@@ -25,3 +25,14 @@ Now, you have to activate it:
 Finally, you can install the dependencies:
 
 `pip install -r requirements.txt`
+
+## How to run it?
+You can run it on debug mode, if you set an environment variable named `DEBUG`
+
+`export DEBUG=TRUE`
+
+After that, run the web app with:
+
+`python3 index.py`
+
+Now, visit `http://127.0.0.1:8050/apps/dashboard` in your web browser.
