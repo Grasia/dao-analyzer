@@ -12,7 +12,7 @@ Even if you install the above dependencies, you must also install the Python dep
 
 `pip3 install -r requirements.txt`
 
-If you don't want to share Python dependencies among other projects, you must use a virtual environment, sush as (https://docs.python-guide.org/dev/virtualenvs/) [virtualenv].
+If you don't want to share Python dependencies among other projects, you must use a virtual environment, sush as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
 
 At first, create a folder where you are going to install all Python dependencies:
 
