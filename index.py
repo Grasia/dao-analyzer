@@ -10,16 +10,13 @@
         <f.r.youssef@hotmail.com>
 """
 
-import os
-
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from app import app
-from apps.dashboard.layout import dashboard
+from app import app, DEBUG
+from apps.dashboard.controller import get_layout
 
-DEBUG = os.environ['DEBUG'] == 'TRUE'
 
 # see https://dash.plot.ly/external-resources to alter header, footer and favicon
 app.index_string = '''
@@ -52,7 +49,7 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/apps/dashboard':
-        return dashboard
+        return get_layout()
     else:
         return '404'
 

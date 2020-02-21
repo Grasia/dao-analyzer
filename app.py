@@ -9,7 +9,10 @@
         <f.r.youssef@hotmail.com>
 """
 
+import os
 import dash
+
+DEBUG = os.environ['DEBUG'] == 'TRUE'
 
 app = dash.Dash(__name__)
 server = app.server
