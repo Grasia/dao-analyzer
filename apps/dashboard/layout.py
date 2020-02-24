@@ -28,6 +28,8 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
     return html.Div(children=[
         __generate_header(),
         __generate_dao_selector(labels),
+        __generate_new_users_graph(),
+        html.Div(id='kk'),
     ])
 
 
@@ -44,3 +46,13 @@ def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
             )
         ]
     )
+
+
+def __generate_new_users_graph() -> html.Div:
+    return html.Div(children=[
+        html.H4(TEXT['new_users_title']),
+        dcc.Graph(
+            id = 'new-users-graph',
+            figure = {'data': [{'x': [], 'y': [], 'type': 'bar'}]}
+        ),
+    ])

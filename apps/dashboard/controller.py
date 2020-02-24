@@ -18,9 +18,24 @@ from apps.dashboard.daos.dao import get_all_daos
 from apps.dashboard.layout import generate_layout
 
 
+
+
+from apps.dashboard.daos.dao import get_reputation_holders
+
+
 def get_layout() -> html.Div:
     daos: List[Dict[str, str]] = get_all_daos()
     labels: List[Dict[str, str]] = [{'value': obj['id'], 
         'label': obj['name']} for obj in daos]
 
     return generate_layout(labels)
+
+
+
+@app.callback(
+    Output('kk', 'children'),
+    [Input('dao-dropdown', 'value')]
+)
+def dao_selector(dao):
+    get_reputation_holders(dao)
+    return []

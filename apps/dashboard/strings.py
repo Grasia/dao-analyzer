@@ -12,4 +12,5 @@
 TEXT: dict = {
     'app_title': 'DAOs Dashboard',
     'dao_selector_title': 'Select your DAO: ',
+    'new_users_title': 'New Reputation Holders',
 }
