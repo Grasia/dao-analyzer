@@ -1,7 +1,7 @@
 """
-   en_strings.py
+   strings.py
 
-   Descp: Use this file in order to isolate your app english text
+   Descp: Use this file in order to isolate your app text
 
    Created on: 21-feb-2020
 

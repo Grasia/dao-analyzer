@@ -12,7 +12,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 
-from apps.dashboard.en_strings import TEXT
+from apps.dashboard.strings import TEXT
 
 
 def generate_layout(labels: list) -> html.Div:

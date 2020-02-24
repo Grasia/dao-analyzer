@@ -14,6 +14,7 @@ from datetime import datetime
 from graphqlclient import GraphQLClient
 
 from app import DEBUG
+from logs import LOGS
 
 # Test the API in: https://thegraph.com/explorer/subgraph/daostack/master
 DAOSTACK_URL = 'https://api.thegraph.com/subgraphs/name/daostack/master'
@@ -28,14 +29,14 @@ def __request(query: str) -> dict:
     """
     start: datetime
     if DEBUG:
-        print(f'Requesting to: {DAOSTACK_URL}')
+        print(LOGS['request_to'].format(DAOSTACK_URL))
         start = datetime.now()
 
     result = daostack_client.execute(query)
 
     if DEBUG:
-        print(f'Requested in: \
-            {(datetime.now() - start).total_seconds() * 1000.0 :.4f} ms')
+        print(LOGS['requested_in'].format((datetime.now() - start)
+         .total_seconds() * 1000))
 
     result = json.loads(result)
 
