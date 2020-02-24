@@ -11,6 +11,7 @@
 
 import json
 from datetime import datetime
+from typing import Dict, List
 from graphqlclient import GraphQLClient
 
 from app import DEBUG
@@ -21,11 +22,12 @@ DAOSTACK_URL = 'https://api.thegraph.com/subgraphs/name/daostack/master'
 
 daostack_client = GraphQLClient(DAOSTACK_URL)
 
-def __request(query: str) -> dict:
+def request(query: str) -> Dict[str, List]:
     """
-    Requests querys at the endpoint
+    Requests querys at the endpoint.
     Return:
-        The response as a dict, if an error ocurrs returns a empty dict 
+        The response as a dict, if an error ocurrs or theres no response 
+        returns a empty dict. 
     """
     start: datetime
     if DEBUG:
@@ -41,20 +43,3 @@ def __request(query: str) -> dict:
     result = json.loads(result)
 
     return result['data'] if 'data' in result else dict()
-
-
-def get_all_daos() -> list:
-    """
-    Requests all the DAOs name
-    Return:
-        A list filled with DAOs name
-    """
-    query: str = '''
-    {
-        daos {
-            name
-        }
-    }
-    '''
-    daos: list = __request(query)
-    return [obj['name'] for obj in daos['daos']]

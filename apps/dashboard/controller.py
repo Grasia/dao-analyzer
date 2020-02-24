@@ -8,22 +8,19 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
+from typing import List, Dict
 
 from dash.dependencies import Input, Output
 import dash_html_components as html
 
 from app import app
-from api_manager import get_all_daos
+from apps.dashboard.daos.dao import get_all_daos
 from apps.dashboard.layout import generate_layout
 
 
 def get_layout() -> html.Div:
-    labels: list = get_all_daos()
+    daos: List[Dict[str, str]] = get_all_daos()
+    labels: List[Dict[str, str]] = [{'value': obj['id'], 
+        'label': obj['name']} for obj in daos]
+
     return generate_layout(labels)
-
-
-# @app.callback(
-#     Output('app-1-display-value', 'children'),
-#     [Input('dao-dropdown', 'value')])
-# def display_value(value):
-#     return 'You have selected "{}"'.format(value)
