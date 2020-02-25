@@ -64,14 +64,29 @@ def get_reputation_holders(id: str) -> List[int]:
     df: pd.DataFrame = pd.DataFrame([int(mem['createdAt']) 
         for mem in dao['dao']['reputationHolders']])
 
-    df.columns = ["date"]
+    df.columns = ['date']
+
+    # takes just the month
     df['date'] = pd.to_datetime(df['date'], unit='s').dt.to_period('M')
 
-    print(df)
+    # counts how many month/year are repeated
+    df = df.groupby(df['date']).size().reset_index(name='count')
+    df['date'] = df['date'].dt.to_timestamp()
     
-    start = df['date'].min().to_timestamp()
+    # generates a time series
+    start = df['date'].min()
     end = datetime.now()
-
     idx = pd.date_range(start=start, end=end, freq=DateOffset(months=1))
 
-    print(idx)
+    # joinning all the data in a unique dataframe
+    dff = pd.DataFrame({'date': idx})
+    dff['count'] = 0
+    df = df.append(dff).sort_values('date').reset_index(drop=True)
+    df = df.drop_duplicates(subset='date', keep="first")
+
+    result: Dict[str, List[pd.Timestamp]] = {
+        'x': df['date'].tolist(),
+        'y': df['count'].tolist(),
+    }
+
+    return result 

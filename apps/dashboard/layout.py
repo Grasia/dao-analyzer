@@ -29,7 +29,6 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
         __generate_header(),
         __generate_dao_selector(labels),
         __generate_new_users_graph(),
-        html.Div(id='kk'),
     ])
 
 
@@ -53,6 +52,25 @@ def __generate_new_users_graph() -> html.Div:
         html.H4(TEXT['new_users_title']),
         dcc.Graph(
             id = 'new-users-graph',
-            figure = {'data': [{'x': [], 'y': [], 'type': 'bar'}]}
+            figure = generate_bar_chart()
         ),
     ])
+
+
+def generate_bar_chart(data: Dict[str, List] = dict()) -> Dict:
+    return {
+        'data': [{
+            'x': data['x'] if 'x' in data else [], 
+            'y': data['y'] if 'y' in data else [], 
+            'type': 'bar',
+        }],
+        'layout': {
+            'xaxis': {
+                #'range': [data['x'][0], data['x'][-1]],
+                'ticks':'outside',
+                'tick0': 0,
+                'ticklen': 8,
+                'tickwidth': 2
+                },
+        }
+    }

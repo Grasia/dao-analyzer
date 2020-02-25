@@ -12,30 +12,29 @@ from typing import List, Dict
 
 from dash.dependencies import Input, Output
 import dash_html_components as html
+from dash.exceptions import PreventUpdate
 
 from app import app
-from apps.dashboard.daos.dao import get_all_daos
-from apps.dashboard.layout import generate_layout
-
-
-
-
-from apps.dashboard.daos.dao import get_reputation_holders
+import apps.dashboard.layout as ly
+import apps.dashboard.daos.dao as DAO
 
 
 def get_layout() -> html.Div:
-    daos: List[Dict[str, str]] = get_all_daos()
+    daos: List[Dict[str, str]] = DAO.get_all_daos()
     labels: List[Dict[str, str]] = [{'value': obj['id'], 
         'label': obj['name']} for obj in daos]
 
-    return generate_layout(labels)
+    return ly.generate_layout(labels)
 
 
 
 @app.callback(
-    Output('kk', 'children'),
+    Output('new-users-graph', 'figure'),
     [Input('dao-dropdown', 'value')]
 )
-def dao_selector(dao):
-    get_reputation_holders(dao)
-    return []
+def dao_selector(dao_id):
+    if not dao_id:
+        raise PreventUpdate
+
+    data:Dict[str, List] = DAO.get_reputation_holders(dao_id)
+    return ly.generate_bar_chart(data)
