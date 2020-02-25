@@ -25,36 +25,70 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
     Return:
         A html.Div filled with the app view 
     """
-    return html.Div(children=[
-        __generate_header(),
-        __generate_dao_selector(labels),
-        __generate_new_users_graph(),
-    ])
+    return html.Div(
+        children = [
+            html.Div(
+                children = [
+                    __generate_header(),
+                ],
+                className = 'main-header'
+            ),
+
+            html.Div(
+                children = [
+                    __generate_dao_selector(labels),
+                    __generate_graphs(),
+                ],
+                className = 'main-body'
+            ),
+
+            html.Div(
+                children = [],
+                className = 'main-foot'
+            ),
+        ],
+        className = 'main-root',
+    )
 
 
 def __generate_header() -> html.H2:
-    return html.H2(TEXT['app_title'])
-
+    return html.H1(TEXT['app_title'])
+    
 
 def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
-    return html.Div( children=[
+    return html.Div( 
+        children = [
             html.Span(TEXT['dao_selector_title']),
             dcc.Dropdown(
                 id = 'dao-dropdown',
-                options = labels
+                options = labels,
+                className = 'drop-down'
             )
-        ]
+        ],
+        className = 'pane dao-selector-pane',
+    )
+
+
+def __generate_graphs() -> html.Div:
+    return html.Div(
+        children = [
+            __generate_new_users_graph(),
+        ],
+        className = 'graphs-container',
     )
 
 
 def __generate_new_users_graph() -> html.Div:
-    return html.Div(children=[
-        html.H4(TEXT['new_users_title']),
-        dcc.Graph(
-            id = 'new-users-graph',
-            figure = generate_bar_chart()
-        ),
-    ])
+    return html.Div(
+        children = [
+            html.H3(TEXT['new_users_title']),
+            dcc.Graph(
+                id = 'new-users-graph',
+                figure = generate_bar_chart()
+            ),
+        ],
+        className = 'pane graph-pane',
+    )
 
 
 def generate_bar_chart(data: Dict[str, List] = dict()) -> Dict:
