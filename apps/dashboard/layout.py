@@ -15,6 +15,8 @@ import dash_html_components as html
 
 from apps.dashboard.strings import TEXT
 
+DARK_BLUE = '#2471a3'
+LIGHT_BLUE = '#d4e6f1'
 
 def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
     """
@@ -37,7 +39,7 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
             html.Div(
                 children = [
                     __generate_dao_selector(labels),
-                    __generate_graphs(),
+                    __generate_all_graphs(),
                 ],
                 className = 'main-body'
             ),
@@ -47,7 +49,7 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
                 className = 'main-foot'
             ),
         ],
-        className = 'main-root',
+        className = 'root',
     )
 
 
@@ -69,34 +71,50 @@ def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
     )
 
 
-def __generate_graphs() -> html.Div:
+def __generate_all_graphs() -> html.Div:
     return html.Div(
         children = [
-            __generate_new_users_graph(),
+            __generate_graph(
+                figure_gen = generate_bar_chart,
+                css_id = 'new-users',
+                title = TEXT['new_users_title'],
+                amount = TEXT['default_amount'],
+                subtitle = TEXT['no_data'],
+            ),
         ],
         className = 'graphs-container',
     )
 
 
-def __generate_new_users_graph() -> html.Div:
+def __generate_graph(figure_gen, css_id: str, title: str, amount: int, 
+    subtitle: str) -> html.Div:
+
     return html.Div(
         children = [
-            html.H3(TEXT['new_users_title']),
+            html.H3(title),
+            html.H2(amount, id = f'{css_id}-amount'),
+            html.Span(subtitle, id = f'{css_id}-subtitle'),
             dcc.Graph(
-                id = 'new-users-graph',
-                figure = generate_bar_chart()
+                id = f'{css_id}-graph',
+                figure = figure_gen()
             ),
         ],
         className = 'pane graph-pane',
     )
 
 
-def generate_bar_chart(data: Dict[str, List] = dict()) -> Dict:
+def generate_bar_chart(x: List = [], y: List[int] = []) -> Dict:
+    color = LIGHT_BLUE
+    if x:
+        color = [LIGHT_BLUE] * len(x)
+        color[-1] = DARK_BLUE
+
     return {
         'data': [{
-            'x': data['x'] if 'x' in data else [], 
-            'y': data['y'] if 'y' in data else [], 
+            'x': x,
+            'y': y,
             'type': 'bar',
+            'marker': { 'color': color }
         }],
         'layout': {
             'xaxis': {

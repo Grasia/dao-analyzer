@@ -12,4 +12,5 @@
 LOGS: dict = {
     'request_to': 'Requesting to: {}',
     'requested_in': 'Requested in: {:.4f} ms',
+    'graph_error': 'An error has ocurred or no data available.',
 }

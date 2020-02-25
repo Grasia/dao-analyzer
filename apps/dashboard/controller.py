@@ -15,8 +15,11 @@ import dash_html_components as html
 from dash.exceptions import PreventUpdate
 
 from app import app
+from app import DEBUG
+from logs import LOGS
 import apps.dashboard.layout as ly
 import apps.dashboard.daos.dao as DAO
+from apps.dashboard.strings import TEXT
 
 
 def get_layout() -> html.Div:
@@ -29,12 +32,25 @@ def get_layout() -> html.Div:
 
 
 @app.callback(
-    Output('new-users-graph', 'figure'),
+    [Output('new-users-graph', 'figure'),
+    Output('new-users-amount', 'children'),
+    Output('new-users-subtitle', 'children')],
     [Input('dao-dropdown', 'value')]
 )
 def dao_selector(dao_id):
     if not dao_id:
         raise PreventUpdate
 
-    data:Dict[str, List] = DAO.get_reputation_holders(dao_id)
-    return ly.generate_bar_chart(data)
+    data:Dict[str, List] = DAO.get_new_users_data(dao_id)
+
+    if not data:
+        if DEBUG:
+            print(LOGS['graph_error'])
+        raise PreventUpdate
+
+    return [
+        ly.generate_bar_chart(x=data['x'], y=data['y']),
+        data['last_month_users'],
+        TEXT['graph_subtitle'].format(data['last_month_name'], 
+            data['month_over_month'])
+    ]
