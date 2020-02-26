@@ -14,8 +14,13 @@ import pandas as pd
 from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 
-from api_manager import request
+from api.api_manager import request
 from apps.dashboard.domain.model_transfers import MetricNewUsers
+from api.query_builder import QueryBuilder
+from api.query import Query
+from api.api_manager import ELEMS_PER_CHUNK
+from app import DEBUG
+from logs import LOGS
 
 
 def get_new_users_metric(id: str) -> MetricNewUsers:
@@ -26,21 +31,32 @@ def get_new_users_metric(id: str) -> MetricNewUsers:
     Return:
         MetricNewUsers
     """
-    query: str = '''
-    {
-        dao(id: "''' + id + '''") {
-            reputationHolders {
-                createdAt
-            }
-        }
-    }
-    '''
-    dao: Dict[str, List] = request(query)
-    if not 'dao' in dao:
+    chunks = 0
+    result: Dict[str, List] = dict()
+    members: List = list()
+    start: datetime = datetime.now()
+
+    while chunks == 0 or ('dao' in result and 
+    len(result['dao']['reputationHolders']) == ELEMS_PER_CHUNK):
+
+        q_builder: QueryBuilder = QueryBuilder()
+        query: Query = Query(header = 'dao',
+                             body = ['reputationHolders', '{createdAt}'], 
+                             filters = {
+                                'id': f'\"{id}\"',
+                                'first': f'{ELEMS_PER_CHUNK + ELEMS_PER_CHUNK * chunks}',
+                                'skip' : f'{ELEMS_PER_CHUNK * chunks}',
+                             })
+        q_builder.add_query(query)
+        result = request(q_builder.build())
+        chunks += 1
+        members += result['dao']['reputationHolders']
+
+    if not members:
         return MetricNewUsers()
 
     df: pd.DataFrame = pd.DataFrame([int(mem['createdAt']) 
-        for mem in dao['dao']['reputationHolders']], columns = ['date'])
+        for mem in result['dao']['reputationHolders']], columns = ['date'])
 
     # takes just the month
     df['date'] = pd.to_datetime(df['date'], unit='s').dt.to_period('M')

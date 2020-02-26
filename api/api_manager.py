@@ -37,36 +37,7 @@ def request(query: str) -> Dict[str, List]:
     result = daostack_client.execute(query)
 
     if DEBUG:
-        print(LOGS['requested_in'].format(1, (datetime.now() - start) \
-         .total_seconds() * 1000))
-
-    result = json.loads(result)
-
-    return result['data'] if 'data' in result else dict()
-
-
-def request_many(query: str, key: str):
-    """
-    Requests many times at the endpoint.
-    Parameters:
-        * query: a graphql query
-        * key: a key to see whether there are still chunks to download
-    Return:
-        The response as a dict, if an error ocurrs or theres no response 
-        returns a empty dict.
-    """
-    start: datetime
-    chunks = 0
-
-    if DEBUG:
-        print(LOGS['request_to'].format(DAOSTACK_URL))
-        start = datetime.now()
-
-    result = daostack_client.execute(query)
-    chunks += 1
-
-    if DEBUG:
-        print(LOGS['requested_in'].format(chunks, (datetime.now() - start) \
+        print(LOGS['requested_in'].format((datetime.now() - start) \
          .total_seconds() * 1000))
 
     result = json.loads(result)
