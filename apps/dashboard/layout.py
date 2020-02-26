@@ -1,6 +1,4 @@
 """
-   layout.py
-
    Descp: It's used to create the dashboard view.
 
    Created on: 20-feb-2020
@@ -62,7 +60,7 @@ def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
         children = [
             html.Span(TEXT['dao_selector_title']),
             dcc.Dropdown(
-                id = 'dao-dropdown',
+                id = 'org-dropdown',
                 options = labels,
                 className = 'drop-down'
             )
@@ -79,7 +77,7 @@ def __generate_all_graphs() -> html.Div:
                 css_id = 'new-users',
                 title = TEXT['new_users_title'],
                 amount = TEXT['default_amount'],
-                subtitle = TEXT['no_data'],
+                subtitle = TEXT['no_data_selected'],
             ),
         ],
         className = 'graphs-container',
@@ -103,7 +101,7 @@ def __generate_graph(figure_gen, css_id: str, title: str, amount: int,
     )
 
 
-def generate_bar_chart(x: List = [], y: List[int] = []) -> Dict:
+def generate_bar_chart(x: List = list(), y: List[int] = list()) -> Dict:
     color = LIGHT_BLUE
     if x:
         color = [LIGHT_BLUE] * len(x)

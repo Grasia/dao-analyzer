@@ -1,6 +1,4 @@
 """
-   app.py
-
    Descp: Used to wrap the dash instance
 
    Created on: 20-feb-2020

@@ -1,6 +1,4 @@
 """
-   logs.py
-
    Descp: Use this file in order to isolate your app logs
 
    Created on: 24-feb-2020
@@ -11,6 +9,6 @@
 
 LOGS: dict = {
     'request_to': 'Requesting to: {}',
-    'requested_in': 'Requested in: {:.4f} ms',
+    'requested_in': 'Requested {} chunks in {:.4f} ms',
     'graph_error': 'An error has ocurred or no data available.',
 }

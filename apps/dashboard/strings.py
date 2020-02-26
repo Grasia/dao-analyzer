@@ -1,6 +1,4 @@
 """
-   strings.py
-
    Descp: Use this file in order to isolate your app text
 
    Created on: 21-feb-2020
@@ -14,6 +12,7 @@ TEXT: dict = {
     'dao_selector_title': 'Select your DAO: ',
     'new_users_title': 'New Reputation Holders',
     'default_amount': 'NAN',
-    'no_data': 'There\'s no DAO selected',
+    'no_data': 'No data',
+    'no_data_selected': 'There\'s no DAO selected',
     'graph_subtitle': '{}, {:.2f}% month over month',
 }

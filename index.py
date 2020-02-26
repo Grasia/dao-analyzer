@@ -1,6 +1,4 @@
 """
-   index.py
-
    Descp: It's used as entry point on the web app. It also configures some 
           settings, such as routes.
 
