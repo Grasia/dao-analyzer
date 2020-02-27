@@ -15,7 +15,7 @@ from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 
 from api.api_manager import request
-from apps.dashboard.domain.model_transfers import MetricNewUsers
+from apps.dashboard.domain.transfers import MetricNewUsers
 from api.query_builder import QueryBuilder
 from api.query import Query
 from api.api_manager import ELEMS_PER_CHUNK
@@ -36,7 +36,7 @@ def get_new_users_metric(id: str) -> MetricNewUsers:
     members: List = list()
     start: datetime = datetime.now()
 
-    while chunks == 0 or ('dao' in result and 
+    while chunks == 0 or ('dao' in result and \
     len(result['dao']['reputationHolders']) == ELEMS_PER_CHUNK):
 
         q_builder: QueryBuilder = QueryBuilder()

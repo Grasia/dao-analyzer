@@ -13,7 +13,7 @@ from typing import List, Dict
 from datetime import datetime
 
 from api.api_manager import request
-from apps.dashboard.domain.model_transfers import Organization
+from apps.dashboard.domain.transfers import Organization
 from api.query_builder import QueryBuilder
 from api.query import Query
 from api.api_manager import ELEMS_PER_CHUNK

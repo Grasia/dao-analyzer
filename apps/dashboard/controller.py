@@ -19,7 +19,7 @@ import apps.dashboard.layout as ly
 from apps.dashboard.strings import TEXT
 from apps.dashboard.domain.daos.dao_organization import get_all_orgs
 from apps.dashboard.domain.daos.dao_new_user_metric import get_new_users_metric
-import apps.dashboard.domain.model_transfers as tr
+import apps.dashboard.domain.transfers as tr
 
 
 def get_layout() -> html.Div:

@@ -17,8 +17,9 @@ class Query():
     TODO: neasted queries
     """
     
-    def __init__(self, header: str, body: List[str], filters: Dict[str, str]):
+    def __init__(self, header: str = '', body: List[str] = None, 
+    filters: Dict[str, str] = None):
 
         self.header = header
-        self.body: Query = body
-        self.filters: Dict[str, str] = filters
+        self.body: List[str] = body if body else list()
+        self.filters: Dict[str, str] = filters if filters else dict()

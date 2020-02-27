@@ -17,8 +17,8 @@ class Organization():
 
 
 class OrganizationUser():
-    def __init__(self, created_at: Timestamp = Timestamp(0)):
-        self.created_at: Timestamp = created_at
+    def __init__(self, created_at: Timestamp = None):
+        self.created_at: Timestamp = created_at if created_at else Timestamp(0)
 
 
 class MetricNewUsers():
@@ -31,12 +31,12 @@ class MetricNewUsers():
     * month_over_month = a percentage of how many users has joined among
                          the last two months.
     """
-    def __init__(self, x: List[Timestamp] = list(), y: List[int] = list(), 
+    def __init__(self, x: List[Timestamp] = None, y: List[int] = None, 
         last_month_n_users: int = 0, last_month_name: str = TEXT['no_data'],
         month_over_month: float = 0.0):
 
-        self.x: List[Timestamp] = x
-        self.y: List[int] = y
+        self.x: List[Timestamp] = x if x else list()
+        self.y: List[int] = y if y else list()
         self.last_month_n_users: int = y[-1] if y else last_month_n_users
         self.last_month_name: str = x[-1].strftime('%B') if x \
             else last_month_name
