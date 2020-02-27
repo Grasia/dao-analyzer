@@ -1,6 +1,4 @@
 """
-   app.py
-
    Descp: Used to wrap the dash instance
 
    Created on: 20-feb-2020
@@ -9,7 +7,10 @@
         <f.r.youssef@hotmail.com>
 """
 
+import os
 import dash
+
+DEBUG = os.environ['DEBUG'] == 'TRUE'
 
 app = dash.Dash(__name__)
 server = app.server
