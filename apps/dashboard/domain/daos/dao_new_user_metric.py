@@ -41,22 +41,28 @@ def get_new_users_metric(id: str) -> MetricNewUsers:
 
         q_builder: QueryBuilder = QueryBuilder()
         query: Query = Query(header = 'dao',
-                             body = ['reputationHolders', '{createdAt}'], 
+                             body = Query(
+                                        header = 'reputationHolders',
+                                        body = ['createdAt'],
+                                        filters = {
+                                            'first': f'{ELEMS_PER_CHUNK}',
+                                            'skip' : f'{ELEMS_PER_CHUNK * chunks}',
+                                        },
+                                    ),
                              filters = {
                                 'id': f'\"{id}\"',
-                                'first': f'{ELEMS_PER_CHUNK + ELEMS_PER_CHUNK * chunks}',
-                                'skip' : f'{ELEMS_PER_CHUNK * chunks}',
                              })
         q_builder.add_query(query)
         result = request(q_builder.build())
         chunks += 1
-        members += result['dao']['reputationHolders']
+        members.extend(result['dao']['reputationHolders'])
 
-    if not members:
-        return MetricNewUsers()
+    if DEBUG:
+        print(LOGS['chunks_requested'].format(chunks, (datetime.now() - start)\
+         .total_seconds() * 1000))
 
-    df: pd.DataFrame = pd.DataFrame([int(mem['createdAt']) 
-        for mem in result['dao']['reputationHolders']], columns = ['date'])
+    df: pd.DataFrame = pd.DataFrame([int(mem['createdAt']) for mem in members],
+     columns = ['date'])
 
     # takes just the month
     df['date'] = pd.to_datetime(df['date'], unit='s').dt.to_period('M')

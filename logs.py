@@ -10,6 +10,6 @@
 LOGS: dict = {
     'request_to': 'Requesting to: {0}',
     'requested_in': 'Requested in {:.4f} ms',
-    'chunks_requested': 'Requested {0} chunks in {1} ms',
+    'chunks_requested': 'Requested {0} chunk(s) in {1} ms',
     'graph_error': 'An error has ocurred or no data available.',
 }

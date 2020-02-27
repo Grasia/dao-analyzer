@@ -12,8 +12,8 @@ from api.query import Query
 
 class QueryBuilder():
 
-    def __init__(self):
-        self.queries: List[Query] = list()
+    def __init__(self, queries: List[Query] = None):
+        self.queries: List[Query] = queries if queries else list()
 
 
     def add_query(self, query: Query):
@@ -28,12 +28,18 @@ class QueryBuilder():
             for f in q.filters:
                 q_filter += f'{f}: {q.filters[f]}, '
 
-            # TODO: neasted queries
             q_body: str = ''
-            for attr in q.body:
-                q_body += f'{attr} '
+            if type(q.body) == list:
+                q_body += '{'
+                for attr in q.body:
+                    q_body += f'{attr} '
+                q_body += '}'
 
-            query += f'{q.header}({q_filter}){{{q_body}}} '
+            elif type(q.body) == Query:
+                q_builder: QueryBuilder = QueryBuilder([q.body])
+                q_body += q_builder.build()
+
+            query += f'{q.header}({q_filter}){q_body} '
 
         query += '}'
         return query

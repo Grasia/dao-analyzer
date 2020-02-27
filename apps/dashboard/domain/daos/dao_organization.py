@@ -39,7 +39,7 @@ def get_all_orgs() -> List[Organization]:
                              body = ['id', 'name'], 
                              filters = {
                                 'where': '{register: \"registered\"}',
-                                'first': f'{ELEMS_PER_CHUNK + ELEMS_PER_CHUNK * chunks}',
+                                'first': f'{ELEMS_PER_CHUNK}',
                                 'skip' : f'{ELEMS_PER_CHUNK * chunks}',
                              })
         q_builder.add_query(query)
