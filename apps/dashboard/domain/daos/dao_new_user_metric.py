@@ -14,30 +14,30 @@ import pandas as pd
 from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 
-from api.api_manager import request
+import api.api_manager as api
 from apps.dashboard.domain.transfers import MetricTimeSeries
 from api.query_builder import QueryBuilder
 from api.query import Query
-from api.api_manager import ELEMS_PER_CHUNK
 from app import DEBUG
 from logs import LOGS
 
 
 def get_new_users_metric(id: str) -> MetricTimeSeries:
     """
-    Gets a specific DAO's users metric.
+    Gets a specific DAO's new users metric.
     Params:
         id: the id of an existing DAO.
     Return:
         MetricTimeSeries
     """
-    chunks = 0
+    chunk = 0
     result: Dict[str, List] = dict()
     members: List = list()
     start: datetime = datetime.now()
 
-    while chunks == 0 or ('dao' in result and \
-    len(result['dao']['reputationHolders']) == ELEMS_PER_CHUNK):
+    while chunk == 0 or ('dao' in result and \
+    len(result['dao']['reputationHolders']) == \
+    api.get_elems_per_chunk(chunk - 1)):
 
         q_builder: QueryBuilder = QueryBuilder()
         query: Query = Query(header = 'dao',
@@ -45,20 +45,21 @@ def get_new_users_metric(id: str) -> MetricTimeSeries:
                                         header = 'reputationHolders',
                                         body = ['createdAt'],
                                         filters = {
-                                            'first': f'{ELEMS_PER_CHUNK}',
-                                            'skip' : f'{ELEMS_PER_CHUNK * chunks}',
+                                            'first': f'{api.get_elems_per_chunk(chunk)}',
+                                            'skip' : f'{len(members)}',
                                         },
                                     ),
                              filters = {
                                 'id': f'\"{id}\"',
                              })
+
         q_builder.add_query(query)
-        result = request(q_builder.build())
-        chunks += 1
+        result = api.request(q_builder.build())
+        chunk += 1
         members.extend(result['dao']['reputationHolders'])
 
     if DEBUG:
-        print(LOGS['chunks_requested'].format(chunks, (datetime.now() - start)\
+        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
          .total_seconds() * 1000))
 
     df: pd.DataFrame = pd.DataFrame([int(mem['createdAt']) for mem in members],
@@ -81,8 +82,9 @@ def get_new_users_metric(id: str) -> MetricTimeSeries:
     # joinning all the data in a unique dataframe
     dff = pd.DataFrame({'date': idx})
     dff['count'] = 0
-    df = df.append(dff).sort_values('date').reset_index(drop=True)
-    df = df.drop_duplicates(subset='date', keep="first")
+    df = df.append(dff, ignore_index = True)
+    df.drop_duplicates(subset='date', keep="first", inplace = True)
+    df.sort_values('date', inplace = True)
 
     metric: MetricTimeSeries = MetricTimeSeries(
         x = df['date'].tolist(), 

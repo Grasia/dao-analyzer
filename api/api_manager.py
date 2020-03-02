@@ -43,3 +43,9 @@ def request(query: str) -> Dict[str, List]:
     result = json.loads(result)
 
     return result['data'] if 'data' in result else dict()
+
+
+def get_elems_per_chunk(n_chunk: int) -> int:
+    elems: int = ELEMS_PER_CHUNK * pow(2, n_chunk)
+    # max elems per chunk = 1000
+    return elems if elems <= 1000 else 1000
