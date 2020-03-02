@@ -32,7 +32,7 @@ def dao_selector(org_id):
     if not org_id:
         raise PreventUpdate
     
-    metric: tr.MetricTimeSeries = service.get_metric_new_users([org_id])
+    metric: tr.MetricTimeSeries = service.get_metric_new_users(org_id)
     return [
         ly.generate_bar_chart(x = metric.x, y = metric.y),
         TEXT['graph_month_amount'].format(metric.last_month_name, 

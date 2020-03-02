@@ -16,6 +16,7 @@ from apps.dashboard.data_access.daos.dao_organization import get_all_orgs
 from apps.dashboard.data_access.daos.dao_new_user_metric import get_new_users_metric
 import apps.dashboard.business.transfers as tr
 from apps.dashboard.business.service_state import ServiceState
+from apps.dashboard.presentation.strings import TEXT
 
 state: ServiceState = None
 
@@ -31,13 +32,28 @@ def get_layout() -> html.Div:
     """
     Returns the app's view. 
     """
+    # request orgs names
     orgs: List[tr.Organization] = get_all_orgs()
     labels: List[Dict[str, str]] = \
         [{'value': o.id, 'label': o.name} for o in orgs]
 
+    labels = sorted(labels, key = lambda k: k['label'])
+
+    # add all orgs selector
+    labels = [{'value': __get_state().ALL_ORGS_ID, 'label': TEXT['all_orgs']}]\
+             + labels
+    # add them to the app's state
     __get_state().set_orgs_ids([o.id for o in orgs])
+
     return generate_layout(labels)
 
 
-def get_metric_new_users(ids: List[str]) -> tr.MetricTimeSeries:
+def get_metric_new_users(d_id: str) -> tr.MetricTimeSeries:
+    ids: List[str] = None
+
+    if d_id == __get_state().ALL_ORGS_ID:
+        ids = __get_state().organization_ids
+    else:
+        ids = [d_id]
+
     return get_new_users_metric(ids)

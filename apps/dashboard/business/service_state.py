@@ -12,7 +12,7 @@ class ServiceState():
     """
     This class is used to save the app's state
     """
-    ALL_ORGS_ID: int = 0
+    ALL_ORGS_ID: str = '1'
 
     def __init__(self):
         self.organization_ids = list()

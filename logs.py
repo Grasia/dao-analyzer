@@ -11,6 +11,6 @@ LOGS: dict = {
     'request_to': 'Requesting to: {}',
     'requested_in': 'Requested in {:.2f} ms',
     'chunks_requested': 'Requested {} chunk(s) in {:.2f} ms',
-    'daos_requested': '{} DAO(s) requested in {:.2f}',
+    'daos_requested': '{} DAO(s) requested in {:.2f} s',
     'graph_error': 'An error has ocurred or no data available.',
 }

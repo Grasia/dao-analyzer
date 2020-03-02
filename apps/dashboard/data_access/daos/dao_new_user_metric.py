@@ -110,6 +110,6 @@ def get_new_users_metric(ids: List[str]) -> MetricTimeSeries:
 
     if DEBUG:
         print(LOGS['daos_requested'].format(n_ids, (datetime.now() - start)\
-         .total_seconds() * 1000))
+         .total_seconds()))
 
     return __process_data(members)
