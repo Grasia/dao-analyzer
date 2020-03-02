@@ -6,28 +6,20 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
-from typing import List, Dict
 
 from dash.dependencies import Input, Output
-import dash_html_components as html
 from dash.exceptions import PreventUpdate
 
 from app import app
-from app import DEBUG
-from logs import LOGS
-import apps.dashboard.layout as ly
-from apps.dashboard.strings import TEXT
-from apps.dashboard.domain.daos.dao_organization import get_all_orgs
-from apps.dashboard.domain.daos.dao_new_user_metric import get_new_users_metric
-import apps.dashboard.domain.transfers as tr
+import apps.dashboard.presentation.layout as ly
+from apps.dashboard.presentation.strings import TEXT
+import apps.dashboard.business.transfers as tr
+import apps.dashboard.business.app_service as service
 
 
-def get_layout() -> html.Div:
-    orgs: List[tr.Organization] = get_all_orgs()
-    labels: List[Dict[str, str]] = \
-        [{'value': o.id, 'label': o.name} for o in orgs]
-
-    return ly.generate_layout(labels)
+def init():
+    # init controller
+    pass
 
 
 @app.callback(
@@ -39,9 +31,8 @@ def get_layout() -> html.Div:
 def dao_selector(org_id):
     if not org_id:
         raise PreventUpdate
-
-    metric: tr.MetricTimeSeries = get_new_users_metric(org_id)
-
+    
+    metric: tr.MetricTimeSeries = service.get_metric_new_users(org_id)
     return [
         ly.generate_bar_chart(x = metric.x, y = metric.y),
         TEXT['graph_month_amount'].format(metric.last_month_name, 

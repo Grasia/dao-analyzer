@@ -13,7 +13,7 @@ from typing import List, Dict
 from datetime import datetime
 
 import api.api_manager as api
-from apps.dashboard.domain.transfers import Organization
+from apps.dashboard.business.transfers import Organization
 from api.query_builder import QueryBuilder
 from api.query import Query
 
@@ -27,7 +27,7 @@ def get_all_orgs() -> List[Organization]:
         A list filled with "Organization"s
     """
     orgs = list()
-    chunk = 0
+    chunk: int = 0
     result: Dict = dict()
     start: datetime = datetime.now()
 
