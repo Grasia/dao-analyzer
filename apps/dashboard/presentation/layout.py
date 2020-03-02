@@ -11,7 +11,7 @@ from typing import Dict, List
 import dash_core_components as dcc
 import dash_html_components as html
 
-from apps.dashboard.strings import TEXT
+from apps.dashboard.presentation.strings import TEXT
 
 DARK_BLUE = '#2471a3'
 LIGHT_BLUE = '#d4e6f1'

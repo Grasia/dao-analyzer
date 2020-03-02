@@ -15,7 +15,7 @@ from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 
 import api.api_manager as api
-from apps.dashboard.domain.transfers import MetricTimeSeries
+from apps.dashboard.business.transfers import MetricTimeSeries
 from api.query_builder import QueryBuilder
 from api.query import Query
 from app import DEBUG
