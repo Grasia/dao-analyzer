@@ -79,6 +79,13 @@ def __generate_all_graphs() -> html.Div:
                 amount = TEXT['default_amount'],
                 subtitle = TEXT['no_data_selected'],
             ),
+            __generate_graph(
+                figure_gen = generate_bar_chart,
+                css_id = 'new-proposals',
+                title = TEXT['new_proposals_title'],
+                amount = TEXT['default_amount'],
+                subtitle = TEXT['no_data_selected'],
+            ),
         ],
         className = 'graphs-container',
     )

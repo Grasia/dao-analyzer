@@ -11,6 +11,7 @@ TEXT: dict = {
     'app_title': 'DAO\'s Dashboard',
     'dao_selector_title': 'Select your DAO: ',
     'new_users_title': 'New Reputation Holders',
+    'new_proposals_title': 'New Proposals',
     'default_amount': 'NAN',
     'no_data': 'No data',
     'no_data_selected': 'There\'s no DAO selected',
