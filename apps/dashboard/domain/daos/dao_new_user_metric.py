@@ -22,15 +22,8 @@ from app import DEBUG
 from logs import LOGS
 
 
-def get_new_users_metric(id: str) -> MetricTimeSeries:
-    """
-    Gets a specific DAO's new users metric.
-    Params:
-        id: the id of an existing DAO.
-    Return:
-        MetricTimeSeries
-    """
-    chunk = 0
+def __request_data(d_id: str) -> List:
+    chunk: int = 0
     result: Dict[str, List] = dict()
     members: List = list()
     start: datetime = datetime.now()
@@ -41,17 +34,18 @@ def get_new_users_metric(id: str) -> MetricTimeSeries:
 
         q_builder: QueryBuilder = QueryBuilder()
         query: Query = Query(header = 'dao',
-                             body = Query(
+                            body = Query(
                                         header = 'reputationHolders',
                                         body = ['createdAt'],
                                         filters = {
-                                            'first': f'{api.get_elems_per_chunk(chunk)}',
+                                            'first': 
+                                            f'{api.get_elems_per_chunk(chunk)}',
                                             'skip' : f'{len(members)}',
                                         },
                                     ),
-                             filters = {
-                                'id': f'\"{id}\"',
-                             })
+                            filters = {
+                                'id': f'\"{d_id}\"',
+                            })
 
         q_builder.add_query(query)
         result = api.request(q_builder.build())
@@ -62,6 +56,10 @@ def get_new_users_metric(id: str) -> MetricTimeSeries:
         print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
          .total_seconds() * 1000))
 
+    return members
+
+
+def __process_data(members: List) -> MetricTimeSeries:
     df: pd.DataFrame = pd.DataFrame([int(mem['createdAt']) for mem in members],
      columns = ['date'])
 
@@ -92,3 +90,26 @@ def get_new_users_metric(id: str) -> MetricTimeSeries:
         m_type = MetricTimeSeries.METRIC_TYPE_NEW_USERS)
 
     return metric
+
+
+def get_new_users_metric(ids: List[str]) -> MetricTimeSeries:
+    """
+    Gets new users metric from a list of ids.
+    Params:
+        ids: a list of existing DAO's id.
+    Return:
+        MetricTimeSeries
+    """
+    start: datetime = datetime.now()
+    members: List = list()
+    n_ids: int = 0
+
+    for d_id in ids:
+        members.extend(__request_data(d_id))
+        n_ids += 1
+
+    if DEBUG:
+        print(LOGS['daos_requested'].format(n_ids, (datetime.now() - start)\
+         .total_seconds() * 1000))
+
+    return __process_data(members)

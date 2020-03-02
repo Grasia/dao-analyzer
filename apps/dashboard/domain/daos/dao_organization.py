@@ -27,7 +27,7 @@ def get_all_orgs() -> List[Organization]:
         A list filled with "Organization"s
     """
     orgs = list()
-    chunk = 0
+    chunk: int = 0
     result: Dict = dict()
     start: datetime = datetime.now()
 
