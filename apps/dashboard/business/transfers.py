@@ -32,6 +32,7 @@ class MetricTimeSeries():
     """
     METRIC_TYPE_NO_TYPE: int = 0
     METRIC_TYPE_NEW_USERS: int = 1
+    METRIC_TYPE_NEW_PROPOSAL: int = 2
 
     def __init__(self, x: List[Timestamp] = None, y: List[int] = None, 
         m_type: int = METRIC_TYPE_NO_TYPE, last_month_amount: int = 0, 

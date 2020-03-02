@@ -20,9 +20,9 @@ from api.query_builder import QueryBuilder
 from api.query import Query
 from app import DEBUG
 from logs import LOGS
+        
 
-
-def __request_data(d_id: str) -> List:
+def __request_new_users(d_id: str) -> List:
     chunk: int = 0
     result: Dict[str, List] = dict()
     members: List = list()
@@ -50,7 +50,8 @@ def __request_data(d_id: str) -> List:
         q_builder.add_query(query)
         result = api.request(q_builder.build())
         chunk += 1
-        members.extend(result['dao']['reputationHolders'])
+        members.extend([int(mem['createdAt']) for mem in \
+            result['dao']['reputationHolders']])
 
     if DEBUG:
         print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
@@ -59,9 +60,8 @@ def __request_data(d_id: str) -> List:
     return members
 
 
-def __process_data(members: List) -> MetricTimeSeries:
-    df: pd.DataFrame = pd.DataFrame([int(mem['createdAt']) for mem in members],
-     columns = ['date'])
+def __process_data(l_dates: List) -> MetricTimeSeries:
+    df: pd.DataFrame = pd.DataFrame(l_dates, columns = ['date'])
 
     # takes just the month
     df['date'] = pd.to_datetime(df['date'], unit='s').dt.to_period('M')
@@ -105,7 +105,7 @@ def get_new_users_metric(ids: List[str]) -> MetricTimeSeries:
     n_ids: int = 0
 
     for d_id in ids:
-        members.extend(__request_data(d_id))
+        members.extend(__request_new_users(d_id))
         n_ids += 1
 
     if DEBUG:

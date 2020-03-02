@@ -13,7 +13,7 @@ import dash_html_components as html
 
 from apps.dashboard.presentation.layout import generate_layout
 from apps.dashboard.data_access.daos.dao_organization import get_all_orgs
-from apps.dashboard.data_access.daos.dao_new_user_metric import get_new_users_metric
+import apps.dashboard.data_access.daos.dao_metric_time_series as tm_dao
 import apps.dashboard.business.transfers as tr
 from apps.dashboard.business.service_state import ServiceState
 from apps.dashboard.presentation.strings import TEXT
@@ -48,12 +48,21 @@ def get_layout() -> html.Div:
     return generate_layout(labels)
 
 
-def get_metric_new_users(d_id: str) -> tr.MetricTimeSeries:
-    ids: List[str] = None
-
-    if d_id == __get_state().ALL_ORGS_ID:
-        ids = __get_state().organization_ids
+def __get_ids_from_id(_id: str) -> List[str]:
+    """
+    Gets a list of ids from a _id attr.
+    If _id is equals to 'all orgs' id then returns a list with all the orgs id.
+    If not returns a list with _id as unique element of the list.
+    """
+    if _id == __get_state().ALL_ORGS_ID:
+        return __get_state().organization_ids
     else:
-        ids = [d_id]
+        return [_id]
 
-    return get_new_users_metric(ids)
+
+def get_metric_new_users(d_id: str) -> tr.MetricTimeSeries:
+    return tm_dao.get_new_users_metric(__get_ids_from_id(d_id))
+
+
+# def get_metric_new_proposals(d_id: str) -> tr.MetricTimeSeries:
+#     return 
