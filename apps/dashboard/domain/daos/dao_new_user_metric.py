@@ -15,7 +15,7 @@ from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 
 from api.api_manager import request
-from apps.dashboard.domain.transfers import MetricNewUsers
+from apps.dashboard.domain.transfers import MetricTimeSeries
 from api.query_builder import QueryBuilder
 from api.query import Query
 from api.api_manager import ELEMS_PER_CHUNK
@@ -23,13 +23,13 @@ from app import DEBUG
 from logs import LOGS
 
 
-def get_new_users_metric(id: str) -> MetricNewUsers:
+def get_new_users_metric(id: str) -> MetricTimeSeries:
     """
     Gets a specific DAO's users metric.
     Params:
         id: the id of an existing DAO.
     Return:
-        MetricNewUsers
+        MetricTimeSeries
     """
     chunks = 0
     result: Dict[str, List] = dict()
@@ -84,4 +84,9 @@ def get_new_users_metric(id: str) -> MetricNewUsers:
     df = df.append(dff).sort_values('date').reset_index(drop=True)
     df = df.drop_duplicates(subset='date', keep="first")
 
-    return MetricNewUsers(x=df['date'].tolist(), y=df['count'].tolist()) 
+    metric: MetricTimeSeries = MetricTimeSeries(
+        x = df['date'].tolist(), 
+        y = df['count'].tolist(),
+        m_type = MetricTimeSeries.METRIC_TYPE_NEW_USERS)
+
+    return metric

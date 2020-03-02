@@ -30,7 +30,6 @@ def get_layout() -> html.Div:
     return ly.generate_layout(labels)
 
 
-
 @app.callback(
     [Output('new-users-graph', 'figure'),
     Output('new-users-month-amount', 'children'),
@@ -41,11 +40,11 @@ def dao_selector(org_id):
     if not org_id:
         raise PreventUpdate
 
-    metric: tr.MetricNewUsers = get_new_users_metric(org_id)
+    metric: tr.MetricTimeSeries = get_new_users_metric(org_id)
 
     return [
         ly.generate_bar_chart(x = metric.x, y = metric.y),
         TEXT['graph_month_amount'].format(metric.last_month_name, 
-            metric.last_month_n_users),
+            metric.last_month_amount),
         TEXT['graph_subtitle'].format(metric.month_over_month)
     ]

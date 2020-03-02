@@ -21,27 +21,32 @@ class OrganizationUser():
         self.created_at: Timestamp = created_at if created_at else Timestamp(0)
 
 
-class MetricNewUsers():
+class MetricTimeSeries():
     """
-    * x = a list with timestamps month over month since first user 
-          registered to today's date.
-    * y = a list with new users in a 'x' month.
-    * last_month_n_users = the number of users in the last month.
+    * x = a list with timestamps month over month.
+    * y = a list with n elems in a 'x' month.
+    * last_month_amount = the amount in the last month.
     * last_month_name = last month's name.
-    * month_over_month = a percentage of how many users has joined among
-                         the last two months.
+    * month_over_month = a percentage of the amount among the last two months.
+    * m_type = no type assigned, new users, 
     """
+    METRIC_TYPE_NO_TYPE: int = 0
+    METRIC_TYPE_NEW_USERS: int = 1
+
     def __init__(self, x: List[Timestamp] = None, y: List[int] = None, 
-        last_month_n_users: int = 0, last_month_name: str = TEXT['no_data'],
-        month_over_month: float = 0.0):
+        m_type: int = METRIC_TYPE_NO_TYPE, last_month_amount: int = 0, 
+        last_month_name: str = TEXT['no_data'], month_over_month: float = 0.0):
 
         self.x: List[Timestamp] = x if x else list()
         self.y: List[int] = y if y else list()
-        self.last_month_n_users: int = y[-1] if y else last_month_n_users
+        self.m_type = m_type
+        self.last_month_amount: int = y[-1] if y else last_month_amount
         self.last_month_name: str = x[-1].strftime('%B') if x \
             else last_month_name
+
         self.month_over_month: float = self.__calculate_m_o_m() if y \
             else month_over_month
+
 
     def __calculate_m_o_m(self) -> float:
         val = 0.0
