@@ -14,5 +14,6 @@ TEXT: dict = {
     'default_amount': 'NAN',
     'no_data': 'No data',
     'no_data_selected': 'There\'s no DAO selected',
-    'graph_subtitle': '{}, {:.2f}% month over month',
+    'graph_month_amount': '{}: {}',
+    'graph_subtitle': '{:.2f}% month over month',
 }

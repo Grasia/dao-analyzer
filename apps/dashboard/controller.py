@@ -33,7 +33,7 @@ def get_layout() -> html.Div:
 
 @app.callback(
     [Output('new-users-graph', 'figure'),
-    Output('new-users-amount', 'children'),
+    Output('new-users-month-amount', 'children'),
     Output('new-users-subtitle', 'children')],
     [Input('org-dropdown', 'value')]
 )
@@ -45,7 +45,7 @@ def dao_selector(org_id):
 
     return [
         ly.generate_bar_chart(x = metric.x, y = metric.y),
-        metric.last_month_n_users,
-        TEXT['graph_subtitle'].format(metric.last_month_name, 
-            metric.month_over_month)
+        TEXT['graph_month_amount'].format(metric.last_month_name, 
+            metric.last_month_n_users),
+        TEXT['graph_subtitle'].format(metric.month_over_month)
     ]

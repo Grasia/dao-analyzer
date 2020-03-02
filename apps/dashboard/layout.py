@@ -84,13 +84,13 @@ def __generate_all_graphs() -> html.Div:
     )
 
 
-def __generate_graph(figure_gen, css_id: str, title: str, amount: int, 
+def __generate_graph(figure_gen, css_id: str, title: str, amount: str, 
     subtitle: str) -> html.Div:
 
     return html.Div(
         children = [
             html.H3(title),
-            html.H2(amount, id = f'{css_id}-amount'),
+            html.H2(amount, id = f'{css_id}-month-amount'),
             html.Span(subtitle, id = f'{css_id}-subtitle'),
             dcc.Graph(
                 id = f'{css_id}-graph',
