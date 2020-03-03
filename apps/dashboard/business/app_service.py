@@ -12,8 +12,8 @@ from typing import List, Dict
 import dash_html_components as html
 
 from apps.dashboard.presentation.layout import generate_layout
-from apps.dashboard.data_access.daos.dao_organization import get_all_orgs
-import apps.dashboard.data_access.daos.dao_metric_time_series as tm_dao
+from apps.dashboard.data_access.dao_organization import get_all_orgs
+from apps.dashboard.data_access.dao_metric_time_series import get_metric
 import apps.dashboard.business.transfers as tr
 from apps.dashboard.business.service_state import ServiceState
 from apps.dashboard.presentation.strings import TEXT
@@ -61,8 +61,10 @@ def __get_ids_from_id(_id: str) -> List[str]:
 
 
 def get_metric_new_users(d_id: str) -> tr.MetricTimeSeries:
-    return tm_dao.get_new_users_metric(__get_ids_from_id(d_id))
+    return get_metric(ids = __get_ids_from_id(d_id), 
+        o_type = tr.MetricTimeSeries.METRIC_TYPE_NEW_USERS)
 
 
-# def get_metric_new_proposals(d_id: str) -> tr.MetricTimeSeries:
-#     return 
+def get_metric_new_proposals(d_id: str) -> tr.MetricTimeSeries:
+    return get_metric(ids = __get_ids_from_id(d_id), 
+        o_type = tr.MetricTimeSeries.METRIC_TYPE_NEW_PROPOSAL)
