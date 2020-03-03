@@ -14,7 +14,7 @@ from dash.exceptions import PreventUpdate
 from app import app
 import apps.dashboard.presentation.layout as ly
 from apps.dashboard.presentation.strings import TEXT
-import apps.dashboard.business.transfers as tr
+from apps.dashboard.business.transfers.metric_time_series import MetricTimeSeries
 import apps.dashboard.business.app_service as service
 
 
@@ -23,7 +23,7 @@ def init():
     pass
 
 
-def __get_data_from_metric(metric: tr.MetricTimeSeries) -> List:
+def __get_data_from_metric(metric: MetricTimeSeries) -> List:
     return [
         ly.generate_bar_chart(x = metric.x, y = metric.y),
         TEXT['graph_month_amount'].format(metric.last_month_name, 

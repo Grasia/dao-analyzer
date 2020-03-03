@@ -1,25 +1,15 @@
 """
-   Descp: This file is used to store all the transfer classes.
+   Descp: Basic time series transfer.
 
-   Created on: 26-feb-2020
+   Created on: 3-mar-2020
 
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
+
 from typing import List
 from pandas import Timestamp
 from apps.dashboard.presentation.strings import TEXT
-
-class Organization():
-    def __init__(self, o_id:str = TEXT['no_data'], name:str = TEXT['no_data']):
-        self.id: str   = o_id
-        self.name: str = name 
-
-
-class OrganizationUser():
-    def __init__(self, created_at: Timestamp = None):
-        self.created_at: Timestamp = created_at if created_at else Timestamp(0)
-
 
 class MetricTimeSeries():
     """
@@ -35,18 +25,17 @@ class MetricTimeSeries():
     METRIC_TYPE_NEW_PROPOSAL: int = 2
 
     def __init__(self, x: List[Timestamp] = None, y: List[int] = None, 
-        m_type: int = METRIC_TYPE_NO_TYPE, last_month_amount: int = 0, 
-        last_month_name: str = TEXT['no_data'], month_over_month: float = 0.0):
+        m_type: int = METRIC_TYPE_NO_TYPE):
 
         self.x: List[Timestamp] = x if x else list()
         self.y: List[int] = y if y else list()
         self.m_type = m_type
-        self.last_month_amount: int = y[-1] if y else last_month_amount
+        self.last_month_amount: int = y[-1] if y else 0
         self.last_month_name: str = x[-1].strftime('%B') if x \
-            else last_month_name
+            else TEXT['no_data']
 
         self.month_over_month: float = self.__calculate_m_o_m() if y \
-            else month_over_month
+            else 0.0
 
 
     def __calculate_m_o_m(self) -> float:

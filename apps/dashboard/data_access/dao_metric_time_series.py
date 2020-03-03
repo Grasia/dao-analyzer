@@ -17,7 +17,7 @@ from datetime import datetime
 from api.query_builder import QueryBuilder
 from api.query import Query
 import api.api_manager as api
-from apps.dashboard.business.transfers import MetricTimeSeries
+from apps.dashboard.business.transfers.metric_time_series import MetricTimeSeries
 from app import DEBUG
 from logs import LOGS
 
