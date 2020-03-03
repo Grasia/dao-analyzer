@@ -14,7 +14,7 @@ from dash.exceptions import PreventUpdate
 from app import app
 import apps.dashboard.presentation.layout as ly
 from apps.dashboard.presentation.strings import TEXT
-from apps.dashboard.business.transfers.metric_time_series import MetricTimeSeries
+from apps.dashboard.business.transfers.stacked_time_serie import StackedTimeSerie
 import apps.dashboard.business.app_service as service
 
 
@@ -23,12 +23,15 @@ def init():
     pass
 
 
-def __get_data_from_metric(metric: MetricTimeSeries) -> List:
+def __get_data_from_metric(metric: StackedTimeSerie) -> List:
+    i_stack: int = 0
     return [
-        ly.generate_bar_chart(x = metric.x, y = metric.y),
-        TEXT['graph_month_amount'].format(metric.last_month_name, 
-            metric.last_month_amount),
-        TEXT['graph_subtitle'].format(metric.month_over_month)
+        ly.generate_bar_chart(
+            x = metric.get_time_serie(), 
+            y = metric.get_y_stack(i_stack)),
+        TEXT['graph_month_amount'].format(metric.get_last_month(), 
+            metric.get_last_month_amount(i_stack)),
+        TEXT['graph_subtitle'].format(metric.get_month_over_month(i_stack))
     ]
 
 

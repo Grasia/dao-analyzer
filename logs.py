@@ -13,5 +13,6 @@ LOGS: dict = {
     'chunks_requested': 'Requested {} chunk(s) in {:.2f} ms',
     'daos_requested': '{} DAO(s) requested in {:.2f} s',
     'graph_error': 'An error has ocurred or no data available.',
-    'no_strategy': 'Strategy request has no set a function.',
+    'attr_not_init': 'You haven\'t initialized {} attribute\
+        , you can\'t use {} method directly.',
 }
