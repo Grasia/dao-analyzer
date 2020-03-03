@@ -28,7 +28,7 @@ class MetricTimeSeries():
     * last_month_amount = the amount in the last month.
     * last_month_name = last month's name.
     * month_over_month = a percentage of the amount among the last two months.
-    * m_type = no type assigned, new users, 
+    * m_type = no type assigned, new users, new proposal
     """
     METRIC_TYPE_NO_TYPE: int = 0
     METRIC_TYPE_NEW_USERS: int = 1

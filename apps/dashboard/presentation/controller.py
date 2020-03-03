@@ -45,14 +45,14 @@ def update_new_user_graph(org_id):
     return __get_data_from_metric(service.get_metric_new_users(org_id))
 
 
-# @app.callback(
-#     [Output('new-proposal-graph', 'figure'),
-#     Output('new-proposal-month-amount', 'children'),
-#     Output('new-proposal-subtitle', 'children')],
-#     [Input('org-dropdown', 'value')]
-# )
-# def update_proposal_graph(org_id):
-#     if not org_id:
-#         raise PreventUpdate
+@app.callback(
+    [Output('new-proposal-graph', 'figure'),
+    Output('new-proposal-month-amount', 'children'),
+    Output('new-proposal-subtitle', 'children')],
+    [Input('org-dropdown', 'value')]
+)
+def update_proposal_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
 
-#     return __get_data_from_metric(service.get_metric_new_proposals(org_id))
+    return __get_data_from_metric(service.get_metric_new_proposals(org_id))
