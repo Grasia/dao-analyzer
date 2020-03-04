@@ -13,7 +13,7 @@ from dash.exceptions import PreventUpdate
 
 from app import app
 import apps.dashboard.presentation.layout as ly
-from apps.dashboard.presentation.strings import TEXT
+from apps.dashboard.resources.strings import TEXT
 from apps.dashboard.business.transfers.stacked_time_serie import StackedTimeSerie
 import apps.dashboard.business.app_service as service
 

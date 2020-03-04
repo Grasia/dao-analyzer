@@ -17,7 +17,7 @@ import apps.dashboard.data_access.dao_stacked_time_series as s_dao
 from apps.dashboard.business.service_state import ServiceState
 from apps.dashboard.business.transfers.organization import Organization
 from apps.dashboard.business.transfers.stacked_time_serie import StackedTimeSerie
-from apps.dashboard.presentation.strings import TEXT
+from apps.dashboard.resources.strings import TEXT
 
 state: ServiceState = None
 

@@ -10,7 +10,7 @@
 from typing import List
 from pandas import Timestamp
 
-from apps.dashboard.presentation.strings import TEXT
+from apps.dashboard.resources.strings import TEXT
 
 class TimeSeries():
     """
