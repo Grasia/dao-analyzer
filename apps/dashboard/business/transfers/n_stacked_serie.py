@@ -14,7 +14,7 @@ from logs import LOGS
 from apps.dashboard.business.transfers.serie import Serie
 from apps.dashboard.business.transfers.stacked_serie import StackedSerie
 
-class NStackedTimeSerie():
+class NStackedSerie():
     """
     NStackedSerie uses StackedSerie and Serie with composition 
     instead of inheritance for better readability and traceability.

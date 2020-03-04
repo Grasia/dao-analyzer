@@ -1,5 +1,5 @@
 """
-   Descp: This is a dao (data access object) of new user metric.
+   Descp: This is a dao (data access object) of stacked series.
     It's used in order to warp the transformation among
     API's responses and the App's transfer.  
 
@@ -37,7 +37,7 @@ def __get_key_from_type(m_type: int) -> str:
     return m_key
 
 
-def __request(o_id: str, m_type: int) -> List:
+def __request(o_id: str, m_type: int) -> List[int]:
     chunk: int = 0
     result: Dict[str, List] = dict()
     elems: List = list()
@@ -109,7 +109,7 @@ def __process_data(l_dates: List) -> StackedSerie:
 def get_metric(ids: List[str], m_type: int = METRIC_TYPE_NO_TYPE) \
     -> StackedSerie:
     """
-    Gets a time series metric from a type and a list of ids.
+    Gets a stacked series metric from a type and a list of ids.
     Params:
         ids: a list of existing DAO's id.
         m_type: metric's type
