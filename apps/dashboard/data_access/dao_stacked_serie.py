@@ -74,8 +74,8 @@ def __request(o_id: str, m_type: int) -> List[int]:
     return elems
 
 
-def __process_data(l_dates: List) -> StackedSerie:
-    df: pd.DataFrame = pd.DataFrame(l_dates, columns = ['date'])
+def __process_data(data: List) -> StackedSerie:
+    df: pd.DataFrame = pd.DataFrame(data, columns = ['date'])
 
     # takes just the month
     df['date'] = pd.to_datetime(df['date'], unit='s').dt.to_period('M')

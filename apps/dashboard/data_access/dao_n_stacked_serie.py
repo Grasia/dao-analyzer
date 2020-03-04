@@ -22,19 +22,23 @@ from api.query_builder import QueryBuilder
 import api.api_manager as api
 
 
-def __transform_json(result: Dict, elements: Dict[str, List]):
+def __apend_data(dict1: Dict[str, List], dict2):
     """
-    Takes result key-val elements and puts them into elems
+    Takes dict2 key-val elements and puts them into dict1
     """
-    for k in result:
-        for e in result[k]:
-            elements[k] = e
+    for e in dict2:
+        for k in e:
+            dict1[k].append(e[k])
 
 
 def __request(o_id: str) -> Dict[str, List]:
     chunk: int = 0
     result: Dict[str, List] = dict()
-    elems: Dict[str, List] = dict()
+    elems: Dict[str, List] = {
+        'closingAt': list(),
+        'boostedAt': list(),
+        'winningOutcome': list()
+    }
     start: datetime = datetime.now()
 
     while chunk == 0 or ('dao' in result and \
@@ -57,14 +61,55 @@ def __request(o_id: str) -> Dict[str, List]:
 
         q_builder.add_query(query)
         result = api.request(q_builder.build())
-        __transform_json(result = result, elements = elems)
+        __apend_data(dict1 = elems, dict2 = result['dao']['proposals'])
         chunk += 1
 
     if DEBUG:
         print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
          .total_seconds() * 1000))
 
+    int_parser = lambda x: int(x)
+    bool_parser = lambda x: True if x == 'Pass' else False
+
+    map(int_parser, elems['closingAt'])
+    map(int_parser, elems['boostedAt'])
+    map(bool_parser, elems['winningOutcome'])
+
     return elems
+
+
+def __process_data(data: Dict[str, List]) -> NStackedSerie:
+    df: pd.DataFrame = pd.DataFrame.from_dict(data)
+
+    # takes just the month
+    df['closingAt'] = pd.to_datetime(df['closingAt'], unit='s').dt.to_period('M')
+    df['boostedAt'] = pd.to_datetime(df['boostedAt'], unit='s').dt.to_period('M')
+    print(df)
+
+    # # counts how many month/year are repeated
+    # df = df.groupby(df['date']).size().reset_index(name='count')
+    # df['date'] = df['date'].dt.to_timestamp()
+    
+    # # generates a time series
+    # today = datetime.now()
+    # today = datetime(today.year, today.month, 1)
+    # start = df['date'].min() if len(df['date']) > 0 else today 
+    # end = today
+    # idx = pd.date_range(start=start, end=end, freq=DateOffset(months=1))
+
+    # # joinning all the data in a unique dataframe
+    # dff = pd.DataFrame({'date': idx})
+    # dff['count'] = 0
+    # df = df.append(dff, ignore_index = True)
+    # df.drop_duplicates(subset='date', keep="first", inplace = True)
+    # df.sort_values('date', inplace = True)
+
+    # serie: Serie = Serie(x = df['date'].tolist())
+    # metric: StackedSerie = StackedSerie(
+    #     serie = serie, 
+    #     y_stack = [df['count'].tolist()])
+
+    # return metric
 
 
 def get_metric(ids: List[str]) -> NStackedSerie:
@@ -76,10 +121,10 @@ def get_metric(ids: List[str]) -> NStackedSerie:
         NStackedSerie
     """
     start: datetime = datetime.now()
-    elems: List = list()
+    elems: Dict[str, List] = dict()
 
     for o_id in ids:
-        elems.extend(__request(o_id = o_id))
+        __apend_data(dict1 = elems, dict2 = __request(o_id = o_id))
 
     if DEBUG:
         duration: int = (datetime.now() - start).total_seconds()

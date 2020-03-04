@@ -14,6 +14,7 @@ import dash_html_components as html
 from apps.dashboard.presentation.layout import generate_layout
 from apps.dashboard.data_access.dao_organization import get_all_orgs
 import apps.dashboard.data_access.dao_stacked_serie as s_dao
+import apps.dashboard.data_access.dao_n_stacked_serie as ns_dao
 from apps.dashboard.business.service_state import ServiceState
 from apps.dashboard.business.transfers.organization import Organization
 from apps.dashboard.business.transfers.stacked_serie import StackedSerie
@@ -69,3 +70,7 @@ def get_metric_new_users(d_id: str) -> StackedSerie:
 def get_metric_new_proposals(d_id: str) -> StackedSerie:
     return s_dao.get_metric(ids = __get_ids_from_id(d_id), 
         m_type = s_dao.METRIC_TYPE_NEW_PROPOSAL)
+
+
+def get_metric_type_proposals(d_id: str) -> StackedSerie:
+    return ns_dao.get_metric(ids = __get_ids_from_id(d_id))
