@@ -17,8 +17,8 @@ from datetime import datetime
 from api.query_builder import QueryBuilder
 from api.query import Query
 import api.api_manager as api
-from apps.dashboard.business.transfers.time_series import TimeSeries
-from apps.dashboard.business.transfers.stacked_time_serie import StackedTimeSerie 
+from apps.dashboard.business.transfers.serie import Serie
+from apps.dashboard.business.transfers.stacked_serie import StackedSerie 
 from app import DEBUG
 from logs import LOGS
 
@@ -74,7 +74,7 @@ def __request(o_id: str, m_type: int) -> List:
     return elems
 
 
-def __process_data(l_dates: List) -> StackedTimeSerie:
+def __process_data(l_dates: List) -> StackedSerie:
     df: pd.DataFrame = pd.DataFrame(l_dates, columns = ['date'])
 
     # takes just the month
@@ -98,23 +98,23 @@ def __process_data(l_dates: List) -> StackedTimeSerie:
     df.drop_duplicates(subset='date', keep="first", inplace = True)
     df.sort_values('date', inplace = True)
 
-    time_serie: TimeSeries = TimeSeries(x = df['date'].tolist())
-    metric: StackedTimeSerie = StackedTimeSerie(
-        time_serie = time_serie, 
+    serie: Serie = Serie(x = df['date'].tolist())
+    metric: StackedSerie = StackedSerie(
+        serie = serie, 
         y_stack = [df['count'].tolist()])
 
     return metric
 
 
 def get_metric(ids: List[str], m_type: int = METRIC_TYPE_NO_TYPE) \
-    -> StackedTimeSerie:
+    -> StackedSerie:
     """
     Gets a time series metric from a type and a list of ids.
     Params:
         ids: a list of existing DAO's id.
         m_type: metric's type
     Return:
-        StackedTimeSerie
+        StackedSerie
     """
     start: datetime = datetime.now()
     elems: List = list()
