@@ -18,8 +18,7 @@ class StackedSerie():
     * y_stack = each element of y_stack is a list of values on the serie.
     """
 
-    def __init__(self, serie: Serie = None, 
-    y_stack: List[List[int]] = None):
+    def __init__(self, serie: Serie = None, y_stack: List[List] = None):
 
         self.serie = serie if serie else Serie()
         self.y_stack = y_stack if y_stack else list(list())
@@ -41,11 +40,11 @@ class StackedSerie():
         return self.serie.get_last_serie_elem()
 
 
-    def get_last_value(self, i_stack: int) -> int:
+    def get_last_value(self, i_stack: int):
         return self.y_stack[i_stack][-1]
 
     
-    def get_i_stack(self, i_stack: int) -> List[int]:
+    def get_i_stack(self, i_stack: int) -> List:
         return self.y_stack[i_stack]
     
 

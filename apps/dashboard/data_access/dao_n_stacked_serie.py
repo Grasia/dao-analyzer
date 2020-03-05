@@ -16,29 +16,47 @@ import pandas as pd
 
 from app import DEBUG
 from logs import LOGS
+from apps.dashboard.business.transfers.serie import Serie
+from apps.dashboard.business.transfers.stacked_serie import StackedSerie
 from apps.dashboard.business.transfers.n_stacked_serie import NStackedSerie
 from api.query import Query
 from api.query_builder import QueryBuilder
 import api.api_manager as api
 
 
-def __apend_data(dict1: Dict[str, List], dict2):
+def __apend_json_data(columns: List[str], new_data: List[Dict[str, str]])\
+ -> pd.DataFrame:
     """
-    Takes dict2 key-val elements and puts them into dict1
+    Takes new_data elements and joins them into df which is returned.
     """
-    for e in dict2:
-        for k in e:
-            dict1[k].append(e[k])
+    df: pd.DataFrame = pd.DataFrame(columns = columns)
+    boost: List[str] = ['BoostedTimeOut', 'BoostedBarCrossed']
 
+    for di in new_data:
+        x: int = None if di['closingAt'] == 'null' else int(di['closingAt'])
+        y: bool = True if di['winningOutcome'] == 'Pass' else False
+        z: bool = True if any(x == di['executionState'] for x in boost)\
+            else False
 
-def __request(o_id: str) -> Dict[str, List]:
+        # just append closed proposals
+        if x:
+            serie: pd.Series = pd.Series([x, y, z], index = df.columns)
+            df = df.append(serie, ignore_index=True)
+
+    return df
+
+def __request(o_id: str, columns: List[str]) -> pd.DataFrame:
+    """
+    Requests data and returns a pandas dataframe with columns distribution.
+    Params:
+        * o_id = An organization id
+        * columns = Columns name for returned dataframe structure
+    Return:
+        * A pandas dataframe
+    """
     chunk: int = 0
     result: Dict[str, List] = dict()
-    elems: Dict[str, List] = {
-        'closingAt': list(),
-        'boostedAt': list(),
-        'winningOutcome': list()
-    }
+    df: pd.DataFrame = pd.DataFrame(columns = columns)
     start: datetime = datetime.now()
 
     while chunk == 0 or ('dao' in result and \
@@ -48,11 +66,12 @@ def __request(o_id: str) -> Dict[str, List]:
         query: Query = Query(header = 'dao',
                             body = Query(
                                         header = 'proposals',
-                                        body = ['closingAt', 'boostedAt', 'winningOutcome'],
+                                        body = ['closingAt', 'executionState',\
+                                         'winningOutcome'],
                                         filters = {
                                             'first': 
                                             f'{api.get_elems_per_chunk(chunk)}',
-                                            'skip' : f'{len(elems)}',
+                                            'skip' : f'{df.shape[0]}',
                                         },
                                     ),
                             filters = {
@@ -61,55 +80,73 @@ def __request(o_id: str) -> Dict[str, List]:
 
         q_builder.add_query(query)
         result = api.request(q_builder.build())
-        __apend_data(dict1 = elems, dict2 = result['dao']['proposals'])
+        dff: pd.DataFrame = __apend_json_data(columns = columns,\
+             new_data = result['dao']['proposals'])
+        df = df.append(dff, ignore_index = True)
         chunk += 1
 
     if DEBUG:
         print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
          .total_seconds() * 1000))
 
-    int_parser = lambda x: int(x)
-    bool_parser = lambda x: True if x == 'Pass' else False
-
-    map(int_parser, elems['closingAt'])
-    map(int_parser, elems['boostedAt'])
-    map(bool_parser, elems['winningOutcome'])
-
-    return elems
+    return df
 
 
-def __process_data(data: Dict[str, List]) -> NStackedSerie:
-    df: pd.DataFrame = pd.DataFrame.from_dict(data)
-
+def __process_data(df: pd.DataFrame) -> NStackedSerie:
     # takes just the month
-    df['closingAt'] = pd.to_datetime(df['closingAt'], unit='s').dt.to_period('M')
-    df['boostedAt'] = pd.to_datetime(df['boostedAt'], unit='s').dt.to_period('M')
-    print(df)
+    df['closedAt'] = pd.to_datetime(df['closedAt'], unit='s').dt.to_period('M')
 
-    # # counts how many month/year are repeated
-    # df = df.groupby(df['date']).size().reset_index(name='count')
-    # df['date'] = df['date'].dt.to_timestamp()
+    # groupby columns and count repetitions as a new column.
+    df = df.groupby(['closedAt', 'hasPassed', 'isBoosted']).size().reset_index(name='count')
+    df['closedAt'] = df['closedAt'].dt.to_timestamp()
     
-    # # generates a time series
-    # today = datetime.now()
-    # today = datetime(today.year, today.month, 1)
-    # start = df['date'].min() if len(df['date']) > 0 else today 
-    # end = today
-    # idx = pd.date_range(start=start, end=end, freq=DateOffset(months=1))
+     # generates a time serie
+    today = datetime.now()
+    today = datetime(today.year, today.month, 1)
+    start = df['closedAt'].min() if len(df['closedAt']) > 0 else today 
+    end = today
+    idx = pd.date_range(start=start, end=end, freq=DateOffset(months=1))
 
-    # # joinning all the data in a unique dataframe
-    # dff = pd.DataFrame({'date': idx})
-    # dff['count'] = 0
-    # df = df.append(dff, ignore_index = True)
-    # df.drop_duplicates(subset='date', keep="first", inplace = True)
-    # df.sort_values('date', inplace = True)
+    # joinning all the data in a unique dataframe
+    dff = pd.DataFrame({
+        'closedAt': idx,
+        'hasPassed': False,
+        'isBoosted': False,
+        'count': 0})
 
-    # serie: Serie = Serie(x = df['date'].tolist())
-    # metric: StackedSerie = StackedSerie(
-    #     serie = serie, 
-    #     y_stack = [df['count'].tolist()])
+    df = df.append(dff, ignore_index = True)
+    df.drop_duplicates(subset = ['closedAt', 'hasPassed', 'isBoosted'],
+     keep = "first", inplace = True)
+    df.sort_values('closedAt', inplace = True)
 
-    # return metric
+    # generate metric output
+    serie: Serie = Serie(x = df['closedAt'].tolist())
+    l_stacked: List[StackedSerie] = list()
+
+    # calculate boosted serie
+    s_pass: List[int] = list()
+    s_not_pass: List[int] = list()
+    last_date = None
+    for i, row in df.iterrows():
+        if row['isBoosted']:
+            if row['hasPassed']:
+                s_pass.append(row['count'])
+            else:
+                s_not_pass.append(row['count'])
+        
+        # fill gaps        
+        if last_date != row['closedAt']:
+            if i > len(s_pass):
+                s_pass.append(0)
+            if i > len(s_not_pass):
+                s_not_pass.append(0)
+
+        last_date = row['closedAt']
+        
+
+
+
+    return NStackedSerie(serie = serie, values = l_stacked)
 
 
 def get_metric(ids: List[str]) -> NStackedSerie:
@@ -121,13 +158,17 @@ def get_metric(ids: List[str]) -> NStackedSerie:
         NStackedSerie
     """
     start: datetime = datetime.now()
-    elems: Dict[str, List] = dict()
+    df: pd.DataFrame = pd.DataFrame(columns = ['closedAt', 'hasPassed',
+     'isBoosted'])
 
     for o_id in ids:
-        __apend_data(dict1 = elems, dict2 = __request(o_id = o_id))
+        dff: pd.DataFrame = __request(o_id = o_id, columns = df.columns)
+        df = df.append(dff, ignore_index = True)
+
+    __process_data(df)
 
     if DEBUG:
         duration: int = (datetime.now() - start).total_seconds()
         print(LOGS['daos_requested'].format(len(ids), duration))
 
-    return __process_data(elems)
+    #return __process_data(df)

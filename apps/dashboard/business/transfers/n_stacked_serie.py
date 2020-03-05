@@ -23,9 +23,7 @@ class NStackedSerie():
     * values: a list of stacked 'y' axis values. See StackedSerie
     """
 
-    def __init__(self, serie: Serie = None, 
-        values: List[StackedSerie] = None):
-
+    def __init__(self, serie: Serie = None, values: List[StackedSerie] = None):
         self.serie = serie if serie else Serie()
         self.values = values if values else list()
 

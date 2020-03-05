@@ -45,7 +45,7 @@ def update_new_user_graph(org_id):
     if not org_id:
         raise PreventUpdate
 
-    #service.get_metric_type_proposals(org_id)
+    service.get_metric_type_proposals(org_id)
     
     return __get_data_from_metric(service.get_metric_new_users(org_id))
 
