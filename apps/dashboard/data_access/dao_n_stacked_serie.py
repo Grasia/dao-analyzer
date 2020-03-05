@@ -92,6 +92,32 @@ def __request(o_id: str, columns: List[str]) -> pd.DataFrame:
     return df
 
 
+def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
+    -> StackedSerie:
+
+    s_pass: List[int] = list()
+    s_not_pass: List[int] = list()
+    last_date = None
+
+    for i, row in df.iterrows():
+        if row['isBoosted'] == boosted:
+            if row['hasPassed']:
+                s_pass.append(row['count'])
+            else:
+                s_not_pass.append(row['count'])
+        
+        # fill gaps        
+        if last_date != row['closedAt']:
+            if i > len(s_pass):
+                s_pass.append(0)
+            if i > len(s_not_pass):
+                s_not_pass.append(0)
+
+        last_date = row['closedAt']
+
+    return StackedSerie(y_stack = [s_not_pass, s_pass])
+
+
 def __process_data(df: pd.DataFrame) -> NStackedSerie:
     # takes just the month
     df['closedAt'] = pd.to_datetime(df['closedAt'], unit='s').dt.to_period('M')
@@ -122,28 +148,8 @@ def __process_data(df: pd.DataFrame) -> NStackedSerie:
     # generate metric output
     serie: Serie = Serie(x = df['closedAt'].tolist())
     l_stacked: List[StackedSerie] = list()
-
-    # calculate boosted serie
-    s_pass: List[int] = list()
-    s_not_pass: List[int] = list()
-    last_date = None
-    for i, row in df.iterrows():
-        if row['isBoosted']:
-            if row['hasPassed']:
-                s_pass.append(row['count'])
-            else:
-                s_not_pass.append(row['count'])
-        
-        # fill gaps        
-        if last_date != row['closedAt']:
-            if i > len(s_pass):
-                s_pass.append(0)
-            if i > len(s_not_pass):
-                s_not_pass.append(0)
-
-        last_date = row['closedAt']
-        
-
+    l_stacked.append(__get_stacked_serie_from_dataframe(df, False))
+    l_stacked.append(__get_stacked_serie_from_dataframe(df, True))
 
 
     return NStackedSerie(serie = serie, values = l_stacked)
