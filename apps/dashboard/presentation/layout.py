@@ -154,7 +154,7 @@ def generate_4stacked_bar_chart(x: List = None, y: List[List] = None) -> Dict:
         bar2: go.Bar = go.Bar(x=x, y=y[1], name=TEXT['abs_pass'], marker_color=DARK_GREEN)
         bar3: go.Bar = go.Bar(x=x, y=y[2], name=TEXT['rel_fail'], marker_color=LIGHT_RED)
         bar4: go.Bar = go.Bar(x=x, y=y[3], name=TEXT['rel_pass'], marker_color=LIGHT_GREEN)
-        data = [bar1, bar2, bar3, bar4]
+        data = [bar2, bar4, bar3, bar1]
         #p_range = [x[0], x[-1]]
 
     layout: go.Layout = go.Layout(barmode = 'stack', xaxis = {
