@@ -11,7 +11,7 @@
 from typing import List, Dict
 import dash_html_components as html
 
-from apps.dashboard.presentation.layout import generate_layout
+import apps.dashboard.presentation.layout as ly
 from apps.dashboard.data_access.dao_organization import get_all_orgs
 import apps.dashboard.data_access.dao_stacked_serie as s_dao
 import apps.dashboard.data_access.dao_proposal_outcome_serie as prop_dao
@@ -47,7 +47,7 @@ def get_layout() -> html.Div:
     # add them to the app's state
     __get_state().set_orgs_ids([o.id for o in orgs])
 
-    return generate_layout(labels)
+    return ly.generate_layout(labels)
 
 
 def __get_ids_from_id(_id: str) -> List[str]:
@@ -72,5 +72,15 @@ def get_metric_new_proposals(d_id: str) -> StackedSerie:
         m_type = s_dao.METRIC_TYPE_NEW_PROPOSAL)
 
 
-def get_metric_type_proposals(d_id: str) -> StackedSerie:
-    return prop_dao.get_metric(ids = __get_ids_from_id(d_id))
+def get_metric_type_proposals(d_id: str) -> Dict:
+    metric:StackedSerie = prop_dao.get_metric(ids = __get_ids_from_id(d_id))
+    text: List[str] = [TEXT['abs_pass'],
+                       TEXT['rel_pass'],
+                       TEXT['rel_fail'],
+                       TEXT['abs_fail']]
+    color: List[str] = [ly.DARK_GREEN,
+                        ly.LIGHT_GREEN,
+                        ly.LIGHT_RED,
+                        ly.DARK_RED]
+
+    return {'metric': metric, 'text': text, 'color': color}

@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List
+from typing import List, Dict
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
@@ -69,8 +69,10 @@ def update_proposals_type_graph(org_id):
     if not org_id:
         raise PreventUpdate
 
-    metric: StackedSerie = service.get_metric_type_proposals(org_id)
+    attrs: Dict = service.get_metric_type_proposals(org_id)
     return ly.generate_4stacked_bar_chart(
-            x = metric.get_serie(), 
-            y = metric.y_stack
+            x = attrs['metric'].get_serie(), 
+            y = attrs['metric'].y_stack,
+            text = attrs['text'],
+            color = attrs['color']
         )

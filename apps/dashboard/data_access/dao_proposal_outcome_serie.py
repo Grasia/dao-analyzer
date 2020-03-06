@@ -10,7 +10,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 import pandas as pd
@@ -93,7 +93,7 @@ def __request(o_id: str, columns: List[str]) -> pd.DataFrame:
 
 
 def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
-    -> List[List[int]]:
+    -> Tuple[List[int]]:
 
     s_pass: List[int] = list()
     s_not_pass: List[int] = list()
@@ -105,7 +105,7 @@ def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
             else:
                 s_not_pass.append(row['count'])
 
-    return [s_not_pass, s_pass]
+    return (s_not_pass, s_pass)
 
 
 def __process_data(df: pd.DataFrame) -> StackedSerie:
@@ -143,17 +143,11 @@ def __process_data(df: pd.DataFrame) -> StackedSerie:
     # generate metric output
     serie: Serie = Serie(x = df.drop_duplicates(subset = 'closedAt', \
         keep = "first")['closedAt'].tolist())
-    y_stack: List[List[int]] = list()
 
-    xss: List[List[int]] = __get_stacked_serie_from_dataframe(df, False)
-    for x in xss:
-        y_stack.append(x)
+    n_p1, p1 = __get_stacked_serie_from_dataframe(df, False)
+    n_p2, p2 = __get_stacked_serie_from_dataframe(df, True)
 
-    xss: List[List[int]] = __get_stacked_serie_from_dataframe(df, True)
-    for x in xss:
-        y_stack.append(x)
-
-    return StackedSerie(serie = serie, y_stack = y_stack)
+    return StackedSerie(serie = serie, y_stack = [p1, p2, n_p2, n_p1])
 
 
 def get_metric(ids: List[str]) -> StackedSerie:
