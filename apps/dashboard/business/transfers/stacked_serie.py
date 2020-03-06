@@ -21,7 +21,7 @@ class StackedSerie():
     def __init__(self, serie: Serie = None, y_stack: List[List] = None):
 
         self.serie = serie if serie else Serie()
-        self.y_stack = y_stack if y_stack else list(list())
+        self.y_stack = y_stack if y_stack else list()
 
 
     def get_serie(self) -> List:

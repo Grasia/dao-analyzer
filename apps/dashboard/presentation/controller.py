@@ -29,7 +29,7 @@ def __get_data_from_metric(metric: StackedSerie) -> List:
         ly.generate_bar_chart(
             x = metric.get_serie(), 
             y = metric.get_i_stack(i_stack)),
-        TEXT['graph_month_amount'].format(metric.get_last_serie_elem(), 
+        TEXT['graph_amount'].format(metric.get_last_serie_elem(), 
             metric.get_last_value(i_stack)),
         TEXT['graph_subtitle'].format(metric.get_diff_last_values(i_stack))
     ]
@@ -37,22 +37,20 @@ def __get_data_from_metric(metric: StackedSerie) -> List:
 
 @app.callback(
     [Output('new-users-graph', 'figure'),
-    Output('new-users-month-amount', 'children'),
+    Output('new-users-amount', 'children'),
     Output('new-users-subtitle', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_new_user_graph(org_id):
     if not org_id:
         raise PreventUpdate
-
-    service.get_metric_type_proposals(org_id)
     
     return __get_data_from_metric(service.get_metric_new_users(org_id))
 
 
 @app.callback(
     [Output('new-proposal-graph', 'figure'),
-    Output('new-proposal-month-amount', 'children'),
+    Output('new-proposal-amount', 'children'),
     Output('new-proposal-subtitle', 'children')],
     [Input('org-dropdown', 'value')]
 )
@@ -61,3 +59,18 @@ def update_proposal_graph(org_id):
         raise PreventUpdate
 
     return __get_data_from_metric(service.get_metric_new_proposals(org_id))
+
+
+@app.callback(
+    Output('proposals-type-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_proposals_type_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    metric: StackedSerie = service.get_metric_type_proposals(org_id)
+    return ly.generate_4stacked_bar_chart(
+            x = metric.get_serie(), 
+            y = metric.y_stack
+        )

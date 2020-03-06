@@ -10,11 +10,16 @@
 from typing import Dict, List
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.graph_objs as go
 
 from apps.dashboard.resources.strings import TEXT
 
 DARK_BLUE = '#2471a3'
 LIGHT_BLUE = '#d4e6f1'
+DARK_RED = '#F44336'
+LIGHT_RED = '#EF9A9A'
+DARK_GREEN = '#4CAF50'
+LIGHT_GREEN = '#A5D6A7'
 
 def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
     """
@@ -86,29 +91,37 @@ def __generate_all_graphs() -> html.Div:
                 amount = TEXT['default_amount'],
                 subtitle = TEXT['no_data_selected'],
             ),
+            __generate_graph(
+                figure_gen = generate_4stacked_bar_chart,
+                css_id = 'proposals-type',
+                title = TEXT['proposal_type_title'],
+            ),
         ],
         className = 'graphs-container',
     )
 
 
-def __generate_graph(figure_gen, css_id: str, title: str, amount: str, 
-    subtitle: str) -> html.Div:
+def __generate_graph(figure_gen, css_id: str, title: str, amount: str = None,
+    subtitle: str = None) -> html.Div:
 
-    return html.Div(
-        children = [
-            html.H3(title),
-            html.H2(amount, id = f'{css_id}-month-amount'),
-            html.Span(subtitle, id = f'{css_id}-subtitle'),
-            dcc.Graph(
-                id = f'{css_id}-graph',
-                figure = figure_gen()
-            ),
-        ],
-        className = 'pane graph-pane',
-    )
+    children: List = [html.H3(title)]
+    if amount:
+        children.append(html.H2(amount, id = f'{css_id}-amount'))
+    if subtitle:
+        children.append(html.Span(subtitle, id = f'{css_id}-subtitle'))
+
+    children.append( dcc.Graph( id = f'{css_id}-graph', figure = figure_gen()))
+
+    return html.Div(children = children, className = 'pane graph-pane')
 
 
-def generate_bar_chart(x: List = list(), y: List[int] = list()) -> Dict:
+def generate_bar_chart(x: List = None, y: List = None) -> Dict:
+    if not x:
+        x = list()
+    
+    if not y:
+        y = list()
+
     color = LIGHT_BLUE
     if x:
         color = [LIGHT_BLUE] * len(x)
@@ -131,3 +144,24 @@ def generate_bar_chart(x: List = list(), y: List[int] = list()) -> Dict:
                 },
         }
     }
+
+
+def generate_4stacked_bar_chart(x: List = None, y: List[List] = None) -> Dict:
+    data: List = list()
+    #p_range: List = [0, 1] 
+    if x and y:
+        bar1: go.Bar = go.Bar(x=x, y=y[0], name=TEXT['abs_fail'], marker_color=DARK_RED)
+        bar2: go.Bar = go.Bar(x=x, y=y[1], name=TEXT['abs_pass'], marker_color=DARK_GREEN)
+        bar3: go.Bar = go.Bar(x=x, y=y[2], name=TEXT['rel_fail'], marker_color=LIGHT_RED)
+        bar4: go.Bar = go.Bar(x=x, y=y[3], name=TEXT['rel_pass'], marker_color=LIGHT_GREEN)
+        data = [bar1, bar2, bar3, bar4]
+        #p_range = [x[0], x[-1]]
+
+    layout: go.Layout = go.Layout(barmode = 'stack', xaxis = {
+                                                        'ticks':'outside',
+                                                        'tick0': 0,
+                                                        'ticklen': 8,
+                                                        'tickwidth': 2,
+                                                        #'range': p_range,
+                                                    })
+    return {'data': data, 'layout': layout}

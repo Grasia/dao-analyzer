@@ -97,7 +97,7 @@ def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
     s_pass: List[int] = list()
     s_not_pass: List[int] = list()
 
-    for i, row in df.iterrows():
+    for _, row in df.iterrows():
         if row['isBoosted'] == boosted:
             if row['hasPassed']:
                 s_pass.append(row['count'])
@@ -172,4 +172,4 @@ def get_metric(ids: List[str]) -> StackedSerie:
         duration: int = (datetime.now() - start).total_seconds()
         print(LOGS['daos_requested'].format(len(ids), duration))
 
-    #return __process_data(df)
+    return __process_data(df)
