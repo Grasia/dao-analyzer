@@ -13,8 +13,8 @@ from dash.exceptions import PreventUpdate
 
 from app import app
 import apps.dashboard.presentation.layout as ly
-from apps.dashboard.presentation.strings import TEXT
-import apps.dashboard.business.transfers as tr
+from apps.dashboard.resources.strings import TEXT
+from apps.dashboard.business.transfers.stacked_serie import StackedSerie
 import apps.dashboard.business.app_service as service
 
 
@@ -23,18 +23,21 @@ def init():
     pass
 
 
-def __get_data_from_metric(metric: tr.MetricTimeSeries) -> List:
+def __get_data_from_metric(metric: StackedSerie) -> List:
+    i_stack: int = 0
     return [
-        ly.generate_bar_chart(x = metric.x, y = metric.y),
-        TEXT['graph_month_amount'].format(metric.last_month_name, 
-            metric.last_month_amount),
-        TEXT['graph_subtitle'].format(metric.month_over_month)
+        ly.generate_bar_chart(
+            x = metric.get_serie(), 
+            y = metric.get_i_stack(i_stack)),
+        TEXT['graph_amount'].format(metric.get_last_serie_elem(), 
+            metric.get_last_value(i_stack)),
+        TEXT['graph_subtitle'].format(metric.get_diff_last_values(i_stack))
     ]
 
 
 @app.callback(
     [Output('new-users-graph', 'figure'),
-    Output('new-users-month-amount', 'children'),
+    Output('new-users-amount', 'children'),
     Output('new-users-subtitle', 'children')],
     [Input('org-dropdown', 'value')]
 )
@@ -47,7 +50,7 @@ def update_new_user_graph(org_id):
 
 @app.callback(
     [Output('new-proposal-graph', 'figure'),
-    Output('new-proposal-month-amount', 'children'),
+    Output('new-proposal-amount', 'children'),
     Output('new-proposal-subtitle', 'children')],
     [Input('org-dropdown', 'value')]
 )
@@ -56,3 +59,18 @@ def update_proposal_graph(org_id):
         raise PreventUpdate
 
     return __get_data_from_metric(service.get_metric_new_proposals(org_id))
+
+
+@app.callback(
+    Output('proposals-type-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_proposals_type_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    metric: StackedSerie = service.get_metric_type_proposals(org_id)
+    return ly.generate_4stacked_bar_chart(
+            x = metric.get_serie(), 
+            y = metric.y_stack
+        )

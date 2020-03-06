@@ -1,5 +1,5 @@
 """
-   Descp: This is a dao (data access object) of new user metric.
+   Descp: This is a dao (data access object) of stacked series.
     It's used in order to warp the transformation among
     API's responses and the App's transfer.  
 
@@ -17,35 +17,40 @@ from datetime import datetime
 from api.query_builder import QueryBuilder
 from api.query import Query
 import api.api_manager as api
-from apps.dashboard.business.transfers import MetricTimeSeries
+from apps.dashboard.business.transfers.serie import Serie
+from apps.dashboard.business.transfers.stacked_serie import StackedSerie 
 from app import DEBUG
 from logs import LOGS
 
-
-def __get_key_from_type(o_type: int) -> str:
-    o_key: str = ''
-    if o_type == MetricTimeSeries.METRIC_TYPE_NEW_USERS:
-        o_key = 'reputationHolders'
-    elif o_type == MetricTimeSeries.METRIC_TYPE_NEW_PROPOSAL:
-        o_key = 'proposals'
-
-    return o_key
+METRIC_TYPE_NO_TYPE: int = 0
+METRIC_TYPE_NEW_USERS: int = 1
+METRIC_TYPE_NEW_PROPOSAL: int = 2
 
 
-def __request(o_id: str, o_type: int) -> List:
+def __get_key_from_type(m_type: int) -> str:
+    m_key: str = ''
+    if m_type == METRIC_TYPE_NEW_USERS:
+        m_key = 'reputationHolders'
+    elif m_type == METRIC_TYPE_NEW_PROPOSAL:
+        m_key = 'proposals'
+
+    return m_key
+
+
+def __request(o_id: str, m_type: int) -> List[int]:
     chunk: int = 0
     result: Dict[str, List] = dict()
     elems: List = list()
     start: datetime = datetime.now()
-    o_key: str = __get_key_from_type(o_type)
+    m_key: str = __get_key_from_type(m_type)
 
     while chunk == 0 or ('dao' in result and \
-    len(result['dao'][o_key]) == api.get_elems_per_chunk(chunk - 1)):
+    len(result['dao'][m_key]) == api.get_elems_per_chunk(chunk - 1)):
 
         q_builder: QueryBuilder = QueryBuilder()
         query: Query = Query(header = 'dao',
                             body = Query(
-                                        header = o_key,
+                                        header = m_key,
                                         body = ['createdAt'],
                                         filters = {
                                             'first': 
@@ -60,7 +65,7 @@ def __request(o_id: str, o_type: int) -> List:
         q_builder.add_query(query)
         result = api.request(q_builder.build())
         chunk += 1
-        elems.extend([int(mem['createdAt']) for mem in result['dao'][o_key]])
+        elems.extend([int(mem['createdAt']) for mem in result['dao'][m_key]])
 
     if DEBUG:
         print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
@@ -69,8 +74,8 @@ def __request(o_id: str, o_type: int) -> List:
     return elems
 
 
-def __process_data(l_dates: List) -> MetricTimeSeries:
-    df: pd.DataFrame = pd.DataFrame(l_dates, columns = ['date'])
+def __process_data(data: List) -> StackedSerie:
+    df: pd.DataFrame = pd.DataFrame(data, columns = ['date'])
 
     # takes just the month
     df['date'] = pd.to_datetime(df['date'], unit='s').dt.to_period('M')
@@ -93,29 +98,29 @@ def __process_data(l_dates: List) -> MetricTimeSeries:
     df.drop_duplicates(subset='date', keep="first", inplace = True)
     df.sort_values('date', inplace = True)
 
-    metric: MetricTimeSeries = MetricTimeSeries(
-        x = df['date'].tolist(), 
-        y = df['count'].tolist(),
-        m_type = MetricTimeSeries.METRIC_TYPE_NEW_USERS)
+    serie: Serie = Serie(x = df['date'].tolist())
+    metric: StackedSerie = StackedSerie(
+        serie = serie, 
+        y_stack = [df['count'].tolist()])
 
     return metric
 
 
-def get_metric(ids: List[str], 
-o_type: int = MetricTimeSeries.METRIC_TYPE_NO_TYPE) -> MetricTimeSeries:
+def get_metric(ids: List[str], m_type: int = METRIC_TYPE_NO_TYPE) \
+    -> StackedSerie:
     """
-    Gets a time series metric from a type and a list of ids.
+    Gets a stacked series metric from a type and a list of ids.
     Params:
         ids: a list of existing DAO's id.
-        o_type: metric's type
+        m_type: metric's type
     Return:
-        MetricTimeSeries
+        StackedSerie
     """
     start: datetime = datetime.now()
     elems: List = list()
 
     for o_id in ids:
-        elems.extend(__request(o_id = o_id, o_type = o_type))
+        elems.extend(__request(o_id = o_id, m_type = m_type))
 
     if DEBUG:
         duration: int = (datetime.now() - start).total_seconds()

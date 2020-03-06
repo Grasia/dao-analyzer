@@ -13,10 +13,12 @@ import dash_html_components as html
 
 from apps.dashboard.presentation.layout import generate_layout
 from apps.dashboard.data_access.dao_organization import get_all_orgs
-from apps.dashboard.data_access.dao_metric_time_series import get_metric
-import apps.dashboard.business.transfers as tr
+import apps.dashboard.data_access.dao_stacked_serie as s_dao
+import apps.dashboard.data_access.dao_proposal_outcome_serie as prop_dao
 from apps.dashboard.business.service_state import ServiceState
-from apps.dashboard.presentation.strings import TEXT
+from apps.dashboard.business.transfers.organization import Organization
+from apps.dashboard.business.transfers.stacked_serie import StackedSerie
+from apps.dashboard.resources.strings import TEXT
 
 state: ServiceState = None
 
@@ -33,7 +35,7 @@ def get_layout() -> html.Div:
     Returns the app's view. 
     """
     # request orgs names
-    orgs: List[tr.Organization] = get_all_orgs()
+    orgs: List[Organization] = get_all_orgs()
     labels: List[Dict[str, str]] = \
         [{'value': o.id, 'label': o.name} for o in orgs]
 
@@ -60,11 +62,15 @@ def __get_ids_from_id(_id: str) -> List[str]:
         return [_id]
 
 
-def get_metric_new_users(d_id: str) -> tr.MetricTimeSeries:
-    return get_metric(ids = __get_ids_from_id(d_id), 
-        o_type = tr.MetricTimeSeries.METRIC_TYPE_NEW_USERS)
+def get_metric_new_users(d_id: str) -> StackedSerie:
+    return s_dao.get_metric(ids = __get_ids_from_id(d_id), 
+        m_type = s_dao.METRIC_TYPE_NEW_USERS)
 
 
-def get_metric_new_proposals(d_id: str) -> tr.MetricTimeSeries:
-    return get_metric(ids = __get_ids_from_id(d_id), 
-        o_type = tr.MetricTimeSeries.METRIC_TYPE_NEW_PROPOSAL)
+def get_metric_new_proposals(d_id: str) -> StackedSerie:
+    return s_dao.get_metric(ids = __get_ids_from_id(d_id), 
+        m_type = s_dao.METRIC_TYPE_NEW_PROPOSAL)
+
+
+def get_metric_type_proposals(d_id: str) -> StackedSerie:
+    return prop_dao.get_metric(ids = __get_ids_from_id(d_id))
