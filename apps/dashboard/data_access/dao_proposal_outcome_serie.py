@@ -109,6 +109,9 @@ def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
 
 
 def __process_data(df: pd.DataFrame) -> StackedSerie:
+    if df.shape[0] == 0:
+        return StackedSerie()
+
     # takes just the month
     df['closedAt'] = pd.to_datetime(df['closedAt'], unit='s').dt.to_period('M')
 
