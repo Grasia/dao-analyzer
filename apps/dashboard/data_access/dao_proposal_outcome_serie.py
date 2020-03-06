@@ -1,5 +1,6 @@
 """
-   Descp: This is a dao (data access object) of n stacked series.
+   Descp: This is a dao (data access object) of stacked series and for 
+    the specific purpose to calculate proposals type's outcomes.
     It's used in order to warp the transformation among
     API's responses and the App's transfer.  
 
