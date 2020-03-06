@@ -18,7 +18,6 @@ from app import DEBUG
 from logs import LOGS
 from apps.dashboard.business.transfers.serie import Serie
 from apps.dashboard.business.transfers.stacked_serie import StackedSerie
-from apps.dashboard.business.transfers.n_stacked_serie import NStackedSerie
 from api.query import Query
 from api.query_builder import QueryBuilder
 import api.api_manager as api
@@ -93,11 +92,10 @@ def __request(o_id: str, columns: List[str]) -> pd.DataFrame:
 
 
 def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
-    -> StackedSerie:
+    -> List[List[int]]:
 
     s_pass: List[int] = list()
     s_not_pass: List[int] = list()
-    last_date = None
 
     for i, row in df.iterrows():
         if row['isBoosted'] == boosted:
@@ -105,20 +103,11 @@ def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
                 s_pass.append(row['count'])
             else:
                 s_not_pass.append(row['count'])
-        
-        # fill gaps        
-        if last_date != row['closedAt']:
-            if i > len(s_pass):
-                s_pass.append(0)
-            if i > len(s_not_pass):
-                s_not_pass.append(0)
 
-        last_date = row['closedAt']
-
-    return StackedSerie(y_stack = [s_not_pass, s_pass])
+    return [s_not_pass, s_pass]
 
 
-def __process_data(df: pd.DataFrame) -> NStackedSerie:
+def __process_data(df: pd.DataFrame) -> StackedSerie:
     # takes just the month
     df['closedAt'] = pd.to_datetime(df['closedAt'], unit='s').dt.to_period('M')
 
@@ -133,35 +122,43 @@ def __process_data(df: pd.DataFrame) -> NStackedSerie:
     end = today
     idx = pd.date_range(start=start, end=end, freq=DateOffset(months=1))
 
-    # joinning all the data in a unique dataframe
-    dff = pd.DataFrame({
-        'closedAt': idx,
-        'hasPassed': False,
-        'isBoosted': False,
-        'count': 0})
+    # joinning all the data in a unique dataframe and fill with all combinations
+    for p in [True, False]:
+        for b in [True, False]:
+            dff = pd.DataFrame({
+                'closedAt': idx,
+                'hasPassed': p,
+                'isBoosted': b,
+                'count': 0})
+            df = df.append(dff, ignore_index = True)
 
-    df = df.append(dff, ignore_index = True)
     df.drop_duplicates(subset = ['closedAt', 'hasPassed', 'isBoosted'],
      keep = "first", inplace = True)
-    df.sort_values('closedAt', inplace = True)
+    df.sort_values('closedAt', inplace = True, ignore_index = True)
 
     # generate metric output
-    serie: Serie = Serie(x = df['closedAt'].tolist())
-    l_stacked: List[StackedSerie] = list()
-    l_stacked.append(__get_stacked_serie_from_dataframe(df, False))
-    l_stacked.append(__get_stacked_serie_from_dataframe(df, True))
+    serie: Serie = Serie(x = df.drop_duplicates(subset = 'closedAt', \
+        keep = "first")['closedAt'].tolist())
+    y_stack: List[List[int]] = list()
+
+    xss: List[List[int]] = __get_stacked_serie_from_dataframe(df, False)
+    for x in xss:
+        y_stack.append(x)
+
+    xss: List[List[int]] = __get_stacked_serie_from_dataframe(df, True)
+    for x in xss:
+        y_stack.append(x)
+
+    return StackedSerie(serie = serie, y_stack = y_stack)
 
 
-    return NStackedSerie(serie = serie, values = l_stacked)
-
-
-def get_metric(ids: List[str]) -> NStackedSerie:
+def get_metric(ids: List[str]) -> StackedSerie:
     """
     Gets a n times stacked serie from a list of ids.
     Params:
         ids: a list of existing DAO's id.
     Return:
-        NStackedSerie
+        StackedSerie
     """
     start: datetime = datetime.now()
     df: pd.DataFrame = pd.DataFrame(columns = ['closedAt', 'hasPassed',
@@ -170,8 +167,6 @@ def get_metric(ids: List[str]) -> NStackedSerie:
     for o_id in ids:
         dff: pd.DataFrame = __request(o_id = o_id, columns = df.columns)
         df = df.append(dff, ignore_index = True)
-
-    __process_data(df)
 
     if DEBUG:
         duration: int = (datetime.now() - start).total_seconds()
