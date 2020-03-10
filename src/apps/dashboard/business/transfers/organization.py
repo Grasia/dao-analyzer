@@ -9,7 +9,7 @@
 
 from pandas import Timestamp
 
-from apps.dashboard.resources.strings import TEXT
+from src.apps.dashboard.resources.strings import TEXT
 
 class Organization():
     def __init__(self, o_id:str = TEXT['no_data'], name:str = TEXT['no_data']):

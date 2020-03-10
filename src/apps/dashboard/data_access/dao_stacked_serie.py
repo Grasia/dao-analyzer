@@ -14,13 +14,13 @@ import pandas as pd
 from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 
-from api.query_builder import QueryBuilder
-from api.query import Query
-import api.api_manager as api
-from apps.dashboard.business.transfers.serie import Serie
-from apps.dashboard.business.transfers.stacked_serie import StackedSerie 
-from app import DEBUG
-from logs import LOGS
+from src.api.query_builder import QueryBuilder
+from src.api.query import Query
+import src.api.api_manager as api
+from src.apps.dashboard.business.transfers.serie import Serie
+from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie 
+from src.app import DEBUG
+from src.logs import LOGS
 
 METRIC_TYPE_NO_TYPE: int = 0
 METRIC_TYPE_NEW_USERS: int = 1

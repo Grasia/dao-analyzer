@@ -9,7 +9,7 @@
 
 from typing import List
 
-from api.query import Query
+from src.api.query import Query
 
 class QueryBuilder():
 

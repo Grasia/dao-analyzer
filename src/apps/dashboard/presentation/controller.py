@@ -11,11 +11,11 @@ from typing import List, Dict
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
-from app import app
-import apps.dashboard.presentation.layout as ly
-from apps.dashboard.resources.strings import TEXT
-from apps.dashboard.business.transfers.stacked_serie import StackedSerie
-import apps.dashboard.business.app_service as service
+from src.app import app
+import src.apps.dashboard.presentation.layout as ly
+from src.apps.dashboard.resources.strings import TEXT
+from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie
+import src.apps.dashboard.business.app_service as service
 
 
 def init():

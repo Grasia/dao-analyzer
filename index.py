@@ -12,9 +12,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from app import app, DEBUG
-import apps.dashboard.business.app_service as service
-import apps.dashboard.presentation.controller as controller
+from src.app import app, DEBUG
+import src.apps.dashboard.business.app_service as service
+import src.apps.dashboard.presentation.controller as controller
 
 
 # see https://dash.plot.ly/external-resources to alter header, footer and favicon

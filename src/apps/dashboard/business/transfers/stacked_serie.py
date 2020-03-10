@@ -9,8 +9,8 @@
 
 from typing import List
 
-from logs import LOGS
-from apps.dashboard.business.transfers.serie import Serie
+from src.logs import LOGS
+from src.apps.dashboard.business.transfers.serie import Serie
 
 class StackedSerie():
     """

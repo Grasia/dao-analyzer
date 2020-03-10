@@ -11,14 +11,14 @@
 from typing import List, Dict
 import dash_html_components as html
 
-import apps.dashboard.presentation.layout as ly
-from apps.dashboard.data_access.dao_organization import get_all_orgs
-import apps.dashboard.data_access.dao_stacked_serie as s_dao
-import apps.dashboard.data_access.dao_proposal_outcome_serie as prop_dao
-from apps.dashboard.business.service_state import ServiceState
-from apps.dashboard.business.transfers.organization import Organization
-from apps.dashboard.business.transfers.stacked_serie import StackedSerie
-from apps.dashboard.resources.strings import TEXT
+import src.apps.dashboard.presentation.layout as ly
+from src.apps.dashboard.data_access.dao_organization import get_all_orgs
+import src.apps.dashboard.data_access.dao_stacked_serie as s_dao
+import src.apps.dashboard.data_access.dao_proposal_outcome_serie as prop_dao
+from src.apps.dashboard.business.service_state import ServiceState
+from src.apps.dashboard.business.transfers.organization import Organization
+from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie
+from src.apps.dashboard.resources.strings import TEXT
 
 state: ServiceState = None
 

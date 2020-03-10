@@ -12,8 +12,8 @@ from datetime import datetime
 from typing import Dict, List
 from graphqlclient import GraphQLClient
 
-from app import DEBUG
-from logs import LOGS
+from src.app import DEBUG
+from src.logs import LOGS
 
 # Test the API in: https://thegraph.com/explorer/subgraph/daostack/master
 DAOSTACK_URL = 'https://api.thegraph.com/subgraphs/name/daostack/master'

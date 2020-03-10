@@ -37,3 +37,6 @@ After that, run the web app with:
 
 Now, visit `http://127.0.0.1:8050/apps/dashboard` in your web browser.
 
+## How to test it?
+Run all tests with:
+`python3 -m pytest test/`

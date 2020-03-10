@@ -10,9 +10,9 @@
 
 from typing import List
 
-from logs import LOGS
-from apps.dashboard.business.transfers.serie import Serie
-from apps.dashboard.business.transfers.stacked_serie import StackedSerie
+from src.logs import LOGS
+from src.apps.dashboard.business.transfers.serie import Serie
+from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie
 
 class NStackedSerie():
     """

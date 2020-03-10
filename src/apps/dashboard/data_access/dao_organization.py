@@ -12,13 +12,13 @@
 from typing import List, Dict
 from datetime import datetime
 
-import api.api_manager as api
-from apps.dashboard.business.transfers.organization import Organization
-from api.query_builder import QueryBuilder
-from api.query import Query
+import src.api.api_manager as api
+from src.apps.dashboard.business.transfers.organization import Organization
+from src.api.query_builder import QueryBuilder
+from src.api.query import Query
 
-from app import DEBUG
-from logs import LOGS
+from src.app import DEBUG
+from src.logs import LOGS
 
 def get_all_orgs() -> List[Organization]:
     """

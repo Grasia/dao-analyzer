@@ -15,13 +15,13 @@ from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 import pandas as pd
 
-from app import DEBUG
-from logs import LOGS
-from apps.dashboard.business.transfers.serie import Serie
-from apps.dashboard.business.transfers.stacked_serie import StackedSerie
-from api.query import Query
-from api.query_builder import QueryBuilder
-import api.api_manager as api
+from src.app import DEBUG
+from src.logs import LOGS
+from src.apps.dashboard.business.transfers.serie import Serie
+from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie
+from src.api.query import Query
+from src.api.query_builder import QueryBuilder
+import src.api.api_manager as api
 
 
 def __apend_json_data(columns: List[str], new_data: List[Dict[str, str]])\
