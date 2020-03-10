@@ -33,7 +33,7 @@ You can run it on debug mode, if you set an environment variable named `DEBUG`
 
 After that, run the web app with:
 
-`python3 index.py`
+`python3 src/index.py`
 
 Now, visit `http://127.0.0.1:8050/apps/dashboard` in your web browser.
 
