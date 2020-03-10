@@ -40,7 +40,7 @@ def get_all_orgs() -> List[Organization]:
                              filters = {
                                 'where': '{register: \"registered\"}',
                                 'first': f'{api.get_elems_per_chunk(chunk)}',
-                                'skip' : f'{len(orgs)}',
+                                'skip': f'{len(orgs)}',
                              })
         q_builder.add_query(query)
         result = api.request(q_builder.build())
@@ -50,7 +50,7 @@ def get_all_orgs() -> List[Organization]:
             orgs.append(Organization(o_id=ele['id'], name=ele['name']))
 
     if DEBUG:
-        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
+        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)
          .total_seconds() * 1000))
     
     return orgs

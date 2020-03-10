@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List
+from typing import List
 import unittest
 from hypothesis import given, example, settings, strategies as st
 
