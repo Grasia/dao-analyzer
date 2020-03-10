@@ -1,0 +1,49 @@
+.root {
+    background-color: #F5F5F5;
+    display: flex;
+    flex-direction: column
+}
+
+.main-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.main-body {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+}
+
+.pane {
+    background-color: white;
+    border-radius: 0.8rem;
+    margin: 0.5rem;
+    display: flex;
+}
+
+.dao-selector-pane {
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.drop-down {
+    margin-left: 0.5rem;
+    width: 15rem;
+}
+
+.graphs-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.graph-pane {
+    flex-direction: column;
+    text-align: center;
+    padding: 0.5rem;
+    width: 48%;
+}
