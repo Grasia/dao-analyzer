@@ -44,7 +44,7 @@ def __request(o_id: str, m_type: int) -> List[int]:
     start: datetime = datetime.now()
     m_key: str = __get_key_from_type(m_type)
 
-    while chunk == 0 or ('dao' in result and \
+    while chunk == 0 or ('dao' in result and
     len(result['dao'][m_key]) == api.get_elems_per_chunk(chunk - 1)):
 
         q_builder: QueryBuilder = QueryBuilder()
@@ -68,7 +68,7 @@ def __request(o_id: str, m_type: int) -> List[int]:
         elems.extend([int(mem['createdAt']) for mem in result['dao'][m_key]])
 
     if DEBUG:
-        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
+        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)
          .total_seconds() * 1000))
 
     return elems

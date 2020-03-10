@@ -3,7 +3,7 @@
 
    Created on: 21-feb-2020
 
-   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
 
@@ -37,7 +37,7 @@ def request(query: str) -> Dict[str, List]:
     result = daostack_client.execute(query)
 
     if DEBUG:
-        print(LOGS['requested_in'].format((datetime.now() - start) \
+        print(LOGS['requested_in'].format((datetime.now() - start)
          .total_seconds() * 1000))
 
     result = json.loads(result)

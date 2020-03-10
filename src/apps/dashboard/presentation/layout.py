@@ -136,7 +136,7 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
         }],
         'layout': {
             'xaxis': {
-                #'range': [data['x'][0], data['x'][-1]],
+                # 'range': [data['x'][0], data['x'][-1]],
                 'ticks':'outside',
                 'tick0': 0,
                 'ticklen': 8,
@@ -146,24 +146,24 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
     }
 
 
-def generate_4stacked_bar_chart(x: List = None, y: List[List] = None, \
+def generate_4stacked_bar_chart(x: List = None, y: List[List] = None,
     text: List[str] = None, color: List[str] = None) -> Dict:
 
     data: List = list()
-    #p_range: List = [0, 1] 
+    # p_range: List = [0, 1] 
     if x and y and text:
         bar1: go.Bar = go.Bar(x=x, y=y[0], name=text[0], marker_color=color[0])
         bar2: go.Bar = go.Bar(x=x, y=y[1], name=text[1], marker_color=color[1])
         bar3: go.Bar = go.Bar(x=x, y=y[2], name=text[2], marker_color=color[2])
         bar4: go.Bar = go.Bar(x=x, y=y[3], name=text[3], marker_color=color[3])
         data = [bar1, bar2, bar3, bar4]
-        #p_range = [x[0], x[-1]]
+        # p_range = [x[0], x[-1]]
 
     layout: go.Layout = go.Layout(barmode = 'stack', xaxis = {
                                                         'ticks':'outside',
                                                         'tick0': 0,
                                                         'ticklen': 8,
                                                         'tickwidth': 2,
-                                                        #'range': p_range,
+                                                        # 'range': p_range,
                                                     })
     return {'data': data, 'layout': layout}

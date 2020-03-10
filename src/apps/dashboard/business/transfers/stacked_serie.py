@@ -26,7 +26,7 @@ class StackedSerie():
 
     def get_serie(self) -> List:
         if not self.serie:
-            raise Exception(LOGS['attr_not_init']\
+            raise Exception(LOGS['attr_not_init']
                 .format('serie', 'get_serie'))
 
         return self.serie.get_x()
@@ -34,7 +34,7 @@ class StackedSerie():
 
     def get_last_serie_elem(self) -> str:
         if not self.serie:
-            raise Exception(LOGS['attr_not_init']\
+            raise Exception(LOGS['attr_not_init']
                 .format('serie', 'get_last_serie_elem'))
 
         return self.serie.get_last_serie_elem()

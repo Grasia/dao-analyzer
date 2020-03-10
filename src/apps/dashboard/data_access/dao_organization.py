@@ -50,7 +50,7 @@ def get_all_orgs() -> List[Organization]:
             orgs.append(Organization(o_id=ele['id'], name=ele['name']))
 
     if DEBUG:
-        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
+        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)
          .total_seconds() * 1000))
     
     return orgs

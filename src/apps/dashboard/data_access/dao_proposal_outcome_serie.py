@@ -59,14 +59,14 @@ def __request(o_id: str, columns: List[str]) -> pd.DataFrame:
     df: pd.DataFrame = pd.DataFrame(columns = columns)
     start: datetime = datetime.now()
 
-    while chunk == 0 or ('dao' in result and \
+    while chunk == 0 or ('dao' in result and
     len(result['dao']['proposals']) == api.get_elems_per_chunk(chunk - 1)):
 
         q_builder: QueryBuilder = QueryBuilder()
         query: Query = Query(header = 'dao',
                             body = Query(
                                         header = 'proposals',
-                                        body = ['closingAt', 'executionState',\
+                                        body = ['closingAt', 'executionState',
                                          'winningOutcome'],
                                         filters = {
                                             'first': 
@@ -80,13 +80,13 @@ def __request(o_id: str, columns: List[str]) -> pd.DataFrame:
 
         q_builder.add_query(query)
         result = api.request(q_builder.build())
-        dff: pd.DataFrame = __apend_json_data(columns = columns,\
+        dff: pd.DataFrame = __apend_json_data(columns = columns,
              new_data = result['dao']['proposals'])
         df = df.append(dff, ignore_index = True)
         chunk += 1
 
     if DEBUG:
-        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)\
+        print(LOGS['chunks_requested'].format(chunk, (datetime.now() - start)
          .total_seconds() * 1000))
 
     return df
@@ -119,7 +119,7 @@ def __process_data(df: pd.DataFrame) -> StackedSerie:
     df = df.groupby(['closedAt', 'hasPassed', 'isBoosted']).size().reset_index(name='count')
     df['closedAt'] = df['closedAt'].dt.to_timestamp()
     
-     # generates a time serie
+    # generates a time serie
     today = datetime.now()
     today = datetime(today.year, today.month, 1)
     start = df['closedAt'].min() if len(df['closedAt']) > 0 else today 
@@ -141,7 +141,7 @@ def __process_data(df: pd.DataFrame) -> StackedSerie:
     df.sort_values('closedAt', inplace = True, ignore_index = True)
 
     # generate metric output
-    serie: Serie = Serie(x = df.drop_duplicates(subset = 'closedAt', \
+    serie: Serie = Serie(x = df.drop_duplicates(subset = 'closedAt',
         keep = "first")['closedAt'].tolist())
 
     n_p1, p1 = __get_stacked_serie_from_dataframe(df, False)

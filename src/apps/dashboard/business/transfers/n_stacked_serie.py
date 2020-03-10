@@ -30,7 +30,7 @@ class NStackedSerie():
 
     def get_serie(self) -> List:
         if not self.serie:
-            raise Exception(LOGS['attr_not_init']\
+            raise Exception(LOGS['attr_not_init']
                 .format('serie', 'get_serie'))
 
         return self.serie.get_x()
@@ -38,7 +38,7 @@ class NStackedSerie():
     
     def get_last_serie_elem(self) -> str:
         if not self.serie:
-            raise Exception(LOGS['attr_not_init']\
+            raise Exception(LOGS['attr_not_init']
                 .format('serie', 'get_last_serie_elem'))
 
         return self.serie.get_last_serie_elem()
@@ -46,7 +46,7 @@ class NStackedSerie():
 
     def get_last_value(self, i_value: int, j_stack: int) -> int:
         if not self.values:
-            raise Exception(LOGS['attr_not_init']\
+            raise Exception(LOGS['attr_not_init']
                 .format('values', 'get_last_value'))
 
         return self.values[i_value].get_last_value(j_stack)
@@ -54,7 +54,7 @@ class NStackedSerie():
     
     def get_i_stack(self, i_value: int, j_stack: int) -> List[int]:
         if not self.values:
-            raise Exception(LOGS['attr_not_init']\
+            raise Exception(LOGS['attr_not_init']
                 .format('values', 'get_i_stack'))
 
         return self.values[i_value].get_i_stack(j_stack)
@@ -62,7 +62,7 @@ class NStackedSerie():
 
     def get_diff_last_values(self, i_value: int, j_stack: int) -> int:
         if not self.values:
-            raise Exception(LOGS['attr_not_init']\
+            raise Exception(LOGS['attr_not_init']
                 .format('values', 'get_diff_last_values'))
 
         return self.values[i_value].get_diff_last_values(j_stack)
