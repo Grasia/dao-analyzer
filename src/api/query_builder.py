@@ -22,7 +22,7 @@ class QueryBuilder():
 
 
     def build(self) -> str:
-        query: str = '{'
+        query: str = '{ '
         
         for q in self.queries:
             q_filter: str = ''
@@ -31,7 +31,7 @@ class QueryBuilder():
 
             q_body: str = ''
             if type(q.body) == list:
-                q_body += '{'
+                q_body += '{ '
                 for attr in q.body:
                     q_body += f'{attr} '
                 q_body += '}'

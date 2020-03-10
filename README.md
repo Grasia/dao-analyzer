@@ -40,3 +40,8 @@ Now, visit `http://127.0.0.1:8050/apps/dashboard` in your web browser.
 ## How to test it?
 Run all tests with:
 `python3 -m pytest test/`
+
+### Flags for hypothesis testing
+Use this flag `--hypothesis-show-statistics` to show statistics.
+
+Use the flag `--hypothesis-seed=<int>` to set a fixed seed, it's useful to reproduce a failure.
