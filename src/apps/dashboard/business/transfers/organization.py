@@ -12,8 +12,8 @@ from pandas import Timestamp
 from src.apps.dashboard.resources.strings import TEXT
 
 class Organization():
-    def __init__(self, o_id:str = TEXT['no_data'], name:str = TEXT['no_data']):
-        self.id: str   = o_id
+    def __init__(self, o_id: str = TEXT['no_data'], name: str = TEXT['no_data']):
+        self.id: str = o_id
         self.name: str = name 
 
 

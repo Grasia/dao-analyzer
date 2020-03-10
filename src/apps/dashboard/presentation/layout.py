@@ -102,7 +102,7 @@ def __generate_all_graphs() -> html.Div:
 
 
 def __generate_graph(figure_gen, css_id: str, title: str, amount: str = None,
-    subtitle: str = None) -> html.Div:
+subtitle: str = None) -> html.Div:
 
     children: List = [html.H3(title)]
     if amount:
@@ -110,7 +110,7 @@ def __generate_graph(figure_gen, css_id: str, title: str, amount: str = None,
     if subtitle:
         children.append(html.Span(subtitle, id = f'{css_id}-subtitle'))
 
-    children.append( dcc.Graph( id = f'{css_id}-graph', figure = figure_gen()))
+    children.append(dcc.Graph(id = f'{css_id}-graph', figure = figure_gen()))
 
     return html.Div(children = children, className = 'pane graph-pane')
 
@@ -132,12 +132,12 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
             'x': x,
             'y': y,
             'type': 'bar',
-            'marker': { 'color': color }
+            'marker': {'color': color}
         }],
         'layout': {
             'xaxis': {
                 # 'range': [data['x'][0], data['x'][-1]],
-                'ticks':'outside',
+                'ticks': 'outside',
                 'tick0': 0,
                 'ticklen': 8,
                 'tickwidth': 2
@@ -147,7 +147,7 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
 
 
 def generate_4stacked_bar_chart(x: List = None, y: List[List] = None,
-    text: List[str] = None, color: List[str] = None) -> Dict:
+text: List[str] = None, color: List[str] = None) -> Dict:
 
     data: List = list()
     # p_range: List = [0, 1] 
@@ -160,7 +160,7 @@ def generate_4stacked_bar_chart(x: List = None, y: List[List] = None,
         # p_range = [x[0], x[-1]]
 
     layout: go.Layout = go.Layout(barmode = 'stack', xaxis = {
-                                                        'ticks':'outside',
+                                                        'ticks': 'outside',
                                                         'tick0': 0,
                                                         'ticklen': 8,
                                                         'tickwidth': 2,

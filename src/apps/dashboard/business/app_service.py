@@ -43,7 +43,7 @@ def get_layout() -> html.Div:
 
     # add all orgs selector
     labels = [{'value': __get_state().ALL_ORGS_ID, 'label': TEXT['all_orgs']}]\
-             + labels
+            + labels
     # add them to the app's state
     __get_state().set_orgs_ids([o.id for o in orgs])
 
@@ -73,7 +73,7 @@ def get_metric_new_proposals(d_id: str) -> StackedSerie:
 
 
 def get_metric_type_proposals(d_id: str) -> Dict:
-    metric:StackedSerie = prop_dao.get_metric(ids = __get_ids_from_id(d_id))
+    metric: StackedSerie = prop_dao.get_metric(ids = __get_ids_from_id(d_id))
     text: List[str] = [TEXT['abs_pass'],
                        TEXT['rel_pass'],
                        TEXT['rel_fail'],
