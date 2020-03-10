@@ -93,7 +93,7 @@ def __request(o_id: str, columns: List[str]) -> pd.DataFrame:
 
 
 def __get_stacked_serie_from_dataframe(df: pd.DataFrame, boosted: bool)\
--> Tuple[List[int]]:
+    -> Tuple[List[int]]:
 
     s_pass: List[int] = list()
     s_not_pass: List[int] = list()

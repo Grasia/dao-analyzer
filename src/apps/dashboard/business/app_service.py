@@ -43,7 +43,7 @@ def get_layout() -> html.Div:
 
     # add all orgs selector
     labels = [{'value': __get_state().ALL_ORGS_ID, 'label': TEXT['all_orgs']}]\
-            + labels
+        + labels
     # add them to the app's state
     __get_state().set_orgs_ids([o.id for o in orgs])
 

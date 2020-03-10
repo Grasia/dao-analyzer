@@ -55,7 +55,7 @@ def __request(o_id: str, m_type: int) -> List[int]:
                                         filters = {
                                             'first': 
                                             f'{api.get_elems_per_chunk(chunk)}',
-                                            'skip' : f'{len(elems)}',
+                                            'skip': f'{len(elems)}',
                                         },
                                     ),
                             filters = {
@@ -107,7 +107,7 @@ def __process_data(data: List) -> StackedSerie:
 
 
 def get_metric(ids: List[str], m_type: int = METRIC_TYPE_NO_TYPE) \
--> StackedSerie:
+    -> StackedSerie:
     """
     Gets a stacked series metric from a type and a list of ids.
     Params:
