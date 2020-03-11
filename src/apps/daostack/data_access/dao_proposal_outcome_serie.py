@@ -17,11 +17,11 @@ import pandas as pd
 
 from src.app import DEBUG
 from src.logs import LOGS
-from src.apps.dashboard.business.transfers.serie import Serie
-from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie
-from src.api.query import Query
-from src.api.query_builder import QueryBuilder
-import src.api.api_manager as api
+from src.apps.daostack.business.transfers.serie import Serie
+from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+from src.api.graphql.query import Query
+from src.api.graphql.query_builder import QueryBuilder
+import src.api.graphql.daostack.api_manager as api
 
 
 def __apend_json_data(columns: List[str], new_data: List[Dict[str, str]])\

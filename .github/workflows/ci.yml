@@ -33,4 +33,4 @@ jobs:
     - name: Test with pytest
       run: |
         #pip install pytest
-        python3 -m pytest --hypothesis-show-statistics test/
+        python3 -m pytest --hypothesis-show-statistics test/unit/

@@ -11,8 +11,8 @@ from typing import List
 import unittest
 from hypothesis import given, example, settings, strategies as st
 
-from src.api.query import Query
-from src.api.query_builder import QueryBuilder
+from src.api.graphql.query import Query
+from src.api.graphql.query_builder import QueryBuilder
 
 QueryStrategy = st.builds(
                     Query, 

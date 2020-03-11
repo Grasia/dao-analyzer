@@ -12,10 +12,10 @@
 from typing import List, Dict
 from datetime import datetime
 
-import src.api.api_manager as api
-from src.apps.dashboard.business.transfers.organization import Organization
-from src.api.query_builder import QueryBuilder
-from src.api.query import Query
+import src.api.graphql.daostack.api_manager as api
+from src.apps.daostack.business.transfers.organization import Organization
+from src.api.graphql.query_builder import QueryBuilder
+from src.api.graphql.query import Query
 
 from src.app import DEBUG
 from src.logs import LOGS

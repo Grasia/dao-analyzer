@@ -14,11 +14,11 @@ import pandas as pd
 from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 
-from src.api.query_builder import QueryBuilder
-from src.api.query import Query
-import src.api.api_manager as api
-from src.apps.dashboard.business.transfers.serie import Serie
-from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie 
+from src.api.graphql.query_builder import QueryBuilder
+from src.api.graphql.query import Query
+import src.api.graphql.daostack.api_manager as api
+from src.apps.daostack.business.transfers.serie import Serie
+from src.apps.daostack.business.transfers.stacked_serie import StackedSerie 
 from src.app import DEBUG
 from src.logs import LOGS
 

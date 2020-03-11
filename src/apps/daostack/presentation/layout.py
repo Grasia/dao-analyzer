@@ -12,7 +12,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-from src.apps.dashboard.resources.strings import TEXT
+from src.apps.daostack.resources.strings import TEXT
 
 DARK_BLUE = '#2471a3'
 LIGHT_BLUE = '#d4e6f1'

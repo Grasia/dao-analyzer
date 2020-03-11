@@ -10,9 +10,13 @@
 from typing import List
 import unittest
 
-import src.api.api_manager as api
+import src.api.graphql.daostack.api_manager as api
 
 class ApiManagerTest(unittest.TestCase):
+    """
+    Unit tests for APIs should be smalls and as fast as possible, so, 
+    do not request big chunks of data.
+    """
     def test_request_1(self):
         query: str = '{test}'
         result = api.request(query)
@@ -21,17 +25,16 @@ class ApiManagerTest(unittest.TestCase):
 
 
     def test_request_2(self):
-        query: str = '{daos(first: 5){name}}'
+        query: str = '{daos(first: 2){name}}'
         result = api.request(query)
         l: int = len(result['daos'])
-        self.assertEqual(5, l, 
-            f'Expected len(result[\'daos\']) = 5, but was {l}')
+        self.assertEqual(2, l, 
+            f'Expected len(result[\'daos\']) = 2, but was {l}')
 
     
     def test_get_elems_per_chunk(self):
         param: List[int] = [-1, 0, 1, 2, 10]
-        sol: List[int] = [api.ELEMS_PER_CHUNK/2, api.ELEMS_PER_CHUNK, 
-            2*api.ELEMS_PER_CHUNK, 4*api.ELEMS_PER_CHUNK, 1000]
+        sol: List[int] = [50, 100, 200, 400, 1000]
 
         for i, p in enumerate(param):
             self.assertEqual(sol[i], api.get_elems_per_chunk(p))

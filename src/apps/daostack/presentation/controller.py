@@ -12,10 +12,10 @@ from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 from src.app import app
-import src.apps.dashboard.presentation.layout as ly
-from src.apps.dashboard.resources.strings import TEXT
-from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie
-import src.apps.dashboard.business.app_service as service
+import src.apps.daostack.presentation.layout as ly
+from src.apps.daostack.resources.strings import TEXT
+from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+import src.apps.daostack.business.app_service as service
 
 
 def init():

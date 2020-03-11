@@ -11,8 +11,8 @@
 from typing import List
 
 from src.logs import LOGS
-from src.apps.dashboard.business.transfers.serie import Serie
-from src.apps.dashboard.business.transfers.stacked_serie import StackedSerie
+from src.apps.daostack.business.transfers.serie import Serie
+from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 
 class NStackedSerie():
     """
