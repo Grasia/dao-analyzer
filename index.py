@@ -13,8 +13,8 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from src.app import app, DEBUG
-import src.apps.daostack.business.app_service as service
-import src.apps.daostack.presentation.controller as controller
+from src.apps.daostack.business.app_service import get_service
+import src.apps.daostack.presentation.controller
 
 
 # see https://dash.plot.ly/external-resources to alter header, footer and favicon
@@ -48,8 +48,7 @@ app.layout = html.Div([
               [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/apps/dashboard':
-        controller.init()
-        return service.get_layout()
+        return get_service().get_layout()
     else:
         return '404'
 

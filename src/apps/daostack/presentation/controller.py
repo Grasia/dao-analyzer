@@ -15,12 +15,7 @@ from src.app import app
 import src.apps.daostack.presentation.layout as ly
 from src.apps.daostack.resources.strings import TEXT
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
-import src.apps.daostack.business.app_service as service
-
-
-def init():
-    # init controller
-    pass
+from src.apps.daostack.business.app_service import get_service
 
 
 def __get_data_from_metric(metric: StackedSerie) -> List:
@@ -45,7 +40,7 @@ def update_new_user_graph(org_id):
     if not org_id:
         raise PreventUpdate
     
-    return __get_data_from_metric(service.get_metric_new_users(org_id))
+    return __get_data_from_metric(get_service().get_metric_new_users(org_id))
 
 
 @app.callback(
@@ -58,7 +53,7 @@ def update_proposal_graph(org_id):
     if not org_id:
         raise PreventUpdate
 
-    return __get_data_from_metric(service.get_metric_new_proposals(org_id))
+    return __get_data_from_metric(get_service().get_metric_new_proposals(org_id))
 
 
 @app.callback(
@@ -69,7 +64,7 @@ def update_proposals_type_graph(org_id):
     if not org_id:
         raise PreventUpdate
 
-    attrs: Dict = service.get_metric_type_proposals(org_id)
+    attrs: Dict = get_service().get_metric_type_proposals(org_id)
     return ly.generate_4stacked_bar_chart(
             x = attrs['metric'].get_serie(), 
             y = attrs['metric'].y_stack,
