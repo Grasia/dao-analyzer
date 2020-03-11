@@ -18,6 +18,10 @@ from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.app_service import get_service
 
 
+def init():
+    pass
+
+
 def __get_data_from_metric(metric: StackedSerie) -> List:
     i_stack: int = 0
     return [
