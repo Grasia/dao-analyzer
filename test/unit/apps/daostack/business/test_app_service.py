@@ -9,7 +9,7 @@
 
 import unittest
 from unittest.mock import MagicMock
-from typing import Any, List, Dict, Set
+from typing import List, Set
 from hypothesis import given, example, settings, strategies as st
 
 from src.apps.daostack.business.transfers.organization import Organization
