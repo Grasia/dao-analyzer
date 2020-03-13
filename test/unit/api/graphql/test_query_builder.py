@@ -42,9 +42,9 @@ class QueryBuilderTest(unittest.TestCase):
     def test_build_1(self, queries: List[Query]):
         builder: QueryBuilder = QueryBuilder(queries=queries)
         query: str = builder.build()
+
         # Test that every query has at least curly braces.
         self.assertEqual(f'{query[0]}{query[-1]}', '{}')
-
         # Test that whether there's at least one query, the string length is
         #  bigger than the first query's header.
         if queries:
@@ -69,6 +69,7 @@ class QueryBuilderTest(unittest.TestCase):
         builder: QueryBuilder = QueryBuilder([query1])
         builder.add_query(query2)
         result: str = builder.build()
+
         sol: str = "{ test1(filt1: true, filt2: false, ){ param1 param2 } \
 test2(f3: True, ){ test3(){ p1 p2 } } }"
 
