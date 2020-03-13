@@ -10,15 +10,11 @@
 """
 
 from typing import List, Dict
-from datetime import datetime
 
 from src.apps.daostack.business.transfers.organization import Organization
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.api.graphql.query_builder import QueryBuilder
 from src.api.graphql.query import Query
-
-from src.app import DEBUG
-from src.logs import LOGS
 
 
 class DaoOrganizationList:

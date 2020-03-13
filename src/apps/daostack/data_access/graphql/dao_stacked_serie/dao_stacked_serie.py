@@ -9,7 +9,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 import pandas as pd
