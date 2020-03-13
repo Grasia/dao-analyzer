@@ -19,7 +19,6 @@ class StackedSerie():
     """
 
     def __init__(self, serie: Serie = None, y_stack: List[List] = None):
-
         self.serie = serie if serie else Serie()
         self.y_stack = y_stack if y_stack else list()
 
@@ -56,7 +55,7 @@ class StackedSerie():
         y: List[int] = self.y_stack[i_stack]
         val = 0.0
 
-        # indexes to access n-1 and n-2 positions in y[n] 
+        # indexes to access n-1 and n-2 positions in y[n]
         i_1 = -1
         i_2 = -(2 % (len(y) + 1))
 

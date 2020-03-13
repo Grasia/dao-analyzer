@@ -14,23 +14,24 @@ from src.apps.daostack.resources.strings import TEXT
 
 class Serie():
     """
-    * x = a list of values which represent the serie.
+    * __x = a list of values which represent the serie.
     """
 
     def __init__(self, x: List = None):
-        self.x: List = x if x else list()
+        self.__x: List = x if x else list()
 
     
     def get_last_serie_elem(self) -> str:
-        val: str = TEXT['no_data']
-        if self.x:
-            val = f'{self.x[-1]}'
+        if not self.__x:
+            return TEXT['no_data']
 
-            if type(self.x[-1]) == Timestamp:
-                val = self.x[-1].strftime('%B')
+        val = f'{self.__x[-1]}'
+
+        if type(self.__x[-1]) == Timestamp:
+            val = self.__x[-1].strftime('%B')
                 
         return val 
 
 
     def get_x(self) -> List:
-        return self.x
+        return self.__x

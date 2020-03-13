@@ -54,6 +54,10 @@ class OrganizationList():
         return len(self.__orgs) == 0
 
 
+    def get_size(self) -> int:
+        return len(self.__orgs)
+
+
     def get_ids_from_id(self, o_id: str) -> List[str]:
         """
         Gets a list of ids from a o_id attr.
