@@ -40,10 +40,14 @@ class StackedSerie():
 
 
     def get_last_value(self, i_stack: int):
+        if i_stack >= len(self.y_stack):
+            return 0 
         return self.y_stack[i_stack][-1]
 
     
     def get_i_stack(self, i_stack: int) -> List:
+        if i_stack >= len(self.y_stack):
+            return list() 
         return self.y_stack[i_stack]
     
 
@@ -52,8 +56,11 @@ class StackedSerie():
         A percentage of the diference among the last two values 
         on the 'i' stack.
         """
+        if i_stack >= len(self.y_stack):
+            return 0.0
+
         y: List[int] = self.y_stack[i_stack]
-        val = 0.0
+        val: float = 0.0
 
         # indexes to access n-1 and n-2 positions in y[n]
         i_1 = -1
@@ -65,3 +72,15 @@ class StackedSerie():
             val = (y[i_1] - y[i_2]) / divider * 100
 
         return val
+
+
+    def get_n_stacks(self, n_stacks: int) -> List[List]:
+        stacks: List[List] = list()
+
+        for s in self.y_stack:
+            stacks.append(s)
+        # fill with the remainder n_stacks
+        for _ in range(len(stacks), n_stacks):
+            stacks.append(list())
+
+        return stacks

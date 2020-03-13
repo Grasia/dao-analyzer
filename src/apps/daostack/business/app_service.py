@@ -12,9 +12,10 @@ from typing import List, Dict
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
-from src.apps.daostack.data_access.dao_organization import get_all_orgs
-import src.apps.daostack.data_access.dao_stacked_serie as s_dao
-import src.apps.daostack.data_access.dao_proposal_outcome_serie as prop_dao
+from src.apps.daostack.data_access.graphql.dao_organization import DaoOrganizationList
+import src.apps.daostack.data_access.graphql.dao_stacked_serie.\
+    dao_stacked_serie_factory as s_factory
+from src.api.graphql.daostack.api_manager import ApiRequester
 from src.apps.daostack.business.transfers.organization import Organization
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
@@ -34,19 +35,15 @@ def get_service():
 
 
 class Service():
-    def __init__(self, dao_org = None, dao_serie = None, dao_prop = None):
-        # Dao's callers
-        self.__dao_org = dao_org if dao_org else get_all_orgs
-        self.__dao_serie = dao_serie if dao_serie else s_dao.get_metric
-        self.__dao_prop = dao_prop if dao_prop else prop_dao.get_metric
-
+    def __init__(self):
         # app state
         self.__orgs: OrganizationList = None
 
 
-    def get_organizations(self) -> List[Organization]:
+    def get_organizations(self) -> OrganizationList:
         if not self.__orgs:
-            orgs: OrganizationList = OrganizationList(orgs=self.__dao_org())
+            orgs: OrganizationList = DaoOrganizationList(ApiRequester())\
+                .get_organizations()
             if not orgs.is_empty():
                 self.__orgs = orgs
                 
@@ -62,18 +59,27 @@ class Service():
 
 
     def get_metric_new_users(self, d_id: str) -> StackedSerie:
-        return self.__dao_serie(ids=self.__orgs.get_ids_from_id(d_id), 
-            m_type = s_dao.METRIC_TYPE_NEW_USERS)
+        dao = s_factory.get_dao(
+            ids=self.__orgs.get_ids_from_id(d_id),
+            metric=s_factory.NEW_USERS)
+
+        return dao.get_stacked_serie()
 
 
     def get_metric_new_proposals(self, d_id: str) -> StackedSerie:
-        return self.__dao_serie(ids=self.__orgs.get_ids_from_id(d_id), 
-            m_type = s_dao.METRIC_TYPE_NEW_PROPOSAL)
+        dao = s_factory.get_dao(
+            ids=self.__orgs.get_ids_from_id(d_id),
+            metric=s_factory.NEW_PROPOSALS)
+
+        return dao.get_stacked_serie()
 
 
     def get_metric_type_proposals(self, d_id: str) -> Dict:
-        metric: StackedSerie = self.__dao_prop(ids=
-            self.__orgs.get_ids_from_id(d_id))
+        dao = s_factory.get_dao(
+        ids=self.__orgs.get_ids_from_id(d_id),
+        metric=s_factory.PROPOSALS_TYPE)
+
+        metric: StackedSerie = dao.get_stacked_serie()
             
         text: List[str] = [TEXT['abs_pass'],
                         TEXT['rel_pass'],

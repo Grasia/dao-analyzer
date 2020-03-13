@@ -56,8 +56,8 @@ class DaoOrganizationList:
 
             result = self.__requester.request(q_builder.build())
             result = result['daos']
-
-            for org in result['daos']:
+        
+            for org in result:
                 orgs.add_organization(Organization(
                                         o_id=org['id'], 
                                         name=org['name']))

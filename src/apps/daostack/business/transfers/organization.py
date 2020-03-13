@@ -12,7 +12,7 @@ from typing import List, Dict
 from src.apps.daostack.resources.strings import TEXT
 
 
-class Organization():
+class Organization:
     def __init__(self, o_id: str = TEXT['no_data'], name: str = TEXT['no_data']):
         self.id: str = o_id
         self.name: str = name
@@ -22,7 +22,7 @@ class Organization():
         return {'value': self.id, 'label': self.name}
 
 
-class OrganizationList():
+class OrganizationList:
     __ALL_ORGS_ID: str = '1'
 
 

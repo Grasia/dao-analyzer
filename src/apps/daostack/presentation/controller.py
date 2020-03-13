@@ -70,8 +70,8 @@ def update_proposals_type_graph(org_id):
 
     attrs: Dict = get_service().get_metric_type_proposals(org_id)
     return ly.generate_4stacked_bar_chart(
-            x = attrs['metric'].get_serie(), 
-            y = attrs['metric'].y_stack,
-            text = attrs['text'],
-            color = attrs['color']
+            x=attrs['metric'].get_serie(), 
+            y=attrs['metric'].get_n_stacks(4),
+            text=attrs['text'],
+            color=attrs['color']
         )

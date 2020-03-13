@@ -10,7 +10,7 @@
 from typing import List
 import unittest
 
-import src.api.graphql.daostack.api_manager as api
+from src.api.graphql.daostack.api_manager import ApiRequester
 
 class ApiManagerTest(unittest.TestCase):
     """
@@ -19,14 +19,14 @@ class ApiManagerTest(unittest.TestCase):
     """
     def test_request_1(self):
         query: str = '{test}'
-        result = api.request(query)
+        result = ApiRequester().request(query)
         self.assertEqual(0, len(result), 
             f'Expected result len = 0, but was {len(result)}')
 
 
     def test_request_2(self):
         query: str = '{daos(first: 2){name}}'
-        result = api.request(query)
+        result = ApiRequester().request(query)
         l: int = len(result['daos'])
         self.assertEqual(2, l, 
             f'Expected len(result[\'daos\']) = 2, but was {l}')
@@ -37,7 +37,7 @@ class ApiManagerTest(unittest.TestCase):
         sol: List[int] = [50, 100, 200, 400, 1000]
 
         for i, p in enumerate(param):
-            self.assertEqual(sol[i], api.get_elems_per_chunk(p))
+            self.assertEqual(sol[i], ApiRequester().get_elems_per_chunk(p))
 
 
 if __name__ == "__main__":
