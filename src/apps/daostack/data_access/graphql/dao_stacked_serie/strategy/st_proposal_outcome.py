@@ -9,7 +9,7 @@
 from typing import List, Dict, Tuple
 import pandas as pd
 from pandas.tseries.offsets import DateOffset
-from datetime import datetime
+from datetime import date
 
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
         strategy_metric_interface import StrategyInterface
@@ -45,18 +45,16 @@ class StProposalOutcome(StrategyInterface):
             return StackedSerie()
 
         # takes just the month
-        df['closedAt'] = pd.to_datetime(df['closedAt'], unit='s').dt.to_period('M')
+        df['closedAt'] = pd.to_datetime(df['closedAt'], unit='s').dt.date
+        df['closedAt'] = df['closedAt'].apply(lambda d: d.replace(day=1))
 
         # groupby columns and count repetitions as a new column.
         df = df.groupby(['closedAt', 'hasPassed', 'isBoosted']).size().reset_index(name='count')
-        df['closedAt'] = df['closedAt'].dt.to_timestamp()
-        
+
         # generates a time serie
-        today = datetime.now()
-        today = datetime(today.year, today.month, 1)
-        start = df['closedAt'].min() if len(df['closedAt']) > 0 else today 
-        end = today
-        idx = pd.date_range(start=start, end=end, freq=DateOffset(months=1))
+        today = date.today().replace(day=1)
+        start = df['closedAt'].min()
+        idx = pd.date_range(start=start, end=today, freq=DateOffset(months=1))
 
         # joinning all the data in a unique dataframe and fill with all combinations
         for p in [True, False]:
@@ -66,6 +64,8 @@ class StProposalOutcome(StrategyInterface):
                     'hasPassed': p,
                     'isBoosted': b,
                     'count': 0})
+
+                dff['closedAt'] = dff['closedAt'].dt.date
                 df = df.append(dff, ignore_index=True)
 
         df.drop_duplicates(subset=['closedAt', 'hasPassed', 'isBoosted'],
@@ -87,7 +87,7 @@ class StProposalOutcome(StrategyInterface):
                     header = 'dao',
                     body = Query(
                                 header = 'proposals',
-                                body = ['closingAt', 'executionState',
+                                body = ['executedAt', 'executionState',
                                 'winningOutcome'],
                                 filters = {
                                     'first': f'{n_first}',
@@ -108,7 +108,7 @@ class StProposalOutcome(StrategyInterface):
         boost: List[str] = ['BoostedTimeOut', 'BoostedBarCrossed']
 
         for di in data:
-            x: int = None if di['closingAt'] == 'null' else int(di['closingAt'])
+            x: int = int(di['executedAt']) if di['executedAt'] else None 
             y: bool = True if di['winningOutcome'] == 'Pass' else False
             z: bool = True if any(x == di['executionState'] for x in boost)\
                 else False

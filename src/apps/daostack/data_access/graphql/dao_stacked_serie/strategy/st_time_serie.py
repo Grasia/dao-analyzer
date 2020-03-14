@@ -9,7 +9,7 @@
 from typing import List, Dict
 import pandas as pd
 from pandas.tseries.offsets import DateOffset
-from datetime import datetime
+from datetime import date
 
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
         strategy_metric_interface import StrategyInterface
@@ -47,26 +47,25 @@ class StTimeSerie(StrategyInterface):
             return StackedSerie()
         
         # takes just the month
-        df['date'] = pd.to_datetime(df['date'], unit='s').dt.to_period('M')
+        df['date'] = pd.to_datetime(df['date'], unit='s').dt.date
+        df['date'] = df['date'].apply(lambda d: d.replace(day=1))
 
         # counts how many month/year are repeated
         df = df.groupby(df['date']).size().reset_index(name='count')
-        df['date'] = df['date'].dt.to_timestamp()
         
         # generates a time series
-        today = datetime.now()
-        today = datetime(today.year, today.month, 1)
-        start = df['date'].min() if len(df['date']) > 0 else today 
-        end = today
-        idx = pd.date_range(start=start, end=end, freq=DateOffset(months=1))
+        today = date.today().replace(day=1)
+        start = df['date'].min()
+        idx = pd.date_range(start=start, end=today, freq=DateOffset(months=1))
 
         # joinning all the data in a unique dataframe
         dff = pd.DataFrame({'date': idx})
+        dff['date'] = dff['date'].dt.date
         dff['count'] = 0
         df = df.append(dff, ignore_index=True)
         df.drop_duplicates(subset='date', keep="first", inplace=True)
         df.sort_values('date', inplace=True)
-
+        
         serie: Serie = Serie(x=df['date'].tolist())
         metric: StackedSerie = StackedSerie(
             serie = serie, 

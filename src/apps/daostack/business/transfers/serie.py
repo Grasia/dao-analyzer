@@ -8,7 +8,7 @@
 """
 
 from typing import List
-from pandas import Timestamp
+from datetime import date
 
 from src.apps.daostack.resources.strings import TEXT
 
@@ -27,7 +27,7 @@ class Serie():
 
         val = f'{self.__x[-1]}'
 
-        if type(self.__x[-1]) == Timestamp:
+        if type(self.__x[-1]) == date:
             val = self.__x[-1].strftime('%B')
                 
         return val 

@@ -126,23 +126,18 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
     if x:
         color = [LIGHT_BLUE] * len(x)
         color[-1] = DARK_BLUE
-
+        
     return {
-        'data': [{
-            'x': x,
-            'y': y,
-            'type': 'bar',
-            'marker': {'color': color}
-        }],
-        'layout': {
-            'xaxis': {
-                # 'range': [data['x'][0], data['x'][-1]],
-                'ticks': 'outside',
-                'tick0': 0,
-                'ticklen': 8,
-                'tickwidth': 2
-                },
-        }
+        'data': [go.Bar(x=x, y=y, marker_color=color)],
+        'layout': go.Layout( 
+                    xaxis={
+                        'type': 'date',
+                        'tickvals': x,
+                        'ticks': 'outside',
+                        'tick0': 0,
+                        'ticklen': 5,
+                        'tickwidth': 1,
+                    })
     }
 
 
@@ -160,10 +155,12 @@ text: List[str] = None, color: List[str] = None) -> Dict:
         # p_range = [x[0], x[-1]]
 
     layout: go.Layout = go.Layout(barmode = 'stack', xaxis = {
+                                                        'type': 'date',
+                                                        'tickvals': x,
                                                         'ticks': 'outside',
                                                         'tick0': 0,
-                                                        'ticklen': 8,
-                                                        'tickwidth': 2,
+                                                        'ticklen': 5,
+                                                        'tickwidth': 1,
                                                         # 'range': p_range,
                                                     })
     return {'data': data, 'layout': layout}
