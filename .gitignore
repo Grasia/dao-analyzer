@@ -1,3 +1,7 @@
 venv/
+venvCI/
 __pycache__/
 .vscode
+.pytest_cache
+.hypothesis
+test_commit.sh
