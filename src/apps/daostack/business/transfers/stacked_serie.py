@@ -84,3 +84,7 @@ class StackedSerie():
             stacks.append(list())
 
         return stacks
+
+
+    def get_stacks(self) -> List[List]:
+        return self.y_stack
