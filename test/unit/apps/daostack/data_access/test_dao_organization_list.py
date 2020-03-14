@@ -9,10 +9,11 @@
 
 import unittest
 from hypothesis import given, settings, strategies as st
-from typing import Any, List, Dict
+from typing import List, Dict
 
 from src.apps.daostack.data_access.graphql.dao_organization import DaoOrganizationList
 from src.apps.daostack.business.transfers.organization import OrganizationList
+from test.mocks.request_mock import RequestMock
 
 
 @st.composite
@@ -25,25 +26,6 @@ def custom_dictionary(draw, size: int) -> Dict:
                             }),
                             min_size=size,
                             max_size=size)}))
-
-
-class RequestMock:
-    def __init__(self, any_list: List[Dict]):
-        self.call_times: int = 0
-        self.any_list: List[Dict] = any_list
-
-
-    def request(self, any: Any) -> Dict:
-        result = self.any_list[self.call_times]
-
-        if self.call_times < len(self.any_list)-1:
-            self.call_times += 1
-
-        return result
-
-
-    def get_elems_per_chunk(self, n_chunk: int) -> int:
-        return pow(2, n_chunk)
 
 
 class DaoOrganizationListTest(unittest.TestCase):
