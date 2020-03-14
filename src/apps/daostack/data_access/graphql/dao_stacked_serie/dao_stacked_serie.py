@@ -10,14 +10,11 @@
 """
 
 from typing import List, Dict
-from pandas.tseries.offsets import DateOffset
 from datetime import datetime
 import pandas as pd
 
 from src.app import DEBUG
 from src.logs import LOGS
-from src.apps.daostack.business.transfers.serie import Serie
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.api.graphql.query import Query
 from src.api.graphql.query_builder import QueryBuilder
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
@@ -62,7 +59,7 @@ class DaoStackedSerie():
         return df
 
 
-    def get_stacked_serie(self) -> StackedSerie:
+    def get_stacked_serie(self):
         start: datetime = datetime.now()
         df: pd.DataFrame = self.__st.get_empty_df()
 

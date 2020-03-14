@@ -9,7 +9,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List, Dict
+from typing import Dict
 
 from src.apps.daostack.business.transfers.organization import Organization
 from src.apps.daostack.business.transfers.organization import OrganizationList
@@ -34,11 +34,6 @@ class DaoOrganizationList:
 
 
     def get_organizations(self) -> OrganizationList:
-        """
-        Requests all organizations.
-        Return:
-            OrganizationList
-        """
         orgs: OrganizationList = OrganizationList()
         chunk: int = 0
         result: Dict = dict()
@@ -46,8 +41,9 @@ class DaoOrganizationList:
 
         while condition:
             e_chunk: int = self.__requester.get_elems_per_chunk(chunk)
-            query: Query = self.__get_query(n_first=e_chunk, 
-                n_skip=orgs.get_size())
+            query: Query = self.__get_query(
+                                    n_first=e_chunk, 
+                                    n_skip=orgs.get_size())
             q_builder: QueryBuilder = QueryBuilder([query])
 
             result = self.__requester.request(q_builder.build())
@@ -58,6 +54,7 @@ class DaoOrganizationList:
                                         o_id=org['id'], 
                                         name=org['name']))
 
+            # means there's still data to request
             condition = len(result) == e_chunk
             chunk += 1
         

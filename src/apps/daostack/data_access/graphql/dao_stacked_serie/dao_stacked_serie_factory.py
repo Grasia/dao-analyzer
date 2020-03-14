@@ -15,8 +15,6 @@ import src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
     st_time_serie as st_tm
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
     st_proposal_outcome import StProposalOutcome
-from src.apps.daostack.data_access.graphql.dao_stacked_serie.dao_stacked_serie\
-    import DaoStackedSerie
 
 
 NEW_USERS = 0
