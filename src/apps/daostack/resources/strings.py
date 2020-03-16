@@ -13,6 +13,7 @@ TEXT: dict = {
     'new_users_title': 'New reputation holders',
     'new_proposals_title': 'New proposals',
     'proposal_type_title': 'Closed proposals by majority\'s type and them outcomes',
+    'total_votes_title': 'Total votes by month',
     'default_amount': 'NAN',
     'no_data': 'No data',
     'no_data_selected': 'There\'s no DAO selected',

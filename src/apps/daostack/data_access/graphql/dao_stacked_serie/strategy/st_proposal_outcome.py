@@ -86,9 +86,9 @@ class StProposalOutcome(StrategyInterface):
 
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
         return Query(
-            header = 'proposals',
-            body = ['executedAt', 'executionState', 'winningOutcome'],
-            filters = {
+            header='proposals',
+            body=['executedAt', 'executionState', 'winningOutcome'],
+            filters={
                 'where': f'{{dao: \"{o_id}\", executedAt_not: null}}',
                 'first': f'{n_first}',
                 'skip': f'{n_skip}',

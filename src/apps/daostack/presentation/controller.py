@@ -61,6 +61,19 @@ def update_proposal_graph(org_id):
 
 
 @app.callback(
+    [Output('total-votes-graph', 'figure'),
+    Output('total-votes-amount', 'children'),
+    Output('total-votes-subtitle', 'children')],
+    [Input('org-dropdown', 'value')]
+)
+def update_total_votes_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    return __get_data_from_metric(get_service().get_metric_total_votes(org_id))
+
+
+@app.callback(
     Output('proposals-type-graph', 'figure'),
     [Input('org-dropdown', 'value')]
 )

@@ -105,6 +105,13 @@ def count_cols_repetitions(df: DataFrame, cols: List[str], new_col: str)\
     return dff
 
 
+def sum_cols_repetitions(df: DataFrame, cols: List[str], new_col: str)\
+-> DataFrame:
+    dff: DataFrame = df
+    dff = dff.groupby(cols).sum().reset_index()
+    return dff
+
+
 def get_monthly_serie_from_df(df: DataFrame, date_col: str) -> pd.DatetimeIndex:
     today = date.today().replace(day=1)
     start = df[date_col].min()

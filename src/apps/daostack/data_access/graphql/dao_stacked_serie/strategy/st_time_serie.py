@@ -3,7 +3,7 @@
 
    Created on: 13-mar-2020
 
-   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
 
@@ -84,8 +84,7 @@ class StTimeSerie(StrategyInterface):
                 'where': f'{{dao: \"{o_id}\"}}',
                 'first': f'{n_first}',
                 'skip': f'{n_skip}',
-            }
-        )
+            })
 
 
     def fetch_result(self, result: Dict) -> List:
