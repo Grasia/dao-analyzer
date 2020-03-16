@@ -6,10 +6,9 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
+
 from typing import List, Dict, Tuple
 import pandas as pd
-from pandas.tseries.offsets import DateOffset
-from datetime import date
 
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
         strategy_metric_interface import StrategyInterface
@@ -17,15 +16,17 @@ from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
 from src.api.graphql.query import Query
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
+import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
 class StProposalOutcome(StrategyInterface):
     def get_empty_df(self) -> pd.DataFrame:
-        return pd.DataFrame(columns=['closedAt', 'hasPassed', 'isBoosted'])
+        return pd_utl.get_empty_data_frame(['closedAt', 'hasPassed',
+            'isBoosted'])
 
 
     def __get_boost_from_dataframe(self, df: pd.DataFrame, boosted: bool)\
-        -> Tuple[List[int]]:
+    -> Tuple[List[int]]:
 
         s_pass: List[int] = list()
         s_not_pass: List[int] = list()
@@ -41,31 +42,26 @@ class StProposalOutcome(StrategyInterface):
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
-        if df.shape[0] == 0:
+        if pd_utl.is_an_empty_df(df):
             return StackedSerie()
 
         # takes just the month
-        df['closedAt'] = pd.to_datetime(df['closedAt'], unit='s').dt.date
-        df['closedAt'] = df['closedAt'].apply(lambda d: d.replace(day=1))
+        df = pd_utl.unix_to_date(df, 'closedAt')
+        df = pd_utl.transform_to_monthly_date(df, 'closedAt')
 
-        # groupby columns and count repetitions as a new column.
-        df = df.groupby(['closedAt', 'hasPassed', 'isBoosted']).size().reset_index(name='count')
+        df = pd_utl.count_cols_repetitions(df=df, 
+            cols=['closedAt', 'hasPassed', 'isBoosted'], new_col='count')
 
         # generates a time serie
-        today = date.today().replace(day=1)
-        start = df['closedAt'].min()
-        idx = pd.date_range(start=start, end=today, freq=DateOffset(months=1))
+        idx = pd_utl.get_monthly_serie_from_df(df, 'closedAt')
 
         # joinning all the data in a unique dataframe and fill with all combinations
         for p in [True, False]:
             for b in [True, False]:
-                dff = pd.DataFrame({
-                    'closedAt': idx,
-                    'hasPassed': p,
-                    'isBoosted': b,
-                    'count': 0})
+                dff = pd_utl.get_df_from_lists([idx, p, b, 0], ['closedAt',
+                    'hasPassed', 'isBoosted', 'count'])
 
-                dff['closedAt'] = dff['closedAt'].dt.date
+                dff = pd_utl.datetime_to_date(dff, 'closedAt')
                 df = df.append(dff, ignore_index=True)
 
         df.drop_duplicates(subset=['closedAt', 'hasPassed', 'isBoosted'],
@@ -108,14 +104,14 @@ class StProposalOutcome(StrategyInterface):
         boost: List[str] = ['BoostedTimeOut', 'BoostedBarCrossed']
 
         for di in data:
-            x: int = int(di['executedAt']) if di['executedAt'] else None 
+            x: int = int(di['executedAt']) if di['executedAt'] else 'Na' 
             y: bool = True if di['winningOutcome'] == 'Pass' else False
             z: bool = True if any(x == di['executionState'] for x in boost)\
                 else False
 
-            # just append closed proposals
-            if x:
-                serie: pd.Series = pd.Series([x, y, z], index=df.columns)
-                df = df.append(serie, ignore_index=True)
+            df = pd_utl.append_rows(df, [x, y, z])
+
+        # filter open proposals
+        df = pd_utl.filter_by_col_value(df, 'closedAt', 'Na', [pd_utl.NEQ])
 
         return df
