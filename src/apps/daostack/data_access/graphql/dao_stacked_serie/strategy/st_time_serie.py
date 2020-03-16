@@ -6,10 +6,9 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
+
 from typing import List, Dict
 import pandas as pd
-from pandas.tseries.offsets import DateOffset
-from datetime import date
 
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
         strategy_metric_interface import StrategyInterface
@@ -17,6 +16,7 @@ from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
 from src.api.graphql.query import Query
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
+import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
 METRIC_TYPE_NEW_USERS: int = 0
@@ -39,29 +39,26 @@ class StTimeSerie(StrategyInterface):
 
 
     def get_empty_df(self) -> pd.DataFrame:
-        return pd.DataFrame(columns=['date'])
+        return pd_utl.get_empty_data_frame(['date'])
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
-        if df.shape[0] == 0:
+        if pd_utl.is_an_empty_df(df):
             return StackedSerie()
         
         # takes just the month
-        df['date'] = pd.to_datetime(df['date'], unit='s').dt.date
-        df['date'] = df['date'].apply(lambda d: d.replace(day=1))
+        df = pd_utl.unix_to_date(df, 'date')
+        df = pd_utl.transform_to_monthly_date(df, 'date')
 
-        # counts how many month/year are repeated
-        df = df.groupby(df['date']).size().reset_index(name='count')
+        df = pd_utl.count_cols_repetitions(df, ['date'], 'count')
         
         # generates a time series
-        today = date.today().replace(day=1)
-        start = df['date'].min()
-        idx = pd.date_range(start=start, end=today, freq=DateOffset(months=1))
+        idx = pd_utl.get_monthly_serie_from_df(df, 'date')
+
+        dff = pd_utl.get_df_from_lists([idx, 0], ['date', 'count'])
+        dff = pd_utl.datetime_to_date(dff, 'date')
 
         # joinning all the data in a unique dataframe
-        dff = pd.DataFrame({'date': idx})
-        dff['date'] = dff['date'].dt.date
-        dff['count'] = 0
         df = df.append(dff, ignore_index=True)
         df.drop_duplicates(subset='date', keep="first", inplace=True)
         df.sort_values('date', inplace=True)
@@ -98,7 +95,6 @@ class StTimeSerie(StrategyInterface):
         df: pd.DataFrame = self.get_empty_df()
 
         for di in data:
-            serie: pd.Series = pd.Series([di['createdAt']], index=df.columns)
-            df = df.append(serie, ignore_index=True)
+            df = pd_utl.append_rows(df, [di['createdAt']])
 
         return df
