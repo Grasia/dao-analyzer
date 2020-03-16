@@ -78,22 +78,18 @@ class StTimeSerie(StrategyInterface):
 
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
         return Query(
-                    header = 'dao',
-                    body = Query(
-                                header = self.__m_type,
-                                body = ['createdAt'],
-                                filters = {
-                                    'first': f'{n_first}',
-                                    'skip': f'{n_skip}',
-                                },
-                            ),
-                    filters = {
-                        'id': f'\"{o_id}\"',
-                    })
+            header=self.__m_type,
+            body=['createdAt'],
+            filters={
+                'where': f'{{dao: \"{o_id}\"}}',
+                'first': f'{n_first}',
+                'skip': f'{n_skip}',
+            }
+        )
 
 
     def fetch_result(self, result: Dict) -> List:
-        return result['dao'][self.__m_type]
+        return result[self.__m_type]
 
     
     def dict_to_df(self, data: List) -> pd.DataFrame:
