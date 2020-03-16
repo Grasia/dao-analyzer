@@ -89,7 +89,7 @@ class StProposalOutcome(StrategyInterface):
             header = 'proposals',
             body = ['executedAt', 'executionState', 'winningOutcome'],
             filters = {
-                'where': f'{{dao: \"{o_id}\"}}',
+                'where': f'{{dao: \"{o_id}\", executedAt_not: null}}',
                 'first': f'{n_first}',
                 'skip': f'{n_skip}',
             })
@@ -104,14 +104,11 @@ class StProposalOutcome(StrategyInterface):
         boost: List[str] = ['BoostedTimeOut', 'BoostedBarCrossed']
 
         for di in data:
-            x: int = int(di['executedAt']) if di['executedAt'] else 'Na' 
+            x: int = int(di['executedAt'])
             y: bool = True if di['winningOutcome'] == 'Pass' else False
             z: bool = True if any(x == di['executionState'] for x in boost)\
                 else False
 
             df = pd_utl.append_rows(df, [x, y, z])
-
-        # filter open proposals
-        df = pd_utl.filter_by_col_value(df, self.__DF_DATE, 'Na', [pd_utl.NEQ])
 
         return df

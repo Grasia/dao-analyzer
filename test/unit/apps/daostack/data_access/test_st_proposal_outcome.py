@@ -40,7 +40,7 @@ class StProposalOutcomeTest(unittest.TestCase):
         query: Query = st_ts.get_query(n_first=100, n_skip=100, o_id='1')
         qb: QueryBuilder = QueryBuilder([query])
 
-        sol: str = "{ proposals(where: {dao: \"1\"}, first: 100, skip: 100,\
+        sol: str = "{ proposals(where: {dao: \"1\", executedAt_not: null}, first: 100, skip: 100,\
  ){ executedAt executionState winningOutcome } }"
 
         self.assertEqual(sol, qb.build())
