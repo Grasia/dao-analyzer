@@ -98,3 +98,11 @@ class Service():
             metric=s_factory.TOTAL_VOTES)
 
         return dao.get_stacked_serie()
+
+
+    def get_metric_total_stakes(self, o_id: str) -> StackedSerie:
+        dao = s_factory.get_dao(
+            ids=self.__orgs.get_ids_from_id(o_id),
+            metric=s_factory.TOTAL_STAKES)
+
+        return dao.get_stacked_serie()

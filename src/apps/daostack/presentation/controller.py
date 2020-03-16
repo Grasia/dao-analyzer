@@ -74,6 +74,19 @@ def update_total_votes_graph(org_id):
 
 
 @app.callback(
+    [Output('total-stakes-graph', 'figure'),
+    Output('total-stakes-amount', 'children'),
+    Output('total-stakes-subtitle', 'children')],
+    [Input('org-dropdown', 'value')]
+)
+def update_total_stakes_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    return __get_data_from_metric(get_service().get_metric_total_stakes(org_id))
+
+
+@app.callback(
     Output('proposals-type-graph', 'figure'),
     [Input('org-dropdown', 'value')]
 )

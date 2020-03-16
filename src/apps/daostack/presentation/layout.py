@@ -103,6 +103,13 @@ def __generate_all_graphs() -> html.Div:
                 amount = TEXT['default_amount'],
                 subtitle = TEXT['no_data_selected'],
             ),
+            __generate_graph(
+                figure_gen = generate_bar_chart,
+                css_id = 'total-stakes',
+                title = TEXT['total_stakes_title'],
+                amount = TEXT['default_amount'],
+                subtitle = TEXT['no_data_selected'],
+            ),
         ],
         className = 'graphs-container',
     )
@@ -136,15 +143,7 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
         
     return {
         'data': [go.Bar(x=x, y=y, marker_color=color)],
-        'layout': go.Layout( 
-                    xaxis={
-                        'type': 'date',
-                        'tickvals': x,
-                        'ticks': 'outside',
-                        'tick0': 0,
-                        'ticklen': 5,
-                        'tickwidth': 1,
-                    })
+        'layout': go.Layout(xaxis=__get_xaxis(x))
     }
 
 
@@ -159,12 +158,16 @@ text: List[str] = None, color: List[str] = None) -> Dict:
         bar4: go.Bar = go.Bar(x=x, y=y[3], name=text[3], marker_color=color[3])
         data = [bar1, bar2, bar3, bar4]
 
-    layout: go.Layout = go.Layout(barmode = 'stack', xaxis = {
-                                                        'type': 'date',
-                                                        'tickvals': x,
-                                                        'ticks': 'outside',
-                                                        'tick0': 0,
-                                                        'ticklen': 5,
-                                                        'tickwidth': 1,
-                                                    })
+    layout: go.Layout = go.Layout(barmode='stack', xaxis=__get_xaxis(x))
     return {'data': data, 'layout': layout}
+
+
+def __get_xaxis(x: List):
+    return {
+        'type': 'date',
+        'tickvals': x,
+        'ticks': 'outside',
+        'tick0': 0,
+        'ticklen': 5,
+        'tickwidth': 1,
+    }
