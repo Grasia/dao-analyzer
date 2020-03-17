@@ -22,6 +22,8 @@ NEW_PROPOSALS = 1
 PROPOSALS_TYPE = 2
 TOTAL_VOTES = 3
 TOTAL_STAKES = 4
+DIFFERENT_VOTERS = 5
+DIFFERENT_STAKERS = 6
 
 
 def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:
@@ -38,5 +40,9 @@ def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:
         stg = st_s.StTimeSerie(st_s.METRIC_TYPE_TOTAL_STAKES)
     elif metric == PROPOSALS_TYPE:
         stg = StProposalOutcome()
+    elif metric == DIFFERENT_VOTERS:
+        stg = 
+        elif metric == DIFFERENT_STAKERS:
+        stg = 
 
     return DaoStackedSerie(ids=ids, strategy=stg, requester=requester)

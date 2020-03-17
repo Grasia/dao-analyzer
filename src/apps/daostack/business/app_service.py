@@ -57,28 +57,33 @@ class Service():
         return ly.generate_layout(orgs.get_dict_representation())
 
 
-    def get_metric_new_users(self, o_id: str) -> StackedSerie:
+    def __get_sserie_by_metric(self, metric: int, o_id: str) -> StackedSerie:
         dao = s_factory.get_dao(
             ids=self.__orgs.get_ids_from_id(o_id),
-            metric=s_factory.NEW_USERS)
+            metric=metric)
 
         return dao.get_stacked_serie()
+
+
+    def get_metric_new_users(self, o_id: str) -> StackedSerie:
+        return self.__get_sserie_by_metric(s_factory.NEW_USERS, o_id)
+
+
+    def get_metric_different_voters(self, o_id: str) -> StackedSerie:
+        return self.__get_sserie_by_metric(s_factory.DIFFERENT_VOTERS, o_id)
+
+
+    def get_metric_different_stakers(self, o_id: str) -> StackedSerie:
+        return self.__get_sserie_by_metric(s_factory.DIFFERENT_STAKERS, o_id)
 
 
     def get_metric_new_proposals(self, o_id: str) -> StackedSerie:
-        dao = s_factory.get_dao(
-            ids=self.__orgs.get_ids_from_id(o_id),
-            metric=s_factory.NEW_PROPOSALS)
-
-        return dao.get_stacked_serie()
+        return self.__get_sserie_by_metric(s_factory.NEW_PROPOSALS, o_id)
 
 
     def get_metric_type_proposals(self, o_id: str) -> Dict:
-        dao = s_factory.get_dao(
-        ids=self.__orgs.get_ids_from_id(o_id),
-        metric=s_factory.PROPOSALS_TYPE)
-
-        metric: StackedSerie = dao.get_stacked_serie()
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.PROPOSALS_TYPE, o_id)
             
         text: List[str] = [TEXT['abs_pass'],
                         TEXT['rel_pass'],
@@ -93,16 +98,8 @@ class Service():
 
 
     def get_metric_total_votes(self, o_id: str) -> StackedSerie:
-        dao = s_factory.get_dao(
-            ids=self.__orgs.get_ids_from_id(o_id),
-            metric=s_factory.TOTAL_VOTES)
-
-        return dao.get_stacked_serie()
+        return self.__get_sserie_by_metric(s_factory.TOTAL_VOTES, o_id)
 
 
     def get_metric_total_stakes(self, o_id: str) -> StackedSerie:
-        dao = s_factory.get_dao(
-            ids=self.__orgs.get_ids_from_id(o_id),
-            metric=s_factory.TOTAL_STAKES)
-
-        return dao.get_stacked_serie()
+        return self.__get_sserie_by_metric(s_factory.TOTAL_STAKES, o_id)
