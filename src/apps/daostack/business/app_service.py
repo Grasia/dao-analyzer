@@ -81,14 +81,14 @@ class Service():
         return self.__get_sserie_by_metric(s_factory.NEW_PROPOSALS, o_id)
 
 
-    def get_metric_type_proposals(self, o_id: str) -> Dict:
+    def get_metric_proposal_boost_outcome(self, o_id: str) -> Dict:
         metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSALS_TYPE, o_id)
+            s_factory.PROPOSALS_BOOST_OUTCOME, o_id)
             
-        text: List[str] = [TEXT['abs_pass'],
-                        TEXT['rel_pass'],
-                        TEXT['rel_fail'],
-                        TEXT['abs_fail']]
+        text: List[str] = [TEXT['queue_pass'],
+                        TEXT['boost_pass'],
+                        TEXT['boost_fail'],
+                        TEXT['queue_fail']]
         color: List[str] = [ly.DARK_GREEN,
                             ly.LIGHT_GREEN,
                             ly.LIGHT_RED,

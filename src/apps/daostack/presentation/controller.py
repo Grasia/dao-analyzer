@@ -101,14 +101,14 @@ def update_total_stakes_graph(org_id):
 
 
 @app.callback(
-    Output('proposals-type-graph', 'figure'),
+    Output('proposal-boost-outcome-graph', 'figure'),
     [Input('org-dropdown', 'value')]
 )
-def update_proposals_type_graph(org_id):
+def update_proposal_boost_outcome_graph(org_id):
     if not org_id:
         raise PreventUpdate
 
-    attrs: Dict = get_service().get_metric_type_proposals(org_id)
+    attrs: Dict = get_service().get_metric_proposal_boost_outcome(org_id)
     return ly.generate_4stacked_bar_chart(
             x=attrs['metric'].get_serie(), 
             y=attrs['metric'].get_n_stacks(4),

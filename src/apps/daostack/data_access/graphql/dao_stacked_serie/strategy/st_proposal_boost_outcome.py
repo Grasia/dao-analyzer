@@ -1,5 +1,5 @@
 """
-   Descp: Strategy pattern for proposal's type outcomes in a timeline 
+   Descp: Strategy pattern for proposal's boost outcomes in a timeline 
 
    Created on: 13-mar-2020
 
@@ -19,7 +19,7 @@ from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-class StProposalOutcome(StrategyInterface):
+class StProposalBoostOutcome(StrategyInterface):
     __DF_DATE = 'closedAt'
     __DF_PASS = 'hasPassed'
     __DF_BOOST = 'isBoosted'
