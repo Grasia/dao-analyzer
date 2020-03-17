@@ -86,15 +86,10 @@ def __generate_all_graphs() -> html.Div:
             ),
             __generate_graph(
                 figure_gen = generate_bar_chart,
-                css_id = 'new-proposal',
-                title = TEXT['new_proposals_title'],
+                css_id = 'different-voters',
+                title = TEXT['different_voters_title'],
                 amount = TEXT['default_amount'],
                 subtitle = TEXT['no_data_selected'],
-            ),
-            __generate_graph(
-                figure_gen = generate_4stacked_bar_chart,
-                css_id = 'proposal-boost-outcome',
-                title = TEXT['proposal_boost_outcome_title'],
             ),
             __generate_graph(
                 figure_gen = generate_bar_chart,
@@ -105,10 +100,29 @@ def __generate_all_graphs() -> html.Div:
             ),
             __generate_graph(
                 figure_gen = generate_bar_chart,
+                css_id = 'different-stakers',
+                title = TEXT['different_stakers_title'],
+                amount = TEXT['default_amount'],
+                subtitle = TEXT['no_data_selected'],
+            ),
+            __generate_graph(
+                figure_gen = generate_bar_chart,
                 css_id = 'total-stakes',
                 title = TEXT['total_stakes_title'],
                 amount = TEXT['default_amount'],
                 subtitle = TEXT['no_data_selected'],
+            ),
+            __generate_graph(
+                figure_gen = generate_bar_chart,
+                css_id = 'new-proposal',
+                title = TEXT['new_proposals_title'],
+                amount = TEXT['default_amount'],
+                subtitle = TEXT['no_data_selected'],
+            ),
+            __generate_graph(
+                figure_gen = generate_4stacked_bar_chart,
+                css_id = 'proposal-boost-outcome',
+                title = TEXT['proposal_boost_outcome_title'],
             ),
         ],
         className = 'graphs-container',
