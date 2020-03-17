@@ -93,8 +93,8 @@ def __generate_all_graphs() -> html.Div:
             ),
             __generate_graph(
                 figure_gen = generate_4stacked_bar_chart,
-                css_id = 'proposals-type',
-                title = TEXT['proposal_type_title'],
+                css_id = 'proposal-boost-outcome',
+                title = TEXT['proposal_boost_outcome_title'],
             ),
             __generate_graph(
                 figure_gen = generate_bar_chart,

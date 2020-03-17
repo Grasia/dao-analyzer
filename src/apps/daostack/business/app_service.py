@@ -73,17 +73,17 @@ class Service():
         return dao.get_stacked_serie()
 
 
-    def get_metric_type_proposals(self, o_id: str) -> Dict:
+    def get_metric_proposal_boost_outcome(self, o_id: str) -> Dict:
         dao = s_factory.get_dao(
         ids=self.__orgs.get_ids_from_id(o_id),
-        metric=s_factory.PROPOSALS_TYPE)
+        metric=s_factory.PROPOSALS_BOOST_OUTCOME)
 
         metric: StackedSerie = dao.get_stacked_serie()
             
-        text: List[str] = [TEXT['abs_pass'],
-                        TEXT['rel_pass'],
-                        TEXT['rel_fail'],
-                        TEXT['abs_fail']]
+        text: List[str] = [TEXT['queue_pass'],
+                        TEXT['boost_pass'],
+                        TEXT['boost_fail'],
+                        TEXT['queue_fail']]
         color: List[str] = [ly.DARK_GREEN,
                             ly.LIGHT_GREEN,
                             ly.LIGHT_RED,

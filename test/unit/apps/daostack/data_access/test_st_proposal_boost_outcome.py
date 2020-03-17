@@ -1,5 +1,5 @@
 """
-   Descp: Tester for StProposalOutcome.
+   Descp: Tester for StProposalBoostOutcome.
 
    Created on: 14-mar-2020
 
@@ -18,7 +18,7 @@ import calendar
 from src.api.graphql.query import Query
 from src.api.graphql.query_builder import QueryBuilder
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
-    st_proposal_outcome import StProposalOutcome
+    st_proposal_boost_outcome import StProposalBoostOutcome
 
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 
@@ -34,9 +34,9 @@ StBoolList = st.lists(
                 max_size=5)
 
 
-class StProposalOutcomeTest(unittest.TestCase):
+class StProposalBoostOutcomeTest(unittest.TestCase):
     def test_get_query(self):
-        st_ts: StProposalOutcome = StProposalOutcome()
+        st_ts: StProposalBoostOutcome = StProposalBoostOutcome()
         query: Query = st_ts.get_query(n_first=100, n_skip=100, o_id='1')
         qb: QueryBuilder = QueryBuilder([query])
 
@@ -70,7 +70,7 @@ class StProposalOutcomeTest(unittest.TestCase):
             sol_dates.append(date.strftime("%d/%m/%Y"))
             date = date + relativedelta(months=+1)
 
-        sserie: StackedSerie = StProposalOutcome().process_data(df=df)
+        sserie: StackedSerie = StProposalBoostOutcome().process_data(df=df)
 
         # check time serie
         dates_r = sserie.get_serie()
