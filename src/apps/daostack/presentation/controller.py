@@ -62,6 +62,20 @@ def update_different_voters_graph(org_id):
 
 
 @app.callback(
+    [Output('different-stakers-graph', 'figure'),
+    Output('different-stakers-amount', 'children'),
+    Output('different-stakers-subtitle', 'children')],
+    [Input('org-dropdown', 'value')]
+)
+def update_different_stakers_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+    
+    return __get_data_from_metric(get_service().
+        get_metric_different_stakers(org_id))
+
+
+@app.callback(
     [Output('new-proposal-graph', 'figure'),
     Output('new-proposal-amount', 'children'),
     Output('new-proposal-subtitle', 'children')],

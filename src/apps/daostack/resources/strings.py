@@ -12,6 +12,7 @@ TEXT: dict = {
     'dao_selector_title': 'Select your DAO: ',
     'new_users_title': 'New reputation holders',
     'different_voters_title': 'Total of different voters',
+    'different_stakers_title': 'Total of different stakers',
     'new_proposals_title': 'New proposals',
     'proposal_boost_outcome_title': 'Closed proposal\'s outcome, boosted and not boosted',
     'total_votes_title': 'Total votes by month',
