@@ -49,7 +49,7 @@ class StTimeSerieTest(unittest.TestCase):
         min_size=5,
         max_size=5))
     @settings(max_examples=30)
-    def test_process_data_1(self, sol: List[int]):
+    def test_process_data(self, sol: List[int]):
         # first element should be at least 1
         if sol[0] == 0:
             sol[0] = 1
