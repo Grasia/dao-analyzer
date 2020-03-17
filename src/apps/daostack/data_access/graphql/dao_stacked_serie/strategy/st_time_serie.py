@@ -3,7 +3,7 @@
 
    Created on: 13-mar-2020
 
-   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
 
@@ -21,9 +21,16 @@ import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 METRIC_TYPE_NEW_USERS: int = 0
 METRIC_TYPE_NEW_PROPOSAL: int = 1
+METRIC_TYPE_TOTAL_VOTES: int = 2
+METRIC_TYPE_TOTAL_STAKES: int = 3
 
 
 class StTimeSerie(StrategyInterface):
+    __DF_DATE = 'date'
+    __DF_COUNT = 'count'
+    __DF_COLS = [__DF_DATE, __DF_COUNT]
+
+
     def __init__(self, m_type: int):
         self.__m_type = self.__get_type(m_type)
 
@@ -34,12 +41,16 @@ class StTimeSerie(StrategyInterface):
             m_key = 'reputationHolders'
         elif m_type == METRIC_TYPE_NEW_PROPOSAL:
             m_key = 'proposals'
+        elif m_type == METRIC_TYPE_TOTAL_VOTES:
+            m_key = 'proposalVotes'
+        elif m_type == METRIC_TYPE_TOTAL_STAKES:
+            m_key = 'proposalStakes'
 
         return m_key
 
 
     def get_empty_df(self) -> pd.DataFrame:
-        return pd_utl.get_empty_data_frame(['date'])
+        return pd_utl.get_empty_data_frame([self.__DF_DATE])
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
@@ -47,48 +58,43 @@ class StTimeSerie(StrategyInterface):
             return StackedSerie()
         
         # takes just the month
-        df = pd_utl.unix_to_date(df, 'date')
-        df = pd_utl.transform_to_monthly_date(df, 'date')
+        df = pd_utl.unix_to_date(df, self.__DF_DATE)
+        df = pd_utl.transform_to_monthly_date(df, self.__DF_DATE)
 
-        df = pd_utl.count_cols_repetitions(df, ['date'], 'count')
+        df = pd_utl.count_cols_repetitions(df, [self.__DF_DATE], self.__DF_COUNT)
         
         # generates a time series
-        idx = pd_utl.get_monthly_serie_from_df(df, 'date')
+        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE)
 
-        dff = pd_utl.get_df_from_lists([idx, 0], ['date', 'count'])
-        dff = pd_utl.datetime_to_date(dff, 'date')
+        dff = pd_utl.get_df_from_lists([idx, 0], self.__DF_COLS)
+        dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
 
         # joinning all the data in a unique dataframe
         df = df.append(dff, ignore_index=True)
-        df.drop_duplicates(subset='date', keep="first", inplace=True)
-        df.sort_values('date', inplace=True)
+        df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
+        df.sort_values(self.__DF_DATE, inplace=True)
         
-        serie: Serie = Serie(x=df['date'].tolist())
+        serie: Serie = Serie(x=df[self.__DF_DATE].tolist())
         metric: StackedSerie = StackedSerie(
             serie = serie, 
-            y_stack = [df['count'].tolist()])
+            y_stack = [df[self.__DF_COUNT].tolist()])
 
         return metric
 
 
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
         return Query(
-                    header = 'dao',
-                    body = Query(
-                                header = self.__m_type,
-                                body = ['createdAt'],
-                                filters = {
-                                    'first': f'{n_first}',
-                                    'skip': f'{n_skip}',
-                                },
-                            ),
-                    filters = {
-                        'id': f'\"{o_id}\"',
-                    })
+            header=self.__m_type,
+            body=['createdAt'],
+            filters={
+                'where': f'{{dao: \"{o_id}\"}}',
+                'first': f'{n_first}',
+                'skip': f'{n_skip}',
+            })
 
 
     def fetch_result(self, result: Dict) -> List:
-        return result['dao'][self.__m_type]
+        return result[self.__m_type]
 
     
     def dict_to_df(self, data: List) -> pd.DataFrame:

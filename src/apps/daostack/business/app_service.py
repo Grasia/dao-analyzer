@@ -57,25 +57,25 @@ class Service():
         return ly.generate_layout(orgs.get_dict_representation())
 
 
-    def get_metric_new_users(self, d_id: str) -> StackedSerie:
+    def get_metric_new_users(self, o_id: str) -> StackedSerie:
         dao = s_factory.get_dao(
-            ids=self.__orgs.get_ids_from_id(d_id),
+            ids=self.__orgs.get_ids_from_id(o_id),
             metric=s_factory.NEW_USERS)
 
         return dao.get_stacked_serie()
 
 
-    def get_metric_new_proposals(self, d_id: str) -> StackedSerie:
+    def get_metric_new_proposals(self, o_id: str) -> StackedSerie:
         dao = s_factory.get_dao(
-            ids=self.__orgs.get_ids_from_id(d_id),
+            ids=self.__orgs.get_ids_from_id(o_id),
             metric=s_factory.NEW_PROPOSALS)
 
         return dao.get_stacked_serie()
 
 
-    def get_metric_type_proposals(self, d_id: str) -> Dict:
+    def get_metric_type_proposals(self, o_id: str) -> Dict:
         dao = s_factory.get_dao(
-        ids=self.__orgs.get_ids_from_id(d_id),
+        ids=self.__orgs.get_ids_from_id(o_id),
         metric=s_factory.PROPOSALS_TYPE)
 
         metric: StackedSerie = dao.get_stacked_serie()
@@ -90,3 +90,19 @@ class Service():
                             ly.DARK_RED]
 
         return {'metric': metric, 'text': text, 'color': color}
+
+
+    def get_metric_total_votes(self, o_id: str) -> StackedSerie:
+        dao = s_factory.get_dao(
+            ids=self.__orgs.get_ids_from_id(o_id),
+            metric=s_factory.TOTAL_VOTES)
+
+        return dao.get_stacked_serie()
+
+
+    def get_metric_total_stakes(self, o_id: str) -> StackedSerie:
+        dao = s_factory.get_dao(
+            ids=self.__orgs.get_ids_from_id(o_id),
+            metric=s_factory.TOTAL_STAKES)
+
+        return dao.get_stacked_serie()

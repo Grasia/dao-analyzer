@@ -20,9 +20,16 @@ import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
 class StProposalOutcome(StrategyInterface):
+    __DF_DATE = 'closedAt'
+    __DF_PASS = 'hasPassed'
+    __DF_BOOST = 'isBoosted'
+    __DF_COUNT = 'count'
+    __DF_COLS1 = [__DF_DATE, __DF_PASS, __DF_BOOST]
+    __DF_COLS2 = [__DF_DATE, __DF_PASS, __DF_BOOST, __DF_COUNT]
+
+
     def get_empty_df(self) -> pd.DataFrame:
-        return pd_utl.get_empty_data_frame(['closedAt', 'hasPassed',
-            'isBoosted'])
+        return pd_utl.get_empty_data_frame(self.__DF_COLS1)
 
 
     def __get_boost_from_dataframe(self, df: pd.DataFrame, boosted: bool)\
@@ -32,11 +39,11 @@ class StProposalOutcome(StrategyInterface):
         s_not_pass: List[int] = list()
 
         for _, row in df.iterrows():
-            if row['isBoosted'] == boosted:
-                if row['hasPassed']:
-                    s_pass.append(row['count'])
+            if row[self.__DF_BOOST] == boosted:
+                if row[self.__DF_PASS]:
+                    s_pass.append(row[self.__DF_COUNT])
                 else:
-                    s_not_pass.append(row['count'])
+                    s_not_pass.append(row[self.__DF_COUNT])
 
         return (s_not_pass, s_pass)
 
@@ -46,31 +53,30 @@ class StProposalOutcome(StrategyInterface):
             return StackedSerie()
 
         # takes just the month
-        df = pd_utl.unix_to_date(df, 'closedAt')
-        df = pd_utl.transform_to_monthly_date(df, 'closedAt')
+        df = pd_utl.unix_to_date(df, self.__DF_DATE)
+        df = pd_utl.transform_to_monthly_date(df, self.__DF_DATE)
 
         df = pd_utl.count_cols_repetitions(df=df, 
-            cols=['closedAt', 'hasPassed', 'isBoosted'], new_col='count')
+            cols=self.__DF_COLS1, new_col=self.__DF_COUNT)
 
         # generates a time serie
-        idx = pd_utl.get_monthly_serie_from_df(df, 'closedAt')
+        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE)
 
         # joinning all the data in a unique dataframe and fill with all combinations
         for p in [True, False]:
             for b in [True, False]:
-                dff = pd_utl.get_df_from_lists([idx, p, b, 0], ['closedAt',
-                    'hasPassed', 'isBoosted', 'count'])
+                dff = pd_utl.get_df_from_lists([idx, p, b, 0], self.__DF_COLS2)
 
-                dff = pd_utl.datetime_to_date(dff, 'closedAt')
+                dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
                 df = df.append(dff, ignore_index=True)
 
-        df.drop_duplicates(subset=['closedAt', 'hasPassed', 'isBoosted'],
+        df.drop_duplicates(subset=self.__DF_COLS1,
         keep="first", inplace=True)
-        df.sort_values('closedAt', inplace=True, ignore_index=True)
+        df.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 
         # generate metric output
-        serie: Serie = Serie(x = df.drop_duplicates(subset='closedAt',
-            keep="first")['closedAt'].tolist())
+        serie: Serie = Serie(x = df.drop_duplicates(subset=self.__DF_DATE,
+            keep="first")[self.__DF_DATE].tolist())
 
         n_p1, p1 = self.__get_boost_from_dataframe(df, False)
         n_p2, p2 = self.__get_boost_from_dataframe(df, True)
@@ -80,23 +86,17 @@ class StProposalOutcome(StrategyInterface):
 
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
         return Query(
-                    header = 'dao',
-                    body = Query(
-                                header = 'proposals',
-                                body = ['executedAt', 'executionState',
-                                'winningOutcome'],
-                                filters = {
-                                    'first': f'{n_first}',
-                                    'skip': f'{n_skip}',
-                                },
-                            ),
-                    filters = {
-                        'id': f'\"{o_id}\"',
-                    })
+            header='proposals',
+            body=['executedAt', 'executionState', 'winningOutcome'],
+            filters={
+                'where': f'{{dao: \"{o_id}\", executedAt_not: null}}',
+                'first': f'{n_first}',
+                'skip': f'{n_skip}',
+            })
 
 
     def fetch_result(self, result: Dict) -> List:
-        return result['dao']['proposals']
+        return result['proposals']
 
     
     def dict_to_df(self, data: List) -> pd.DataFrame:
@@ -104,14 +104,11 @@ class StProposalOutcome(StrategyInterface):
         boost: List[str] = ['BoostedTimeOut', 'BoostedBarCrossed']
 
         for di in data:
-            x: int = int(di['executedAt']) if di['executedAt'] else 'Na' 
+            x: int = int(di['executedAt'])
             y: bool = True if di['winningOutcome'] == 'Pass' else False
             z: bool = True if any(x == di['executionState'] for x in boost)\
                 else False
 
             df = pd_utl.append_rows(df, [x, y, z])
-
-        # filter open proposals
-        df = pd_utl.filter_by_col_value(df, 'closedAt', 'Na', [pd_utl.NEQ])
 
         return df

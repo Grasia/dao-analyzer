@@ -12,7 +12,7 @@ from src.apps.daostack.data_access.graphql.dao_stacked_serie.dao_stacked_serie \
     import DaoStackedSerie
 from src.api.graphql.daostack.api_manager import ApiRequester
 import src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
-    st_time_serie as st_tm
+    st_time_serie as st_s
 from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
     st_proposal_outcome import StProposalOutcome
 
@@ -20,17 +20,23 @@ from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
 NEW_USERS = 0
 NEW_PROPOSALS = 1
 PROPOSALS_TYPE = 2
+TOTAL_VOTES = 3
+TOTAL_STAKES = 4
 
 
 def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:
     requester: ApiRequester = ApiRequester()
 
-    st = None
+    stg = None
     if metric == NEW_USERS:
-        st = st_tm.StTimeSerie(st_tm.METRIC_TYPE_NEW_USERS)
+        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_NEW_USERS)
     elif metric == NEW_PROPOSALS:
-        st = st_tm.StTimeSerie(st_tm.METRIC_TYPE_NEW_PROPOSAL)
+        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_NEW_PROPOSAL)
+    elif metric == TOTAL_VOTES:
+        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_TOTAL_VOTES)
+    elif metric == TOTAL_STAKES:
+        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_TOTAL_STAKES)
     elif metric == PROPOSALS_TYPE:
-        st = StProposalOutcome()
+        stg = StProposalOutcome()
 
-    return DaoStackedSerie(ids=ids, strategy=st, requester=requester)
+    return DaoStackedSerie(ids=ids, strategy=stg, requester=requester)

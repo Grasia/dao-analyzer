@@ -29,7 +29,7 @@ class StTimeSerieTest(unittest.TestCase):
         query: Query = st_ts.get_query(n_first=100, n_skip=100, o_id='1')
         qb: QueryBuilder = QueryBuilder([query])
 
-        sol: str = "{ dao(id: \"1\", ){ reputationHolders(first: 100, skip: 100, ){ createdAt } } }"
+        sol: str = "{ reputationHolders(where: {dao: \"1\"}, first: 100, skip: 100, ){ createdAt } }"
 
         self.assertEqual(sol, qb.build())
 
@@ -39,7 +39,7 @@ class StTimeSerieTest(unittest.TestCase):
         query: Query = st_ts.get_query(n_first=10, n_skip=1, o_id='2')
         qb: QueryBuilder = QueryBuilder([query])
 
-        sol: str = "{ dao(id: \"2\", ){ proposals(first: 10, skip: 1, ){ createdAt } } }"
+        sol: str = "{ proposals(where: {dao: \"2\"}, first: 10, skip: 1, ){ createdAt } }"
 
         self.assertEqual(sol, qb.build())
 
