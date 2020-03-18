@@ -17,6 +17,7 @@ TEXT: dict = {
     'proposal_boost_outcome_title': 'Closed proposal\'s outcome, boosted and not boosted',
     'total_votes_title': 'Total votes by month',
     'total_stakes_title': 'Total stakes by month',
+    'proposal_outcome_majority_title': 'Closed proposal\'s majority outcome',
     'default_amount': 'NAN',
     'no_data': 'No data',
     'no_data_selected': 'There\'s no DAO selected',

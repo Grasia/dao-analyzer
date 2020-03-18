@@ -11,6 +11,7 @@ from typing import Dict, List
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 
 from src.apps.daostack.resources.strings import TEXT
 
@@ -124,6 +125,11 @@ def __generate_all_graphs() -> html.Div:
                 css_id = 'proposal-boost-outcome',
                 title = TEXT['proposal_boost_outcome_title'],
             ),
+            __generate_graph(
+                figure_gen = generate_double_dot_chart,
+                css_id = 'proposal-outc-majority',
+                title = TEXT['proposal_outcome_majority_title'],
+            ),
         ],
         className = 'graphs-container',
     )
@@ -174,6 +180,59 @@ text: List[str] = None, color: List[str] = None) -> Dict:
 
     layout: go.Layout = go.Layout(barmode='stack', xaxis=__get_xaxis(x))
     return {'data': data, 'layout': layout}
+
+
+def generate_double_dot_chart(x: List = None, y1: List[List] = None, 
+y2: List[List] = None, color1: List[str] = None, color2: List[str] = None) -> Dict:
+
+    x = ['1/10/2019', '1/11/2019', '1/12/2019']
+    y1 = [20, 50, 80]
+    y2 = [10, 40, 70]
+    y3 = [0, 4, 15]
+
+    color1 = color1 if color1 else [LIGHT_GREEN]*len(y1)
+    color2 = color2 if color2 else [LIGHT_RED]*len(y2)
+
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.01)
+    
+    fig.add_trace(
+        go.Scatter(
+            x=x, 
+            y=y2, 
+            marker=dict(color=color2, size=12),
+            mode="markers",), 
+        row=2, 
+        col=1)
+
+    fig.add_trace(
+        go.Scatter(
+            x=x, 
+            y=y3, 
+            marker=dict(color=color2, size=12),
+            mode="markers",), 
+        row=2, 
+        col=1)
+
+    fig.add_trace(
+        go.Scatter(
+            x=x, 
+            y=y1, 
+            marker=dict(color=color1, size=12),
+            mode="markers",),
+        row=1,
+        col=1)
+
+    fig.update_layout(
+        #xaxis=__get_xaxis(x),
+        yaxis=dict(
+            range=[0, 100],
+        ),
+        yaxis2=dict(
+            autorange='reversed',
+            range=[0, 100],
+        ))
+
+    return fig
 
 
 def __get_xaxis(x: List):
