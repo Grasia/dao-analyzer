@@ -182,54 +182,66 @@ text: List[str] = None, color: List[str] = None) -> Dict:
     return {'data': data, 'layout': layout}
 
 
-def generate_double_dot_chart(x: List = None, y1: List[List] = None, 
-y2: List[List] = None, color1: List[str] = None, color2: List[str] = None) -> Dict:
+def generate_double_dot_chart(data: Dict = None) -> Dict:
+##############################
+    data: Dict = {
+        'chart1': {
+            'x': ['1/10/2019', '1/10/2019', '1/11/2019', '1/11/2019', '1/12/2019', '1/12/2019'],
+            'y': [20, 50, 80, 0, 4, 15],
+            'color': [LIGHT_GREEN]*6,
+            'name': 'Pass',
+            'range': [0, 100],
+        },
+        'chart2': {
+            'x': ['1/10/2019', '1/11/2019', '1/12/2019'],
+            'y': [10, 40, 70],
+            'color': [LIGHT_RED]*3,
+            'name': 'Fail',
+            'range': [0, 100],
+        }
+    }
+##############################
 
-    x = ['1/10/2019', '1/11/2019', '1/12/2019']
-    y1 = [20, 50, 80]
-    y2 = [10, 40, 70]
-    y3 = [0, 4, 15]
-
-    color1 = color1 if color1 else [LIGHT_GREEN]*len(y1)
-    color2 = color2 if color2 else [LIGHT_RED]*len(y2)
+    if not data:
+        aux: Dict = {
+            'x': list(),
+            'y': list(),
+            'color': list(),
+            'name': '',
+            'range': [0,1],
+        }
+        data: Dict = {'chart1': aux, 'chart2': aux}
 
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.01)
-    
-    fig.add_trace(
-        go.Scatter(
-            x=x, 
-            y=y2, 
-            marker=dict(color=color2, size=12),
-            mode="markers",), 
-        row=2, 
-        col=1)
 
     fig.add_trace(
         go.Scatter(
-            x=x, 
-            y=y3, 
-            marker=dict(color=color2, size=12),
-            mode="markers",), 
-        row=2, 
-        col=1)
-
-    fig.add_trace(
-        go.Scatter(
-            x=x, 
-            y=y1, 
-            marker=dict(color=color1, size=12),
-            mode="markers",),
+            x=data['chart1']['x'], 
+            y=data['chart1']['y'], 
+            marker=dict(color=data['chart1']['color'], size=12),
+            mode="markers",
+            name=data['chart1']['name']),
         row=1,
+        col=1)
+        
+    fig.add_trace(
+        go.Scatter(
+            x=data['chart2']['x'], 
+            y=data['chart2']['y'], 
+            marker=dict(color=data['chart2']['color'], size=12),
+            mode="markers",
+            name=data['chart2']['name']), 
+        row=2, 
         col=1)
 
     fig.update_layout(
         #xaxis=__get_xaxis(x),
         yaxis=dict(
-            range=[0, 100],
+            range=data['chart1']['range'],
         ),
         yaxis2=dict(
             autorange='reversed',
-            range=[0, 100],
+            range=data['chart2']['range'],
         ))
 
     return fig
