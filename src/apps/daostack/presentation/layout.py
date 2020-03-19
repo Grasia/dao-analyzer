@@ -163,7 +163,9 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
         
     return {
         'data': [go.Bar(x=x, y=y, marker_color=color)],
-        'layout': go.Layout(xaxis=__get_xaxis(x))
+        'layout': go.Layout(
+            xaxis=__get_axis_layout(tickvals=x, l_type='date', tickformat='%b, %Y'),
+            yaxis=__get_axis_layout(tickangle=False,))
     }
 
 
@@ -178,81 +180,91 @@ text: List[str] = None, color: List[str] = None) -> Dict:
         bar4: go.Bar = go.Bar(x=x, y=y[3], name=text[3], marker_color=color[3])
         data = [bar1, bar2, bar3, bar4]
 
-    layout: go.Layout = go.Layout(barmode='stack', xaxis=__get_xaxis(x))
+    layout: go.Layout = go.Layout(
+        barmode='stack', 
+        xaxis=__get_axis_layout(tickvals=x, l_type='date', tickformat='%b, %Y'),
+        yaxis=__get_axis_layout(tickangle=False,),
+        legend=__get_legend())
+
     return {'data': data, 'layout': layout}
 
 
 def generate_double_dot_chart(data: Dict = None) -> Dict:
-##############################
-    data: Dict = {
-        'chart1': {
-            'x': ['1/10/2019', '1/10/2019', '1/11/2019', '1/11/2019', '1/12/2019', '1/12/2019'],
-            'y': [20, 50, 80, 0, 4, 15],
-            'color': [LIGHT_GREEN]*6,
-            'name': 'Pass',
-            'range': [0, 100],
-        },
-        'chart2': {
-            'x': ['1/10/2019', '1/11/2019', '1/12/2019'],
-            'y': [10, 40, 70],
-            'color': [LIGHT_RED]*3,
-            'name': 'Fail',
-            'range': [0, 100],
-        }
-    }
-##############################
-
     if not data:
         aux: Dict = {
             'x': list(),
             'y': list(),
             'color': list(),
             'name': '',
-            'range': [0,1],
         }
         data: Dict = {'chart1': aux, 'chart2': aux}
 
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.01)
 
-    fig.add_trace(
-        go.Scatter(
-            x=data['chart1']['x'], 
-            y=data['chart1']['y'], 
-            marker=dict(color=data['chart1']['color'], size=12),
-            mode="markers",
-            name=data['chart1']['name']),
-        row=1,
-        col=1)
-        
-    fig.add_trace(
-        go.Scatter(
-            x=data['chart2']['x'], 
-            y=data['chart2']['y'], 
-            marker=dict(color=data['chart2']['color'], size=12),
-            mode="markers",
-            name=data['chart2']['name']), 
-        row=2, 
-        col=1)
+    i_row: int = 1
+    for k in data:
+        fig.add_trace(
+            go.Scatter(
+                x=data[k]['x'], 
+                y=data[k]['y'], 
+                marker=dict(color=data[k]['color'], size=12),
+                mode="markers",
+                name=data[k]['name']),
+            row=i_row,
+            col=1)
+        i_row += 1
 
     fig.update_layout(
-        #xaxis=__get_xaxis(x),
-        yaxis=dict(
-            range=data['chart1']['range'],
+        xaxis=__get_axis_layout(tickvals=data['chart1']['x']),
+        yaxis=__get_axis_layout(
+            tickvals=[i for i in range(0, 110, 10)],
+            suffix='%',
+            tickangle=False,
         ),
-        yaxis2=dict(
-            autorange='reversed',
-            range=data['chart2']['range'],
-        ))
+        yaxis2=__get_axis_layout(
+            tickvals=[i for i in range(0, 110, 10)],
+            reverse_range=True,
+            suffix='%',
+            tickangle=False,
+        ),
+        legend=__get_legend())
 
     return fig
 
 
-def __get_xaxis(x: List):
-    return {
-        'type': 'date',
-        'tickvals': x,
+def __get_axis_layout(tickvals: List = None, l_type: str = '-', 
+l_range: list = None, reverse_range: bool = False, grid: bool = False,
+suffix: str = '', tickformat: str = '', tickangle: bool = True) -> Dict:
+
+    axis_l: Dict[str, str] = {
+        'type': l_type,
         'ticks': 'outside',
         'tick0': 0,
         'ticklen': 5,
         'tickwidth': 1,
+        'ticksuffix': suffix,
+        'showline': True, 
+        'linewidth': 1, 
+        'linecolor': 'black',
     }
+
+    if grid:
+        axis_l['showgrid'] = True
+        axis_l['gridwidth'] = 1
+        axis_l['gridcolor'] = 'LightPink'
+    if tickvals:
+        axis_l['tickvals'] = tickvals
+    if reverse_range:
+        axis_l['autorange'] = 'reversed'
+    if l_range:
+        axis_l['range'] = l_range
+    if tickformat:
+        axis_l['tickformat'] = tickformat
+    if tickangle:
+        axis_l['tickangle'] = 45
+
+    return axis_l
+
+
+def __get_legend() -> Dict:
+    return {'orientation': 'h', 'x': 0, 'y': 1.15}
