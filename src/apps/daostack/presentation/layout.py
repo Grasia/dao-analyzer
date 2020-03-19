@@ -227,7 +227,8 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
             suffix='%',
             tickangle=False,
         ),
-        legend=__get_legend())
+        legend=__get_legend(),
+        plot_bgcolor="white")
 
     return fig
 
@@ -246,12 +247,11 @@ suffix: str = '', tickformat: str = '', tickangle: bool = True) -> Dict:
         'showline': True, 
         'linewidth': 1, 
         'linecolor': 'black',
+        'showgrid': grid,
+        'gridwidth': 1,
+        'gridcolor': 'LightPink',
     }
 
-    if grid:
-        axis_l['showgrid'] = True
-        axis_l['gridwidth'] = 1
-        axis_l['gridcolor'] = 'LightPink'
     if tickvals:
         axis_l['tickvals'] = tickvals
     if reverse_range:
