@@ -196,6 +196,7 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
             'y': list(),
             'color': list(),
             'name': '',
+            'range': [i for i in range(0, 110, 10)],
         }
         data: Dict = {'chart1': aux, 'chart2': aux}
 
@@ -217,12 +218,12 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
     fig.update_layout(
         xaxis=__get_axis_layout(tickvals=data['chart1']['x']),
         yaxis=__get_axis_layout(
-            tickvals=[i for i in range(0, 110, 10)],
+            tickvals=data['chart1']['range'],
             suffix='%',
             tickangle=False,
         ),
         yaxis2=__get_axis_layout(
-            tickvals=[i for i in range(0, 110, 10)],
+            tickvals=data['chart2']['range'],
             reverse_range=True,
             suffix='%',
             tickangle=False,
@@ -267,4 +268,4 @@ suffix: str = '', tickformat: str = '', tickangle: bool = True) -> Dict:
 
 
 def __get_legend() -> Dict:
-    return {'orientation': 'h', 'x': 0, 'y': 1.15}
+    return {'orientation': 'h', 'x': 0, 'y': -0.3}

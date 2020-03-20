@@ -8,14 +8,14 @@
 """
 from typing import List
 
-from src.apps.daostack.data_access.graphql.dao_stacked_serie.dao_stacked_serie \
+from src.apps.daostack.data_access.graphql.dao_metric.dao_metric \
     import DaoStackedSerie
 from src.api.graphql.daostack.api_manager import ApiRequester
-import src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
+import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     st_time_serie as st_s
-from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
+from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     st_proposal_boost_outcome import StProposalBoostOutcome
-import src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
+import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     st_different_voters_stakers as st_vs
 
 

@@ -13,8 +13,8 @@ import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
 from src.apps.daostack.data_access.graphql.dao_organization import DaoOrganizationList
-import src.apps.daostack.data_access.graphql.dao_stacked_serie.\
-    dao_stacked_serie_factory as s_factory
+import src.apps.daostack.data_access.graphql.dao_metric.\
+    dao_metric_factory as s_factory
 from src.api.graphql.daostack.api_manager import ApiRequester
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
