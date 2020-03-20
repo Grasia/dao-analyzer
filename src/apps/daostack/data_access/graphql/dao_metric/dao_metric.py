@@ -17,7 +17,7 @@ from src.app import DEBUG
 from src.logs import LOGS
 from src.api.graphql.query import Query
 from src.api.graphql.query_builder import QueryBuilder
-from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
+from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     strategy_metric_interface import StrategyInterface
 
 
@@ -59,7 +59,7 @@ class DaoStackedSerie():
         return df
 
 
-    def get_stacked_serie(self):
+    def get_metric(self):
         start: datetime = datetime.now()
         df: pd.DataFrame = self.__st.get_empty_df()
 

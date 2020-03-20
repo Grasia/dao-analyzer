@@ -11,6 +11,7 @@ from typing import Dict, List
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 
 from src.apps.daostack.resources.strings import TEXT
 
@@ -124,6 +125,11 @@ def __generate_all_graphs() -> html.Div:
                 css_id = 'proposal-boost-outcome',
                 title = TEXT['proposal_boost_outcome_title'],
             ),
+            __generate_graph(
+                figure_gen = generate_double_dot_chart,
+                css_id = 'proposal-outc-majority',
+                title = TEXT['proposal_outcome_majority_title'],
+            ),
         ],
         className = 'graphs-container',
     )
@@ -157,7 +163,9 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
         
     return {
         'data': [go.Bar(x=x, y=y, marker_color=color)],
-        'layout': go.Layout(xaxis=__get_xaxis(x))
+        'layout': go.Layout(
+            xaxis=__get_axis_layout(tickvals=x, l_type='date', tickformat='%b, %Y'),
+            yaxis=__get_axis_layout(tickangle=False,))
     }
 
 
@@ -172,16 +180,96 @@ text: List[str] = None, color: List[str] = None) -> Dict:
         bar4: go.Bar = go.Bar(x=x, y=y[3], name=text[3], marker_color=color[3])
         data = [bar1, bar2, bar3, bar4]
 
-    layout: go.Layout = go.Layout(barmode='stack', xaxis=__get_xaxis(x))
+    layout: go.Layout = go.Layout(
+        barmode='stack', 
+        xaxis=__get_axis_layout(tickvals=x, l_type='date', tickformat='%b, %Y'),
+        yaxis=__get_axis_layout(tickangle=False,),
+        legend=__get_legend())
+
     return {'data': data, 'layout': layout}
 
 
-def __get_xaxis(x: List):
-    return {
-        'type': 'date',
-        'tickvals': x,
+def generate_double_dot_chart(data: Dict = None) -> Dict:
+    if not data:
+        aux: Dict = {
+            'x': list(),
+            'y': list(),
+            'color': list(),
+            'name': '',
+            'range': [i for i in range(0, 110, 10)],
+        }
+        data: Dict = {'chart1': aux, 'chart2': aux}
+
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0)
+
+    i_row: int = 1
+    for k in data:
+        fig.add_trace(
+            go.Scatter(
+                x=data[k]['x'], 
+                y=data[k]['y'], 
+                marker=dict(color=data[k]['color'], size=12),
+                mode="markers",
+                name=data[k]['name']),
+            row=i_row,
+            col=1)
+        i_row += 1
+
+    fig.update_layout(
+        xaxis2=__get_axis_layout(
+            tickvals=data['chart1']['x'], 
+            l_type='date', 
+            tickformat='%b, %Y'
+        ),
+        yaxis=__get_axis_layout(
+            #tickvals=data['chart1']['range'],
+            suffix='%',
+            tickangle=False,
+        ),
+        yaxis2=__get_axis_layout(
+            #tickvals=data['chart2']['range'],
+            reverse_range=True,
+            suffix='%',
+            tickangle=False,
+        ),
+        legend=__get_legend(),
+        plot_bgcolor="white")
+
+    return fig
+
+
+def __get_axis_layout(tickvals: List = None, l_type: str = '-', 
+l_range: list = None, reverse_range: bool = False, grid: bool = False,
+suffix: str = '', tickformat: str = '', tickangle: bool = True) -> Dict:
+
+    axis_l: Dict[str, str] = {
+        'type': l_type,
         'ticks': 'outside',
         'tick0': 0,
         'ticklen': 5,
-        'tickwidth': 1,
+        'tickwidth': 2,
+        'ticksuffix': suffix,
+        'showline': True, 
+        'linewidth': 2, 
+        'linecolor': 'black',
+        'showgrid': grid,
+        'gridwidth': 1,
+        'gridcolor': 'LightPink',
     }
+
+    if tickvals:
+        axis_l['tickvals'] = tickvals
+    if reverse_range:
+        axis_l['autorange'] = 'reversed'
+    if l_range:
+        axis_l['range'] = l_range
+    if tickformat:
+        axis_l['tickformat'] = tickformat
+    if tickangle:
+        axis_l['tickangle'] = 45
+
+    return axis_l
+
+
+def __get_legend() -> Dict:
+    return {'orientation': 'h', 'x': 0, 'y': -0.3}

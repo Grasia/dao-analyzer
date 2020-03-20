@@ -8,10 +8,9 @@
 """
 
 import abc
-from typing import List, Dict
+from typing import List, Dict, Any
 from pandas import DataFrame
 
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.api.graphql.query import Query
 
 
@@ -37,7 +36,11 @@ class StrategyInterface(metaclass=abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def process_data(self, df: DataFrame) -> StackedSerie:
+    def process_data(self, df: DataFrame) -> Any:
+        """
+        Proces and transform the data frame in a transfer class.
+        Return: StackedSerie or NStackedSerie
+        """
         raise NotImplementedError
 
 

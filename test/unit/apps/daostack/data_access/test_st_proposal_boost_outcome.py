@@ -17,7 +17,7 @@ import calendar
 
 from src.api.graphql.query import Query
 from src.api.graphql.query_builder import QueryBuilder
-from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
+from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     st_proposal_boost_outcome import StProposalBoostOutcome
 
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie

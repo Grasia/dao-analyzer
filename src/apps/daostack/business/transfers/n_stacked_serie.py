@@ -20,49 +20,56 @@ class NStackedSerie():
     instead of inheritance for better readability and traceability.
 
     * serie: see Serie.
-    * values: a list of stacked 'y' axis values. See StackedSerie
+    * sseries: a list of stacked 'y' axis sseries. See StackedSerie
     """
 
-    def __init__(self, serie: Serie = None, values: List[StackedSerie] = None):
-        self.serie = serie if serie else Serie()
-        self.values = values if values else list()
+    def __init__(self, serie: Serie = None, sseries: List[StackedSerie] = None):
+        self.__serie = serie if serie else Serie()
+        self.__sseries = sseries if sseries else list()
 
 
     def get_serie(self) -> List:
-        if not self.serie:
+        if not self.__serie:
             raise Exception(LOGS['attr_not_init']
                 .format('serie', 'get_serie'))
 
-        return self.serie.get_x()
+        return self.__serie.get_x()
 
     
     def get_last_serie_elem(self) -> str:
-        if not self.serie:
+        if not self.__serie:
             raise Exception(LOGS['attr_not_init']
                 .format('serie', 'get_last_serie_elem'))
 
-        return self.serie.get_last_serie_elem()
+        return self.__serie.get_last_serie_elem()
 
 
     def get_last_value(self, i_value: int, j_stack: int) -> int:
-        if not self.values:
+        if not self.__sseries:
             raise Exception(LOGS['attr_not_init']
-                .format('values', 'get_last_value'))
+                .format('sseries', 'get_last_value'))
 
-        return self.values[i_value].get_last_value(j_stack)
+        return self.__sseries[i_value].get_last_value(j_stack)
 
     
     def get_i_stack(self, i_value: int, j_stack: int) -> List[int]:
-        if not self.values:
+        if not self.__sseries:
             raise Exception(LOGS['attr_not_init']
-                .format('values', 'get_i_stack'))
+                .format('sseries', 'get_i_stack'))
 
-        return self.values[i_value].get_i_stack(j_stack)
+        return self.__sseries[i_value].get_i_stack(j_stack)
 
 
-    def get_diff_last_values(self, i_value: int, j_stack: int) -> int:
-        if not self.values:
+    def get_diff_last_sseries(self, i_value: int, j_stack: int) -> int:
+        if not self.__sseries:
             raise Exception(LOGS['attr_not_init']
-                .format('values', 'get_diff_last_values'))
+                .format('sseries', 'get_diff_last_sseries'))
 
-        return self.values[i_value].get_diff_last_values(j_stack)
+        return self.__sseries[i_value].get_diff_last_sseries(j_stack)
+
+
+    def get_i_sserie(self, i: int) -> StackedSerie:
+        if i >= len(self.__sseries):
+            return StackedSerie()
+
+        return self.__sseries[i]

@@ -10,7 +10,7 @@
 from typing import List, Dict, Tuple
 import pandas as pd
 
-from src.apps.daostack.data_access.graphql.dao_stacked_serie.strategy.\
+from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
         strategy_metric_interface import StrategyInterface
 
 from src.api.graphql.query import Query
