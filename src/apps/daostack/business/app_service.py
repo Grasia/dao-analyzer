@@ -118,14 +118,14 @@ class Service():
             'chart1': {
                 'x': passes.get_serie(),
                 'y': passes.get_i_stack(0),
-                'color': [ly.LIGHT_GREEN]*len(passes.get_i_stack(0)),
+                'color': [ly.DARK_GREEN]*len(passes.get_i_stack(0)),
                 'name': TEXT['passes'],
                 'range': _range,
             },
             'chart2': {
                 'x': fails.get_serie(),
                 'y': fails.get_i_stack(0),
-                'color': [ly.LIGHT_RED]*len(fails.get_i_stack(0)),
+                'color': [ly.DARK_RED]*len(fails.get_i_stack(0)),
                 'name': TEXT['fails'],
                 'range': _range,
             }
