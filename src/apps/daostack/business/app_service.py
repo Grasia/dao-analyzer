@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List
+from typing import Dict, List, Any
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
@@ -18,6 +18,7 @@ import src.apps.daostack.data_access.graphql.dao_metric.\
 from src.api.graphql.daostack.api_manager import ApiRequester
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
 from src.apps.daostack.resources.strings import TEXT
 
 
@@ -57,12 +58,12 @@ class Service():
         return ly.generate_layout(orgs.get_dict_representation())
 
 
-    def __get_sserie_by_metric(self, metric: int, o_id: str) -> StackedSerie:
+    def __get_sserie_by_metric(self, metric: int, o_id: str) -> Any:
         dao = s_factory.get_dao(
             ids=self.__orgs.get_ids_from_id(o_id),
             metric=metric)
 
-        return dao.get_stacked_serie()
+        return dao.get_metric()
 
 
     def get_metric_new_users(self, o_id: str) -> StackedSerie:
@@ -103,3 +104,31 @@ class Service():
 
     def get_metric_total_stakes(self, o_id: str) -> StackedSerie:
         return self.__get_sserie_by_metric(s_factory.TOTAL_STAKES, o_id)
+
+
+    def get_metric_proposal_majority(self, o_id: str) -> Dict:
+        metric: NStackedSerie = self.__get_sserie_by_metric(
+            s_factory.PROPOSAL_MAJORITY, o_id)
+
+        passes: StackedSerie = metric.get_i_sserie(0)
+        fails: StackedSerie = metric.get_i_sserie(1)
+        _range: List[int] = [i for i in range(0, 110, 10)]
+
+        data: Dict = {
+            'chart1': {
+                'x': passes.get_serie(),
+                'y': passes.get_i_stack(0),
+                'color': [ly.LIGHT_GREEN]*len(passes.get_i_stack(0)),
+                'name': TEXT['passes'],
+                'range': _range,
+            },
+            'chart2': {
+                'x': fails.get_serie(),
+                'y': fails.get_i_stack(0),
+                'color': [ly.LIGHT_RED]*len(fails.get_i_stack(0)),
+                'name': TEXT['fails'],
+                'range': _range,
+            }
+        }
+
+        return data 

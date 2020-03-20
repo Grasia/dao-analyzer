@@ -59,7 +59,7 @@ class DaoStackedSerie():
         return df
 
 
-    def get_stacked_serie(self):
+    def get_metric(self):
         start: datetime = datetime.now()
         df: pd.DataFrame = self.__st.get_empty_df()
 

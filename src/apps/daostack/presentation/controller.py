@@ -129,3 +129,16 @@ def update_proposal_boost_outcome_graph(org_id):
             text=attrs['text'],
             color=attrs['color']
         )
+
+
+@app.callback(
+    Output('proposal-outc-majority-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_proposal_majority_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    data: Dict = get_service().get_metric_proposal_majority(org_id)
+
+    return ly.generate_double_dot_chart(data=data)

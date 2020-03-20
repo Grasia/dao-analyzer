@@ -200,7 +200,7 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
         }
         data: Dict = {'chart1': aux, 'chart2': aux}
 
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.01)
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0)
 
     i_row: int = 1
     for k in data:
@@ -216,14 +216,18 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
         i_row += 1
 
     fig.update_layout(
-        xaxis=__get_axis_layout(tickvals=data['chart1']['x']),
+        xaxis2=__get_axis_layout(
+            tickvals=data['chart1']['x'], 
+            l_type='date', 
+            tickformat='%b, %Y'
+        ),
         yaxis=__get_axis_layout(
-            tickvals=data['chart1']['range'],
+            #tickvals=data['chart1']['range'],
             suffix='%',
             tickangle=False,
         ),
         yaxis2=__get_axis_layout(
-            tickvals=data['chart2']['range'],
+            #tickvals=data['chart2']['range'],
             reverse_range=True,
             suffix='%',
             tickangle=False,
@@ -243,10 +247,10 @@ suffix: str = '', tickformat: str = '', tickangle: bool = True) -> Dict:
         'ticks': 'outside',
         'tick0': 0,
         'ticklen': 5,
-        'tickwidth': 1,
+        'tickwidth': 2,
         'ticksuffix': suffix,
         'showline': True, 
-        'linewidth': 1, 
+        'linewidth': 2, 
         'linecolor': 'black',
         'showgrid': grid,
         'gridwidth': 1,

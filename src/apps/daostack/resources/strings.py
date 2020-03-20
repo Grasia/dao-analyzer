@@ -28,4 +28,6 @@ TEXT: dict = {
     'queue_pass': 'Not boosted passes',
     'boost_fail': 'Boosted fails',
     'boost_pass': 'Boosted passes',
+    'passes': 'Passes',
+    'fails': 'Fails',
 }
