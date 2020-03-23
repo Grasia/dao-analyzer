@@ -130,6 +130,11 @@ def __generate_all_graphs() -> html.Div:
                 css_id = 'proposal-outc-majority',
                 title = TEXT['proposal_outcome_majority_title'],
             ),
+            __generate_graph(
+                figure_gen = generate_bar_chart,
+                css_id = 'proposal-total-succ-ratio',
+                title = TEXT['proposal_total_succ_ratio_title'],
+            ),
         ],
         className = 'graphs-container',
     )

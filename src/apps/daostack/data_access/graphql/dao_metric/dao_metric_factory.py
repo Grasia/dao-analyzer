@@ -29,9 +29,11 @@ TOTAL_STAKES = 4
 DIFFERENT_VOTERS = 5
 DIFFERENT_STAKERS = 6
 PROPOSAL_MAJORITY = 7
+PROPOSALS_TOTAL_SUCCES_RATIO = 8
+PROPOSALS_BOOST_SUCCES_RATIO = 9
 
 
-def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:
+def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:# noqa: C901
     requester: ApiRequester = ApiRequester()
 
     stg = None
@@ -51,5 +53,9 @@ def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:
         stg = st_vs.StDifferentVS(st_vs.METRIC_STAKERS)
     elif metric == PROPOSAL_MAJORITY:
         stg = StProposalMajority()
+    elif metric == PROPOSALS_TOTAL_SUCCES_RATIO:
+        stg = st_po.StProposalOutcome(st_po.METRIC_TYPE_TOTAL_SUCCESS_RATIO)
+    elif metric == PROPOSALS_BOOST_SUCCES_RATIO:
+        stg = st_po.StProposalOutcome(st_po.METRIC_TYPE_BOOST_SUCCESS_RATIO)
 
     return DaoStackedSerie(ids=ids, strategy=stg, requester=requester)

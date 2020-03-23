@@ -132,3 +132,8 @@ class Service():
         }
 
         return data 
+
+
+    def get_metric_prop_total_succes_ratio(self, o_id: str) -> StackedSerie:
+        return self.__get_sserie_by_metric(
+            s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, o_id)

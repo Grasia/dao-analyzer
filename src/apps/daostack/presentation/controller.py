@@ -142,3 +142,18 @@ def update_proposal_majority_graph(org_id):
     data: Dict = get_service().get_metric_proposal_majority(org_id)
 
     return ly.generate_double_dot_chart(data=data)
+
+
+@app.callback(
+    Output('proposal-total-succ-ratio-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_proposal_total_succ_ratio(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    metric = get_service().get_metric_prop_total_succes_ratio(org_id)
+
+    return ly.generate_bar_chart(
+            x = metric.get_serie(), 
+            y = metric.get_i_stack(0))

@@ -57,7 +57,7 @@ class StProposalOutcome(StrategyInterface):
         return (s_not_pass, s_pass)
 
 
-    def process_data(self, df: pd.DataFrame) -> StackedSerie:
+    def process_data(self, df: pd.DataFrame) -> Any:
         if pd_utl.is_an_empty_df(df):
             return StackedSerie()
 
@@ -91,9 +91,9 @@ class StProposalOutcome(StrategyInterface):
 
         if self.__m_type == METRIC_TYPE_BOOST_OUTCOME:
             metric = self.__get_boost_outcome(df)
-        elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
-            metric = self.__get_total_success_ratio(df)
         elif self.__m_type == METRIC_TYPE_TOTAL_SUCCESS_RATIO:
+            metric = self.__get_total_success_ratio(df)
+        elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
             pass
 
         return metric
@@ -125,7 +125,7 @@ class StProposalOutcome(StrategyInterface):
             if denominator == 0:
                 ratio.append(None)
             else:
-                ratio.append(numerator/denominator)
+                ratio.append(round(numerator / denominator, 4))
 
         return StackedSerie(serie=serie, y_stack=[ratio])
 
@@ -188,18 +188,18 @@ class StProposalOutcome(StrategyInterface):
         elif pred == 'fn':
             boost = False
 
-        dff = pd_utl.filter_by_col_value(df, self.__DF_BOOST, boost, pd_utl.EQ)
-        dff = pd_utl.filter_by_col_value(dff, self.__DF_PASS, _pass, pd_utl.EQ)
+        dff = pd_utl.filter_by_col_value(df, self.__DF_BOOST, boost, [pd_utl.EQ])
+        dff = pd_utl.filter_by_col_value(dff, self.__DF_PASS, _pass, [pd_utl.EQ])
 
-        dff = dff.drop(columns=[self.__DF_BOOST, self.__DF_PASS])
-        dff = pd_utl.count_cols_repetitions(df=dff, cols=[self.__DF_DATE], 
-            new_col=self.__DF_COUNT)
-
-        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE)
+        # date reconstruction
+        idx = pd_utl.get_monthly_serie_from_df(dff, self.__DF_DATE)
         d3f = pd_utl.get_df_from_lists([idx, 0], [self.__DF_DATE, self.__DF_COUNT])
         d3f = pd_utl.datetime_to_date(d3f, self.__DF_DATE)
 
-        dff = df.append(d3f, ignore_index=True)
+        dff = pd_utl.filter_by_col_value(dff, self.__DF_COUNT, 0, [pd_utl.GT])
+        dff = dff.drop(columns=[self.__DF_BOOST, self.__DF_PASS])
+
+        dff = dff.append(d3f, ignore_index=True)
         dff.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 
