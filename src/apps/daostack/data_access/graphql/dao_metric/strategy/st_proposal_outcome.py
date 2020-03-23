@@ -90,16 +90,16 @@ class StProposalOutcome(StrategyInterface):
         metric = StackedSerie()
 
         if self.__m_type == METRIC_TYPE_BOOST_OUTCOME:
-            metric = self.get_boost_outcome(df)
+            metric = self.__get_boost_outcome(df)
         elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
-            pass
+            metric = self.__get_total_success_ratio(df)
         elif self.__m_type == METRIC_TYPE_TOTAL_SUCCESS_RATIO:
             pass
 
         return metric
 
 
-    def get_boost_outcome(self, df: pd.DataFrame) -> StackedSerie:
+    def __get_boost_outcome(self, df: pd.DataFrame) -> StackedSerie:
         serie: Serie = Serie(x = df.drop_duplicates(subset=self.__DF_DATE,
             keep="first")[self.__DF_DATE].tolist())
 
@@ -107,6 +107,27 @@ class StProposalOutcome(StrategyInterface):
         n_p2, p2 = self.__get_boost_from_dataframe(df, True)
 
         return StackedSerie(serie=serie, y_stack=[p1, p2, n_p2, n_p1])
+
+
+    def __get_total_success_ratio(self, df: pd.DataFrame) -> StackedSerie:
+        serie: Serie = Serie(x = df.drop_duplicates(subset=self.__DF_DATE,
+            keep="first")[self.__DF_DATE].tolist())
+
+        tp: List[int] = self.__get_predicted_values(df, 'tp')
+        tn: List[int] = self.__get_predicted_values(df, 'tn')
+        fp: List[int] = self.__get_predicted_values(df, 'fp')
+        fn: List[int] = self.__get_predicted_values(df, 'fn')
+        ratio: List[float] = list()
+
+        for i in range(len(tp)):
+            numerator: int = tp[i] + tn[i]
+            denominator: int = tp[i] + tn[i] + fp[i] + fn[i]
+            if denominator == 0:
+                ratio.append(None)
+            else:
+                ratio.append(numerator/denominator)
+
+        return StackedSerie(serie=serie, y_stack=[ratio])
 
 
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
@@ -137,3 +158,50 @@ class StProposalOutcome(StrategyInterface):
             df = pd_utl.append_rows(df, [x, y, z])
 
         return df
+
+
+    def __get_predicted_values(self, df: pd.DataFrame, pred: str) -> List[int]:
+        """ 
+        True positives = boost and pass
+        True negatives = not boost and not pass
+        False positives = boost and not pass
+        False negatives = not boost and pass
+
+        Parameters:
+            * df = data frame to filter
+            * pred = must be 'tp', 'tn', 'fp', 'fn' in other case return true 
+                     positive by default.
+        Return:
+            A list with a counter of predicted values. This list has the 
+            number of elements such as different dates of the df parameter.
+            This list is also ordered by the dates of the df parameter. 
+        """
+        # default tp
+        boost: bool = True
+        _pass: bool = True
+
+        if pred == 'tn':
+            boost = False
+            _pass = False
+        elif pred == 'fp':
+            _pass = False
+        elif pred == 'fn':
+            boost = False
+
+        dff = pd_utl.filter_by_col_value(df, self.__DF_BOOST, boost, pd_utl.EQ)
+        dff = pd_utl.filter_by_col_value(dff, self.__DF_PASS, _pass, pd_utl.EQ)
+
+        dff = dff.drop(columns=[self.__DF_BOOST, self.__DF_PASS])
+        dff = pd_utl.count_cols_repetitions(df=dff, cols=[self.__DF_DATE], 
+            new_col=self.__DF_COUNT)
+
+        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE)
+        d3f = pd_utl.get_df_from_lists([idx, 0], [self.__DF_DATE, self.__DF_COUNT])
+        d3f = pd_utl.datetime_to_date(d3f, self.__DF_DATE)
+
+        dff = df.append(d3f, ignore_index=True)
+        dff.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
+        dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
+
+        return dff[self.__DF_COUNT].to_list()
+    
