@@ -131,6 +131,11 @@ def __generate_all_graphs() -> html.Div:
                 title = TEXT['proposal_outcome_majority_title'],
             ),
             __generate_graph(
+                figure_gen = generate_multiple_bar_chart,
+                css_id = 'proposal-boost-succ-ratio',
+                title = TEXT['proposal_boost_succ_ratio_title'],
+            ),
+            __generate_graph(
                 figure_gen = generate_bar_chart,
                 css_id = 'proposal-total-succ-ratio',
                 title = TEXT['proposal_total_succ_ratio_title'],
@@ -172,6 +177,28 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
             xaxis=__get_axis_layout(tickvals=x, l_type='date', tickformat='%b, %Y'),
             yaxis=__get_axis_layout(tickangle=False,))
     }
+
+
+def generate_multiple_bar_chart(data: Dict = None) -> Dict:
+    if not data:
+        data = dict()
+    tickvals = data['bar1']['x'] if data else list()
+
+    bars: List = list()
+    for k in data:
+        bars.append(go.Bar(
+                x=data[k]['x'], 
+                y=data[k]['y'], 
+                name=data[k]['name'], 
+                marker_color=data[k]['color']))
+
+    layout: go.Layout = go.Layout(
+        barmode='group',
+        xaxis=__get_axis_layout(tickvals=tickvals, l_type='date', tickformat='%b, %Y'),
+        yaxis=__get_axis_layout(tickangle=False),
+        legend=__get_legend())
+
+    return {'data': bars, 'layout': layout}
 
 
 def generate_4stacked_bar_chart(x: List = None, y: List[List] = None,

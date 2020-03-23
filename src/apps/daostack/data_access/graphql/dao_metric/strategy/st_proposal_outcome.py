@@ -15,6 +15,7 @@ from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
 
 from src.api.graphql.query import Query
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie 
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
@@ -94,7 +95,7 @@ class StProposalOutcome(StrategyInterface):
         elif self.__m_type == METRIC_TYPE_TOTAL_SUCCESS_RATIO:
             metric = self.__get_total_success_ratio(df)
         elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
-            pass
+            metric = self.__get_boost_success_ratio(df)
 
         return metric
 
@@ -117,17 +118,63 @@ class StProposalOutcome(StrategyInterface):
         tn: List[int] = self.__get_predicted_values(df, 'tn')
         fp: List[int] = self.__get_predicted_values(df, 'fp')
         fn: List[int] = self.__get_predicted_values(df, 'fn')
-        ratio: List[float] = list()
 
-        for i in range(len(tp)):
-            numerator: int = tp[i] + tn[i]
-            denominator: int = tp[i] + tn[i] + fp[i] + fn[i]
-            if denominator == 0:
-                ratio.append(None)
-            else:
-                ratio.append(round(numerator / denominator, 4))
+        ratio: List[float] = self.__calculate_ratio(
+            numerator=[tp, tn], 
+            denominator=[tp, tn, fp, fn], 
+            _len=len(tp))
 
         return StackedSerie(serie=serie, y_stack=[ratio])
+
+
+    def __get_boost_success_ratio(self, df: pd.DataFrame) -> NStackedSerie:
+        serie: Serie = Serie(x = df.drop_duplicates(subset=self.__DF_DATE,
+            keep="first")[self.__DF_DATE].tolist())
+
+        tp: List[int] = self.__get_predicted_values(df, 'tp')
+        tn: List[int] = self.__get_predicted_values(df, 'tn')
+        fp: List[int] = self.__get_predicted_values(df, 'fp')
+        fn: List[int] = self.__get_predicted_values(df, 'fn')
+
+        boost_ratio: List[float] = self.__calculate_ratio(
+            numerator=[tp], 
+            denominator=[tp, fp], 
+            _len=len(tp))
+
+        nboost_ratio: List[float] = self.__calculate_ratio(
+            numerator=[tn], 
+            denominator=[tn, fn], 
+            _len=len(tn))
+
+        return NStackedSerie(
+            serie=serie, 
+            sseries=[
+                StackedSerie(y_stack=[boost_ratio]),
+                StackedSerie(y_stack=[nboost_ratio])])
+
+
+    def __calculate_ratio(self, numerator: List, denominator: List, 
+    _len: int) -> List:
+
+        ratio: List = list()
+        for i in range(_len):
+            n_val: int = 0
+            d_val: int = 0
+
+            # numerator elements sum
+            for n in numerator:
+                n_val += n[i]
+
+            # denominator elements sum
+            for d in denominator:
+                d_val += d[i]
+
+            if d_val == 0:
+                ratio.append(None)
+            else:
+                ratio.append(round(n_val / d_val, 4))
+
+        return ratio
 
 
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:

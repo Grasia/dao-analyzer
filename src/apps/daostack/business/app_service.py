@@ -137,3 +137,28 @@ class Service():
     def get_metric_prop_total_succes_ratio(self, o_id: str) -> StackedSerie:
         return self.__get_sserie_by_metric(
             s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, o_id)
+
+
+    def get_metric_prop_boost_succes_ratio(self, o_id: str) -> Dict:
+        metric: NStackedSerie = self.__get_sserie_by_metric(
+            s_factory.PROPOSALS_BOOST_SUCCES_RATIO, o_id)
+
+        y1 = metric.get_i_sserie(0).get_i_stack(0)
+        y2 = metric.get_i_sserie(1).get_i_stack(0)
+
+        data: Dict = {
+            'bar1': {
+                'x': metric.get_serie(),
+                'y': y1,
+                'color': [ly.LIGHT_GREEN]*len(y1),
+                'name': TEXT['boost'],
+            },
+            'bar2': {
+                'x': metric.get_serie(),
+                'y': y2,
+                'color': [ly.DARK_RED]*len(y2),
+                'name': TEXT['not_boost'],
+            },
+        }
+
+        return data
