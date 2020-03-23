@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 import pandas as pd
 
 from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
@@ -19,13 +19,22 @@ from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-class StProposalBoostOutcome(StrategyInterface):
+METRIC_TYPE_BOOST_OUTCOME: int = 0
+METRIC_TYPE_BOOST_SUCCESS_RATIO: int = 1
+METRIC_TYPE_TOTAL_SUCCESS_RATIO: int = 2
+
+
+class StProposalOutcome(StrategyInterface):
     __DF_DATE = 'closedAt'
     __DF_PASS = 'hasPassed'
     __DF_BOOST = 'isBoosted'
     __DF_COUNT = 'count'
     __DF_COLS1 = [__DF_DATE, __DF_PASS, __DF_BOOST]
     __DF_COLS2 = [__DF_DATE, __DF_PASS, __DF_BOOST, __DF_COUNT]
+
+
+    def __init__(self, m_type: int):
+        self.__m_type = m_type
 
 
     def get_empty_df(self) -> pd.DataFrame:
@@ -74,7 +83,23 @@ class StProposalBoostOutcome(StrategyInterface):
         keep="first", inplace=True)
         df.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 
-        # generate metric output
+        return self.generate_metric(df)
+
+
+    def generate_metric(self, df: pd.DataFrame) -> Any:
+        metric = StackedSerie()
+
+        if self.__m_type == METRIC_TYPE_BOOST_OUTCOME:
+            metric = self.get_boost_outcome(df)
+        elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
+            pass
+        elif self.__m_type == METRIC_TYPE_TOTAL_SUCCESS_RATIO:
+            pass
+
+        return metric
+
+
+    def get_boost_outcome(self, df: pd.DataFrame) -> StackedSerie:
         serie: Serie = Serie(x = df.drop_duplicates(subset=self.__DF_DATE,
             keep="first")[self.__DF_DATE].tolist())
 

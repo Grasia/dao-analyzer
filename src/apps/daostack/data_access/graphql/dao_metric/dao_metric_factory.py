@@ -13,8 +13,8 @@ from src.apps.daostack.data_access.graphql.dao_metric.dao_metric \
 from src.api.graphql.daostack.api_manager import ApiRequester
 import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     st_time_serie as st_s
-from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
-    st_proposal_boost_outcome import StProposalBoostOutcome
+import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+    st_proposal_outcome as st_po
 import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     st_different_voters_stakers as st_vs
 from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
@@ -44,7 +44,7 @@ def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:
     elif metric == TOTAL_STAKES:
         stg = st_s.StTimeSerie(st_s.METRIC_TYPE_TOTAL_STAKES)
     elif metric == PROPOSALS_BOOST_OUTCOME:
-        stg = StProposalBoostOutcome()
+        stg = st_po.StProposalOutcome(st_po.METRIC_TYPE_BOOST_OUTCOME)
     elif metric == DIFFERENT_VOTERS:
         stg = st_vs.StDifferentVS(st_vs.METRIC_VOTERS)
     elif metric == DIFFERENT_STAKERS:

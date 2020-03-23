@@ -1,5 +1,5 @@
 """
-   Descp: Tester for StProposalBoostOutcome.
+   Descp: Tester for StProposalOutcome.
 
    Created on: 14-mar-2020
 
@@ -17,8 +17,8 @@ import calendar
 
 from src.api.graphql.query import Query
 from src.api.graphql.query_builder import QueryBuilder
-from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
-    st_proposal_boost_outcome import StProposalBoostOutcome
+import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+    st_proposal_outcome as st_po
 
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 
@@ -34,10 +34,11 @@ StBoolList = st.lists(
                 max_size=5)
 
 
-class StProposalBoostOutcomeTest(unittest.TestCase):
+class StProposalOutcomeTest(unittest.TestCase):
     def test_get_query(self):
-        st_ts: StProposalBoostOutcome = StProposalBoostOutcome()
-        query: Query = st_ts.get_query(n_first=100, n_skip=100, o_id='1')
+        st: st_po.StProposalOutcome = st_po.StProposalOutcome(
+            st_po.METRIC_TYPE_BOOST_OUTCOME)
+        query: Query = st.get_query(n_first=100, n_skip=100, o_id='1')
         qb: QueryBuilder = QueryBuilder([query])
 
         sol: str = "{ proposals(where: {dao: \"1\", executedAt_not: null}, first: 100, skip: 100,\
@@ -70,7 +71,8 @@ class StProposalBoostOutcomeTest(unittest.TestCase):
             sol_dates.append(date.strftime("%d/%m/%Y"))
             date = date + relativedelta(months=+1)
 
-        sserie: StackedSerie = StProposalBoostOutcome().process_data(df=df)
+        sserie: StackedSerie = st_po.StProposalOutcome(
+            st_po.METRIC_TYPE_BOOST_OUTCOME).process_data(df=df)
 
         # check time serie
         dates_r = sserie.get_serie()
