@@ -35,6 +35,9 @@ def get_service():
 
 
 class Service():
+    __DATE_FORMAT: str = '%b, %Y'
+
+
     def __init__(self):
         # app state
         self.__orgs: OrganizationList = None
@@ -148,17 +151,20 @@ class Service():
 
         data: Dict = {
             'bar1': {
-                'x': metric.get_serie(),
                 'y': y1,
                 'color': [ly.LIGHT_GREEN]*len(y1),
                 'name': TEXT['boost'],
             },
             'bar2': {
-                'x': metric.get_serie(),
                 'y': y2,
                 'color': [ly.DARK_RED]*len(y2),
                 'name': TEXT['not_boost'],
             },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+            }
         }
 
         return data

@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List
+from typing import Dict, List, Set
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
@@ -182,19 +182,30 @@ def generate_bar_chart(x: List = None, y: List = None) -> Dict:
 def generate_multiple_bar_chart(data: Dict = None) -> Dict:
     if not data:
         data = dict()
-    tickvals = data['bar1']['x'] if data else list()
+        data['common'] = {
+            'x': list(),
+            'type': '-',
+            'x_format': '',
+        }
 
     bars: List = list()
-    for k in data:
+    keys: Set[str] = set(data.keys())
+    if 'common' in keys:
+        keys.remove('common')
+
+    for k in keys:
         bars.append(go.Bar(
-                x=data[k]['x'], 
+                x=data['common']['x'], 
                 y=data[k]['y'], 
                 name=data[k]['name'], 
                 marker_color=data[k]['color']))
 
     layout: go.Layout = go.Layout(
         barmode='group',
-        xaxis=__get_axis_layout(tickvals=tickvals, l_type='date', tickformat='%b, %Y'),
+        xaxis=__get_axis_layout(
+            tickvals=data['common']['x'], 
+            l_type=data['common']['type'], 
+            tickformat=data['common']['x_format']),
         yaxis=__get_axis_layout(tickangle=False),
         legend=__get_legend())
 
