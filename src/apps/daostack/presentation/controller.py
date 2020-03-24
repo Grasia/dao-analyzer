@@ -14,7 +14,6 @@ from dash.exceptions import PreventUpdate
 from src.app import app
 import src.apps.daostack.presentation.layout as ly
 from src.apps.daostack.resources.strings import TEXT
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.app_service import get_service
 
 

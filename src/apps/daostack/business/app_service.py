@@ -184,31 +184,46 @@ class Service():
         metric: NStackedSerie = self.__get_sserie_by_metric(
             s_factory.PROPOSAL_MAJORITY, o_id)
 
-        passes: StackedSerie = metric.get_i_sserie(0)
-        fails: StackedSerie = metric.get_i_sserie(1)
-        x: List = passes.get_serie() if len(passes.get_serie()) \
-            > len(fails.get_serie()) else fails.get_serie()
+        y1: StackedSerie = metric.get_i_sserie(0)
+        y2: StackedSerie = metric.get_i_sserie(1)
+        y3: StackedSerie = metric.get_i_sserie(2)
+        y4: StackedSerie = metric.get_i_sserie(3)
+        x: List = y1.get_serie()
 
         data: Dict = {
             'serie1': {
-                'x': passes.get_serie(),
-                'y': passes.get_i_stack(0),
-                'color': [ly.DARK_GREEN]*len(passes.get_i_stack(0)),
-                'name': TEXT['passes'],
+                'x': y1.get_serie(),
+                'y': y1.get_i_stack(0),
+                'color': [ly.DARK_GREEN]*len(y1.get_i_stack(0)),
+                'name': TEXT['abs_pass'],
                 'position': 'up',
             },
             'serie2': {
-                'x': fails.get_serie(),
-                'y': fails.get_i_stack(0),
-                'color': [ly.DARK_RED]*len(fails.get_i_stack(0)),
-                'name': TEXT['fails'],
+                'x': y2.get_serie(),
+                'y': y2.get_i_stack(0),
+                'color': [ly.LIGHT_GREEN]*len(y2.get_i_stack(0)),
+                'name': TEXT['rel_pass'],
+                'position': 'up',
+            },
+            'serie3': {
+                'x': y3.get_serie(),
+                'y': y3.get_i_stack(0),
+                'color': [ly.LIGHT_RED]*len(y3.get_i_stack(0)),
+                'name': TEXT['rel_fail'],
+                'position': 'down',
+            },
+            'serie4': {
+                'x': y4.get_serie(),
+                'y': y4.get_i_stack(0),
+                'color': [ly.DARK_RED]*len(y4.get_i_stack(0)),
+                'name': TEXT['abs_fail'],
                 'position': 'down',
             },
             'common': {
                 'x': x,
                 'type': 'date', 
                 'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2'], 
+                'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'], 
                 'y_suffix': '%'
             }
         }
