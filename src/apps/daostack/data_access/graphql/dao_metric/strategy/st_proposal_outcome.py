@@ -58,9 +58,20 @@ class StProposalOutcome(StrategyInterface):
         return (s_not_pass, s_pass)
 
 
+    def __get_empty_transfer(self) -> Any:
+        if self.__m_type == METRIC_TYPE_BOOST_OUTCOME:
+            return StackedSerie()
+        elif self.__m_type == METRIC_TYPE_TOTAL_SUCCESS_RATIO:
+            return StackedSerie()
+        elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
+            return NStackedSerie()
+
+        return None
+
+
     def process_data(self, df: pd.DataFrame) -> Any:
         if pd_utl.is_an_empty_df(df):
-            return StackedSerie()
+            return self.__get_empty_transfer()
 
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)

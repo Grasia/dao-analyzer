@@ -121,7 +121,7 @@ def __generate_all_graphs() -> html.Div:
                 subtitle = TEXT['no_data_selected'],
             ),
             __generate_graph(
-                figure_gen = generate_4stacked_bar_chart,
+                figure_gen = generate_bar_chart,
                 css_id = 'proposal-boost-outcome',
                 title = TEXT['proposal_boost_outcome_title'],
             ),
@@ -131,7 +131,7 @@ def __generate_all_graphs() -> html.Div:
                 title = TEXT['proposal_outcome_majority_title'],
             ),
             __generate_graph(
-                figure_gen = generate_multiple_bar_chart,
+                figure_gen = generate_bar_chart,
                 css_id = 'proposal-boost-succ-ratio',
                 title = TEXT['proposal_boost_succ_ratio_title'],
             ),
@@ -159,41 +159,13 @@ subtitle: str = None) -> html.Div:
     return html.Div(children = children, className = 'pane graph-pane')
 
 
-def generate_bar_chart(x: List = None, y: List = None) -> Dict:
-    if not x:
-        x = list()
-    
-    if not y:
-        y = list()
-
-    color = LIGHT_BLUE
-    if x:
-        color = [LIGHT_BLUE] * len(x)
-        color[-1] = DARK_BLUE
-        
-    return {
-        'data': [go.Bar(x=x, y=y, marker_color=color)],
-        'layout': go.Layout(
-            xaxis=__get_axis_layout(tickvals=x, l_type='date', tickformat='%b, %Y'),
-            yaxis=__get_axis_layout(tickangle=False,))
-    }
-
-
-def generate_multiple_bar_chart(data: Dict = None) -> Dict:
+def generate_bar_chart(data: Dict = None, barmode: str = 'group') -> Dict:
     if not data:
-        data = dict()
-        data['common'] = {
-            'x': list(),
-            'type': '-',
-            'x_format': '',
-        }
+        data = {'common': {'x': list(), 'type': '-', 'x_format': '', 
+            'ordered_keys': []}}
 
     bars: List = list()
-    keys: Set[str] = set(data.keys())
-    if 'common' in keys:
-        keys.remove('common')
-
-    for k in keys:
+    for k in data['common']['ordered_keys']:
         bars.append(go.Bar(
                 x=data['common']['x'], 
                 y=data[k]['y'], 
@@ -201,7 +173,7 @@ def generate_multiple_bar_chart(data: Dict = None) -> Dict:
                 marker_color=data[k]['color']))
 
     layout: go.Layout = go.Layout(
-        barmode='group',
+        barmode=barmode,
         xaxis=__get_axis_layout(
             tickvals=data['common']['x'], 
             l_type=data['common']['type'], 
@@ -210,26 +182,6 @@ def generate_multiple_bar_chart(data: Dict = None) -> Dict:
         legend=__get_legend())
 
     return {'data': bars, 'layout': layout}
-
-
-def generate_4stacked_bar_chart(x: List = None, y: List[List] = None,
-text: List[str] = None, color: List[str] = None) -> Dict:
-
-    data: List = list()
-    if x and y and text:
-        bar1: go.Bar = go.Bar(x=x, y=y[0], name=text[0], marker_color=color[0])
-        bar2: go.Bar = go.Bar(x=x, y=y[1], name=text[1], marker_color=color[1])
-        bar3: go.Bar = go.Bar(x=x, y=y[2], name=text[2], marker_color=color[2])
-        bar4: go.Bar = go.Bar(x=x, y=y[3], name=text[3], marker_color=color[3])
-        data = [bar1, bar2, bar3, bar4]
-
-    layout: go.Layout = go.Layout(
-        barmode='stack', 
-        xaxis=__get_axis_layout(tickvals=x, l_type='date', tickformat='%b, %Y'),
-        yaxis=__get_axis_layout(tickangle=False,),
-        legend=__get_legend())
-
-    return {'data': data, 'layout': layout}
 
 
 def generate_double_dot_chart(data: Dict = None) -> Dict:

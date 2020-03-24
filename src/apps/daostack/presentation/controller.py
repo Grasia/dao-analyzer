@@ -22,15 +22,13 @@ def init():
     pass
 
 
-def __get_data_from_metric(metric: StackedSerie) -> List:
-    i_stack: int = 0
+def __get_data_from_metric(metric: Dict) -> List:
     return [
-        ly.generate_bar_chart(
-            x = metric.get_serie(), 
-            y = metric.get_i_stack(i_stack)),
-        TEXT['graph_amount'].format(metric.get_last_serie_elem(), 
-            metric.get_last_value(i_stack)),
-        TEXT['graph_subtitle'].format(metric.get_diff_last_values(i_stack))
+        ly.generate_bar_chart(metric),
+        TEXT['graph_amount'].format(
+            metric['common']['last_serie_elem'], 
+            metric['common']['last_value']),
+        TEXT['graph_subtitle'].format(metric['common']['diff'])
     ]
 
 
@@ -135,13 +133,8 @@ def update_proposal_boost_outcome_graph(org_id):
     if not org_id:
         raise PreventUpdate
 
-    attrs: Dict = get_service().get_metric_proposal_boost_outcome(org_id)
-    return ly.generate_4stacked_bar_chart(
-            x=attrs['metric'].get_serie(), 
-            y=attrs['metric'].get_n_stacks(4),
-            text=attrs['text'],
-            color=attrs['color']
-        )
+    metric: Dict = get_service().get_metric_proposal_boost_outcome(org_id)
+    return ly.generate_bar_chart(data=metric, barmode='stack')
 
 
 @app.callback(
@@ -153,9 +146,7 @@ def update_proposal_total_succ_ratio(org_id):
         raise PreventUpdate
 
     metric = get_service().get_metric_prop_total_succes_ratio(org_id)
-    return ly.generate_bar_chart(
-            x = metric.get_serie(), 
-            y = metric.get_i_stack(0))
+    return ly.generate_bar_chart(data=metric)
 
 
 @app.callback(
@@ -167,4 +158,4 @@ def update_proposal_boost_succ_ratio(org_id):
         raise PreventUpdate
 
     metric = get_service().get_metric_prop_boost_succes_ratio(org_id)
-    return ly.generate_multiple_bar_chart(metric)
+    return ly.generate_bar_chart(metric)
