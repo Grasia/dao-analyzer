@@ -186,19 +186,12 @@ def generate_bar_chart(data: Dict = None, barmode: str = 'group') -> Dict:
 
 def generate_double_dot_chart(data: Dict = None) -> Dict:
     if not data:
-        aux: Dict = {
-            'x': list(),
-            'y': list(),
-            'color': list(),
-            'name': '',
-            'range': [i for i in range(0, 110, 10)],
-        }
-        data: Dict = {'chart1': aux, 'chart2': aux}
+        data = {'common': {'x': list(), 'type': '-', 'x_format': '',
+            'ordered_keys': [], 'y_suffix': ''}}
 
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0)
 
-    i_row: int = 1
-    for k in data:
+    for k in data['common']['ordered_keys']:
         fig.add_trace(
             go.Scatter(
                 x=data[k]['x'], 
@@ -206,25 +199,22 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
                 marker=dict(color=data[k]['color'], size=12),
                 mode="markers",
                 name=data[k]['name']),
-            row=i_row,
+            row=1 if data[k]['position'] == 'up' else 2,
             col=1)
-        i_row += 1
 
     fig.update_layout(
         xaxis2=__get_axis_layout(
-            tickvals=data['chart1']['x'], 
-            l_type='date', 
-            tickformat='%b, %Y'
+            tickvals=data['common']['x'], 
+            l_type=data['common']['type'], 
+            tickformat=data['common']['x_format'],
         ),
         yaxis=__get_axis_layout(
-            #tickvals=data['chart1']['range'],
-            suffix='%',
+            suffix=data['common']['y_suffix'],
             tickangle=False,
         ),
         yaxis2=__get_axis_layout(
-            #tickvals=data['chart2']['range'],
             reverse_range=True,
-            suffix='%',
+            suffix=data['common']['y_suffix'],
             tickangle=False,
         ),
         legend=__get_legend(),

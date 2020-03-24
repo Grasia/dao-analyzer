@@ -186,22 +186,30 @@ class Service():
 
         passes: StackedSerie = metric.get_i_sserie(0)
         fails: StackedSerie = metric.get_i_sserie(1)
-        _range: List[int] = [i for i in range(0, 110, 10)]
+        x: List = passes.get_serie() if len(passes.get_serie()) \
+            > len(fails.get_serie()) else fails.get_serie()
 
         data: Dict = {
-            'chart1': {
+            'serie1': {
                 'x': passes.get_serie(),
                 'y': passes.get_i_stack(0),
                 'color': [ly.DARK_GREEN]*len(passes.get_i_stack(0)),
                 'name': TEXT['passes'],
-                'range': _range,
+                'position': 'up',
             },
-            'chart2': {
+            'serie2': {
                 'x': fails.get_serie(),
                 'y': fails.get_i_stack(0),
                 'color': [ly.DARK_RED]*len(fails.get_i_stack(0)),
                 'name': TEXT['fails'],
-                'range': _range,
+                'position': 'down',
+            },
+            'common': {
+                'x': x,
+                'type': 'date', 
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2'], 
+                'y_suffix': '%'
             }
         }
 
