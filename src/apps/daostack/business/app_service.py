@@ -35,6 +35,9 @@ def get_service():
 
 
 class Service():
+    __DATE_FORMAT: str = '%b, %Y'
+
+
     def __init__(self):
         # app state
         self.__orgs: OrganizationList = None
@@ -66,77 +69,173 @@ class Service():
         return dao.get_metric()
 
 
-    def get_metric_new_users(self, o_id: str) -> StackedSerie:
-        return self.__get_sserie_by_metric(s_factory.NEW_USERS, o_id)
+    def __get_common_representation(self, metric: StackedSerie, 
+    complements: bool = True) -> Dict:
+
+        y: List[float] = metric.get_i_stack(0)
+        color = [ly.LIGHT_BLUE] * len(y)
+        if color:
+            color[-1] = ly.DARK_BLUE
+
+        data: Dict = {
+            'serie': {
+                'y': y,
+                'color': color,
+                'name': '',
+            },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie'],
+            }
+        }
+
+        if complements:
+            data['common']['last_serie_elem'] = metric.get_last_serie_elem()
+            data['common']['last_value'] = metric.get_last_value(0)
+            data['common']['diff'] = metric.get_diff_last_values(0)
+
+        return data
 
 
-    def get_metric_different_voters(self, o_id: str) -> StackedSerie:
-        return self.__get_sserie_by_metric(s_factory.DIFFERENT_VOTERS, o_id)
+    def get_metric_new_users(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.NEW_USERS, o_id)
+
+        return self.__get_common_representation(metric=metric)
 
 
-    def get_metric_different_stakers(self, o_id: str) -> StackedSerie:
-        return self.__get_sserie_by_metric(s_factory.DIFFERENT_STAKERS, o_id)
+    def get_metric_different_voters(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.DIFFERENT_VOTERS, o_id)
+
+        return self.__get_common_representation(metric=metric)
 
 
-    def get_metric_new_proposals(self, o_id: str) -> StackedSerie:
-        return self.__get_sserie_by_metric(s_factory.NEW_PROPOSALS, o_id)
+    def get_metric_different_stakers(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.DIFFERENT_STAKERS, o_id)
+
+        return self.__get_common_representation(metric=metric)
+
+
+    def get_metric_new_proposals(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.NEW_PROPOSALS, o_id)
+        
+        return self.__get_common_representation(metric=metric)
 
 
     def get_metric_proposal_boost_outcome(self, o_id: str) -> Dict:
         metric: StackedSerie = self.__get_sserie_by_metric(
             s_factory.PROPOSALS_BOOST_OUTCOME, o_id)
-            
-        text: List[str] = [TEXT['queue_pass'],
-                        TEXT['boost_pass'],
-                        TEXT['boost_fail'],
-                        TEXT['queue_fail']]
-        color: List[str] = [ly.DARK_GREEN,
-                            ly.LIGHT_GREEN,
-                            ly.LIGHT_RED,
-                            ly.DARK_RED]
 
-        return {'metric': metric, 'text': text, 'color': color}
+        y1 = metric.get_i_stack(0)
+        y2 = metric.get_i_stack(1)
+        y3 = metric.get_i_stack(2)
+        y4 = metric.get_i_stack(3)
+        data: Dict = {
+            'serie1': {
+                'y': y1,
+                'color': [ly.DARK_GREEN]*len(y1),
+                'name': TEXT['queue_pass'],
+            },
+            'serie2': {
+                'y': y2,
+                'color': [ly.LIGHT_GREEN]*len(y2),
+                'name': TEXT['boost_pass'],
+            },
+            'serie3': {
+                'y': y3,
+                'color': [ly.LIGHT_RED]*len(y3),
+                'name': TEXT['boost_fail'],
+            },
+            'serie4': {
+                'y': y4,
+                'color': [ly.DARK_RED]*len(y4),
+                'name': TEXT['queue_fail'],
+            },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'],
+            },
+        }
+        return data
 
 
-    def get_metric_total_votes(self, o_id: str) -> StackedSerie:
-        return self.__get_sserie_by_metric(s_factory.TOTAL_VOTES, o_id)
+    def get_metric_total_votes(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.TOTAL_VOTES, o_id)
+
+        return self.__get_common_representation(metric=metric)
 
 
-    def get_metric_total_stakes(self, o_id: str) -> StackedSerie:
-        return self.__get_sserie_by_metric(s_factory.TOTAL_STAKES, o_id)
+    def get_metric_total_stakes(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.TOTAL_STAKES, o_id)
+
+        return self.__get_common_representation(metric=metric)
 
 
     def get_metric_proposal_majority(self, o_id: str) -> Dict:
         metric: NStackedSerie = self.__get_sserie_by_metric(
             s_factory.PROPOSAL_MAJORITY, o_id)
 
-        passes: StackedSerie = metric.get_i_sserie(0)
-        fails: StackedSerie = metric.get_i_sserie(1)
-        _range: List[int] = [i for i in range(0, 110, 10)]
+        y1: StackedSerie = metric.get_i_sserie(0)
+        y2: StackedSerie = metric.get_i_sserie(1)
+        y3: StackedSerie = metric.get_i_sserie(2)
+        y4: StackedSerie = metric.get_i_sserie(3)
+        x: List = y1.get_serie()
 
         data: Dict = {
-            'chart1': {
-                'x': passes.get_serie(),
-                'y': passes.get_i_stack(0),
-                'color': [ly.DARK_GREEN]*len(passes.get_i_stack(0)),
-                'name': TEXT['passes'],
-                'range': _range,
+            'serie1': {
+                'x': y1.get_serie(),
+                'y': y1.get_i_stack(0),
+                'color': [ly.DARK_GREEN]*len(y1.get_i_stack(0)),
+                'name': TEXT['abs_pass'],
+                'position': 'up',
             },
-            'chart2': {
-                'x': fails.get_serie(),
-                'y': fails.get_i_stack(0),
-                'color': [ly.DARK_RED]*len(fails.get_i_stack(0)),
-                'name': TEXT['fails'],
-                'range': _range,
+            'serie2': {
+                'x': y2.get_serie(),
+                'y': y2.get_i_stack(0),
+                'color': [ly.LIGHT_GREEN]*len(y2.get_i_stack(0)),
+                'name': TEXT['rel_pass'],
+                'position': 'up',
+            },
+            'serie3': {
+                'x': y3.get_serie(),
+                'y': y3.get_i_stack(0),
+                'color': [ly.LIGHT_RED]*len(y3.get_i_stack(0)),
+                'name': TEXT['rel_fail'],
+                'position': 'down',
+            },
+            'serie4': {
+                'x': y4.get_serie(),
+                'y': y4.get_i_stack(0),
+                'color': [ly.DARK_RED]*len(y4.get_i_stack(0)),
+                'name': TEXT['abs_fail'],
+                'position': 'down',
+            },
+            'common': {
+                'x': x,
+                'type': 'date', 
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'], 
+                'y_suffix': '%'
             }
         }
 
         return data 
 
 
-    def get_metric_prop_total_succes_ratio(self, o_id: str) -> StackedSerie:
-        return self.__get_sserie_by_metric(
+    def get_metric_prop_total_succes_ratio(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
             s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, o_id)
+
+        return self.__get_common_representation(metric=metric, complements=False)
 
 
     def get_metric_prop_boost_succes_ratio(self, o_id: str) -> Dict:
@@ -147,18 +246,22 @@ class Service():
         y2 = metric.get_i_sserie(1).get_i_stack(0)
 
         data: Dict = {
-            'bar1': {
-                'x': metric.get_serie(),
+            'serie1': {
                 'y': y1,
                 'color': [ly.LIGHT_GREEN]*len(y1),
                 'name': TEXT['boost'],
             },
-            'bar2': {
-                'x': metric.get_serie(),
+            'serie2': {
                 'y': y2,
                 'color': [ly.DARK_RED]*len(y2),
                 'name': TEXT['not_boost'],
             },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2'],
+            }
         }
 
         return data
