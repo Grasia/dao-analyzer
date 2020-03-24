@@ -115,6 +115,19 @@ def update_total_stakes_graph(org_id):
 
 
 @app.callback(
+    Output('proposal-outc-majority-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_proposal_majority_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    data: Dict = get_service().get_metric_proposal_majority(org_id)
+
+    return ly.generate_double_dot_chart(data=data)
+
+
+@app.callback(
     Output('proposal-boost-outcome-graph', 'figure'),
     [Input('org-dropdown', 'value')]
 )
@@ -132,13 +145,26 @@ def update_proposal_boost_outcome_graph(org_id):
 
 
 @app.callback(
-    Output('proposal-outc-majority-graph', 'figure'),
+    Output('proposal-total-succ-ratio-graph', 'figure'),
     [Input('org-dropdown', 'value')]
 )
-def update_proposal_majority_graph(org_id):
+def update_proposal_total_succ_ratio(org_id):
     if not org_id:
         raise PreventUpdate
 
-    data: Dict = get_service().get_metric_proposal_majority(org_id)
+    metric = get_service().get_metric_prop_total_succes_ratio(org_id)
+    return ly.generate_bar_chart(
+            x = metric.get_serie(), 
+            y = metric.get_i_stack(0))
 
-    return ly.generate_double_dot_chart(data=data)
+
+@app.callback(
+    Output('proposal-boost-succ-ratio-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_proposal_boost_succ_ratio(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    metric = get_service().get_metric_prop_boost_succes_ratio(org_id)
+    return ly.generate_multiple_bar_chart(metric)
