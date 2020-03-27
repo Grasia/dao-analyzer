@@ -38,24 +38,24 @@ def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:# noqa: C901
 
     stg = None
     if metric == NEW_USERS:
-        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_NEW_USERS)
+        stg = st_s.StTimeSerie(st_s.NEW_USERS)
     elif metric == NEW_PROPOSALS:
-        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_NEW_PROPOSAL)
+        stg = st_s.StTimeSerie(st_s.NEW_PROPOSAL)
     elif metric == TOTAL_VOTES:
-        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_TOTAL_VOTES)
+        stg = st_s.StTimeSerie(st_s.TOTAL_VOTES)
     elif metric == TOTAL_STAKES:
-        stg = st_s.StTimeSerie(st_s.METRIC_TYPE_TOTAL_STAKES)
+        stg = st_s.StTimeSerie(st_s.TOTAL_STAKES)
     elif metric == PROPOSALS_BOOST_OUTCOME:
-        stg = st_po.StProposalOutcome(st_po.METRIC_TYPE_BOOST_OUTCOME)
+        stg = st_po.StProposalOutcome(st_po.BOOST_OUTCOME)
     elif metric == DIFFERENT_VOTERS:
-        stg = st_vs.StDifferentVS(st_vs.METRIC_VOTERS)
+        stg = st_vs.StDifferentVS(st_vs.VOTERS)
     elif metric == DIFFERENT_STAKERS:
-        stg = st_vs.StDifferentVS(st_vs.METRIC_STAKERS)
+        stg = st_vs.StDifferentVS(st_vs.STAKERS)
     elif metric == PROPOSAL_MAJORITY:
         stg = StProposalMajority()
     elif metric == PROPOSALS_TOTAL_SUCCES_RATIO:
-        stg = st_po.StProposalOutcome(st_po.METRIC_TYPE_TOTAL_SUCCESS_RATIO)
+        stg = st_po.StProposalOutcome(st_po.TOTAL_SUCCESS_RATIO)
     elif metric == PROPOSALS_BOOST_SUCCES_RATIO:
-        stg = st_po.StProposalOutcome(st_po.METRIC_TYPE_BOOST_SUCCESS_RATIO)
+        stg = st_po.StProposalOutcome(st_po.BOOST_SUCCESS_RATIO)
 
     return DaoStackedSerie(ids=ids, strategy=stg, requester=requester)

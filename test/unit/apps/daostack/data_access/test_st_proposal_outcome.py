@@ -37,7 +37,7 @@ StBoolList = st.lists(
 class StProposalOutcomeTest(unittest.TestCase):
     def test_get_query(self):
         st: st_po.StProposalOutcome = st_po.StProposalOutcome(
-            st_po.METRIC_TYPE_BOOST_OUTCOME)
+            st_po.BOOST_OUTCOME)
         query: Query = st.get_query(n_first=100, n_skip=100, o_id='1')
         qb: QueryBuilder = QueryBuilder([query])
 
@@ -72,7 +72,7 @@ class StProposalOutcomeTest(unittest.TestCase):
             date = date + relativedelta(months=+1)
 
         sserie: StackedSerie = st_po.StProposalOutcome(
-            st_po.METRIC_TYPE_BOOST_OUTCOME).process_data(df=df)
+            st_po.BOOST_OUTCOME).process_data(df=df)
 
         # check time serie
         dates_r = sserie.get_serie()

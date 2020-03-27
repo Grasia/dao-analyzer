@@ -19,8 +19,8 @@ from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-METRIC_VOTERS = 0
-METRIC_STAKERS = 1
+VOTERS = 0
+STAKERS = 1
 
 
 class StDifferentVS(StrategyInterface):
@@ -45,9 +45,9 @@ class StDifferentVS(StrategyInterface):
 
     def __get_index(self, m_type: int) -> int:
         index: int = -1
-        if m_type == METRIC_VOTERS:
+        if m_type == VOTERS:
             index = 0
-        elif m_type == METRIC_STAKERS:
+        elif m_type == STAKERS:
             index = 1
         else:
             raise Exception(f'{m_type} type not allowed')

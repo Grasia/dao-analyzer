@@ -19,10 +19,10 @@ from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-METRIC_TYPE_NEW_USERS: int = 0
-METRIC_TYPE_NEW_PROPOSAL: int = 1
-METRIC_TYPE_TOTAL_VOTES: int = 2
-METRIC_TYPE_TOTAL_STAKES: int = 3
+NEW_USERS: int = 0
+NEW_PROPOSAL: int = 1
+TOTAL_VOTES: int = 2
+TOTAL_STAKES: int = 3
 
 
 class StTimeSerie(StrategyInterface):
@@ -37,13 +37,13 @@ class StTimeSerie(StrategyInterface):
 
     def __get_type(self, m_type: int) -> str:
         m_key: str = ''
-        if m_type == METRIC_TYPE_NEW_USERS:
+        if m_type == NEW_USERS:
             m_key = 'reputationHolders'
-        elif m_type == METRIC_TYPE_NEW_PROPOSAL:
+        elif m_type == NEW_PROPOSAL:
             m_key = 'proposals'
-        elif m_type == METRIC_TYPE_TOTAL_VOTES:
+        elif m_type == TOTAL_VOTES:
             m_key = 'proposalVotes'
-        elif m_type == METRIC_TYPE_TOTAL_STAKES:
+        elif m_type == TOTAL_STAKES:
             m_key = 'proposalStakes'
 
         return m_key

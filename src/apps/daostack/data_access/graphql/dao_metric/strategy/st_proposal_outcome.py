@@ -20,9 +20,9 @@ from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-METRIC_TYPE_BOOST_OUTCOME: int = 0
-METRIC_TYPE_BOOST_SUCCESS_RATIO: int = 1
-METRIC_TYPE_TOTAL_SUCCESS_RATIO: int = 2
+BOOST_OUTCOME: int = 0
+BOOST_SUCCESS_RATIO: int = 1
+TOTAL_SUCCESS_RATIO: int = 2
 
 
 class StProposalOutcome(StrategyInterface):
@@ -59,11 +59,11 @@ class StProposalOutcome(StrategyInterface):
 
 
     def __get_empty_transfer(self) -> Any:
-        if self.__m_type == METRIC_TYPE_BOOST_OUTCOME:
+        if self.__m_type == BOOST_OUTCOME:
             return StackedSerie()
-        elif self.__m_type == METRIC_TYPE_TOTAL_SUCCESS_RATIO:
+        elif self.__m_type == TOTAL_SUCCESS_RATIO:
             return StackedSerie()
-        elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
+        elif self.__m_type == BOOST_SUCCESS_RATIO:
             return NStackedSerie()
 
         return None
@@ -101,11 +101,11 @@ class StProposalOutcome(StrategyInterface):
     def generate_metric(self, df: pd.DataFrame) -> Any:
         metric = StackedSerie()
 
-        if self.__m_type == METRIC_TYPE_BOOST_OUTCOME:
+        if self.__m_type == BOOST_OUTCOME:
             metric = self.__get_boost_outcome(df)
-        elif self.__m_type == METRIC_TYPE_TOTAL_SUCCESS_RATIO:
+        elif self.__m_type == TOTAL_SUCCESS_RATIO:
             metric = self.__get_total_success_ratio(df)
-        elif self.__m_type == METRIC_TYPE_BOOST_SUCCESS_RATIO:
+        elif self.__m_type == BOOST_SUCCESS_RATIO:
             metric = self.__get_boost_success_ratio(df)
 
         return metric
@@ -208,14 +208,30 @@ class StProposalOutcome(StrategyInterface):
         boost: List[str] = ['BoostedTimeOut', 'BoostedBarCrossed']
 
         for di in data:
-            x: int = int(di['executedAt'])
-            y: bool = True if di['winningOutcome'] == 'Pass' else False
-            z: bool = True if any(x == di['executionState'] for x in boost)\
+            date: int = int(di['executedAt'])
+            has_pass: bool = True if di['winningOutcome'] == 'Pass' else False
+            is_boost: bool = True if any(x == di['executionState'] for x in boost)\
                 else False
 
-            df = pd_utl.append_rows(df, [x, y, z])
+            # if self.__filter_fail_queue():
+            #     continue
+
+            df = pd_utl.append_rows(df, [date, has_pass, is_boost])
 
         return df
+
+
+    def __filter_fail_queue(self, has_pass: bool, boost: bool, 
+    stakes_against: int) -> bool:
+
+        filt: bool = False
+
+        if self.__m_type == BOOST_SUCCESS_RATIO or self.__m_type == TOTAL_SUCCESS_RATIO:
+            if not has_pass and not boost:
+                if stakes_against == 0:
+                    filt = True
+
+        return filt
 
 
     def __get_predicted_values(self, df: pd.DataFrame, pred: str) -> List[int]:
