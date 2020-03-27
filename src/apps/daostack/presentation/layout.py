@@ -257,4 +257,4 @@ suffix: str = '', tickformat: str = '', tickangle: bool = True) -> Dict:
 
 
 def __get_legend() -> Dict:
-    return {'orientation': 'h', 'x': 0, 'y': -0.3}
+    return {'orientation': 'h', 'x': 0, 'y': 1.2}
