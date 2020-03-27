@@ -213,25 +213,9 @@ class StProposalOutcome(StrategyInterface):
             is_boost: bool = True if any(x == di['executionState'] for x in boost)\
                 else False
 
-            # if self.__filter_fail_queue():
-            #     continue
-
             df = pd_utl.append_rows(df, [date, has_pass, is_boost])
 
         return df
-
-
-    def __filter_fail_queue(self, has_pass: bool, boost: bool, 
-    stakes_against: int) -> bool:
-
-        filt: bool = False
-
-        if self.__m_type == BOOST_SUCCESS_RATIO or self.__m_type == TOTAL_SUCCESS_RATIO:
-            if not has_pass and not boost:
-                if stakes_against == 0:
-                    filt = True
-
-        return filt
 
 
     def __get_predicted_values(self, df: pd.DataFrame, pred: str) -> List[int]:
