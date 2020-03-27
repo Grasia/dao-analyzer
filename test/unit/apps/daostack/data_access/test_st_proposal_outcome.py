@@ -42,7 +42,8 @@ class StProposalOutcomeTest(unittest.TestCase):
         qb: QueryBuilder = QueryBuilder([query])
 
         sol: str = "{ proposals(where: {dao: \"1\", executedAt_not: null}, first: 100, skip: 100,\
- ){ executedAt executionState winningOutcome } }"
+ ){ executedAt boostedAt winningOutcome totalRepWhenExecuted votesFor\
+ genesisProtocolParams{queuedVoteRequiredPercentage} } }"
 
         self.assertEqual(sol, qb.build())
 

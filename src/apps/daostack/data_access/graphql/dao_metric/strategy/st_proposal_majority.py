@@ -89,7 +89,7 @@ class StProposalMajority(StrategyInterface):
         return Query(
             header='proposals',
             body=['executedAt', 'winningOutcome', 'totalRepWhenExecuted', 
-                'votesFor', 'votesAgainst', 
+                'votesFor', 'votesAgainst', 'boostedAt' ,
                 'genesisProtocolParams{queuedVoteRequiredPercentage}'],
             filters={
                 'where': f'{{dao: \"{o_id}\", executedAt_not: null}}',
@@ -111,7 +111,9 @@ class StProposalMajority(StrategyInterface):
                 continue
 
             date: int = int(di['executedAt'])
+            # winning outcome means more votes for than votes against
             outcome: bool = True if di['winningOutcome'] == 'Pass' else False
+            boost: bool = True if di['boostedAt'] else False
 
             percentage: int = (int(di['votesFor']) / total) if outcome \
                 else (int(di['votesAgainst']) / total)
@@ -121,6 +123,10 @@ class StProposalMajority(StrategyInterface):
                 int(di['genesisProtocolParams']['queuedVoteRequiredPercentage'])\
                 <= percentage else False
 
-            df = pd_utl.append_rows(df, [date, outcome, percentage, is_absolute])
+            has_passed: bool = False
+            if outcome:
+                has_passed = boost or is_absolute
+
+            df = pd_utl.append_rows(df, [date, has_passed, percentage, is_absolute])
 
         return df

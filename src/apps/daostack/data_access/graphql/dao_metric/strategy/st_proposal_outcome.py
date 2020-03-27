@@ -191,7 +191,9 @@ class StProposalOutcome(StrategyInterface):
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
         return Query(
             header='proposals',
-            body=['executedAt', 'executionState', 'winningOutcome'],
+            body=['executedAt', 'boostedAt', 'winningOutcome', 
+                  'totalRepWhenExecuted', 'votesFor',
+                  'genesisProtocolParams{queuedVoteRequiredPercentage}'],
             filters={
                 'where': f'{{dao: \"{o_id}\", executedAt_not: null}}',
                 'first': f'{n_first}',
@@ -205,17 +207,29 @@ class StProposalOutcome(StrategyInterface):
     
     def dict_to_df(self, data: List) -> pd.DataFrame:
         df: pd.DataFrame = self.get_empty_df()
-        boost: List[str] = ['BoostedTimeOut', 'BoostedBarCrossed']
 
         for di in data:
             date: int = int(di['executedAt'])
-            has_pass: bool = True if di['winningOutcome'] == 'Pass' else False
-            is_boost: bool = True if any(x == di['executionState'] for x in boost)\
-                else False
+            is_boost: bool = True if di['boostedAt'] else False
+            has_passed: bool = self.__has_passed(data=di, is_boost=is_boost)
 
-            df = pd_utl.append_rows(df, [date, has_pass, is_boost])
+            df = pd_utl.append_rows(df, [date, has_passed, is_boost])
 
         return df
+
+
+    def __has_passed(self, data: Dict, is_boost: bool) -> bool:
+        # winning outcome means more votes for than votes against
+        outcome: bool = True if data['winningOutcome'] == 'Pass' else False
+        percentage = int(data['votesFor']) / int(data['totalRepWhenExecuted']) * 100
+        limit: int = int(data['genesisProtocolParams']['queuedVoteRequiredPercentage'])
+
+        has_passed: bool = outcome and is_boost
+        # if there was no boost and pass outcome, you must consider if there was absolute majority
+        if outcome and not is_boost:
+            has_passed = percentage > limit
+
+        return has_passed
 
 
     def __get_predicted_values(self, df: pd.DataFrame, pred: str) -> List[int]:

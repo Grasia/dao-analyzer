@@ -23,7 +23,7 @@ class StProposalMajorityTest(unittest.TestCase):
 
         sol: str = "{ proposals(where: {dao: \"1\", executedAt_not: null}, \
 first: 100, skip: 100, ){ executedAt winningOutcome totalRepWhenExecuted \
-votesFor votesAgainst genesisProtocolParams{queuedVoteRequiredPercentage} } }"
+votesFor votesAgainst boostedAt genesisProtocolParams{queuedVoteRequiredPercentage} } }"
 
         self.assertEqual(sol, qb.build())
 
