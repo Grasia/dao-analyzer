@@ -133,12 +133,12 @@ def __generate_all_graphs() -> html.Div:
             __generate_graph(
                 figure_gen = generate_bar_chart,
                 css_id = 'proposal-boost-succ-ratio',
-                title = TEXT['proposal_boost_succ_ratio_title'],
+                title = TEXT['proposal_boost_succ_rate_title'],
             ),
             __generate_graph(
                 figure_gen = generate_bar_chart,
                 css_id = 'proposal-total-succ-ratio',
-                title = TEXT['proposal_total_succ_ratio_title'],
+                title = TEXT['proposal_total_succ_rate_title'],
             ),
         ],
         className = 'graphs-container',
