@@ -174,11 +174,12 @@ def generate_bar_chart(data: Dict = None, barmode: str = 'group') -> Dict:
 
     layout: go.Layout = go.Layout(
         barmode=barmode,
-        xaxis=__get_axis_layout(
-            tickvals=data['common']['x'], 
-            l_type=data['common']['type'], 
-            tickformat=data['common']['x_format']),
-        yaxis=__get_axis_layout(tickangle=False),
+        xaxis=__get_axis_layout(args={
+            'tickvals': data['common']['x'], 
+            'type': data['common']['type'], 
+            'tickformat': data['common']['x_format']}
+        ),
+        yaxis=__get_axis_layout(args={'tickangle': False}),
         legend=__get_legend())
 
     return {'data': bars, 'layout': layout}
@@ -196,26 +197,27 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
             go.Scatter(
                 x=data[k]['x'], 
                 y=data[k]['y'], 
-                marker=dict(color=data[k]['color'], size=12),
+                marker=dict(color=data[k]['color'], size=8),
                 mode="markers",
                 name=data[k]['name']),
             row=1 if data[k]['position'] == 'up' else 2,
             col=1)
 
     fig.update_layout(
-        xaxis2=__get_axis_layout(
-            tickvals=data['common']['x'], 
-            l_type=data['common']['type'], 
-            tickformat=data['common']['x_format'],
+        xaxis=__get_axis_layout(args={'removemarkers': True}),
+        xaxis2=__get_axis_layout(args={
+            'tickvals': data['common']['x'], 
+            'type': data['common']['type'], 
+            'tickformat': data['common']['x_format']}
         ),
-        yaxis=__get_axis_layout(
-            suffix=data['common']['y_suffix'],
-            tickangle=False,
+        yaxis=__get_axis_layout(args={
+            'suffix': data['common']['y_suffix'],
+            'tickangle': False}
         ),
-        yaxis2=__get_axis_layout(
-            reverse_range=True,
-            suffix=data['common']['y_suffix'],
-            tickangle=False,
+        yaxis2=__get_axis_layout(args={
+            'reverse_range': True,
+            'suffix': data['common']['y_suffix'],
+            'tickangle': False}
         ),
         legend=__get_legend(),
         plot_bgcolor="white")
@@ -223,34 +225,33 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
     return fig
 
 
-def __get_axis_layout(tickvals: List = None, l_type: str = '-', 
-l_range: list = None, reverse_range: bool = False, grid: bool = False,
-suffix: str = '', tickformat: str = '', tickangle: bool = True) -> Dict:
-
+def __get_axis_layout(args: Dict) -> Dict:
     axis_l: Dict[str, str] = {
-        'type': l_type,
+        'type': args['type'] if 'type' in args else '-',
         'ticks': 'outside',
-        'tick0': 0,
         'ticklen': 5,
         'tickwidth': 2,
-        'ticksuffix': suffix,
+        'ticksuffix': args['suffix'] if 'suffix' in args else '',
         'showline': True, 
         'linewidth': 2, 
         'linecolor': 'black',
-        'showgrid': grid,
+        'showgrid': args['grid'] if 'grid' in args else False,
         'gridwidth': 1,
         'gridcolor': 'LightPink',
     }
 
-    if tickvals:
-        axis_l['tickvals'] = tickvals
-    if reverse_range:
+    if 'removemarkers' in args:
+        axis_l['ticklen'] = 0
+        axis_l['tickwidth'] = 0
+    if 'tickvals' in args:
+        axis_l['tickvals'] = args['tickvals']
+    if 'reverse_range' in args:
         axis_l['autorange'] = 'reversed'
-    if l_range:
-        axis_l['range'] = l_range
-    if tickformat:
-        axis_l['tickformat'] = tickformat
-    if tickangle:
+    if 'l_range' in args:
+        axis_l['range'] = args['l_range']
+    if 'tickformat' in args:
+        axis_l['tickformat'] = args['tickformat']
+    if 'tickangle' in args:
         axis_l['tickangle'] = 45
 
     return axis_l

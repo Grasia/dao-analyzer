@@ -117,7 +117,7 @@ class StProposalMajority(StrategyInterface):
 
             percentage: int = (int(di['votesFor']) / total) if outcome \
                 else (int(di['votesAgainst']) / total)
-            percentage = int(round(percentage * 100))
+            percentage = round(percentage * 100, 1)
 
             is_absolute: bool  = True if \
                 int(di['genesisProtocolParams']['queuedVoteRequiredPercentage'])\
