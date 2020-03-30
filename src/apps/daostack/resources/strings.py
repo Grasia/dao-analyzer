@@ -20,6 +20,8 @@ TEXT: dict = {
     'proposal_outcome_majority_title': 'Closed proposal\'s majority outcome',
     'proposal_total_succ_rate_title': 'Total success rate of the stakes',
     'proposal_boost_succ_rate_title': 'Success rate of the stakes by boost',
+    'outcome_vote_title': 'Vote\'s outcome',
+    'outcome_stake_title': 'Stake\'s outcome',
     'default_amount': 'NAN',
     'no_data': 'No data',
     'no_data_selected': 'There\'s no DAO selected',
@@ -40,4 +42,8 @@ TEXT: dict = {
     'vote_title': 'Votes',
     'stake_title': 'Stakes',
     'proposal_title': 'Proposals',
+    'votes_for': 'Votes for',
+    'votes_against': 'Votes against',
+    'upstakes': 'Upstakes',
+    'downstakes': 'Downstakes',
 }

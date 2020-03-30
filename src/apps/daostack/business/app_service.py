@@ -270,3 +270,54 @@ class Service():
         }
 
         return data
+
+
+    def get_metric_outcome_vote(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.OUTCOME_VOTES, o_id)
+
+        data: Dict = {
+            'serie1': {
+                'y': metric.get_i_stack(0),
+                'color': Color.LIGHT_RED,
+                'name': TEXT['votes_against'],
+            },
+            'serie2': {
+                'y': metric.get_i_stack(1),
+                'color': Color.LIGHT_GREEN,
+                'name': TEXT['votes_for'],
+            },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2'],
+            }
+        }
+
+        return data
+
+
+    def get_metric_outcome_stake(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.OUTCOME_STAKES, o_id)
+
+        data: Dict = {
+            'serie1': {
+                'y': metric.get_i_stack(0),
+                'color': Color.LIGHT_RED,
+                'name': TEXT['downstakes'],
+            },
+            'serie2': {
+                'y': metric.get_i_stack(1),
+                'color': Color.LIGHT_GREEN,
+                'name': TEXT['upstakes'],
+            },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2'],
+            }
+        }
+        return data

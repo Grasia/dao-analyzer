@@ -158,3 +158,27 @@ def update_proposal_boost_succ_ratio(org_id):
 
     metric = get_service().get_metric_prop_boost_succes_ratio(org_id)
     return ly.generate_bar_chart(metric)
+
+
+@app.callback(
+    Output('outcome-vote-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_outcome_vote_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    metric: Dict = get_service().get_metric_outcome_vote(org_id)
+    return ly.generate_bar_chart(data=metric, barmode='stack')
+
+
+@app.callback(
+    Output('outcome-stake-graph', 'figure'),
+    [Input('org-dropdown', 'value')]
+)
+def update_outcome_stake_graph(org_id):
+    if not org_id:
+        raise PreventUpdate
+
+    metric: Dict = get_service().get_metric_outcome_stake(org_id)
+    return ly.generate_bar_chart(data=metric, barmode='stack')
