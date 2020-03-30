@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly

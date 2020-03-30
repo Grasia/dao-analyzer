@@ -18,23 +18,38 @@
 
 .pane {
     background-color: white;
-    border-radius: 0.8rem;
-    margin: 0.5rem;
     display: flex;
+    border: 1px #CFD8DC solid;
+    border-top: 0;
+    margin-bottom: 0.9rem;
 }
 
 .dao-selector-pane {
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
+    font-size: xx-large;
+    margin-bottom: 2rem;
 }
 
 .drop-down {
     margin-left: 0.5rem;
-    width: 15rem;
+    width: 20rem;
+    font-size: large;
 }
 
-.graphs-container {
+.section {
+    margin-bottom: 1rem;
+}
+
+.title-section{
+    background-color: #CFD8DC;
+    text-align: center;
+    font-size: xx-large;
+}
+
+.graph-section {
     display: flex;
     justify-content: space-between;
     flex-direction: row;
@@ -44,6 +59,16 @@
 .graph-pane {
     flex-direction: column;
     text-align: center;
-    padding: 0.5rem;
-    width: 48%;
+    width: 49.5%;
+}
+
+.graph-title1 {
+    text-align: center;
+    font-size: x-large;
+    margin: 1rem 0rem 1rem 0rem;
+}
+
+.graph-title2 {
+    text-align: center;
+    font-size: large;
 }
