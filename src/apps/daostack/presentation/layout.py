@@ -15,12 +15,6 @@ from plotly.subplots import make_subplots
 
 from src.apps.daostack.resources.strings import TEXT
 
-DARK_BLUE = '#2471a3'
-LIGHT_BLUE = '#d4e6f1'
-DARK_RED = '#F44336'
-LIGHT_RED = '#EF9A9A'
-DARK_GREEN = '#4CAF50'
-LIGHT_GREEN = '#A5D6A7'
 
 def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
     """
@@ -197,7 +191,15 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
             go.Scatter(
                 x=data[k]['x'], 
                 y=data[k]['y'], 
-                marker=dict(color=data[k]['color'], size=8),
+                marker=dict(
+                    color=data[k]['color'],
+                    size=8,
+                    opacity=0.5,
+                    symbol=data[k]['marker_symbol'],
+                    line=dict(
+                        width=1.2,
+                        color='black',
+                    )),
                 mode="markers",
                 name=data[k]['name']),
             row=1 if data[k]['position'] == 'up' else 2,
@@ -212,12 +214,14 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
         ),
         yaxis=__get_axis_layout(args={
             'suffix': data['common']['y_suffix'],
-            'tickangle': False}
+            'tickangle': False,
+            }
         ),
         yaxis2=__get_axis_layout(args={
             'reverse_range': True,
             'suffix': data['common']['y_suffix'],
-            'tickangle': False}
+            'tickangle': False,
+            }
         ),
         legend=__get_legend(),
         plot_bgcolor="white")

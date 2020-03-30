@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Tuple
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
@@ -20,6 +20,7 @@ from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
 from src.apps.daostack.resources.strings import TEXT
+import src.apps.daostack.resources.colors as Color
 
 
 __service = None
@@ -73,9 +74,9 @@ class Service():
     complements: bool = True) -> Dict:
 
         y: List[float] = metric.get_i_stack(0)
-        color = [ly.LIGHT_BLUE] * len(y)
+        color = [Color.LIGHT_BLUE] * len(y)
         if color:
-            color[-1] = ly.DARK_BLUE
+            color[-1] = Color.DARK_BLUE
 
         data: Dict = {
             'serie': {
@@ -138,22 +139,22 @@ class Service():
         data: Dict = {
             'serie1': {
                 'y': y1,
-                'color': [ly.DARK_GREEN]*len(y1),
+                'color': [Color.DARK_GREEN]*len(y1),
                 'name': TEXT['queue_pass'],
             },
             'serie2': {
                 'y': y2,
-                'color': [ly.LIGHT_GREEN]*len(y2),
+                'color': [Color.LIGHT_GREEN]*len(y2),
                 'name': TEXT['boost_pass'],
             },
             'serie3': {
                 'y': y3,
-                'color': [ly.LIGHT_RED]*len(y3),
+                'color': [Color.LIGHT_RED]*len(y3),
                 'name': TEXT['boost_fail'],
             },
             'serie4': {
                 'y': y4,
-                'color': [ly.DARK_RED]*len(y4),
+                'color': [Color.DARK_RED]*len(y4),
                 'name': TEXT['queue_fail'],
             },
             'common': {
@@ -194,28 +195,32 @@ class Service():
             'serie1': {
                 'x': y1.get_serie(),
                 'y': y1.get_i_stack(0),
-                'color': [ly.DARK_GREEN]*len(y1.get_i_stack(0)),
+                'color': f'rgba{Color.hex_to_rgba(Color.DARK_GREEN, 0.5)}',
+                'marker_symbol': 'triangle-up',
                 'name': TEXT['abs_pass'],
                 'position': 'up',
             },
             'serie2': {
                 'x': y2.get_serie(),
                 'y': y2.get_i_stack(0),
-                'color': [ly.LIGHT_GREEN]*len(y2.get_i_stack(0)),
+                'color': f'rgba{Color.hex_to_rgba(Color.DARK_GREEN, 0.5)}',
+                'marker_symbol': 'circle',
                 'name': TEXT['rel_pass'],
                 'position': 'up',
             },
             'serie3': {
                 'x': y3.get_serie(),
                 'y': y3.get_i_stack(0),
-                'color': [ly.LIGHT_RED]*len(y3.get_i_stack(0)),
+                'color': f'rgba{Color.hex_to_rgba(Color.DARK_RED, 0.5)}',
+                'marker_symbol': 'circle',
                 'name': TEXT['rel_fail'],
                 'position': 'down',
             },
             'serie4': {
                 'x': y4.get_serie(),
                 'y': y4.get_i_stack(0),
-                'color': [ly.DARK_RED]*len(y4.get_i_stack(0)),
+                'color': f'rgba{Color.hex_to_rgba(Color.DARK_RED, 0.5)}',
+                'marker_symbol': 'triangle-down',
                 'name': TEXT['abs_fail'],
                 'position': 'down',
             },
@@ -224,7 +229,7 @@ class Service():
                 'type': 'date', 
                 'x_format': self.__DATE_FORMAT,
                 'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'], 
-                'y_suffix': '%'
+                'y_suffix': '%',
             }
         }
 
@@ -248,12 +253,12 @@ class Service():
         data: Dict = {
             'serie1': {
                 'y': y1,
-                'color': [ly.LIGHT_GREEN]*len(y1),
+                'color': [Color.LIGHT_GREEN]*len(y1),
                 'name': TEXT['boost'],
             },
             'serie2': {
                 'y': y2,
-                'color': [ly.DARK_RED]*len(y2),
+                'color': [Color.DARK_RED]*len(y2),
                 'name': TEXT['not_boost'],
             },
             'common': {
