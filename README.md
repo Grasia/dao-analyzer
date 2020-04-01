@@ -1,18 +1,28 @@
 # chain-community-dashboard
 DAO visualization tool
 
+## Download
+Enter in your terminal (git must be installed) and write down:
+
+`git clone https://github.com/Grasia/chain-community-dashboard`
+
+After that, move to repository root directory with:
+
+`cd chain-community-dashboard`
+
 ## Installation
-All code has been tested on Linux, so, you must install the following dependencies to run the tool:
+All code has been tested on Linux, but it should work on Windows and macOS, 'cause it just uses the python environment.
+So, you must install the following dependencies to run the tool:
 
 * python3 (3.7 or later)
 * python3-pip
-* virtualenv
+* virtualenv (not essential)
 
 Even if you install the above dependencies, you must also install the Python dependencies:
 
 `pip3 install -r requirements.txt`
 
-If you don't want to share Python dependencies among other projects, you must use a virtual environment, such as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
+If you don't want to share Python dependencies among other projects, you should use a virtual environment, such as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
 
 At first, create a folder where you are going to install all Python dependencies:
 
@@ -35,7 +45,7 @@ After that, run the web app with:
 
 `python3 index.py`
 
-Now, visit `http://127.0.0.1:8050/apps/dashboard` in your web browser.
+Now, visit `http://127.0.0.1:8050/apps/daostack` in your web browser.
 
 ## How to test it?
 Run all tests with:
