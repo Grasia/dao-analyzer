@@ -77,11 +77,11 @@ def __generate_user_charts() -> html.Div:
             html.Div(TEXT['rep_holder_title'], className='title-section'),
             html.Div(children=[
                 __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'new-users',
-                    title = TEXT['new_users_title'],
-                    amount = TEXT['default_amount'],
-                    subtitle = TEXT['no_data_selected'],
+                    figure_gen=generate_bar_chart,
+                    css_id='new-users',
+                    title=TEXT['new_users_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
                 ),
             ],
             className='graph-section'),
@@ -103,18 +103,18 @@ def __generate_vote_charts() -> html.Div:
                 #     subtitle = TEXT['no_data_selected'],
                 # ),
                 __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'total-votes-option',
-                    title = TEXT['total_votes_option_title'],
-                    amount = TEXT['default_amount'],
-                    subtitle = TEXT['no_data_selected'],
+                    figure_gen=generate_bar_chart,
+                    css_id='total-votes-option',
+                    title=TEXT['total_votes_option_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
                 ),
                 __generate_graph(
                     figure_gen = generate_bar_chart,
-                    css_id = 'different-voters',
-                    title = TEXT['different_voters_title'],
-                    amount = TEXT['default_amount'],
-                    subtitle = TEXT['no_data_selected'],
+                    css_id='different-voters',
+                    title=TEXT['different_voters_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
                 ),
             ],
             className='graph-section'),
@@ -130,10 +130,10 @@ def __generate_stake_charts() -> html.Div:
             html.Div(children=[
                 __generate_graph(
                     figure_gen = generate_bar_chart,
-                    css_id = 'total-stakes',
-                    title = TEXT['total_stakes_title'],
-                    amount = TEXT['default_amount'],
-                    subtitle = TEXT['no_data_selected'],
+                    css_id='total-stakes',
+                    title=TEXT['total_stakes_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
                 ),
                 # __generate_graph(
                 #     figure_gen = generate_bar_chart,
@@ -141,11 +141,11 @@ def __generate_stake_charts() -> html.Div:
                 #     title = TEXT['total_stakes_option_title'],
                 # ),
                 __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'different-stakers',
-                    title = TEXT['different_stakers_title'],
-                    amount = TEXT['default_amount'],
-                    subtitle = TEXT['no_data_selected'],
+                    figure_gen=generate_bar_chart,
+                    css_id='different-stakers',
+                    title=TEXT['different_stakers_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
                 ),
             ],
             className='graph-section'),
@@ -160,31 +160,43 @@ def __generate_proposal_charts() -> html.Div:
             html.Div(TEXT['proposal_title'], className='title-section'),
             html.Div(children=[
                 __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'new-proposal',
-                    title = TEXT['new_proposals_title'],
-                    amount = TEXT['default_amount'],
-                    subtitle = TEXT['no_data_selected'],
+                    figure_gen=generate_bar_chart,
+                    css_id='new-proposal',
+                    title=TEXT['new_proposals_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
                 ),
                 __generate_graph(
-                    figure_gen = generate_double_dot_chart,
-                    css_id = 'proposal-outc-majority',
-                    title = TEXT['proposal_outcome_majority_title'],
+                    figure_gen=generate_double_dot_chart,
+                    css_id='proposal-outc-majority',
+                    title=TEXT['proposal_outcome_majority_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
+                    show_subsection=False,
                 ),
                 __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'proposal-boost-outcome',
-                    title = TEXT['proposal_boost_outcome_title'],
+                    figure_gen=generate_bar_chart,
+                    css_id='proposal-boost-outcome',
+                    title=TEXT['proposal_boost_outcome_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
+                    show_subsection=False,
                 ),
                 __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'proposal-total-succ-ratio',
-                    title = TEXT['proposal_total_succ_rate_title'],
+                    figure_gen=generate_bar_chart,
+                    css_id='proposal-total-succ-ratio',
+                    title=TEXT['proposal_total_succ_rate_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
+                    show_subsection=False,
                 ),
                 __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'proposal-boost-succ-ratio',
-                    title = TEXT['proposal_boost_succ_rate_title'],
+                    figure_gen=generate_bar_chart,
+                    css_id='proposal-boost-succ-ratio',
+                    title=TEXT['proposal_boost_succ_rate_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
+                    show_subsection=False,
                 ),
             ],
             className='graph-section'),
@@ -192,14 +204,20 @@ def __generate_proposal_charts() -> html.Div:
         className='section')
 
 
-def __generate_graph(figure_gen, css_id: str, title: str, amount: str = None,
-subtitle: str = None) -> html.Div:
+def __generate_graph(figure_gen, css_id: str, title: str, amount: str,
+subtitle: str, show_subsection: bool = True) -> html.Div:
+
+    hide: str = '' if show_subsection else 'hide'
 
     children: List = [html.Span(title, className='graph-title1')]
-    if amount:
-        children.append(html.Span(amount, id=f'{css_id}-amount', className='graph-title2'))
-    if subtitle:
-        children.append(html.Span(subtitle, id=f'{css_id}-subtitle'))
+    children.append(html.Span(
+        amount, 
+        id=f'{css_id}-amount', 
+        className=f'graph-title2 {hide}'))
+    children.append(html.Span(
+        subtitle, 
+        id=f'{css_id}-subtitle',
+        className=hide))
 
     children.append(dcc.Graph(id=f'{css_id}-graph', figure=figure_gen()))
 

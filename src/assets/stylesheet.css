@@ -72,3 +72,7 @@
     text-align: center;
     font-size: large;
 }
+
+.hide {
+    visibility: hidden;
+}
