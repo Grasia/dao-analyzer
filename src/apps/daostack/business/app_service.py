@@ -272,9 +272,9 @@ class Service():
         return data
 
 
-    def get_metric_outcome_vote(self, o_id: str) -> Dict:
+    def get_metric_total_votes_option(self, o_id: str) -> Dict:
         metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.OUTCOME_VOTES, o_id)
+            s_factory.TOTAL_VOTES_OPTION, o_id)
 
         data: Dict = {
             'serie1': {
@@ -298,9 +298,9 @@ class Service():
         return data
 
 
-    def get_metric_outcome_stake(self, o_id: str) -> Dict:
+    def get_metric_total_stakes_option(self, o_id: str) -> Dict:
         metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.OUTCOME_STAKES, o_id)
+            s_factory.TOTAL_STAKES_OPTION, o_id)
 
         data: Dict = {
             'serie1': {

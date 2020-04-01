@@ -85,17 +85,17 @@ def update_proposal_graph(org_id):
     return __get_data_from_metric(get_service().get_metric_new_proposals(org_id))
 
 
-@app.callback(
-    [Output('total-votes-graph', 'figure'),
-    Output('total-votes-amount', 'children'),
-    Output('total-votes-subtitle', 'children')],
-    [Input('org-dropdown', 'value')]
-)
-def update_total_votes_graph(org_id):
-    if not org_id:
-        raise PreventUpdate
+# @app.callback(
+#     [Output('total-votes-graph', 'figure'),
+#     Output('total-votes-amount', 'children'),
+#     Output('total-votes-subtitle', 'children')],
+#     [Input('org-dropdown', 'value')]
+# )
+# def update_total_votes_graph(org_id):
+#     if not org_id:
+#         raise PreventUpdate
 
-    return __get_data_from_metric(get_service().get_metric_total_votes(org_id))
+#     return __get_data_from_metric(get_service().get_metric_total_votes(org_id))
 
 
 @app.callback(
@@ -161,24 +161,24 @@ def update_proposal_boost_succ_ratio(org_id):
 
 
 @app.callback(
-    Output('outcome-vote-graph', 'figure'),
+    Output('total-votes-option-graph', 'figure'),
     [Input('org-dropdown', 'value')]
 )
-def update_outcome_vote_graph(org_id):
+def update_total_votes_option_graph(org_id):
     if not org_id:
         raise PreventUpdate
 
-    metric: Dict = get_service().get_metric_outcome_vote(org_id)
+    metric: Dict = get_service().get_metric_total_votes_option(org_id)
     return ly.generate_bar_chart(data=metric, barmode='stack')
 
 
-@app.callback(
-    Output('outcome-stake-graph', 'figure'),
-    [Input('org-dropdown', 'value')]
-)
-def update_outcome_stake_graph(org_id):
-    if not org_id:
-        raise PreventUpdate
+# @app.callback(
+#     Output('total-stakes-option-graph', 'figure'),
+#     [Input('org-dropdown', 'value')]
+# )
+# def update_total_stakes_option_graph(org_id):
+#     if not org_id:
+#         raise PreventUpdate
 
-    metric: Dict = get_service().get_metric_outcome_stake(org_id)
-    return ly.generate_bar_chart(data=metric, barmode='stack')
+#     metric: Dict = get_service().get_metric_total_stakes_option(org_id)
+#     return ly.generate_bar_chart(data=metric, barmode='stack')

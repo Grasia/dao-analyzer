@@ -95,17 +95,19 @@ def __generate_vote_charts() -> html.Div:
         children=[
             html.Div(TEXT['vote_title'], className='title-section'),
             html.Div(children=[
+                # __generate_graph(
+                #     figure_gen = generate_bar_chart,
+                #     css_id = 'total-votes',
+                #     title = TEXT['total_votes_title'],
+                #     amount = TEXT['default_amount'],
+                #     subtitle = TEXT['no_data_selected'],
+                # ),
                 __generate_graph(
                     figure_gen = generate_bar_chart,
-                    css_id = 'total-votes',
-                    title = TEXT['total_votes_title'],
+                    css_id = 'total-votes-option',
+                    title = TEXT['total_votes_option_title'],
                     amount = TEXT['default_amount'],
                     subtitle = TEXT['no_data_selected'],
-                ),
-                __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'outcome-vote',
-                    title = TEXT['outcome_vote_title'],
                 ),
                 __generate_graph(
                     figure_gen = generate_bar_chart,
@@ -133,11 +135,11 @@ def __generate_stake_charts() -> html.Div:
                     amount = TEXT['default_amount'],
                     subtitle = TEXT['no_data_selected'],
                 ),
-                __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id = 'outcome-stake',
-                    title = TEXT['outcome_stake_title'],
-                ),
+                # __generate_graph(
+                #     figure_gen = generate_bar_chart,
+                #     css_id = 'total-stakes-option',
+                #     title = TEXT['total_stakes_option_title'],
+                # ),
                 __generate_graph(
                     figure_gen = generate_bar_chart,
                     css_id = 'different-stakers',
