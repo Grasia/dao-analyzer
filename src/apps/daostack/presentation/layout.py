@@ -265,7 +265,7 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
                 y=data[k]['y'], 
                 marker=dict(
                     color=data[k]['color'],
-                    size=8,
+                    size=6,
                     opacity=0.5,
                     symbol=data[k]['marker_symbol'],
                     line=dict(
@@ -294,10 +294,30 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
             'suffix': data['common']['y_suffix'],
             }
         ),
+        shapes=[
+            __get_horizontal_line(y=0.0, y_ref='y'), 
+            __get_horizontal_line(y=0.0, y_ref='y2')],
         legend=__get_legend(),
         plot_bgcolor="white")
 
     return fig
+
+
+def __get_horizontal_line(y, y_ref: str):
+    return {
+            'type': 'line',
+            'xref': 'paper',
+            'yref': y_ref,
+            'x0': 0,
+            'y0': y,
+            'x1': 1,
+            'y1': y,
+            'line':{
+                'color': 'black',
+                'width': 0.5,
+                'dash':'dot'
+            }
+        }
 
 
 def __get_axis_layout(args: Dict) -> Dict:
