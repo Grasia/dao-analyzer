@@ -95,7 +95,7 @@ class Service():
         if complements:
             data['common']['last_serie_elem'] = metric.get_last_serie_elem()
             data['common']['last_value'] = metric.get_last_value(0)
-            data['common']['diff'] = metric.get_diff_last_values(0)
+            data['common']['diff'] = metric.get_diff_last_values()
 
         return data
 
@@ -275,6 +275,9 @@ class Service():
     def get_metric_total_votes_option(self, o_id: str) -> Dict:
         metric: StackedSerie = self.__get_sserie_by_metric(
             s_factory.TOTAL_VOTES_OPTION, o_id)
+            
+        last_value: int = metric.get_last_value(0) + metric.get_last_value(1)
+        diff: float = metric.get_diff_last_values(add_stacks=True)
 
         data: Dict = {
             'serie1': {
@@ -292,6 +295,9 @@ class Service():
                 'type': 'date',
                 'x_format': self.__DATE_FORMAT,
                 'ordered_keys': ['serie1', 'serie2'],
+                'last_serie_elem': metric.get_last_serie_elem(),
+                'last_value': last_value,
+                'diff': diff, 
             }
         }
 

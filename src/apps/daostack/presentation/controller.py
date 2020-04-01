@@ -161,7 +161,9 @@ def update_proposal_boost_succ_ratio(org_id):
 
 
 @app.callback(
-    Output('total-votes-option-graph', 'figure'),
+    [Output('total-votes-option-graph', 'figure'),
+    Output('total-votes-option-amount', 'children'),
+    Output('total-votes-option-subtitle', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_total_votes_option_graph(org_id):
@@ -169,7 +171,13 @@ def update_total_votes_option_graph(org_id):
         raise PreventUpdate
 
     metric: Dict = get_service().get_metric_total_votes_option(org_id)
-    return ly.generate_bar_chart(data=metric, barmode='stack')
+    return [
+        ly.generate_bar_chart(data=metric, barmode='stack'),
+        TEXT['graph_amount'].format(
+            metric['common']['last_serie_elem'], 
+            metric['common']['last_value']),
+        TEXT['graph_subtitle'].format(metric['common']['diff'])
+        ]
 
 
 # @app.callback(
