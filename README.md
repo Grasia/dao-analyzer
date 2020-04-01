@@ -12,6 +12,7 @@ After that, move to repository root directory with:
 
 ## Installation
 All code has been tested on Linux, but it should work on Windows and macOS, 'cause it just uses the python environment.
+
 So, you must install the following dependencies to run the tool:
 
 * python3 (3.7 or later)
