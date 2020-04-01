@@ -287,11 +287,13 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
         ),
         yaxis=__get_axis_layout(args={
             'suffix': data['common']['y_suffix'],
+            #'matches': 'y2',
             }
         ),
         yaxis2=__get_axis_layout(args={
-            'reverse_range': True,
             'suffix': data['common']['y_suffix'],
+            #'matches': 'y',
+            'reverse_range': True,
             }
         ),
         shapes=[
@@ -348,6 +350,8 @@ def __get_axis_layout(args: Dict) -> Dict:
         axis_l['tickformat'] = args['tickformat']
     if 'tickangle' in args:
         axis_l['tickangle'] = 45
+    if 'matches' in args:
+        axis_l['matches'] = args['matches']
 
     return axis_l
 
