@@ -51,25 +51,43 @@ class StackedSerie():
         return self.y_stack[i_stack]
     
 
-    def get_diff_last_values(self, i_stack: int) -> float:
+    def get_diff_last_values(self, i_stack: int = 0, add_stacks: bool = False)\
+    -> float:
         """
-        A percentage of the diference among the last two values 
-        on the 'i' stack.
+        A percentage of the diference among the last two values.
+        Parameters: 
+            * i_stack: indicates the stack to operate. Default 0.
+            * add_stacks: indicates whether you wish to operate over all
+                          the stacks, if you enable this flag, i_stack don't
+                          care. Default False.
+        Return:
+            A float. 
         """
+        if add_stacks:
+            i_stack = 0
+        
         if i_stack >= len(self.y_stack):
             return 0.0
 
-        y: List[int] = self.y_stack[i_stack]
+        y: List = self.y_stack[i_stack]
         val: float = 0.0
 
         # indexes to access n-1 and n-2 positions in y[n]
         i_1 = -1
         i_2 = -(2 % (len(y) + 1))
+        op1 = y[i_1]
+        op2 = y[i_2]
 
-        divider: int = y[i_1] + y[i_2]
+        if add_stacks:
+            for j in range(i_stack+1, len(self.y_stack)):
+                y = self.y_stack[j]
+                op1 += y[i_1]
+                op2 += y[i_2]
 
-        if divider > 0:
-            val = (y[i_1] - y[i_2]) / divider * 100
+        denominator = (op1 + op2)
+        numerator = (op1 - op2)
+        if denominator > 0:
+            val = numerator / denominator * 100
 
         return val
 

@@ -95,7 +95,7 @@ class Service():
         if complements:
             data['common']['last_serie_elem'] = metric.get_last_serie_elem()
             data['common']['last_value'] = metric.get_last_value(0)
-            data['common']['diff'] = metric.get_diff_last_values(0)
+            data['common']['diff'] = metric.get_diff_last_values()
 
         return data
 
@@ -269,4 +269,61 @@ class Service():
             }
         }
 
+        return data
+
+
+    def get_metric_total_votes_option(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.TOTAL_VOTES_OPTION, o_id)
+            
+        last_value: int = metric.get_last_value(0) + metric.get_last_value(1)
+        diff: float = metric.get_diff_last_values(add_stacks=True)
+
+        data: Dict = {
+            'serie1': {
+                'y': metric.get_i_stack(0),
+                'color': Color.LIGHT_RED,
+                'name': TEXT['votes_against'],
+            },
+            'serie2': {
+                'y': metric.get_i_stack(1),
+                'color': Color.LIGHT_GREEN,
+                'name': TEXT['votes_for'],
+            },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2'],
+                'last_serie_elem': metric.get_last_serie_elem(),
+                'last_value': last_value,
+                'diff': diff, 
+            }
+        }
+
+        return data
+
+
+    def get_metric_total_stakes_option(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.TOTAL_STAKES_OPTION, o_id)
+
+        data: Dict = {
+            'serie1': {
+                'y': metric.get_i_stack(0),
+                'color': Color.LIGHT_RED,
+                'name': TEXT['downstakes'],
+            },
+            'serie2': {
+                'y': metric.get_i_stack(1),
+                'color': Color.LIGHT_GREEN,
+                'name': TEXT['upstakes'],
+            },
+            'common': {
+                'x': metric.get_serie(),
+                'type': 'date',
+                'x_format': self.__DATE_FORMAT,
+                'ordered_keys': ['serie1', 'serie2'],
+            }
+        }
         return data

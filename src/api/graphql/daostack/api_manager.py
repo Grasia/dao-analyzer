@@ -18,7 +18,7 @@ from src.logs import LOGS
 
 class ApiRequester:
     # Test the API in: https://thegraph.com/explorer/subgraph/daostack/master
-    __DAOSTACK_URL = 'https://api.thegraph.com/subgraphs/name/daostack/alchemy'
+    __DAOSTACK_URL = 'https://api.thegraph.com/subgraphs/name/daostack/master'
     __ELEMS_PER_CHUNK = 100
 
 
