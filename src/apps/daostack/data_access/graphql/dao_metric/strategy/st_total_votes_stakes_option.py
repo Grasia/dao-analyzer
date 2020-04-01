@@ -23,7 +23,7 @@ VOTES = 0
 STAKES = 1
 
 
-class StOutcomeVS(StrategyInterface):
+class StTotalVSOption(StrategyInterface):
     __DF_DATE = 'createdAt'
     __DF_IS_POSITIVE = 'isPositive'
     __DF_COUNT = 'count'

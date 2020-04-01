@@ -20,7 +20,7 @@ import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
 from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
     st_proposal_majority import StProposalMajority
 import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
-    st_outcome_vote_stake as st_o_vs
+    st_total_votes_stakes_option as st_tvso
 
 
 NEW_USERS = 0
@@ -62,8 +62,8 @@ def get_dao(ids: List[str], metric: int) -> DaoStackedSerie:# noqa: C901
     elif metric == PROPOSALS_BOOST_SUCCES_RATIO:
         stg = st_po.StProposalOutcome(st_po.BOOST_SUCCESS_RATIO)
     elif metric == TOTAL_VOTES_OPTION:
-        stg = st_o_vs.StOutcomeVS(st_o_vs.VOTES)
+        stg = st_tvso.StTotalVSOption(st_tvso.VOTES)
     elif metric == TOTAL_STAKES_OPTION:
-        stg = st_o_vs.StOutcomeVS(st_o_vs.STAKES)
+        stg = st_tvso.StTotalVSOption(st_tvso.STAKES)
 
     return DaoStackedSerie(ids=ids, strategy=stg, requester=requester)
