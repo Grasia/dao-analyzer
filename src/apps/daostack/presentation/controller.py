@@ -31,6 +31,14 @@ def __get_data_from_metric(metric: Dict) -> List:
     ]
 
 
+def __get_empty_chart(chart) -> List:
+    return [
+        chart,
+        TEXT['default_amount'],
+        TEXT['no_data_selected']
+    ]
+
+
 @app.callback(
     [Output('new-users-graph', 'figure'),
     Output('new-users-amount', 'children'),
@@ -39,7 +47,7 @@ def __get_data_from_metric(metric: Dict) -> List:
 )
 def update_new_user_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return __get_empty_chart(chart=ly.generate_bar_chart())
     
     return __get_data_from_metric(get_service().get_metric_new_users(org_id))
 
@@ -52,7 +60,7 @@ def update_new_user_graph(org_id):
 )
 def update_different_voters_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return __get_empty_chart(chart=ly.generate_bar_chart())
     
     return __get_data_from_metric(get_service().
         get_metric_different_voters(org_id))
@@ -66,7 +74,7 @@ def update_different_voters_graph(org_id):
 )
 def update_different_stakers_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return __get_empty_chart(chart=ly.generate_bar_chart())
     
     return __get_data_from_metric(get_service().
         get_metric_different_stakers(org_id))
@@ -78,9 +86,9 @@ def update_different_stakers_graph(org_id):
     Output('new-proposal-subtitle', 'children')],
     [Input('org-dropdown', 'value')]
 )
-def update_proposal_graph(org_id):
+def update_new_proposal_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return __get_empty_chart(chart=ly.generate_bar_chart())
 
     return __get_data_from_metric(get_service().get_metric_new_proposals(org_id))
 
@@ -93,7 +101,7 @@ def update_proposal_graph(org_id):
 # )
 # def update_total_votes_graph(org_id):
 #     if not org_id:
-#         raise PreventUpdate
+#         return __get_empty_chart(chart=ly.generate_bar_chart())
 
 #     return __get_data_from_metric(get_service().get_metric_total_votes(org_id))
 
@@ -106,7 +114,7 @@ def update_proposal_graph(org_id):
 )
 def update_total_stakes_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return __get_empty_chart(chart=ly.generate_bar_chart())
 
     return __get_data_from_metric(get_service().get_metric_total_stakes(org_id))
 
@@ -117,7 +125,7 @@ def update_total_stakes_graph(org_id):
 )
 def update_proposal_majority_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return ly.generate_bar_chart()
 
     data: Dict = get_service().get_metric_proposal_majority(org_id)
 
@@ -130,7 +138,7 @@ def update_proposal_majority_graph(org_id):
 )
 def update_proposal_boost_outcome_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return ly.generate_bar_chart()
 
     metric: Dict = get_service().get_metric_proposal_boost_outcome(org_id)
     return ly.generate_bar_chart(data=metric, barmode='stack')
@@ -142,7 +150,7 @@ def update_proposal_boost_outcome_graph(org_id):
 )
 def update_proposal_total_succ_ratio(org_id):
     if not org_id:
-        raise PreventUpdate
+        return ly.generate_bar_chart()
 
     metric = get_service().get_metric_prop_total_succes_ratio(org_id)
     return ly.generate_bar_chart(data=metric)
@@ -154,7 +162,7 @@ def update_proposal_total_succ_ratio(org_id):
 )
 def update_proposal_boost_succ_ratio(org_id):
     if not org_id:
-        raise PreventUpdate
+        return ly.generate_bar_chart()
 
     metric = get_service().get_metric_prop_boost_succes_ratio(org_id)
     return ly.generate_bar_chart(metric)
@@ -168,7 +176,7 @@ def update_proposal_boost_succ_ratio(org_id):
 )
 def update_total_votes_option_graph(org_id):
     if not org_id:
-        raise PreventUpdate
+        return __get_empty_chart(chart=ly.generate_bar_chart())
 
     metric: Dict = get_service().get_metric_total_votes_option(org_id)
     return [
@@ -186,7 +194,7 @@ def update_total_votes_option_graph(org_id):
 # )
 # def update_total_stakes_option_graph(org_id):
 #     if not org_id:
-#         raise PreventUpdate
+#         return __get_empty_chart(chart=ly.generate_bar_chart())
 
 #     metric: Dict = get_service().get_metric_total_stakes_option(org_id)
 #     return ly.generate_bar_chart(data=metric, barmode='stack')
