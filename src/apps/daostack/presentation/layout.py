@@ -14,6 +14,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
 from src.apps.daostack.resources.strings import TEXT
+import src.apps.daostack.resources.colors as Color
 
 
 def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
@@ -219,7 +220,10 @@ subtitle: str, show_subsection: bool = True) -> html.Div:
         id=f'{css_id}-subtitle',
         className=hide))
 
-    children.append(dcc.Graph(id=f'{css_id}-graph', figure=figure_gen()))
+    children.append(dcc.Loading(
+        type="circle",
+        color=Color.DARK_BLUE,
+        children=dcc.Graph(id=f'{css_id}-graph', figure=figure_gen())))
 
     return html.Div(children=children, className='pane graph-pane')
 
