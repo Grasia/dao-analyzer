@@ -9,7 +9,6 @@
 
 from typing import List, Dict
 from dash.dependencies import Input, Output
-from dash.exceptions import PreventUpdate
 
 from src.app import app
 import src.apps.daostack.presentation.layout as ly
