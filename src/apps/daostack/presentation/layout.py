@@ -249,7 +249,7 @@ def generate_bar_chart(data: Dict = None, barmode: str = 'group') -> Dict:
             'tickformat': data['common']['x_format'],
             'tickangle': True}
         ),
-        yaxis=__get_axis_layout(args={}),
+        yaxis=__get_axis_layout(args={'grid': True}),
         legend=__get_legend())
 
     return {'data': bars, 'layout': layout}
@@ -337,8 +337,8 @@ def __get_axis_layout(args: Dict) -> Dict:
         'linewidth': 2, 
         'linecolor': 'black',
         'showgrid': args['grid'] if 'grid' in args else False,
-        'gridwidth': 1,
-        'gridcolor': 'LightPink',
+        'gridwidth': 0.5,
+        'gridcolor': '#B0BEC5',
     }
 
     if 'removemarkers' in args:
