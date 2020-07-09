@@ -35,8 +35,12 @@ def n_requests(query: str, skip_n: int, result_key: str) -> List[Dict]:
     while condition:
         query_filled: str = query.format(ELEMS_PER_CHUNK, skip_n + len(elements))
 
-        result = request(query=query_filled)
-        result = result[result_key]
+        try:
+            result = request(query=query_filled)
+            result = result[result_key]
+        except Exception:
+            print('\nError: Not all elements was requested.\n')
+            return elements
 
         elements.extend(result)
 
