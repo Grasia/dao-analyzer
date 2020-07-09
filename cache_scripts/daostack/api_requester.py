@@ -1,6 +1,6 @@
 import json
 from graphqlclient import GraphQLClient
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 ELEMS_PER_CHUNK: int = 1000
@@ -17,33 +17,30 @@ def request(query: str) -> Dict:
     return result['data'] if 'data' in result else dict()
 
 
-def n_requests(query: str, result_key: str, dao_id: str = '') -> List[Dict]:
+def n_requests(query: str, skip_n: int, result_key: str) -> List[Dict]:
     """
     Requests all chunks from endpoint.
 
     Parameters:
         * query: json to request
-        * result_key 
-        * dao_id
+        * skip_n: number of rows to skip
+        * result_key: dict key to access the list
     """
     elements: List[Dict] = list()
-    chunk: int = 0
     result = Dict
+    
+    # do-while structure
     condition: bool = True
 
     while condition:
-        if dao_id:
-            query_filled: str = query.format(dao_id, ELEMS_PER_CHUNK, len(elements))
-        else:
-            query_filled: str = query.format(ELEMS_PER_CHUNK, len(elements))
+        query_filled: str = query.format(ELEMS_PER_CHUNK, skip_n + len(elements))
 
         result = request(query=query_filled)
         result = result[result_key]
 
         elements.extend(result)
 
-        # if return data (result) has less than ELEMS_PER_CHUNK means that it was the last one 
+        # if return data (result) has less than ELEMS_PER_CHUNK means that it was the last chunk 
         condition = len(result) == ELEMS_PER_CHUNK
-        chunk += 1
 
     return elements
