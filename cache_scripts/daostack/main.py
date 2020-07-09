@@ -2,13 +2,14 @@ import os
 import json
 from typing import Dict, List
 import dao_collector as dao
+import rep_holder_collector as rep_h
 
 META_PATH: str = os.path.join('datawarehouse', 'daostack', 'meta.json')
 
 
 def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
-    keys: List[str] = [dao.META_KEY] # add here new keys
+    keys: List[str] = [dao.META_KEY, rep_h.META_KEY] # add here new keys
 
     for k in keys:
         if not k in meta_data:
@@ -40,7 +41,7 @@ if __name__ == '__main__':
     meta_data: Dict = _get_meta_data()
 
     # add new collectors
-    collectors: List = [dao.update_daos]
+    collectors: List = [dao.update_daos, rep_h.update_rep_holders]
 
     for c in collectors:
         c(meta_data)

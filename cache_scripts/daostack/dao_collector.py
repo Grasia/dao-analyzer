@@ -16,7 +16,8 @@ def _request_daos(current_rows: int) -> List[Dict]:
     print("Requesting DAO\'s data ...")
     start: datetime = datetime.now()
 
-    daos: List[Dict] = n_requests(query=DAO_QUERY, skip_n=current_rows, result_key='daos')
+    daos: List[Dict] = n_requests(query=DAO_QUERY, skip_n=current_rows, 
+        result_key=META_KEY)
 
     print(f'DAO\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return daos
