@@ -1,0 +1,48 @@
+import os
+import json
+from typing import Dict, List
+import dao_collector as dao
+
+META_PATH: str = os.path.join('datawarehouse', 'daostack', 'meta.json')
+
+
+def _fill_empty_keys(meta_data: Dict) -> Dict:
+    meta_fill: Dict = meta_data
+    keys: List[str] = [dao.META_KEY] # add here new keys
+
+    for k in keys:
+        if not k in meta_data:
+            meta_fill[k] = {'rows': 0}
+
+    return meta_fill
+
+
+def _get_meta_data() -> Dict:
+    meta_data: Dict
+
+    if os.path.isfile(META_PATH):
+        with open(META_PATH) as json_file:
+            meta_data = json.load(json_file)
+    else:
+        meta_data = dict() # there is not previous executions
+
+    return _fill_empty_keys(meta_data=meta_data)
+
+
+def _write_meta_data(meta: Dict) -> None:
+    with open(META_PATH, 'w+') as outfile:
+        json.dump(meta, outfile)
+    
+    print(f'Updated meta-data in {META_PATH}')
+
+
+if __name__ == '__main__':
+    meta_data: Dict = _get_meta_data()
+
+    # add new collectors
+    collectors: List = [dao.update_daos]
+
+    for c in collectors:
+        c(meta_data)
+
+    _write_meta_data(meta=meta_data)
