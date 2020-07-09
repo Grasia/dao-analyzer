@@ -42,7 +42,7 @@ def _request_open_proposals(ids: List[str]) -> List[Dict]:
             query: str = O_PROPOSAL_QUERY.format(p_id)
             result = request(query=query)
             open_props.append(result['proposal'])
-    except:
+    except Exception:
         print('\nError: Open proposals not updated.\n')
 
     print(f'Open proposals requested in {round((datetime.now() - start).total_seconds(), 2)}s')

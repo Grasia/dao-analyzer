@@ -21,7 +21,7 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
         ] # add here new keys
 
     for k in keys:
-        if not k in meta_data:
+        if k not in meta_data:
             meta_fill[k] = {'rows': 0}
 
     return meta_fill
