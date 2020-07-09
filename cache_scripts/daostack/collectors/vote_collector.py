@@ -60,4 +60,4 @@ def update_votes(meta_data: Dict) -> None:
 
 if __name__ == '__main__':
     meta: dict = {META_KEY: {'rows': 0}}
-    update_rep_holders(meta_data=meta)
+    update_votes(meta_data=meta)

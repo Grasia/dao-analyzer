@@ -4,6 +4,7 @@ from typing import Dict, List
 import collectors.dao_collector as dao
 import collectors.rep_holder_collector as rep_h
 import collectors.vote_collector as vote
+import collectors.stake_collector as stake
 
 META_PATH: str = os.path.join('datawarehouse', 'daostack', 'meta.json')
 
@@ -13,7 +14,9 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
     keys: List[str] = [
         dao.META_KEY, 
         rep_h.META_KEY, 
-        vote.META_KEY] # add here new keys
+        vote.META_KEY,
+        stake.META_KEY,
+        ] # add here new keys
 
     for k in keys:
         if not k in meta_data:
@@ -48,7 +51,9 @@ if __name__ == '__main__':
     collectors: List = [
         dao.update_daos, 
         rep_h.update_rep_holders,
-        vote.update_votes,]
+        vote.update_votes,
+        stake.update_stakes,
+        ]
 
     for c in collectors:
         c(meta_data)
