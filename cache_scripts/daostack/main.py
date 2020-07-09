@@ -5,6 +5,7 @@ import collectors.dao_collector as dao
 import collectors.rep_holder_collector as rep_h
 import collectors.vote_collector as vote
 import collectors.stake_collector as stake
+import collectors.proposal_collector as proposal
 
 META_PATH: str = os.path.join('datawarehouse', 'daostack', 'meta.json')
 
@@ -16,6 +17,7 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
         rep_h.META_KEY, 
         vote.META_KEY,
         stake.META_KEY,
+        proposal.META_KEY
         ] # add here new keys
 
     for k in keys:
@@ -53,6 +55,7 @@ if __name__ == '__main__':
         rep_h.update_rep_holders,
         vote.update_votes,
         stake.update_stakes,
+        proposal.update_proposals
         ]
 
     for c in collectors:
