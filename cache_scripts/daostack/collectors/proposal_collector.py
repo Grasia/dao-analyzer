@@ -3,7 +3,7 @@ import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
 
-from api_requester import n_requests
+from api_requester import n_requests, request
 
 
 PROPOSAL_QUERY: str = '{{proposals(first: {0}, skip: {1})\
@@ -12,7 +12,12 @@ totalRepWhenExecuted totalRepWhenCreated executionState organizationId \
 expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst \
 genesisProtocolParams{{queuedVoteRequiredPercentage}}}}}}'
 
+O_PROPOSAL_QUERY: str = '{{proposal(id: \"{0}\")\
+{{id stage preBoostedAt boostedAt executedAt totalRepWhenExecuted executionState \
+expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst}}}}'
+
 META_KEY: str = 'proposals'
+OUT_FILE: str = os.path.join('datawarehouse', 'daostack', 'proposals.csv')
 
 
 def _request_proposals(current_rows: int) -> List[Dict]:
@@ -24,6 +29,24 @@ def _request_proposals(current_rows: int) -> List[Dict]:
 
     print(f'Proposal\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return proposals
+
+
+def _request_open_proposals(ids: List[str]) -> List[Dict]:
+    print("Requesting open proposals ...")
+    start: datetime = datetime.now()
+
+    open_props: List = list()
+    result: Dict = list()
+    try:
+        for p_id in ids:
+            query: str = O_PROPOSAL_QUERY.format(p_id)
+            result = request(query=query)
+            open_props.append(result['proposal'])
+    except:
+        print('\nError: Open proposals not updated.\n')
+
+    print(f'Open proposals requested in {round((datetime.now() - start).total_seconds(), 2)}s')
+    return open_props
 
 
 def _transform_to_df(proposals: List[Dict]) -> pd.DataFrame:
@@ -41,20 +64,50 @@ def _transform_to_df(proposals: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(proposals)
 
 
+def _get_opened_proposals(df: pd.DataFrame) -> List[str]:
+    dff: pd.DataFrame = df[df['executedAt'].isnull()]
+    return dff['id'].tolist()
+
+
+def join_data(df: pd.DataFrame, df2: pd.DataFrame, df3: pd.DataFrame) -> pd.DataFrame:
+    """
+        Updates df with df2, and apends df3 rows in df
+    """
+    dff: pd.DataFrame = df
+
+    dff.set_index('id', inplace=True)
+
+    if len(df2) > 0:
+        df2.set_index('id', inplace=True)
+        dff.update(df2)
+
+    if len(df3) > 0:
+        df3.set_index('id', inplace=True)
+        dff = dff.append(df3)
+
+    return dff
+
+
 def update_proposals(meta_data: Dict) -> None:
+    df: pd.DataFrame
+
     proposals: List[Dict] = _request_proposals(current_rows=
         meta_data[META_KEY]['rows'])
+    df3: pd.DataFrame = _transform_to_df(proposals=proposals)
 
-    df: pd.DataFrame = _transform_to_df(proposals=proposals)
+    if os.path.isfile(OUT_FILE):
+        df = pd.read_csv(OUT_FILE, header=0)
 
-    filename: str = os.path.join('datawarehouse', 'daostack', 'proposals.csv')
+        open_prop: List[Dict] = _request_open_proposals(ids=_get_opened_proposals(df))
+        df2: pd.DataFrame = pd.DataFrame(open_prop)
 
-    if os.path.isfile(filename):
-        df.to_csv(filename, mode='a', header=False)
+        df = join_data(df=df, df2=df2, df3=df3)
+        df.to_csv(OUT_FILE)
+
     else:
-        df.to_csv(filename, index=False)
+        df3.to_csv(OUT_FILE, index=False)
 
-    print(f'Data stored in {filename}.')
+    print(f'Data stored in {OUT_FILE}.')
 
     # update meta
     meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(proposals)
