@@ -1,6 +1,6 @@
 import json
 from graphqlclient import GraphQLClient
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 
 ELEMS_PER_CHUNK: int = 1000
