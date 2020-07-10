@@ -1,7 +1,7 @@
 """
-   Descp: Strategy pattern for calculate differents voters and stakers by month.
+   Descp: Strategy pattern for calculate votes/stakes outcome.
 
-   Created on: 17-mar-2020
+   Created on: 30-mar-2020
 
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
@@ -10,49 +10,40 @@
 from typing import List, Dict
 import pandas as pd
 
-from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+from src.apps.daostack.data_access.daos.metric.strategy.\
         strategy_metric_interface import StrategyInterface
 
-from src.api.graphql.query import Query
+from src.apps.api.graphql.query import Query
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-VOTERS = 0
-STAKERS = 1
+VOTES = 0
+STAKES = 1
 
 
-class StDifferentVS(StrategyInterface):
+class StTotalVSOption(StrategyInterface):
     __DF_DATE = 'createdAt'
-    __DF_USER_ID = 'userId'
+    __DF_IS_POSITIVE = 'isPositive'
     __DF_COUNT = 'count'
-    __DF_COLS = [__DF_DATE, __DF_USER_ID]
-    __SCHEMA_VOTER = {
-        'schema': 'proposalVotes',
-        'attrs': ['createdAt', 'voter'],
-    }
-    __SCHEMA_STAKER = {
-        'schema': 'proposalStakes',
-        'attrs': ['createdAt', 'staker'],
-    }
-    __SCHEMAS = [__SCHEMA_VOTER, __SCHEMA_STAKER]
+    __DF_COLS = [__DF_DATE, __DF_IS_POSITIVE]
 
 
     def __init__(self, m_type: int):
-        self.__m_index: int = self.__get_index(m_type)
+        self.__schema: str = self.__get_schema(m_type)
 
 
-    def __get_index(self, m_type: int) -> int:
-        index: int = -1
-        if m_type == VOTERS:
-            index = 0
-        elif m_type == STAKERS:
-            index = 1
+    def __get_schema(self, m_type: int) -> str:
+        schema = str
+        if m_type == VOTES:
+            schema = 'proposalVotes'
+        elif m_type == STAKES:
+            schema = 'proposalStakes'
         else:
             raise Exception(f'{m_type} type not allowed')
 
-        return index
+        return schema
 
 
     def get_empty_df(self) -> pd.DataFrame:
@@ -67,33 +58,44 @@ class StDifferentVS(StrategyInterface):
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
         df = pd_utl.transform_to_monthly_date(df, self.__DF_DATE)
 
-        # join dates-ids
+        # join by dates
         df = pd_utl.count_cols_repetitions(df, self.__DF_COLS, self.__DF_COUNT)
-        # different voters by month
-        df = pd_utl.count_cols_repetitions(df, [self.__DF_DATE], self.__DF_COUNT)
 
-        # generates a time series
+        # generates a time serie
         idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE)
         dff = pd_utl.get_df_from_lists([idx, 0], [self.__DF_DATE, self.__DF_COUNT])
         dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
 
-        # joinning all the data in a unique dataframe
-        df = df.append(dff, ignore_index=True)
-        df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
-        df.sort_values(self.__DF_DATE, inplace=True)
+        serie: Serie = Serie(x=dff[self.__DF_DATE].tolist())
+        positives: List = self.__get_outcome(True, df, dff)
+        negatives: List = self.__get_outcome(False, df, dff)
 
-        serie: Serie = Serie(x=df[self.__DF_DATE].tolist())
         metric: StackedSerie = StackedSerie(
             serie = serie, 
-            y_stack = [df[self.__DF_COUNT].tolist()])
+            y_stack = [negatives, positives])
 
         return metric
 
 
+    def __get_outcome(self, is_positive: bool, df: pd.DataFrame, dff: pd.DataFrame) -> List:
+        d3f: pd.DataFrame = pd_utl.filter_by_col_value(
+            df=df, 
+            col=self.__DF_IS_POSITIVE, 
+            value=is_positive,
+            filters=[pd_utl.EQ])
+
+        d3f = d3f.drop(columns=[self.__DF_IS_POSITIVE])
+        d3f = d3f.append(dff, ignore_index=True)
+        d3f.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
+        d3f.sort_values(self.__DF_DATE, inplace=True)
+
+        return d3f[self.__DF_COUNT].tolist()
+
+
     def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
         return Query(
-            header=self.__SCHEMAS[self.__m_index]['schema'],
-            body=self.__SCHEMAS[self.__m_index]['attrs'],
+            header=self.__schema,
+            body=['createdAt', 'outcome'],
             filters={
                 'where': f'{{dao: \"{o_id}\"}}',
                 'first': f'{n_first}',
@@ -102,18 +104,16 @@ class StDifferentVS(StrategyInterface):
 
 
     def fetch_result(self, result: Dict) -> List:
-        return result[self.__SCHEMAS[self.__m_index]['schema']]
+        return result[self.__schema]
 
     
     def dict_to_df(self, data: List) -> pd.DataFrame:
         df: pd.DataFrame = self.get_empty_df()
-        attrs: List[str]
 
         for di in data:
-            attrs = list()
-            for k in self.__SCHEMAS[self.__m_index]['attrs']:
-                attrs.append(di[k])
+            date: int = int(di['createdAt'])
+            is_positive: bool = True if di['outcome'] == 'Pass' else False
 
-            df = pd_utl.append_rows(df, attrs)
+            df = pd_utl.append_rows(df, [date, is_positive])
 
         return df

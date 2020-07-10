@@ -15,9 +15,9 @@ import datetime as dt
 from dateutil.relativedelta import relativedelta
 import calendar
 
-from src.api.graphql.query import Query
-from src.api.graphql.query_builder import QueryBuilder
-import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+from src.apps.api.graphql.query import Query
+from src.apps.api.graphql.query_builder import QueryBuilder
+import src.apps.daostack.data_access.daos.metric.strategy.\
     st_proposal_outcome as st_po
 
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie

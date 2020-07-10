@@ -13,8 +13,8 @@ from typing import Dict
 
 from src.apps.daostack.business.transfers.organization import Organization
 from src.apps.daostack.business.transfers.organization import OrganizationList
-from src.api.graphql.query_builder import QueryBuilder
-from src.api.graphql.query import Query
+from src.apps.api.graphql.query_builder import QueryBuilder
+from src.apps.api.graphql.query import Query
 
 
 class DaoOrganizationList:

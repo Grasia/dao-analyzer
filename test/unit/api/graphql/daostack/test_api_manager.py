@@ -10,7 +10,7 @@
 from typing import List
 import unittest
 
-from src.api.graphql.daostack.api_manager import ApiRequester
+from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
 
 class ApiManagerTest(unittest.TestCase):
     """

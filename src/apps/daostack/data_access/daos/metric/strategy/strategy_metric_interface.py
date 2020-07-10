@@ -11,7 +11,7 @@ import abc
 from typing import List, Dict, Any
 from pandas import DataFrame
 
-from src.api.graphql.query import Query
+from src.apps.api.graphql.query import Query
 
 
 class StrategyInterface(metaclass=abc.ABCMeta):

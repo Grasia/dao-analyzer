@@ -9,9 +9,9 @@
 
 import unittest
 
-from src.api.graphql.query import Query
-from src.api.graphql.query_builder import QueryBuilder
-from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+from src.apps.api.graphql.query import Query
+from src.apps.api.graphql.query_builder import QueryBuilder
+from src.apps.daostack.data_access.daos.metric.strategy.\
     st_proposal_majority import StProposalMajority
 
 

@@ -11,7 +11,7 @@ import unittest
 from hypothesis import given, settings, strategies as st
 from typing import List, Dict
 
-from src.apps.daostack.data_access.graphql.dao_organization import DaoOrganizationList
+from src.apps.daostack.data_access.daos.organization.dao_organization import DaoOrganizationList
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from test.mocks.request_mock import RequestMock
 

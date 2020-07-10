@@ -9,7 +9,7 @@
 
 from typing import List
 
-from src.api.graphql.query import Query
+from src.apps.api.graphql.query import Query
 
 class QueryBuilder():
 

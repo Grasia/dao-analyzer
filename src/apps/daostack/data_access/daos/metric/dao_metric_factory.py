@@ -8,18 +8,18 @@
 """
 from typing import List
 
-from src.apps.daostack.data_access.graphql.dao_metric.dao_metric \
+from src.apps.daostack.data_access.daos.metric.dao_metric \
     import DaoStackedSerie
-from src.api.graphql.daostack.api_manager import ApiRequester
-import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
+import src.apps.daostack.data_access.daos.metric.strategy.\
     st_time_serie as st_s
-import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+import src.apps.daostack.data_access.daos.metric.strategy.\
     st_proposal_outcome as st_po
-import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+import src.apps.daostack.data_access.daos.metric.strategy.\
     st_different_voters_stakers as st_vs
-from src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+from src.apps.daostack.data_access.daos.metric.strategy.\
     st_proposal_majority import StProposalMajority
-import src.apps.daostack.data_access.graphql.dao_metric.strategy.\
+import src.apps.daostack.data_access.daos.metric.strategy.\
     st_total_votes_stakes_option as st_tvso
 
 
