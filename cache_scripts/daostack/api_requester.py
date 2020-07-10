@@ -1,3 +1,12 @@
+"""
+   Descp: Functions to fetch from endpoint given queries.
+
+   Created on: 10-jul-2020
+
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+        <f.r.youssef@hotmail.com>
+"""
+
 import json
 from graphqlclient import GraphQLClient
 from typing import Dict, List

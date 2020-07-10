@@ -1,3 +1,12 @@
+"""
+   Descp: Script to fetch users's data and store it as a caché.
+
+   Created on: 10-jul-2020
+
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+        <f.r.youssef@hotmail.com>
+"""
+
 import os
 import pandas as pd
 from typing import Dict, List

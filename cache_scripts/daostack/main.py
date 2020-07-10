@@ -1,3 +1,12 @@
+"""
+   Descp: Main script to create the app's caché, it call all the collectors.
+
+   Created on: 10-jul-2020
+
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+        <f.r.youssef@hotmail.com>
+"""
+
 import os
 import json
 from typing import Dict, List
