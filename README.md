@@ -48,6 +48,14 @@ After that, run the web app with:
 
 Now, visit `http://127.0.0.1:8050/apps/daostack` in your web browser.
 
+### Caching data to improve the performance
+Instead of fetching data from the API, you can store all the data locally to improve the performance.
+Launching the following script will store all the data in `datawarehouse/daostack`:
+
+`python3 cache_scripts/daostack/main.py`
+
+After a few minutes, you can launch the app as previously mentioned.
+
 ## How to test it?
 Run all tests with:
 `python3 -m pytest test/`
