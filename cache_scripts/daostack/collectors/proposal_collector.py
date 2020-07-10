@@ -8,9 +8,9 @@ from api_requester import n_requests, request
 
 PROPOSAL_QUERY: str = '{{proposals(first: {0}, skip: {1})\
 {{id proposer stage createdAt preBoostedAt boostedAt closingAt executedAt \
-totalRepWhenExecuted totalRepWhenCreated executionState organizationId \
+totalRepWhenExecuted totalRepWhenCreated executionState \
 expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst \
-genesisProtocolParams{{queuedVoteRequiredPercentage}}}}}}'
+genesisProtocolParams{{queuedVoteRequiredPercentage}} dao{{id}} }}}}'
 
 O_PROPOSAL_QUERY: str = '{{proposal(id: \"{0}\")\
 {{id stage preBoostedAt boostedAt executedAt totalRepWhenExecuted executionState \
@@ -52,10 +52,10 @@ def _request_open_proposals(ids: List[str]) -> List[Dict]:
 def _transform_to_df(proposals: List[Dict]) -> pd.DataFrame:
     # remove neasted dicts
     for p in proposals:
-        dao: str = p['organizationId']
+        dao: str = p['dao']['id']
         per: str = p['genesisProtocolParams']['queuedVoteRequiredPercentage']
 
-        del p['organizationId']
+        del p['dao']
         del p['genesisProtocolParams']
 
         p['dao'] = dao
@@ -95,6 +95,7 @@ def update_proposals(meta_data: Dict) -> None:
         meta_data[META_KEY]['rows'])
     df3: pd.DataFrame = _transform_to_df(proposals=proposals)
 
+    # fetch new proposals and update opened proposals
     if os.path.isfile(OUT_FILE):
         df = pd.read_csv(OUT_FILE, header=0)
 
@@ -104,6 +105,7 @@ def update_proposals(meta_data: Dict) -> None:
         df = join_data(df=df, df2=df2, df3=df3)
         df.to_csv(OUT_FILE)
 
+    # save all proposals
     else:
         df3.to_csv(OUT_FILE, index=False)
 
