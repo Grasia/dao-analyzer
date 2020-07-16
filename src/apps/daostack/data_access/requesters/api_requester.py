@@ -37,7 +37,7 @@ class ApiRequester(IRequester):
             returns a empty dict. 
         """
         if len(args) < 1:
-            raise AttributeError('\'args\' has to be filled with a query.\n')
+            raise AttributeError(LOGS['no_attr_api_req'])
 
         query: str = args[0]
         start: datetime
