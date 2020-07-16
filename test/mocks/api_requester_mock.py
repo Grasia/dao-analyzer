@@ -7,9 +7,9 @@
         <f.r.youssef@hotmail.com>
 """
 from typing import Any, List, Dict
+from src.apps.daostack.data_access.requesters.irequester import IRequester
 
-
-class RequestMock:
+class ApiRequesterMock(IRequester):
     def __init__(self, any_list: List[Dict]):
         self.call_times: int = 0
         self.any_list: List[Dict] = any_list

@@ -13,7 +13,7 @@ from typing import List, Dict
 
 from src.apps.daostack.data_access.daos.organization.dao_organization import DaoOrganizationList
 from src.apps.daostack.business.transfers.organization import OrganizationList
-from test.mocks.request_mock import RequestMock
+from test.mocks.api_requester_mock import ApiRequesterMock
 
 
 @st.composite
@@ -37,7 +37,7 @@ class DaoOrganizationListTest(unittest.TestCase):
     @settings(max_examples=30)
     def test_get_organizations(self, r1: Dict, r2: Dict, r3: Dict, r4: Dict):
         results: List = [r1, r2, r3, r4]
-        mock: RequestMock = RequestMock(any_list=results)
+        mock: ApiRequesterMock = ApiRequesterMock(any_list=results)
         dao: DaoOrganizationList = DaoOrganizationList(requester=mock)
         daos: OrganizationList = dao.get_organizations()
 

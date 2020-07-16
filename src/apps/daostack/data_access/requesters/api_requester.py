@@ -12,11 +12,12 @@ from datetime import datetime
 from typing import Dict, List
 from graphqlclient import GraphQLClient
 
+from src.apps.daostack.data_access.requesters.irequester import IRequester
 from src.app import DEBUG
 from src.logs import LOGS
 
 
-class ApiRequester:
+class ApiRequester(IRequester):
     # Test the API in: https://thegraph.com/explorer/subgraph/daostack/master
     __DAOSTACK_URL = 'https://api.thegraph.com/subgraphs/name/daostack/master'
     __ELEMS_PER_CHUNK = 100
@@ -26,13 +27,19 @@ class ApiRequester:
         self.__client = GraphQLClient(self.__DAOSTACK_URL)
 
 
-    def request(self, query: str) -> Dict[str, List]:
+    def request(self, *args) -> Dict[str, List]:
         """
-        Requests querys at the endpoint.
+        Requests queries from the endpoint.
+        Arguments:
+            * args: it expects just one argument, formated as a GraphQL query.
         Return:
-            The response as a dict, if an error ocurrs or theres no response 
+            The response as a dict, if an error ocurrs or there is no response 
             returns a empty dict. 
         """
+        if len(args) < 1:
+            raise AttributeError('\'args\' has to be filled with a query at the first position')
+
+        query: str = args[0]
         start: datetime
 
         if DEBUG:
