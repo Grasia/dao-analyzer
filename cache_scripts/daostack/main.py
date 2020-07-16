@@ -16,7 +16,8 @@ import collectors.vote_collector as vote
 import collectors.stake_collector as stake
 import collectors.proposal_collector as proposal
 
-META_PATH: str = os.path.join('datawarehouse', 'daostack', 'meta.json')
+DIRS: str = os.path.join('datawarehouse', 'daostack')
+META_PATH: str = os.path.join(DIRS, 'meta.json')
 
 
 def _fill_empty_keys(meta_data: Dict) -> Dict:
@@ -56,6 +57,9 @@ def _write_meta_data(meta: Dict) -> None:
 
 
 if __name__ == '__main__':
+    if not os.path.isfile(DIRS):
+        os.makedirs(DIRS)
+
     meta_data: Dict = _get_meta_data()
 
     # add new collectors

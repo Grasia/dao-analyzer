@@ -37,7 +37,7 @@ class ApiRequester(IRequester):
             returns a empty dict. 
         """
         if len(args) < 1:
-            raise AttributeError('\'args\' has to be filled with a query at the first position')
+            raise AttributeError('\'args\' has to be filled with a query.\n')
 
         query: str = args[0]
         start: datetime
