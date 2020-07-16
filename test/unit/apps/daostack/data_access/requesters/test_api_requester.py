@@ -1,5 +1,5 @@
 """
-   Descp: Tester for API manager.
+   Descp: Tester for API requester.
 
    Created on: 10-mar-2020
 
@@ -12,7 +12,7 @@ import unittest
 
 from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
 
-class ApiManagerTest(unittest.TestCase):
+class ApiRequesterTest(unittest.TestCase):
     """
     Unit tests for APIs should be smalls and as fast as possible, so, 
     do not request big chunks of data.
