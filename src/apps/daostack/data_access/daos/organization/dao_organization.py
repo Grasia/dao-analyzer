@@ -15,10 +15,11 @@ from src.apps.daostack.business.transfers.organization import Organization
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.api.graphql.query_builder import QueryBuilder
 from src.apps.api.graphql.query import Query
+from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
 
 
 class DaoOrganizationList:
-    def __init__(self, requester):
+    def __init__(self, requester: ApiRequester):
         self.__requester = requester
 
 

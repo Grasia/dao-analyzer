@@ -19,10 +19,12 @@ from src.apps.api.graphql.query import Query
 from src.apps.api.graphql.query_builder import QueryBuilder
 from src.apps.daostack.data_access.daos.metric.strategy.\
     strategy_metric_interface import StrategyInterface
+from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
 
 
 class DaoStackedSerie():
-    def __init__(self, ids: List[str], strategy: StrategyInterface, requester):
+    def __init__(self, ids: List[str], strategy: StrategyInterface,
+     requester: ApiRequester):
         self.__ids = ids
         self.__st = strategy
         self.__requester = requester
