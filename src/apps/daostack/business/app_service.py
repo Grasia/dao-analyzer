@@ -12,11 +12,12 @@ from typing import Dict, List, Any
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
-from src.apps.daostack.data_access.daos.organization.dao_api\
-    import ApiDaoOrganizationList
+from src.apps.daostack.data_access.daos.organization_dao\
+    import DaoOrganizationList
 import src.apps.daostack.data_access.daos.metric.\
     dao_metric_factory as s_factory
 from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
+from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester 
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
@@ -47,7 +48,7 @@ class Service():
 
     def get_organizations(self) -> OrganizationList:
         if not self.__orgs:
-            orgs: OrganizationList = ApiDaoOrganizationList(ApiRequester())\
+            orgs: OrganizationList = DaoOrganizationList(CacheRequester())\
                 .get_organizations()
             if not orgs.is_empty():
                 self.__orgs = orgs
