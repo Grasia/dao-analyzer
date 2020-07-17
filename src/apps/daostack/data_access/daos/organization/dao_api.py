@@ -18,7 +18,7 @@ from src.apps.api.graphql.query import Query
 from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
 
 
-class DaoOrganizationList:
+class ApiDaoOrganizationList:
     def __init__(self, requester: ApiRequester):
         self.__requester = requester
 
