@@ -21,20 +21,35 @@ import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
 class StProposalMajority(StrategyInterface):
-    __DF_DATE = 'closedAt'
-    __DF_PASS = 'outcome'
+    __DF_DATE = 'executedAt'
+    __DF_PASS = 'winningOutcome'
+    __DF_REP = 'totalRepWhenExecuted'
+    __DF_VOTES_F = 'votesFor'
+    __DF_VOTES_A = 'votesAgainst'
+    __DF_BOOST_AT = 'boostedAt'
+    __DF_QUORUM = 'queuedVoteRequiredPercentage'
+    __DF_INI_COLS = [__DF_DATE, __DF_PASS, __DF_REP, __DF_VOTES_F, __DF_VOTES_A,
+                    __DF_BOOST_AT, __DF_QUORUM]
+
     __DF_MAJORITY_PER = 'majorityPer'
     __DF_IS_ABSOLUTE = 'isAbsolute'
     __DF_COLS = [__DF_DATE, __DF_PASS, __DF_MAJORITY_PER, __DF_IS_ABSOLUTE]
 
 
-    def get_empty_df(self) -> pd.DataFrame:
-        return pd_utl.get_empty_data_frame(self.__DF_COLS)
+    def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = df
+        dff = dff[dff[self.__DF_DATE].notna()]
+
+        dff = dff[self.__DF_INI_COLS]
+        return dff
 
 
     def process_data(self, df: pd.DataFrame) -> NStackedSerie:
         if pd_utl.is_an_empty_df(df):
             return NStackedSerie()
+
+        df = self.clean_df(df=df)
+        df = self.__calculate_outcome(df=df)
 
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
@@ -51,10 +66,10 @@ class StProposalMajority(StrategyInterface):
         #df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         df.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 
-        return self.generate_metric(df)
+        return self.__generate_metric(df)
 
 
-    def generate_metric(self, df: pd.DataFrame) -> NStackedSerie:
+    def __generate_metric(self, df: pd.DataFrame) -> NStackedSerie:
         abs_passes, rel_passes = self.__get_sserie_outcome(df=df, has_pass=True)
         abs_fails, rel_fails = self.__get_sserie_outcome(df=df, has_pass=False)
 
@@ -84,49 +99,30 @@ class StProposalMajority(StrategyInterface):
         return StackedSerie(serie=serie, y_stack=[df[
             self.__DF_MAJORITY_PER].tolist()])
 
-
-    def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
-        return Query(
-            header='proposals',
-            body=['executedAt', 'winningOutcome', 'totalRepWhenExecuted', 
-                'votesFor', 'votesAgainst', 'boostedAt' ,
-                'genesisProtocolParams{queuedVoteRequiredPercentage}'],
-            filters={
-                'where': f'{{dao: \"{o_id}\", executedAt_not: null}}',
-                'first': f'{n_first}',
-                'skip': f'{n_skip}',
-            })
-
-
-    def fetch_result(self, result: Dict) -> List:
-        return result['proposals']
-
     
-    def dict_to_df(self, data: List) -> pd.DataFrame:
-        df: pd.DataFrame = self.get_empty_df()
+    def __calculate_outcome(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = pd_utl.get_empty_data_frame(self.__DF_COLS)
 
-        for di in data:
-            total: int = int(di['totalRepWhenExecuted'])
+        for _, row in df.iterrows():
+            total: int = int(row[self.__DF_REP])
             if total == 0:
                 continue
 
-            date: int = int(di['executedAt'])
+            date: int = int(row[self.__DF_DATE])
             # winning outcome means more votes for than votes against
-            outcome: bool = True if di['winningOutcome'] == 'Pass' else False
-            boost: bool = True if di['boostedAt'] else False
+            outcome: bool = True if row[self.__DF_PASS] == 'Pass' else False
+            boost: bool = True if row[self.__DF_BOOST_AT] else False
 
-            percentage: int = (int(di['votesFor']) / total) if outcome \
-                else (int(di['votesAgainst']) / total)
+            percentage: int = (int(row[self.__DF_VOTES_F]) / total) if outcome \
+                else (int(row[self.__DF_VOTES_A]) / total)
             percentage = round(percentage * 100, 1)
 
-            is_absolute: bool  = True if \
-                int(di['genesisProtocolParams']['queuedVoteRequiredPercentage'])\
-                <= percentage else False
+            is_absolute: bool  = True if int(row[self.__DF_QUORUM]) <= percentage else False
 
             has_passed: bool = False
             if outcome:
                 has_passed = boost or is_absolute
 
-            df = pd_utl.append_rows(df, [date, has_passed, percentage, is_absolute])
+            dff = pd_utl.append_rows(dff, [date, has_passed, percentage, is_absolute])
 
-        return df
+        return dff

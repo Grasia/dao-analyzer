@@ -7,13 +7,12 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List, Dict
+from typing import List
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
         strategy_metric_interface import StrategyInterface
 
-from src.apps.api.graphql.query import Query
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
@@ -25,43 +24,38 @@ STAKERS = 1
 
 class StDifferentVS(StrategyInterface):
     __DF_DATE = 'createdAt'
-    __DF_USER_ID = 'userId'
+    __DF_VOTER = 'voter'
+    __DF_STAKER = 'staker'
     __DF_COUNT = 'count'
-    __DF_COLS = [__DF_DATE, __DF_USER_ID]
-    __SCHEMA_VOTER = {
-        'schema': 'proposalVotes',
-        'attrs': ['createdAt', 'voter'],
-    }
-    __SCHEMA_STAKER = {
-        'schema': 'proposalStakes',
-        'attrs': ['createdAt', 'staker'],
-    }
-    __SCHEMAS = [__SCHEMA_VOTER, __SCHEMA_STAKER]
 
 
     def __init__(self, m_type: int):
-        self.__m_index: int = self.__get_index(m_type)
+        self.__DF_COLS: List[str] = self.__get_df_columns(m_type)
 
 
-    def __get_index(self, m_type: int) -> int:
-        index: int = -1
+    def __get_df_columns(self, m_type: int) -> List[str]:
+        cols: List[str] = [self.__DF_DATE]
         if m_type == VOTERS:
-            index = 0
+            cols.append(self.__DF_VOTER)
         elif m_type == STAKERS:
-            index = 1
+            cols.append(self.__DF_STAKER)
         else:
             raise Exception(f'{m_type} type not allowed')
 
-        return index
+        return cols
 
 
-    def get_empty_df(self) -> pd.DataFrame:
-        return pd_utl.get_empty_data_frame(self.__DF_COLS)
+    def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = df
+        dff = dff[self.__DF_COLS]
+        return dff
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
         if pd_utl.is_an_empty_df(df):
             return StackedSerie()
+
+        df = self.clean_df(df=df)
 
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
@@ -88,32 +82,3 @@ class StDifferentVS(StrategyInterface):
             y_stack = [df[self.__DF_COUNT].tolist()])
 
         return metric
-
-
-    def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
-        return Query(
-            header=self.__SCHEMAS[self.__m_index]['schema'],
-            body=self.__SCHEMAS[self.__m_index]['attrs'],
-            filters={
-                'where': f'{{dao: \"{o_id}\"}}',
-                'first': f'{n_first}',
-                'skip': f'{n_skip}',
-            })
-
-
-    def fetch_result(self, result: Dict) -> List:
-        return result[self.__SCHEMAS[self.__m_index]['schema']]
-
-    
-    def dict_to_df(self, data: List) -> pd.DataFrame:
-        df: pd.DataFrame = self.get_empty_df()
-        attrs: List[str]
-
-        for di in data:
-            attrs = list()
-            for k in self.__SCHEMAS[self.__m_index]['attrs']:
-                attrs.append(di[k])
-
-            df = pd_utl.append_rows(df, attrs)
-
-        return df
