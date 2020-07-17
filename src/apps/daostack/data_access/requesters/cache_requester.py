@@ -12,7 +12,6 @@ import os
 from typing import List
 
 from src.apps.daostack.data_access.requesters.irequester import IRequester
-from src.logs import LOGS
 
 CACHE_PATH: str = os.path.join('datawarehouse', 'daostack')
 DAOS: str = os.path.join(CACHE_PATH, 'daos.csv')
@@ -24,23 +23,23 @@ ALL_FILES: List[str] = [DAOS, PROPOSALS, REP_HOLDERS, STAKES, VOTES]
 
 
 class CacheRequester(IRequester):
+    def __init__(self, src: str):
+        self.__src = src
+
+
     def request(self, *args) -> pd.DataFrame:
         """
-        Requests data from datawarehouse.
+        Gets data from datawarehouse.
         Arguments:
-            * args: Takes its first argument and use it as path to load data.
+            * args: Its not used
         Return:
-            a pandas dataframe with all the data loaded. If the path does not 
+            a pandas dataframe with all the data loaded. If the src does not 
             exist, it will return an empty dataframe.
         """
-        if len(args) < 1:
-            raise AttributeError(LOGS['no_attr_cache_req'])
-
-        path: str = args[0]
-        if not os.path.isfile(path):
+        if not os.path.isfile(self.__src):
             return pd.DataFrame() 
         
-        return pd.read_csv(path, header=0)
+        return pd.read_csv(self.__src, header=0)
 
 
     @classmethod

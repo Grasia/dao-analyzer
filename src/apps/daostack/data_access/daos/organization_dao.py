@@ -7,22 +7,20 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
-
-from typing import Dict
 import pandas as pd
 
 from src.apps.daostack.business.transfers.organization import Organization
 from src.apps.daostack.business.transfers.organization import OrganizationList
-import src.apps.daostack.data_access.requesters.cache_requester as cache 
+from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester
 
 
-class DaoOrganizationList:
-    def __init__(self, requester: cache.CacheRequester):
+class OrganizationListDao:
+    def __init__(self, requester: CacheRequester):
         self.__requester = requester
 
 
     def get_organizations(self) -> OrganizationList:
-        df: pd.DataFrame = self.__requester.request(cache.DAOS)
+        df: pd.DataFrame = self.__requester.request()
         orgs: OrganizationList = OrganizationList()
 
         for _, row in df.iterrows():

@@ -13,11 +13,10 @@ import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
 from src.apps.daostack.data_access.daos.organization_dao\
-    import DaoOrganizationList
+    import OrganizationListDao
 import src.apps.daostack.data_access.daos.metric.\
-    dao_metric_factory as s_factory
-from src.apps.daostack.data_access.requesters.api_requester import ApiRequester
-from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester 
+    metric_dao_factory as s_factory
+import src.apps.daostack.data_access.requesters.cache_requester as cache
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
@@ -48,8 +47,8 @@ class Service():
 
     def get_organizations(self) -> OrganizationList:
         if not self.__orgs:
-            orgs: OrganizationList = DaoOrganizationList(CacheRequester())\
-                .get_organizations()
+            orgs: OrganizationList = OrganizationListDao(cache.CacheRequester(
+                src=cache.DAOS)).get_organizations()
             if not orgs.is_empty():
                 self.__orgs = orgs
                 
