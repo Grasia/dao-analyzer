@@ -26,7 +26,7 @@ TOTAL_STAKES: int = 3
 
 
 class StTimeSerie(StrategyInterface):
-    __DF_DATE = 'date'
+    __DF_DATE = 'createdAt'
     __DF_COUNT = 'count'
     __DF_COLS = [__DF_DATE, __DF_COUNT]
 
@@ -49,14 +49,18 @@ class StTimeSerie(StrategyInterface):
         return m_key
 
 
-    def get_empty_df(self) -> pd.DataFrame:
-        return pd_utl.get_empty_data_frame([self.__DF_DATE])
+    def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = df
+        dff = dff[self.__DF_DATE]
+        return dff
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
         if pd_utl.is_an_empty_df(df):
             return StackedSerie()
         
+        df = self.clean_df(df=df)
+
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
         df = pd_utl.transform_to_monthly_date(df, self.__DF_DATE)
@@ -80,27 +84,3 @@ class StTimeSerie(StrategyInterface):
             y_stack = [df[self.__DF_COUNT].tolist()])
 
         return metric
-
-
-    def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
-        return Query(
-            header=self.__m_type,
-            body=['createdAt'],
-            filters={
-                'where': f'{{dao: \"{o_id}\"}}',
-                'first': f'{n_first}',
-                'skip': f'{n_skip}',
-            })
-
-
-    def fetch_result(self, result: Dict) -> List:
-        return result[self.__m_type]
-
-    
-    def dict_to_df(self, data: List) -> pd.DataFrame:
-        df: pd.DataFrame = self.get_empty_df()
-
-        for di in data:
-            df = pd_utl.append_rows(df, [di['createdAt']])
-
-        return df
