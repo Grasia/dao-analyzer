@@ -26,20 +26,31 @@ TOTAL_SUCCESS_RATIO: int = 2
 
 
 class StProposalOutcome(StrategyInterface):
-    __DF_DATE = 'closedAt'
+    __DF_DATE = 'executedAt'
     __DF_PASS = 'hasPassed'
     __DF_BOOST = 'isBoosted'
+    __DF_BOOST_AT = 'boostedAt'
+    __DF_OUTCOME = 'winningOutcome'
+    __DF_REP = 'totalRepWhenExecuted'
+    __DF_VOTES_F = 'votesFor'
+    __DF_QUORUM = 'queuedVoteRequiredPercentage'
     __DF_COUNT = 'count'
     __DF_COLS1 = [__DF_DATE, __DF_PASS, __DF_BOOST]
     __DF_COLS2 = [__DF_DATE, __DF_PASS, __DF_BOOST, __DF_COUNT]
+    __DF_INI_COLS = [__DF_DATE, __DF_OUTCOME, __DF_REP, __DF_VOTES_F,
+                    __DF_BOOST_AT, __DF_QUORUM]
 
 
     def __init__(self, m_type: int):
         self.__m_type = m_type
 
 
-    def get_empty_df(self) -> pd.DataFrame:
-        return pd_utl.get_empty_data_frame(self.__DF_COLS1)
+    def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = df
+        dff = dff[dff[self.__DF_DATE].notna()]
+
+        dff = dff[self.__DF_INI_COLS]
+        return dff
 
 
     def __get_boost_from_dataframe(self, df: pd.DataFrame, boosted: bool)\
@@ -72,6 +83,9 @@ class StProposalOutcome(StrategyInterface):
     def process_data(self, df: pd.DataFrame) -> Any:
         if pd_utl.is_an_empty_df(df):
             return self.__get_empty_transfer()
+
+        df = self.clean_df(df=df)
+        df = self.__calculate_outcome(df=df)
 
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
@@ -187,42 +201,25 @@ class StProposalOutcome(StrategyInterface):
 
         return ratio
 
-
-    def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
-        return Query(
-            header='proposals',
-            body=['executedAt', 'boostedAt', 'winningOutcome', 
-                  'totalRepWhenExecuted', 'votesFor',
-                  'genesisProtocolParams{queuedVoteRequiredPercentage}'],
-            filters={
-                'where': f'{{dao: \"{o_id}\", executedAt_not: null}}',
-                'first': f'{n_first}',
-                'skip': f'{n_skip}',
-            })
-
-
-    def fetch_result(self, result: Dict) -> List:
-        return result['proposals']
-
     
-    def dict_to_df(self, data: List) -> pd.DataFrame:
-        df: pd.DataFrame = self.get_empty_df()
+    def __calculate_outcome(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = pd_utl.get_empty_data_frame(self.__DF_COLS1)
 
-        for di in data:
-            date: int = int(di['executedAt'])
-            is_boost: bool = True if di['boostedAt'] else False
-            has_passed: bool = self.__has_passed(data=di, is_boost=is_boost)
+        for _, row in df.iterrows():
+            date: int = int(row[self.__DF_DATE])
+            is_boost: bool = True if row[self.__DF_BOOST_AT] else False
+            has_passed: bool = self.__has_passed(data=row, is_boost=is_boost)
 
-            df = pd_utl.append_rows(df, [date, has_passed, is_boost])
+            dff = pd_utl.append_rows(dff, [date, has_passed, is_boost])
 
-        return df
+        return dff
 
 
-    def __has_passed(self, data: Dict, is_boost: bool) -> bool:
+    def __has_passed(self, data, is_boost: bool) -> bool:
         # winning outcome means more votes for than votes against
-        outcome: bool = True if data['winningOutcome'] == 'Pass' else False
-        percentage = int(data['votesFor']) / int(data['totalRepWhenExecuted']) * 100
-        limit: int = int(data['genesisProtocolParams']['queuedVoteRequiredPercentage'])
+        outcome: bool = True if data[self.__DF_OUTCOME] == 'Pass' else False
+        percentage = int(data[self.__DF_VOTES_F]) / int(data[self.__DF_REP]) * 100
+        limit: int = int(data[self.__DF_QUORUM])
 
         has_passed: bool = outcome and is_boost
         # if there was no boost and pass outcome, you must consider if there was absolute majority
