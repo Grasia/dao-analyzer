@@ -32,26 +32,12 @@ class StTimeSerie(StrategyInterface):
 
 
     def __init__(self, m_type: int):
-        self.__m_type = self.__get_type(m_type)
-
-
-    def __get_type(self, m_type: int) -> str:
-        m_key: str = ''
-        if m_type == NEW_USERS:
-            m_key = 'reputationHolders'
-        elif m_type == NEW_PROPOSAL:
-            m_key = 'proposals'
-        elif m_type == TOTAL_VOTES:
-            m_key = 'proposalVotes'
-        elif m_type == TOTAL_STAKES:
-            m_key = 'proposalStakes'
-
-        return m_key
+        self.__m_type = m_type
 
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff = dff[self.__DF_DATE]
+        dff = dff[[self.__DF_DATE]]
         return dff
 
 
