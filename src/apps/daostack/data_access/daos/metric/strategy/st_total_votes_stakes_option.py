@@ -25,34 +25,29 @@ STAKES = 1
 
 class StTotalVSOption(StrategyInterface):
     __DF_DATE = 'createdAt'
+    __DF_OUTCOME = 'outcome'
     __DF_IS_POSITIVE = 'isPositive'
     __DF_COUNT = 'count'
     __DF_COLS = [__DF_DATE, __DF_IS_POSITIVE]
+    __DF_INI_COLS = [__DF_DATE, __DF_OUTCOME]
 
 
     def __init__(self, m_type: int):
-        self.__schema: str = self.__get_schema(m_type)
+        self.__type: int = m_type
 
 
-    def __get_schema(self, m_type: int) -> str:
-        schema = str
-        if m_type == VOTES:
-            schema = 'proposalVotes'
-        elif m_type == STAKES:
-            schema = 'proposalStakes'
-        else:
-            raise Exception(f'{m_type} type not allowed')
-
-        return schema
-
-
-    def get_empty_df(self) -> pd.DataFrame:
-        return pd_utl.get_empty_data_frame(self.__DF_COLS)
+    def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = df
+        dff = dff[self.__DF_INI_COLS]
+        return dff
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
         if pd_utl.is_an_empty_df(df):
             return StackedSerie()
+
+        df = self.clean_df(df=df)
+        df = self.__transform_df(df=df)
 
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
@@ -91,29 +86,14 @@ class StTotalVSOption(StrategyInterface):
 
         return d3f[self.__DF_COUNT].tolist()
 
-
-    def get_query(self, n_first: int, n_skip: int, o_id: int) -> Query:
-        return Query(
-            header=self.__schema,
-            body=['createdAt', 'outcome'],
-            filters={
-                'where': f'{{dao: \"{o_id}\"}}',
-                'first': f'{n_first}',
-                'skip': f'{n_skip}',
-            })
-
-
-    def fetch_result(self, result: Dict) -> List:
-        return result[self.__schema]
-
     
-    def dict_to_df(self, data: List) -> pd.DataFrame:
-        df: pd.DataFrame = self.get_empty_df()
+    def __transform_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        dff: pd.DataFrame = pd_utl.get_empty_data_frame(self.__DF_COLS)
 
-        for di in data:
-            date: int = int(di['createdAt'])
-            is_positive: bool = True if di['outcome'] == 'Pass' else False
+        for _, row in df.iterrows():
+            date: int = int(row[self.__DF_DATE])
+            is_positive: bool = True if row[self.__DF_OUTCOME] == 'Pass' else False
 
-            df = pd_utl.append_rows(df, [date, is_positive])
+            dff = pd_utl.append_rows(dff, [date, is_positive])
 
-        return df
+        return dff
