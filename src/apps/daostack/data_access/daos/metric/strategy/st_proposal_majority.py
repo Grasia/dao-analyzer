@@ -109,7 +109,6 @@ class StProposalMajority(StrategyInterface):
                 continue
 
             date: int = int(row[self.__DF_DATE])
-            # winning outcome means more votes for than votes against
             outcome: bool = True if row[self.__DF_PASS] == 'Pass' else False
             boost: bool = True if row[self.__DF_BOOST_AT] else False
 
@@ -120,7 +119,9 @@ class StProposalMajority(StrategyInterface):
             is_absolute: bool  = True if int(row[self.__DF_QUORUM]) <= percentage else False
 
             has_passed: bool = False
+            # winning outcome means more 'votes for' than 'votes against'
             if outcome:
+                # it passed if outcome and it had relative majority or absolute majority 
                 has_passed = boost or is_absolute
 
             dff = pd_utl.append_rows(dff, [date, has_passed, percentage, is_absolute])

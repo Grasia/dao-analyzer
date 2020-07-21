@@ -82,13 +82,13 @@ def is_an_empty_df(df: DataFrame) -> bool:
 
 def unix_to_date(df: DataFrame, col: str) -> DataFrame:
     dff: DataFrame = df
-    dff[col] = pd.to_datetime(df[col], unit='s').dt.date
+    dff.loc[:, col] = pd.to_datetime(dff.loc[:, col], unit='s').dt.date
     return dff
 
 
 def transform_to_monthly_date(df: DataFrame, col: str) -> DataFrame:
     dff: DataFrame = df
-    dff[col] = df[col].apply(lambda d: d.replace(day=1))
+    dff.loc[:, col] = dff[col].apply(lambda d: d.replace(day=1))
     return dff
 
 
