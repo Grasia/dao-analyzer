@@ -8,10 +8,8 @@
 """
 
 import abc
-from typing import List, Dict, Any
+from typing import Any
 from pandas import DataFrame
-
-from src.apps.api.graphql.query import Query
 
 
 class StrategyInterface(metaclass=abc.ABCMeta):

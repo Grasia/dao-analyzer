@@ -6,14 +6,10 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
-
-from typing import List, Dict
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
         strategy_metric_interface import StrategyInterface
-
-from src.apps.api.graphql.query import Query
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
