@@ -110,7 +110,9 @@ class StProposalMajority(StrategyInterface):
 
             date: int = int(row[self.__DF_DATE])
             outcome: bool = True if row[self.__DF_PASS] == 'Pass' else False
-            boost: bool = True if row[self.__DF_BOOST_AT] else False
+
+            # boost == na means there was not boosted
+            boost: bool = False if pd.isna(row[self.__DF_BOOST_AT]) else True
 
             percentage: int = (int(row[self.__DF_VOTES_F]) / total) if outcome \
                 else (int(row[self.__DF_VOTES_A]) / total)
