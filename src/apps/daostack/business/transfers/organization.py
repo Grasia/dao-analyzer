@@ -14,12 +14,20 @@ from src.apps.daostack.resources.strings import TEXT
 
 class Organization:
     def __init__(self, o_id: str = TEXT['no_data'], name: str = TEXT['no_data']):
-        self.id: str = o_id
-        self.name: str = name
+        self.__id: str = o_id
+        self.__name: str = name
 
     
     def get_dict_representation(self) -> Dict[str, str]:
-        return {'value': self.id, 'label': self.name}
+        return {'value': self.__id, 'label': self.__name}
+
+
+    def get_id(self) -> str:
+        return self.__id
+
+
+    def get_name(self) -> str:
+        return self.__name
 
 
 class OrganizationList:
@@ -33,6 +41,10 @@ class OrganizationList:
     def add_organization(self, org: Organization):
         if org:
             self.__orgs.append(org)
+
+    
+    def get_organizations(self) -> List[Organization]:
+        return self.__orgs
 
 
     def get_dict_representation(self) -> List[Dict[str, str]]:
