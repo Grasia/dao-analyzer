@@ -45,8 +45,7 @@ class StProposalOutcome(StrategyInterface):
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff = dff[dff[self.__DF_DATE].notna()]
-
+        dff = dff.dropna(subset=[self.__DF_DATE]).copy()
         dff.loc[:, self.__DF_INI_COLS] = dff[self.__DF_INI_COLS]
         return dff
 
