@@ -15,10 +15,10 @@ from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester
 
 class DaoOrganizationListTest(unittest.TestCase):
+    filename: str = os.path.join('datawarehouse', 'daostack', 'daos.csv')
 
     def test_get_organizations1(self):
-        filename: str = os.path.join('datawarehouse', 'daostack', 'daos.csv')
-        requester: CacheRequester = CacheRequester(src=filename)
+        requester: CacheRequester = CacheRequester(src=self.filename)
         dao: OrganizationListDao = OrganizationListDao(requester=requester)
 
         orgs: OrganizationList = dao.get_organizations()
@@ -28,8 +28,7 @@ class DaoOrganizationListTest(unittest.TestCase):
 
 
     def test_get_organizations2(self):
-        filename: str = os.path.join('datawarehouse', 'daostack', 'daos.csv')
-        requester: CacheRequester = CacheRequester(src=filename)
+        requester: CacheRequester = CacheRequester(src=self.filename)
         dao: OrganizationListDao = OrganizationListDao(requester=requester)
 
         orgs: OrganizationList = dao.get_organizations()
