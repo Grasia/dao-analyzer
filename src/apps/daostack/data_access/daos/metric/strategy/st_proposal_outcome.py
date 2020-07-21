@@ -207,7 +207,7 @@ class StProposalOutcome(StrategyInterface):
 
         for _, row in df.iterrows():
             date: int = int(row[self.__DF_DATE])
-            is_boost: bool = True if row[self.__DF_BOOST_AT] else False
+            is_boost: bool = False if pd.isna(row[self.__DF_BOOST_AT]) else True
             has_passed: bool = self.__has_passed(data=row, is_boost=is_boost)
 
             dff = pd_utl.append_rows(dff, [date, has_passed, is_boost])
