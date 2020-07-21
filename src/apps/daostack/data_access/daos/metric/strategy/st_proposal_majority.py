@@ -36,7 +36,7 @@ class StProposalMajority(StrategyInterface):
         dff: pd.DataFrame = df
         dff = dff[dff[self.__DF_DATE].notna()]
 
-        dff = dff[self.__DF_INI_COLS]
+        dff.loc[:, self.__DF_INI_COLS] = dff[self.__DF_INI_COLS]
         return dff
 
 

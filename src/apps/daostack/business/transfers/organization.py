@@ -82,4 +82,4 @@ class OrganizationList:
         if not o_id == self.__ALL_ORGS_ID:
             return [o_id]
 
-        return list(map(lambda x: x.id, self.__orgs))
+        return list(map(lambda x: x.get_id(), self.__orgs))

@@ -94,7 +94,7 @@ def transform_to_monthly_date(df: DataFrame, col: str) -> DataFrame:
 
 def datetime_to_date(df: DataFrame, col: str) -> DataFrame:
     dff: DataFrame = df
-    dff[col] = dff[col].dt.date
+    dff.loc[:, col] = dff[col].dt.date
     return dff
 
 

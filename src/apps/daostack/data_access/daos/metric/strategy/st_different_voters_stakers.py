@@ -47,7 +47,7 @@ class StDifferentVS(StrategyInterface):
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff = dff[self.__DF_COLS]
+        dff.loc[:, self.__DF_COLS] = dff[self.__DF_COLS]
         return dff
 
 

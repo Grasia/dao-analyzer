@@ -33,7 +33,7 @@ class StTimeSerie(StrategyInterface):
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff = dff[[self.__DF_DATE]]
+        dff.loc[:, [self.__DF_DATE]] = dff[[self.__DF_DATE]]
         return dff
 
 
