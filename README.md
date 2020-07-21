@@ -38,23 +38,20 @@ Finally, you can install the dependencies:
 `pip install -r requirements.txt`
 
 ## How to run it?
-You can run it on debug mode, if you set an environment variable named `DEBUG`
+Before launch the app, you have to run the following script in order to enable the cache stored in `datawarehouse/daostack`:
 
-`export DEBUG=TRUE`
+`python3 cache_scripts/daostack/main.py`
 
-After that, run the web app with:
+After a few minutes, you can now run the app with:
 
 `python3 index.py`
 
 Now, visit `http://127.0.0.1:8050/apps/daostack` in your web browser.
 
-### Caching data to improve the performance
-Instead of fetching data from the API, you can store all the data locally to improve the performance.
-Launching the following script will store all the data in `datawarehouse/daostack`:
+### Debug mode
+Setting the environment variable, `DEBUG`, before running the app, will enable the debug mode.
 
-`python3 cache_scripts/daostack/main.py`
-
-After a few minutes, you can launch the app as previously mentioned.
+`export DEBUG=TRUE`
 
 ## How to test it?
 Run all tests with:
