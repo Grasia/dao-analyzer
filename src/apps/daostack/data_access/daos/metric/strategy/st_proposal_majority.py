@@ -34,7 +34,7 @@ class StProposalMajority(StrategyInterface):
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff = dff.dropna(subset=[self.__DF_DATE]).copy()
+        dff.dropna(subset=[self.__DF_DATE], inplace=True)
         dff.loc[:, self.__DF_INI_COLS] = dff[self.__DF_INI_COLS]
         return dff
 
@@ -50,18 +50,25 @@ class StProposalMajority(StrategyInterface):
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
         df = pd_utl.transform_to_monthly_date(df, self.__DF_DATE)
 
+        return self.__generate_metric(df=df)
+
+
+    def __replicate_time_series(self, df: pd.DataFrame, first_date) -> pd.DataFrame:
+        dff: pd.DataFrame = df
+
         # generates a time serie
-        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE)
+        idx = pd_utl.get_monthly_serie_from_df(dff, self.__DF_DATE, start=first_date)
 
         # joinning all the data in a unique dataframe and fill with NA values
-        dff = pd_utl.get_df_from_lists([idx, None, None, None], self.__DF_COLS)
-        dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
+        df3 = pd_utl.get_df_from_lists([idx, None, None, None], self.__DF_COLS)
+        df3 = pd_utl.datetime_to_date(df3, self.__DF_DATE)
+        # remove duplicated NA  
+        pd_utl.drop_duplicate_date_rows(df=dff, dff=df3, date_col=self.__DF_DATE)
 
-        df = df.append(dff, ignore_index=True)
-        #df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
-        df.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
+        dff = dff.append(df3, ignore_index=True)
+        dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 
-        return self.__generate_metric(df)
+        return dff
 
 
     def __generate_metric(self, df: pd.DataFrame) -> NStackedSerie:
@@ -74,16 +81,21 @@ class StProposalMajority(StrategyInterface):
     def __get_sserie_outcome(self, df: pd.DataFrame, has_pass: bool)\
     -> (StackedSerie, StackedSerie):
 
+        first_date = df[self.__DF_DATE].min()
         # invert has_pass 'cause the df col has True, False and None values.
         dff: pd.DataFrame = pd_utl.filter_by_col_value(df, self.__DF_PASS, 
             (not has_pass), [pd_utl.NEQ])
+
         # absolute
         d3f: pd.DataFrame = pd_utl.filter_by_col_value(dff, self.__DF_IS_ABSOLUTE, 
             False, [pd_utl.NEQ])
+        d3f = self.__replicate_time_series(df=d3f, first_date=first_date)
         absolute: StackedSerie = self.__get_sserie_from_df(d3f)
+
         # relative
         d3f: pd.DataFrame = pd_utl.filter_by_col_value(dff, self.__DF_IS_ABSOLUTE, 
             True, [pd_utl.NEQ])
+        d3f = self.__replicate_time_series(df=d3f, first_date=first_date)
         relative: StackedSerie = self.__get_sserie_from_df(d3f)
 
         return (absolute, relative)

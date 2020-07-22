@@ -20,6 +20,13 @@ from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 
 class StDifferentVSTest(unittest.TestCase):
 
+    def __check_lists(self, df: pd.DataFrame, out: List[int], stype: int) -> None:
+        strategy: StDifferentVS = StDifferentVS(m_type=stype)
+        result: StackedSerie = strategy.process_data(df=df)
+
+        self.assertListEqual(out, result.get_i_stack(i_stack=0))
+
+
     def test_process_data1(self):
         in_df: pd.DataFrame = pd.DataFrame([
             {'createdAt': 1571961600, 'voter': '0', 'trash': 'trash'}, #2019-10-25T00:00:00+00:00
@@ -27,15 +34,12 @@ class StDifferentVSTest(unittest.TestCase):
             {'createdAt': 1572649200, 'voter': '0', 'trash': 'trash'}, #2019-11-01T23:00:00+00:00
             {'createdAt': 1569974399, 'voter': '1', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
             {'createdAt': 1569974399, 'voter': '1', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
-            {'createdAt': 1577836799, 'voter': '2', 'trash': 'trash'}, #2019-12-31T23:59:59+00:00
+            {'createdAt': 1577750400, 'voter': '2', 'trash': 'trash'}, #2019-12-31T00:00:00+00:00
         ])
-        delta = relativedelta.relativedelta(datetime.now(), datetime.utcfromtimestamp(1577836799))
+        delta = relativedelta.relativedelta(datetime.now(), datetime.fromtimestamp(1577750400))
         out: List[int] = [2, 1, 1] + [0] * (delta.months + 1)
 
-        strategy: StDifferentVS = StDifferentVS(m_type=0)
-        result: StackedSerie = strategy.process_data(df=in_df)
-        for i, r in enumerate(result.get_i_stack(i_stack=0), 0):
-            self.assertEqual(out[i], r)
+        self.__check_lists(df=in_df, out=out, stype=0)
 
         
     def test_process_data2(self):
@@ -48,12 +52,9 @@ class StDifferentVSTest(unittest.TestCase):
             {'createdAt': 1577923200, 'staker': '3', 'trash': 'trash'}, #2020-01-02T00:00:00+00:00
         ])
         delta = relativedelta.relativedelta(datetime.now(), datetime.utcfromtimestamp(1577923200))
-        out: List[int] = [3, 1, 0, 1] + [0] * (delta.months + 1)
+        out: List[int] = [3, 1, 0, 1] + [0] * delta.months
 
-        strategy: StDifferentVS = StDifferentVS(m_type=1)
-        result: StackedSerie = strategy.process_data(df=in_df)
-        for i, r in enumerate(result.get_i_stack(i_stack=0), 0):
-            self.assertEqual(out[i], r)
+        self.__check_lists(df=in_df, out=out, stype=1)
 
 
 if __name__ == "__main__":
