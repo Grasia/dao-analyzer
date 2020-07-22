@@ -10,7 +10,6 @@
 import unittest
 from typing import List, Tuple
 import pandas as pd
-import numpy as np
 from dateutil import relativedelta
 from datetime import datetime
 
@@ -27,9 +26,9 @@ class StProposalOutcomeTest(unittest.TestCase):
 
         prev: List[List[int]] = [fn, tp, fp, tn]
         out: List[List[int]] = list()
-        for l in prev:
-            l = l + [0] * num_months
-            out.append(l)
+        for vals in prev:
+            vals += [0] * num_months
+            out.append(vals)
 
         return out
 

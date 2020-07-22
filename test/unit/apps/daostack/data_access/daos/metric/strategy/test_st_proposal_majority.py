@@ -25,9 +25,9 @@ class StProposalMajorityTest(unittest.TestCase):
 
         prev: List[List[int]] = [abs_passes, rel_passes, rel_fails, abs_fails]
         out: List[List[int]] = list()
-        for l in prev:
-            l = l + [np.nan] * num_months
-            out.append(l)
+        for vals in prev:
+            vals += [np.nan] * num_months
+            out.append(vals)
 
         return out
 
