@@ -1,14 +1,14 @@
-# chain-community-dashboard
+# dao-analyzer
 DAO visualization tool
 
 ## Download
 Enter in your terminal (git must be installed) and write down:
 
-`git clone https://github.com/Grasia/chain-community-dashboard`
+`git clone https://github.com/Grasia/dao-analyzer`
 
 After that, move to repository root directory with:
 
-`cd chain-community-dashboard`
+`cd dao-analyzer`
 
 ## Installation
 All code has been tested on Linux, but it should work on Windows and macOS, 'cause it just uses the python environment.
@@ -38,15 +38,20 @@ Finally, you can install the dependencies:
 `pip install -r requirements.txt`
 
 ## How to run it?
-You can run it on debug mode, if you set an environment variable named `DEBUG`
+Before launch the app, you have to run the following script in order to enable the cache stored in `datawarehouse/daostack`:
 
-`export DEBUG=TRUE`
+`python3 cache_scripts/daostack/main.py`
 
-After that, run the web app with:
+After a few minutes, you can now run the app with:
 
 `python3 index.py`
 
 Now, visit `http://127.0.0.1:8050/apps/daostack` in your web browser.
+
+### Debug mode
+Setting the environment variable, `DEBUG`, before running the app, will enable the debug mode.
+
+`export DEBUG=TRUE`
 
 ## How to test it?
 Run all tests with:
