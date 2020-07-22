@@ -8,17 +8,28 @@
 """
 import os
 import unittest
+from unittest.mock import MagicMock
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.organization_dao import OrganizationListDao
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester
 
+
 class DaoOrganizationListTest(unittest.TestCase):
-    filename: str = os.path.join('datawarehouse', 'daostack', 'daos.csv')
+
+    def __get_test_data(self) -> pd.DataFrame:
+        return pd.DataFrame([
+            {'id': '0', 'name': 'dao1', 'trash': 'trash'},
+            {'id': '-1', 'name': 'dao-1', 'trash': 'trash'},
+            {'id': '4', 'name': 'dao4', 'trash': 'trash'},
+            {'id': '88pku88d8dd8d8', 'name': 'odd', 'trash': 'trash'},
+        ])
+
 
     def test_get_organizations1(self):
-        requester: CacheRequester = CacheRequester(src=self.filename)
+        requester: CacheRequester = CacheRequester(src='')
+        requester.request = MagicMock(return_value=self.__get_test_data())
         dao: OrganizationListDao = OrganizationListDao(requester=requester)
 
         orgs: OrganizationList = dao.get_organizations()
@@ -28,7 +39,8 @@ class DaoOrganizationListTest(unittest.TestCase):
 
 
     def test_get_organizations2(self):
-        requester: CacheRequester = CacheRequester(src=self.filename)
+        requester: CacheRequester = CacheRequester(src='')
+        requester.request = MagicMock(return_value=self.__get_test_data())
         dao: OrganizationListDao = OrganizationListDao(requester=requester)
 
         orgs: OrganizationList = dao.get_organizations()
