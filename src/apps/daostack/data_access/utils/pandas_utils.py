@@ -8,7 +8,7 @@
 """
 
 from datetime import date
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Set
 import pandas as pd
 from pandas import DataFrame
 from pandas.tseries.offsets import DateOffset
@@ -82,19 +82,19 @@ def is_an_empty_df(df: DataFrame) -> bool:
 
 def unix_to_date(df: DataFrame, col: str) -> DataFrame:
     dff: DataFrame = df
-    dff[col] = pd.to_datetime(df[col], unit='s').dt.date
+    dff.loc[:, col] = pd.to_datetime(dff.loc[:, col], unit='s').dt.date
     return dff
 
 
 def transform_to_monthly_date(df: DataFrame, col: str) -> DataFrame:
     dff: DataFrame = df
-    dff[col] = df[col].apply(lambda d: d.replace(day=1))
+    dff.loc[:, col] = dff[col].apply(lambda d: d.replace(day=1))
     return dff
 
 
 def datetime_to_date(df: DataFrame, col: str) -> DataFrame:
     dff: DataFrame = df
-    dff[col] = dff[col].dt.date
+    dff.loc[:, col] = dff[col].dt.date
     return dff
 
 
@@ -112,7 +112,22 @@ def sum_cols_repetitions(df: DataFrame, cols: List[str], new_col: str)\
     return dff
 
 
-def get_monthly_serie_from_df(df: DataFrame, date_col: str) -> pd.DatetimeIndex:
+def get_monthly_serie_from_df(df: DataFrame, date_col: str, start: date = None) -> pd.DatetimeIndex:
     today = date.today().replace(day=1)
-    start = df[date_col].min()
+    start = df[date_col].min() if not start else start 
     return pd.date_range(start=start, end=today, freq=DateOffset(months=1))
+
+
+def drop_duplicate_date_rows(df: DataFrame, dff: DataFrame, date_col: str) -> None:
+    """
+    Removes all duplicated date-rows from dff considering the df's ones.
+    """
+    idx: List[int] = list()
+    dates: Set[date] = set(df[date_col].tolist())
+
+    # find dataframe indexes of duplicated dates
+    for i, row in dff.iterrows():
+        if row[date_col] in dates:
+            idx.append(i)
+
+    dff.drop(idx, inplace=True)

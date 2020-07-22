@@ -58,10 +58,10 @@ class OrganizationTest(unittest.TestCase):
     def test_get_ids_from_id_1(self, orgs: List[Organization]):
         l_org: OrganizationList = OrganizationList(orgs=orgs)
         org: Organization = Random().choice(orgs)
-        ids: List[str] = l_org.get_ids_from_id(org.id)
+        ids: List[str] = l_org.get_ids_from_id(org.get_id())
 
         self.assertEqual(1, len(ids))
-        self.assertEqual(org.id, ids[0])
+        self.assertEqual(org.get_id(), ids[0])
 
 
     @example(orgs=list())
