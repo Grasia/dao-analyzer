@@ -52,7 +52,6 @@ class StProposalOutcome(StrategyInterface):
 
     def __get_boost_from_dataframe(self, df: pd.DataFrame, boosted: bool)\
     -> Tuple[List[int]]:
-        print(df)
         s_pass: List[int] = list()
         s_not_pass: List[int] = list()
 
