@@ -30,6 +30,9 @@ jobs:
         flake8 . --count --ignore=E1,E2,E3,E501,W1,W2,W3,W5 --show-source --statistics --max-complexity=10 --max-line-length=100
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         #flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+    - name: Run dao's script to store required data in tests
+      run: |
+        python3 cache_scripts/daostack/collectors/dao_collector.py
     - name: Test with pytest
       run: |
         #pip install pytest
