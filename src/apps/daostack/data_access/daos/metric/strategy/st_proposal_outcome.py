@@ -52,7 +52,7 @@ class StProposalOutcome(StrategyInterface):
 
     def __get_boost_from_dataframe(self, df: pd.DataFrame, boosted: bool)\
     -> Tuple[List[int]]:
-
+        print(df)
         s_pass: List[int] = list()
         s_not_pass: List[int] = list()
 
@@ -126,8 +126,8 @@ class StProposalOutcome(StrategyInterface):
         serie: Serie = Serie(x = df.drop_duplicates(subset=self.__DF_DATE,
             keep="first")[self.__DF_DATE].tolist())
 
-        n_p1, p1 = self.__get_boost_from_dataframe(df, False)
-        n_p2, p2 = self.__get_boost_from_dataframe(df, True)
+        n_p1, p1 = self.__get_boost_from_dataframe(df, boosted=False)
+        n_p2, p2 = self.__get_boost_from_dataframe(df, boosted=True)
 
         return StackedSerie(serie=serie, y_stack=[p1, p2, n_p2, n_p1])
 
@@ -221,7 +221,7 @@ class StProposalOutcome(StrategyInterface):
         has_passed: bool = outcome and is_boost
         # if there was no boost and pass outcome, you must consider if there was absolute majority
         if outcome and not is_boost:
-            has_passed = percentage > limit
+            has_passed = percentage >= limit
 
         return has_passed
 
