@@ -9,14 +9,10 @@
 
 import unittest
 from typing import List
-from hypothesis import given, settings, strategies as st
 import pandas as pd
-import datetime as dt
-from dateutil.relativedelta import relativedelta
-import calendar
+from dateutil import relativedelta
+from datetime import datetime
 
-from src.apps.api.graphql.query import Query
-from src.apps.api.graphql.query_builder import QueryBuilder
 from src.apps.daostack.data_access.daos.metric.strategy.\
     st_time_serie import StTimeSerie
 
@@ -24,64 +20,29 @@ from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 
 
 class StTimeSerieTest(unittest.TestCase):
-    def test_get_query_1(self):
-        st_ts: StTimeSerie = StTimeSerie(m_type=0)
-        query: Query = st_ts.get_query(n_first=100, n_skip=100, o_id='1')
-        qb: QueryBuilder = QueryBuilder([query])
 
-        sol: str = "{ reputationHolders(where: {dao: \"1\"}, first: 100, skip: 100, ){ createdAt } }"
+    def __check_lists(self, df: pd.DataFrame, out: List[int]) -> None:
+        # m_type it not used, in the future -1 will break it
+        strategy: StTimeSerie = StTimeSerie(m_type=-1)
+        result: StackedSerie = strategy.process_data(df=df)
 
-        self.assertEqual(sol, qb.build())
-
-
-    def test_get_query_2(self):
-        st_ts: StTimeSerie = StTimeSerie(m_type=1)
-        query: Query = st_ts.get_query(n_first=10, n_skip=1, o_id='2')
-        qb: QueryBuilder = QueryBuilder([query])
-
-        sol: str = "{ proposals(where: {dao: \"2\"}, first: 10, skip: 1, ){ createdAt } }"
-
-        self.assertEqual(sol, qb.build())
+        self.assertListEqual(out, result.get_i_stack(i_stack=0))
 
 
-    @given(sol=st.lists(
-        st.integers(min_value=0, max_value=5),
-        min_size=5,
-        max_size=5))
-    @settings(max_examples=30)
-    def test_process_data(self, sol: List[int]):
-        # first element should be at least 1
-        if sol[0] == 0:
-            sol[0] = 1
-        
-        df: pd.DataFrame = pd.DataFrame(columns=['date'])
-        date = dt.date.today().replace(day=1)
-        date = date + relativedelta(months=-4)
-        sol_dates: List = list()
+    def test_process_data(self):
+        in_df: pd.DataFrame = pd.DataFrame([
+            {'createdAt': 1567296000, 'id': '-1', 'trash': 'trash'}, #2019-09-01T00:00:00+00:00
+            {'createdAt': 1571961600, 'id': '3', 'trash': 'trash'}, #2019-10-25T00:00:00+00:00
+            {'createdAt': 1571961600, 'id': '0', 'trash': 'trash'}, #2019-10-25T00:00:00+00:00
+            {'createdAt': 1572649200, 'id': '0', 'trash': 'trash'}, #2019-11-01T23:00:00+00:00
+            {'createdAt': 1569974399, 'id': '1', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
+            {'createdAt': 1569974399, 'id': '1', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
+            {'createdAt': 1577750400, 'id': '2', 'trash': 'trash'}, #2019-12-31T00:00:00+00:00
+        ])
+        delta = relativedelta.relativedelta(datetime.now(), datetime.fromtimestamp(1577750400))
+        out: List[int] = [1, 4, 1, 1] + [0] * (delta.months + 1)
 
-        # fill df with repeated dates
-        for times in sol:
-            unix: int = int(calendar.timegm(date.timetuple()))
-            for _ in range(times):
-                serie: pd.Series = pd.Series([unix], index=df.columns)
-                df = df.append(serie, ignore_index=True)
-
-            sol_dates.append(date.strftime("%d/%m/%Y"))
-            date = date + relativedelta(months=+1)
-
-        sserie: StackedSerie = StTimeSerie(0).process_data(df=df)
-
-        # check stacked values
-        values = sserie.get_i_stack(0)
-        self.assertEqual(len(sol), len(values), sserie.get_serie())
-        for i, elem in enumerate(values):
-            self.assertEqual(sol[i], elem, f'{sol} != {values}')
-        
-        # check time serie
-        dates_r = sserie.get_serie()
-        self.assertEqual(len(sol_dates), len(dates_r))
-        for i, date in enumerate(dates_r):
-            self.assertEqual(sol_dates[i], date.strftime("%d/%m/%Y"))
+        self.__check_lists(df=in_df, out=out)
 
 
 if __name__ == "__main__":
