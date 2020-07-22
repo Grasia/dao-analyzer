@@ -1,14 +1,14 @@
-# chain-community-dashboard
+# dao-analyzer
 DAO visualization tool
 
 ## Download
 Enter in your terminal (git must be installed) and write down:
 
-`git clone https://github.com/Grasia/chain-community-dashboard`
+`git clone https://github.com/Grasia/dao-analyzer`
 
 After that, move to repository root directory with:
 
-`cd chain-community-dashboard`
+`cd dao-analyzer`
 
 ## Installation
 All code has been tested on Linux, but it should work on Windows and macOS, 'cause it just uses the python environment.
