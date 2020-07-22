@@ -6,7 +6,6 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
-import os
 import unittest
 from unittest.mock import MagicMock
 import pandas as pd
