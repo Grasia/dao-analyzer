@@ -57,7 +57,7 @@ def _write_meta_data(meta: Dict) -> None:
 
 
 if __name__ == '__main__':
-    if not os.path.isfile(DIRS):
+    if not os.path.isdir(DIRS):
         os.makedirs(DIRS)
 
     meta_data: Dict = _get_meta_data()
