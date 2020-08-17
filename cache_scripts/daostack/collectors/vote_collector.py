@@ -56,7 +56,7 @@ def update_votes(meta_data: Dict) -> None:
     filename: str = os.path.join('datawarehouse', 'daostack', 'votes.csv')
 
     if os.path.isfile(filename):
-        df.to_csv(filename, mode='a', header=False)
+        df.to_csv(filename, mode='a', header=False, index=False)
     else:
         df.to_csv(filename, index=False)
 
