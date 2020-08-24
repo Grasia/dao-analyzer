@@ -118,7 +118,7 @@ def update_proposals(meta_data: Dict) -> None:
     else:
         df3.to_csv(OUT_FILE, index=False)
 
-    print(f'Data stored in {OUT_FILE}.')
+    print(f'Data stored in {OUT_FILE}.\n')
 
     # update meta
     meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(proposals)
