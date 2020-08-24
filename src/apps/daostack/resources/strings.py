@@ -8,7 +8,7 @@
 """
 
 TEXT: dict = {
-    'app_title': 'DAO\'s Dashboard',
+    'app_title': 'DAO-Analyzer',
     'dao_selector_title': 'Select your DAO: ',
     'new_users_title': 'New reputation holders',
     'different_voters_title': 'Different voters',
@@ -46,4 +46,6 @@ TEXT: dict = {
     'votes_against': 'Votes against',
     'upstakes': 'Upstakes',
     'downstakes': 'Downstakes',
+    'github': 'Follow us on GitHub: ',
+    'github_url': 'https://github.com/Grasia/dao-analyzer',
 }

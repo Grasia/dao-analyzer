@@ -27,34 +27,35 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
         A html.Div filled with the app view 
     """
     return html.Div(
-        children = [
+        children=[
             html.Div(
-                children = [
+                children=[
+                    __generate_header(),
                 ],
-                className = 'main-header'
+                className='main-header fix-height'
             ),
 
             html.Div(
-                children = [
+                children=[
                     __generate_dao_selector(labels),
                     __generate_user_charts(),
                     __generate_vote_charts(),
                     __generate_stake_charts(),
                     __generate_proposal_charts(),
                 ],
-                className = 'main-body'
+                className='main-body'
             ),
 
             html.Div(
-                children = [],
-                className = 'main-foot'
+                children=[__generate_foot(),],
+                className='main-foot fix-height'
             ),
         ],
-        className = 'root',
+        className='root',
     )
 
 
-def __generate_header() -> html.H2:
+def __generate_header() -> html.H1:
     return html.H1(TEXT['app_title'])
     
 
@@ -70,6 +71,14 @@ def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
         ],
         className='dao-selector-pane',
     )
+
+
+def __generate_foot() -> html.Div:
+    return html.Div(children=[
+                    html.Span(TEXT['github'], className='right-separator bold'),
+                    html.A(TEXT['github_url'], href=TEXT['github_url'], target='_blank'),
+                ],
+                className='foot-text')
 
 
 def __generate_user_charts() -> html.Div:
