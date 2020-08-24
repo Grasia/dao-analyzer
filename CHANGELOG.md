@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.2.0 - 2020-08-24
+### Added
+- Graph of active users
+### Fixed
+- Bugs related with the cache script
+
 ## 0.1.0 - 2020-07-22
 ### Added
 
