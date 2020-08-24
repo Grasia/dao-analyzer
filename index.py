@@ -48,7 +48,7 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/apps/daostack':
+    if pathname == '/apps/daostack' or '/':
         controller.init()
         return get_service().get_layout()
     else:
