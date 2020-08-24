@@ -2,7 +2,7 @@
    Descp: Strategy pattern to calculate active users, the ones who performs
    at least one action (create a proposal, vote or stake) in a given month. 
 
-   Created on: 24-jul-2020
+   Created on: 24-aug-2020
 
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
@@ -31,12 +31,17 @@ class StActiveUsers(StrategyInterface):
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        used_cols = [self.__DF_DATE, self.__DF_PROPOSER, self.__DF_VOTER, self.__DF_STAKER]
+        actioners = set([self.__DF_PROPOSER, self.__DF_VOTER, self.__DF_STAKER])
+        actioners = list(actioners.intersection(set(df.columns)))
+        used_cols: List[str] = actioners + [self.__DF_DATE]
         dff = dff[used_cols]
         return dff
 
 
     def __get_user_action(self, df: pd.DataFrame, actioner: str) -> pd.DataFrame:
+        if actioner not in df.columns:
+            return pd.DataFrame()
+
         columns: List[str] = [self.__DF_DATE, actioner]
         dff = df[columns]
         dff = dff.dropna(subset=[actioner])
@@ -60,6 +65,9 @@ class StActiveUsers(StrategyInterface):
 
         df = self.clean_df(df=df)
         df = self.__prepare_df(df=df)
+
+        if pd_utl.is_an_empty_df(df):
+            return StackedSerie()
 
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)

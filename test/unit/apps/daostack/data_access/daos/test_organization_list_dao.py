@@ -27,7 +27,7 @@ class DaoOrganizationListTest(unittest.TestCase):
 
 
     def test_get_organizations1(self):
-        requester: CacheRequester = CacheRequester(src='')
+        requester: CacheRequester = CacheRequester(srcs=[''])
         requester.request = MagicMock(return_value=self.__get_test_data())
         dao: OrganizationListDao = OrganizationListDao(requester=requester)
 
@@ -38,7 +38,7 @@ class DaoOrganizationListTest(unittest.TestCase):
 
 
     def test_get_organizations2(self):
-        requester: CacheRequester = CacheRequester(src='')
+        requester: CacheRequester = CacheRequester(srcs=[''])
         requester.request = MagicMock(return_value=self.__get_test_data())
         dao: OrganizationListDao = OrganizationListDao(requester=requester)
 
