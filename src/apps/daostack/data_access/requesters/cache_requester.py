@@ -23,8 +23,8 @@ ALL_FILES: List[str] = [DAOS, PROPOSALS, REP_HOLDERS, STAKES, VOTES]
 
 
 class CacheRequester(IRequester):
-    def __init__(self, src: str):
-        self.__src = src
+    def __init__(self, srcs: List[str]):
+        self.__srcs = srcs
 
 
     def request(self, *args) -> pd.DataFrame:
@@ -36,10 +36,12 @@ class CacheRequester(IRequester):
             a pandas dataframe with all the data loaded. If the src does not 
             exist, it will return an empty dataframe.
         """
-        if not os.path.isfile(self.__src):
-            return pd.DataFrame() 
+        df: pd.DataFrame = pd.DataFrame()
+        for src in self.__srcs:
+            if os.path.isfile(src):
+                df = pd.concat([df, pd.read_csv(src, header=0)], axis=0, ignore_index=True)
         
-        return pd.read_csv(self.__src, header=0)
+        return df
 
 
     @classmethod

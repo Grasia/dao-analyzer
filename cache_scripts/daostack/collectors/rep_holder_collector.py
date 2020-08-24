@@ -52,11 +52,11 @@ def update_rep_holders(meta_data: Dict) -> None:
         'reputation_holders.csv')
 
     if os.path.isfile(filename):
-        df.to_csv(filename, mode='a', header=False)
+        df.to_csv(filename, mode='a', header=False, index=False)
     else:
         df.to_csv(filename, index=False)
 
-    print(f'Data stored in {filename}.')
+    print(f'Data stored in {filename}.\n')
 
     # update meta
     meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(reps)
