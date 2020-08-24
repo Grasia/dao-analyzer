@@ -16,6 +16,7 @@ from src.app import app, DEBUG
 from src.apps.daostack.business.app_service import get_service
 import src.apps.daostack.presentation.controller as controller
 
+server = app.server
 
 # see https://dash.plot.ly/external-resources to alter header, footer and favicon
 app.index_string = '''
