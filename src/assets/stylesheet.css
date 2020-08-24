@@ -31,7 +31,7 @@
 .foot-text {
     display: flex;
     align-items: center;
-    font-size: larger;
+    font-size: medium;
 }
 
 .pane {
