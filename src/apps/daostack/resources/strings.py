@@ -11,6 +11,7 @@ TEXT: dict = {
     'app_title': 'DAO-Analyzer',
     'dao_selector_title': 'Select your DAO: ',
     'new_users_title': 'New reputation holders',
+    'active_users_title': 'Active reputation holders',
     'different_voters_title': 'Different voters',
     'different_stakers_title': 'Different stakers',
     'new_proposals_title': 'New proposals',

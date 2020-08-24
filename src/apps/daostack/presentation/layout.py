@@ -47,7 +47,7 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
             ),
 
             html.Div(
-                children=[__generate_foot(),],
+                children=[__generate_foot()],
                 className='main-foot fix-height'
             ),
         ],
@@ -90,6 +90,13 @@ def __generate_user_charts() -> html.Div:
                     figure_gen=generate_bar_chart,
                     css_id='new-users',
                     title=TEXT['new_users_title'],
+                    amount=TEXT['default_amount'],
+                    subtitle=TEXT['no_data_selected'],
+                ),
+                __generate_graph(
+                    figure_gen=generate_bar_chart,
+                    css_id='active-users',
+                    title=TEXT['active_users_title'],
                     amount=TEXT['default_amount'],
                     subtitle=TEXT['no_data_selected'],
                 ),

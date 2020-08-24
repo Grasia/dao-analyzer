@@ -52,6 +52,19 @@ def update_new_user_graph(org_id):
 
 
 @app.callback(
+    [Output('active-users-graph', 'figure'),
+    Output('active-users-amount', 'children'),
+    Output('active-users-subtitle', 'children')],
+    [Input('org-dropdown', 'value')]
+)
+def update_active_user_graph(org_id):
+    if not org_id:
+        return __get_empty_chart(chart=ly.generate_bar_chart())
+    
+    return __get_data_from_metric(get_service().get_metric_active_users(org_id))
+
+
+@app.callback(
     [Output('different-voters-graph', 'figure'),
     Output('different-voters-amount', 'children'),
     Output('different-voters-subtitle', 'children')],

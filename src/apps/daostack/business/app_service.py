@@ -48,7 +48,7 @@ class Service():
     def get_organizations(self) -> OrganizationList:
         if not self.__orgs:
             orgs: OrganizationList = OrganizationListDao(cache.CacheRequester(
-                src=cache.DAOS)).get_organizations()
+                srcs=[cache.DAOS])).get_organizations()
             if not orgs.is_empty():
                 self.__orgs = orgs
                 
@@ -107,6 +107,13 @@ class Service():
 
         return self.__get_common_representation(metric=metric)
 
+
+    def get_metric_active_users(self, o_id: str) -> Dict:
+        metric: StackedSerie = self.__get_sserie_by_metric(
+            s_factory.ACTIVE_USERS, o_id)
+
+        return self.__get_common_representation(metric=metric)
+        
 
     def get_metric_different_voters(self, o_id: str) -> Dict:
         metric: StackedSerie = self.__get_sserie_by_metric(
