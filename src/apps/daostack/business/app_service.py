@@ -65,7 +65,7 @@ class Service():
 
     def __get_sserie_by_metric(self, metric: int, o_id: str) -> Any:
         dao = s_factory.get_dao(
-            ids=self.__orgs.get_ids_from_id(o_id),
+            ids=self.get_organizations().get_ids_from_id(o_id),
             metric=metric)
 
         return dao.get_metric()
