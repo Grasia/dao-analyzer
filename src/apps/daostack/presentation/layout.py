@@ -48,7 +48,7 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
 
             html.Div(
                 children=[__generate_foot()],
-                className='main-foot fix-height'
+                className='main-foot'
             ),
         ],
         className='root',
@@ -75,10 +75,25 @@ def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
 
 def __generate_foot() -> html.Div:
     return html.Div(children=[
-                    html.Span(TEXT['github'], className='right-separator bold'),
-                    html.A(TEXT['github_url'], href=TEXT['github_url'], target='_blank'),
-                ],
-                className='foot-text')
+                    html.Div(children=[
+                        html.Span(TEXT['github'], className='right-separator bold'),
+                        html.A(TEXT['github_url'], href=TEXT['github_url'], target='_blank')
+                    ], className='center-aligner medium-font small-vertical-margin'),
+                    html.Div(children=[
+                        html.Div(children=[
+                            html.A(children=[
+                                html.Img(src=TEXT['cc_image_url'], className='license-img'),
+                            ], href=TEXT['cc_url'], target='_blank'),
+                            html.A(TEXT['cc_license_text'], href=TEXT['cc_url'], target='_blank'),
+                        ], className='column-container center-aligner'),
+                        html.Div(children=[
+                            html.A(children=[
+                                html.Img(src=TEXT['gpl_image_url'], className='license-img'),
+                            ], href=TEXT['gpl_url'], target='_blank'),
+                            html.A(TEXT['gpl_license_text'], href=TEXT['gpl_url'], target='_blank'),
+                        ], className='column-container center-aligner')
+                    ], className='row-container space-aligner small-vertical-margin')
+                ])
 
 
 def __generate_user_charts() -> html.Div:
