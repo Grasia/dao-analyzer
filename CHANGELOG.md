@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.2.1 - 2020-09-07
+### Added
+- Added licenses in the web page
+
 ## 0.2.0 - 2020-08-24
 ### Added
 - Graph of active users
