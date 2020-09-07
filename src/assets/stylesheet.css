@@ -23,15 +23,33 @@
 }
 
 .main-foot {
-    display: flex;
-    justify-content: center;
     background-color: #CFD8DC;
 }
 
-.foot-text {
+.center-aligner {
     display: flex;
+    justify-content: center;
     align-items: center;
+}
+
+.space-aligner {
+    display: flex;
+    justify-content: space-around;
+    
+}
+
+.medium-font {
     font-size: medium;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.column-container {
+    display: flex;
+    flex-direction: column;
 }
 
 .pane {
@@ -48,7 +66,6 @@
     justify-content: center;
     font-size: medium;
     padding: 1rem 0 1rem 0;
-
 }
 
 .drop-down {
@@ -103,6 +120,11 @@
     font-weight: bold;
 }
 
-.fix-height {
-    height: 5rem;
+.license-img {
+    width: 88px;
+    height: 31px;
+}
+
+.small-vertical-margin {
+    margin: 0.5rem 0 0.5rem 0;
 }

@@ -49,4 +49,10 @@ TEXT: dict = {
     'downstakes': 'Downstakes',
     'github': 'Follow us on GitHub: ',
     'github_url': 'https://github.com/Grasia/dao-analyzer',
+    'cc_license_text': 'This work is licensed under Creative Commons 4.0',
+    'cc_url': 'https://creativecommons.org/licenses/by/4.0/',
+    'cc_image_url': 'https://i.creativecommons.org/l/by/4.0/88x31.png',
+    'gpl_license_text': 'The code is licensed under GPLv3',
+    'gpl_image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/GPLv3_Logo.svg/1200px-GPLv3_Logo.svg.png',
+    'gpl_url': 'https://www.gnu.org/licenses/gpl-3.0.en.html',
 }
