@@ -89,7 +89,11 @@ def __generate_foot() -> html.Div:
                             ], href=TEXT['gpl_url'], target='_blank'),
                         ], className='column-container padding-30 center-aligner medium-horizontal-margin'),
                         html.Div(children=[
-                            html.P(f"{TEXT['cc_license_text']}. {TEXT['gpl_license_text']}. {TEXT['acknowledgements']}.", 
+                            html.P(children=[
+                                    f"{TEXT['cc_license_text']}. {TEXT['gpl_license_text']}. ",
+                                    html.A(TEXT['p2p_models'], href=TEXT['p2p_models_url'], target='_blank'),
+                                    f"{TEXT['acknowledgements']}."
+                                ],
                                 className='small-font'),
                         ], className='padding-30 medium-horizontal-margin'),
                         html.Div(children=[
