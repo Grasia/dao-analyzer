@@ -42,6 +42,10 @@
     font-size: medium;
 }
 
+.small-font {
+    font-size: small;
+}
+
 .row-container {
     display: flex;
     flex-direction: row;
@@ -125,6 +129,26 @@
     height: 31px;
 }
 
+.sponsor-img {
+    display: block;
+    max-width: 200px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+}
+
 .small-vertical-margin {
     margin: 0.5rem 0 0.5rem 0;
+}
+
+.medium-horizontal-margin {
+    margin: 0 1rem 0 1rem;
+}
+
+.medium-bottom-margin {
+    margin-bottom: 1rem;
+}
+
+.padding-70 {
+    width: 70%;
 }

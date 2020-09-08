@@ -84,15 +84,27 @@ def __generate_foot() -> html.Div:
                             html.A(children=[
                                 html.Img(src=TEXT['cc_image_url'], className='license-img'),
                             ], href=TEXT['cc_url'], target='_blank'),
-                            html.A(TEXT['cc_license_text'], href=TEXT['cc_url'], target='_blank'),
-                        ], className='column-container center-aligner'),
-                        html.Div(children=[
                             html.A(children=[
                                 html.Img(src=TEXT['gpl_image_url'], className='license-img'),
                             ], href=TEXT['gpl_url'], target='_blank'),
-                            html.A(TEXT['gpl_license_text'], href=TEXT['gpl_url'], target='_blank'),
-                        ], className='column-container center-aligner')
-                    ], className='row-container space-aligner small-vertical-margin')
+                        ], className='column-container padding-30 center-aligner medium-horizontal-margin'),
+                        html.Div(children=[
+                            html.P(children=[
+                                    f"{TEXT['cc_license_text']}. {TEXT['gpl_license_text']}. ",
+                                    html.A(TEXT['p2p_models'], href=TEXT['p2p_models_url'], target='_blank'),
+                                    f"{TEXT['acknowledgements']}."
+                                ],
+                                className='small-font'),
+                        ], className='padding-30 medium-horizontal-margin'),
+                        html.Div(children=[
+                            html.A(children=[
+                                html.Img(src=TEXT['erc_image_url'], className='sponsor-img'),
+                            ], href=TEXT['erc_url'], target='_blank'),
+                            html.A(children=[
+                                html.Img(src=TEXT['spanish_ministry_image_url'], className='sponsor-img'),
+                            ], href=TEXT['spanish_ministry_url'], target='_blank')
+                        ], className='column-container padding-30 center-aligner medium-horizontal-margin')
+                    ], className='row-container medium-bottom-margin center-aligner space-aligner')
                 ])
 
 
