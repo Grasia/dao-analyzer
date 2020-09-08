@@ -1,9 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.2.1 - 2020-09-07
+## 0.2.1 - 2020-09-08
 ### Added
-- Added licenses in the web page
+- Added licenses in the web page and acknowledgements
 
 ## 0.2.0 - 2020-08-24
 ### Added
