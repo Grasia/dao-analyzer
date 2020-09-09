@@ -3,7 +3,7 @@
 
    Created on: 20-feb-2020
 
-   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
 
@@ -352,7 +352,7 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
     return fig
 
 
-def __get_horizontal_line(y, y_ref: str):
+def __get_horizontal_line(y, y_ref: str) -> Dict:
     return {
             'type': 'line',
             'xref': 'paper',
