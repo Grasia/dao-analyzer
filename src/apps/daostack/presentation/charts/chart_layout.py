@@ -22,7 +22,9 @@ class ChartLayout(metaclass=abc.ABCMeta):
                 hasattr(subclass, 'get_layout') and
                 callable(subclass.get_layout) and
                 hasattr(subclass, 'get_configuration') and
-                callable(subclass.get_configuration) or
+                callable(subclass.get_configuration) and
+                hasattr(subclass, 'get_empty_plot_data') and
+                callable(subclass.get_empty_plot_data) or
                 NotImplemented)
 
     
@@ -46,5 +48,13 @@ class ChartLayout(metaclass=abc.ABCMeta):
     def get_configuration(self) -> ChartConfiguration:
         """
         Returns the chart layout configuration.
+        """
+        raise NotImplementedError
+
+
+    @abc.abstractmethod
+    def get_empty_plot_data(self) -> Dict:
+        """
+        Returns an empty dictionary with the plot_data schema.
         """
         raise NotImplementedError

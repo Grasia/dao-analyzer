@@ -248,29 +248,6 @@ def __generate_proposal_charts() -> html.Div:
         className='section')
 
 
-def __generate_graph(figure_gen, css_id: str, title: str, amount: str,
-subtitle: str, show_subsection: bool = True) -> html.Div:
-
-    hide: str = '' if show_subsection else 'hide'
-
-    children: List = [html.Span(title, className='graph-title1')]
-    children.append(html.Span(
-        amount, 
-        id=f'{css_id}-amount', 
-        className=f'graph-title2 {hide}'))
-    children.append(html.Span(
-        subtitle, 
-        id=f'{css_id}-subtitle',
-        className=hide))
-
-    children.append(dcc.Loading(
-        type="circle",
-        color=Color.DARK_BLUE,
-        children=dcc.Graph(id=f'{css_id}-graph', figure=figure_gen())))
-
-    return html.Div(children=children, className='pane graph-pane')
-
-
 def generate_bar_chart(data: Dict = None, barmode: str = 'group') -> Dict:
     if not data:
         data = {'common': {'x': list(), 'type': '-', 'x_format': '', 
@@ -350,58 +327,3 @@ def generate_double_dot_chart(data: Dict = None) -> Dict:
         plot_bgcolor="white")
 
     return fig
-
-
-def __get_horizontal_line(y, y_ref: str) -> Dict:
-    return {
-            'type': 'line',
-            'xref': 'paper',
-            'yref': y_ref,
-            'x0': 0,
-            'y0': y,
-            'x1': 1,
-            'y1': y,
-            'line':{
-                'color': 'black',
-                'width': 0.5,
-                'dash':'dot'
-            }
-        }
-
-
-def __get_axis_layout(args: Dict) -> Dict:
-    axis_l: Dict[str, str] = {
-        'type': args['type'] if 'type' in args else '-',
-        'ticks': 'outside',
-        'ticklen': 5,
-        'tickwidth': 2,
-        'ticksuffix': args['suffix'] if 'suffix' in args else '',
-        'showline': True, 
-        'linewidth': 2, 
-        'linecolor': 'black',
-        'showgrid': args['grid'] if 'grid' in args else False,
-        'gridwidth': 0.5,
-        'gridcolor': '#B0BEC5',
-    }
-
-    if 'removemarkers' in args:
-        axis_l['ticklen'] = 0
-        axis_l['tickwidth'] = 0
-    if 'tickvals' in args:
-        axis_l['tickvals'] = args['tickvals']
-    if 'reverse_range' in args:
-        axis_l['autorange'] = 'reversed'
-    if 'l_range' in args:
-        axis_l['range'] = args['l_range']
-    if 'tickformat' in args:
-        axis_l['tickformat'] = args['tickformat']
-    if 'tickangle' in args:
-        axis_l['tickangle'] = 45
-    if 'matches' in args:
-        axis_l['matches'] = args['matches']
-
-    return axis_l
-
-
-def __get_legend() -> Dict:
-    return {'orientation': 'h', 'x': 0, 'y': 1.2}

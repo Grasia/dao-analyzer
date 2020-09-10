@@ -20,8 +20,20 @@ class BarLayout(ChartLayout):
         self.__configuration = ChartConfiguration()
 
 
+    @staticmethod
+    def get_empty_plot_data() -> Dict:
+        return {
+            'x': [],
+            'y': [],
+            'name': '',
+            'color': '',
+            'type': '-',
+            'x_format': '',
+        }
+
+
     def get_empty_layout(self) -> Dict:
-        return { 'data': [] }
+        return self.get_layout(plot_data = self.get_empty_plot_data())
 
 
     def get_layout(self, plot_data: Dict) -> Dict:

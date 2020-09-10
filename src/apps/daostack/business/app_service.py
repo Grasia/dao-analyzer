@@ -37,9 +37,7 @@ def get_service():
 
 
 class Service():
-    __DATE_FORMAT: str = '%b, %Y'
-
-
+ 
     def __init__(self):
         # app state
         self.__orgs: OrganizationList = None

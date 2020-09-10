@@ -11,32 +11,30 @@ from dash.dependencies import Input, Output
 
 from src.app import app
 from src.apps.daostack.presentation.charts.chart_pane_layout \
-import ChartPaneLayout
+    import ChartPaneLayout
+from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
 
 class ChartController():
 
-    def __init__(self, css_id: str, layout: ChartPaneLayout, metric: Metric) -> None:
+    def __init__(self, css_id: str, layout: ChartPaneLayout, adapter: MetricAdapter) -> None:
         self.__layout = layout
-        self.__metric = metric
+        self.__adapter = adapter
 
         self.bind_callback(
             app = app, 
-            chart = css_id,
-            elem1 = f'{css_id}{ChartPaneLayout.SUFFIX_ID_SUBTITLE1}',
-            elem2 = f'{css_id}{ChartPaneLayout.SUFFIX_ID_SUBTITLE2}',
+            pane = css_id,
             input_callback = 'org-dropdown')
 
 
-    def bind_callback(self, app, chart, elem1, elem2, input_callback) -> None:
+    def bind_callback(self, app, pane, input_callback) -> None:
 
         @app.callback(
-            [Output(chart, 'figure'),
-             Output(elem1, 'children'),
-             Output(elem2, 'children')],
+            [Output(pane, 'children')],
             [Input(input_callback, 'value')]
         )
         def update_chart(org_id):
             if not org_id:
                 self.__layout.get_layout()
-        # TODO
-            
+
+            data = self.__adapter.get_plot_data(org_id = org_id)
+            return self.__layout.fill_child(plot_data=data)
