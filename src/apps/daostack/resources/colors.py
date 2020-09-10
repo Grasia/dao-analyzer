@@ -18,6 +18,8 @@ DARK_GREEN = '#4CAF50'
 LIGHT_GREEN = '#A5D6A7'
 DARK_PURPLE = '#9C27B0'
 LIGHT_PURPLE = '#CE93D8'
+BLACK = 'black'
+GRID_COLOR = '#B0BEC5'
 
 
 def hex_to_rgba(color: str, alpha: float = 1.0) -> Tuple:

@@ -8,7 +8,10 @@
 """
 
 import abc
-from typing import Any, Dict
+from typing import Dict
+
+from src.apps.daostack.presentation.charts.chart_configuration\
+.chart_configuration import ChartConfiguration
 
 class ChartLayout(metaclass=abc.ABCMeta):
 
@@ -17,12 +20,14 @@ class ChartLayout(metaclass=abc.ABCMeta):
         return (hasattr(subclass, 'get_empty_layout') and
                 callable(subclass.get_empty_layout) and
                 hasattr(subclass, 'get_layout') and
-                callable(subclass.get_layout) or
+                callable(subclass.get_layout) and
+                hasattr(subclass, 'get_configuration') and
+                callable(subclass.get_configuration) or
                 NotImplemented)
 
     
     @abc.abstractmethod
-    def get_empty_layout(self) -> Any:
+    def get_empty_layout(self) -> Dict:
         """
         Returns an empty layout. 
         """
@@ -30,9 +35,16 @@ class ChartLayout(metaclass=abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def get_layout(self, plot_data: Dict) -> Any:
+    def get_layout(self, plot_data: Dict) -> Dict:
         """
         Returns the chart layout filled with the plot_data argument.
-        Note: see each implementation to know how plot_data structure is.
+        """
+        raise NotImplementedError
+
+
+    @abc.abstractmethod
+    def get_configuration(self) -> ChartConfiguration:
+        """
+        Returns the chart layout configuration.
         """
         raise NotImplementedError

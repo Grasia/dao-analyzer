@@ -1,5 +1,5 @@
 """
-   Descp: Bar chart used as a representation of value series.
+   Descp: Wraps the layout and its control.
 
    Created on: 09-sep-2020
 

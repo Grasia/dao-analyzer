@@ -40,8 +40,8 @@ def __get_empty_chart(chart) -> List:
 
 @app.callback(
     [Output('new-users-graph', 'figure'),
-    Output('new-users-amount', 'children'),
-    Output('new-users-subtitle', 'children')],
+    Output('new-users-subtitle1', 'children'),
+    Output('new-users-subtitle2', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_new_user_graph(org_id):
@@ -53,8 +53,8 @@ def update_new_user_graph(org_id):
 
 @app.callback(
     [Output('active-users-graph', 'figure'),
-    Output('active-users-amount', 'children'),
-    Output('active-users-subtitle', 'children')],
+    Output('active-users-subtitle1', 'children'),
+    Output('active-users-subtitle2', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_active_user_graph(org_id):
@@ -66,8 +66,8 @@ def update_active_user_graph(org_id):
 
 @app.callback(
     [Output('different-voters-graph', 'figure'),
-    Output('different-voters-amount', 'children'),
-    Output('different-voters-subtitle', 'children')],
+    Output('different-voters-subtitle1', 'children'),
+    Output('different-voters-subtitle2', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_different_voters_graph(org_id):
@@ -80,8 +80,8 @@ def update_different_voters_graph(org_id):
 
 @app.callback(
     [Output('different-stakers-graph', 'figure'),
-    Output('different-stakers-amount', 'children'),
-    Output('different-stakers-subtitle', 'children')],
+    Output('different-stakers-subtitle1', 'children'),
+    Output('different-stakers-subtitle2', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_different_stakers_graph(org_id):
@@ -94,8 +94,8 @@ def update_different_stakers_graph(org_id):
 
 @app.callback(
     [Output('new-proposal-graph', 'figure'),
-    Output('new-proposal-amount', 'children'),
-    Output('new-proposal-subtitle', 'children')],
+    Output('new-proposal-subtitle1', 'children'),
+    Output('new-proposal-subtitle2', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_new_proposal_graph(org_id):
@@ -107,8 +107,8 @@ def update_new_proposal_graph(org_id):
 
 # @app.callback(
 #     [Output('total-votes-graph', 'figure'),
-#     Output('total-votes-amount', 'children'),
-#     Output('total-votes-subtitle', 'children')],
+#     Output('total-votes-subtitle1', 'children'),
+#     Output('total-votes-subtitle2', 'children')],
 #     [Input('org-dropdown', 'value')]
 # )
 # def update_total_votes_graph(org_id):
@@ -120,8 +120,8 @@ def update_new_proposal_graph(org_id):
 
 @app.callback(
     [Output('total-stakes-graph', 'figure'),
-    Output('total-stakes-amount', 'children'),
-    Output('total-stakes-subtitle', 'children')],
+    Output('total-stakes-subtitle1', 'children'),
+    Output('total-stakes-subtitle2', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_total_stakes_graph(org_id):
@@ -182,8 +182,8 @@ def update_proposal_boost_succ_ratio(org_id):
 
 @app.callback(
     [Output('total-votes-option-graph', 'figure'),
-    Output('total-votes-option-amount', 'children'),
-    Output('total-votes-option-subtitle', 'children')],
+    Output('total-votes-option-subtitle1', 'children'),
+    Output('total-votes-option-subtitle2', 'children')],
     [Input('org-dropdown', 'value')]
 )
 def update_total_votes_option_graph(org_id):

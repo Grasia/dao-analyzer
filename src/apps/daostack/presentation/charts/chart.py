@@ -13,6 +13,12 @@ from typing import Any
 
 class Chart(metaclass=abc.ABCMeta):
 
+    ID: int = 0
+
+    def __init__(self) -> None:
+        Chart.ID += 1
+
+
     @classmethod
     def __subclasshook__(cls, subclass):
         return (hasattr(subclass, 'get_layout') and

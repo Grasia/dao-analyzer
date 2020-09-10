@@ -1,5 +1,5 @@
 """
-   Descp: Common pane which wraps chart layouts.
+   Descp: Common pane which wraps chart layout and other components.
 
    Created on: 09-sep-2020
 
@@ -9,38 +9,66 @@
 
 import dash_html_components as html
 import dash_core_components as dcc
-from typing import Dict, List
+from typing import List
 
 from src.apps.daostack.resources.strings import TEXT
 import src.apps.daostack.resources.colors as Color
 from src.apps.daostack.presentation.charts.chart_layout import ChartLayout
+from src.apps.daostack.presentation.charts.chart_configuration\
+.chart_configuration import ChartConfiguration
 
 
 class ChartPaneLayout():
+    SUFFIX_ID_SUBTITLE1: str = '-subtitle1'
+    SUFFIX_ID_SUBTITLE2: str = '-subtitle2'
 
     def __init__(self, title: str, css_id: str, figure: ChartLayout) -> None:
-        self.__title = title
-        self.__css_id = css_id
-        self.__figure = figure
+        self.__title: str = title
+        self.__css_id: str = css_id
+        self.__figure: ChartLayout = figure
+        self.__show_subtitles: bool = True
 
 
-    def get_layout(self, amount: str, subtitle: str, is_subsection: bool = True) -> html.Div:
+    def get_layout(self) -> html.Div:
+        """
+        Returns a pane with all the components of the chart initialized to a default value.
+        """
+        hide: str = '' if self.__show_subtitles else 'hide'
 
-        hide: str = '' if show_subsection else 'hide'
-
-        children: List = [html.Span(title, className='graph-title1')]
-        children.append(html.Span(
-            amount, 
-            id=f'{css_id}-amount', 
-            className=f'graph-title2 {hide}'))
-        children.append(html.Span(
-            subtitle, 
-            id=f'{css_id}-subtitle',
-            className=hide))
-
-        children.append(dcc.Loading(
-            type="circle",
-            color=Color.DARK_BLUE,
-            children=dcc.Graph(id=f'{css_id}-graph', figure=figure_gen())))
-
+        children: List = [
+            html.Span(
+                self.__title,
+                className = 'graph-pane-title'
+            ),
+            html.Span(
+                TEXT['default_amount'],
+                id = f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE1}',
+                className = f'graph-pane-subtitle {hide}'
+            ),
+            html.Span(
+                TEXT['no_data_selected'], 
+                id = f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
+                className = hide
+            ),
+            dcc.Loading(
+                type = "circle",
+                color = Color.DARK_BLUE,
+                children = dcc.Graph(
+                    id = f'{self.__css_id}', 
+                    figure = self.__figure.get_empty_layout()
+                ),
+            ),
+        ]
         return html.Div(children=children, className='pane graph-pane')
+
+
+    def enable_subtitles(self) -> None:
+        self.__show_subtitles = True
+
+
+    def disable_subtitles(self) -> None:
+        self.__show_subtitles = False
+
+
+    def get_configuration(self) -> ChartConfiguration:
+        return self.__figure.get_configuration()

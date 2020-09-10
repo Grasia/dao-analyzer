@@ -101,13 +101,13 @@
     width: 49.5%;
 }
 
-.graph-title1 {
+.graph-pane-title {
     text-align: center;
     font-size: large;
     margin: 1rem 0rem 1rem 0rem;
 }
 
-.graph-title2 {
+.graph-pane-subtitle {
     text-align: center;
     font-size: medium;
 }
