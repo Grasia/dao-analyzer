@@ -13,9 +13,9 @@ from typing import List, Dict
 
 from src.apps.daostack.resources.strings import TEXT
 import src.apps.daostack.resources.colors as Color
-from src.apps.daostack.presentation.charts.chart_layout import ChartLayout
-from src.apps.daostack.presentation.charts.chart_configuration\
-.chart_configuration import ChartConfiguration
+from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
+from src.apps.daostack.presentation.charts.layout.figure.figure_configuration \
+    import FigureConfiguration
 
 
 class ChartPaneLayout():
@@ -23,18 +23,18 @@ class ChartPaneLayout():
     SUFFIX_ID_SUBTITLE1: str = '-subtitle1'
     SUFFIX_ID_SUBTITLE2: str = '-subtitle2'
 
-    def __init__(self, title: str, css_id: str, figure: ChartLayout) -> None:
+    def __init__(self, title: str, css_id: str, figure: Figure) -> None:
         self.__title: str = title
         self.__css_id: str = css_id
-        self.__figure: ChartLayout = figure
+        self.__figure: Figure = figure
         self.__show_subtitles: bool = True
 
 
-    def get_layout(self, plot_data) -> html.Div:
+    def get_layout(self) -> html.Div:
         """
         Returns a pane with all the components initialized .
         """
-        figure: Dict = self.__figure.get_empty_layout()
+        figure: Dict = self.__figure.get_empty_figure()
         subtitle1: str = TEXT['default_amount']
         subtitle2: str = TEXT['no_data_selected']
         children = self._get_children(subtitle1, subtitle2, figure)
@@ -47,7 +47,7 @@ class ChartPaneLayout():
 
 
     def fill_child(self, plot_data: Dict) -> List:
-        figure = self.__figure.get_layout(plot_data = plot_data)
+        figure = self.__figure.get_figure(plot_data = plot_data)
         subtitle1: str = TEXT['default_amount']
         subtitle2: str = TEXT['no_data_selected']
 
@@ -98,5 +98,5 @@ class ChartPaneLayout():
         self.__show_subtitles = False
 
 
-    def get_configuration(self) -> ChartConfiguration:
+    def get_configuration(self) -> FigureConfiguration:
         return self.__figure.get_configuration()

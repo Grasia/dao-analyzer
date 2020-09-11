@@ -1,5 +1,5 @@
 """
-   Descp: Bar chart layout used to wrap its representation.
+   Descp: This class is used to represent a bar plot.
 
    Created on: 09-sep-2020
 
@@ -9,15 +9,15 @@
 from typing import Dict
 import plotly.graph_objs as go
 
-from src.apps.daostack.presentation.charts.chart_layout import ChartLayout
-from src.apps.daostack.presentation.charts.chart_configuration\
-.chart_configuration import ChartConfiguration
+from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
+from src.apps.daostack.presentation.charts.layout.figure.figure_configuration \
+    import FigureConfiguration
+import src.apps.daostack.resources.colors as Color
 
-
-class BarLayout(ChartLayout):
+class BarFigure(Figure):
 
     def __init__(self) -> None:
-        self.__configuration = ChartConfiguration()
+        self.__configuration = FigureConfiguration()
 
 
     @staticmethod
@@ -26,17 +26,17 @@ class BarLayout(ChartLayout):
             'x': [],
             'y': [],
             'name': '',
-            'color': '',
+            'color': Color.LIGHT_BLUE,
             'type': '-',
             'x_format': '',
         }
 
 
-    def get_empty_layout(self) -> Dict:
-        return self.get_layout(plot_data = self.get_empty_plot_data())
+    def get_empty_figure(self) -> Dict:
+        return self.get_figure(plot_data = self.get_empty_plot_data())
 
 
-    def get_layout(self, plot_data: Dict) -> Dict:
+    def get_figure(self, plot_data: Dict) -> Dict:
         """
         Returns the bar chart filled with plot_data.
         Arguments:
@@ -50,10 +50,10 @@ class BarLayout(ChartLayout):
             } 
         """
         bar: go.Bar = go.Bar(
-                x = plot_data['x'],
-                y = plot_data['y'],
-                name = plot_data['name'],
-                marker_color = plot_data['color'])
+                x=plot_data['x'],
+                y=plot_data['y'],
+                name=plot_data['name'],
+                marker_color=plot_data['color'])
 
         x_args: Dict = {
             'tickvals': plot_data['x'],
@@ -65,14 +65,14 @@ class BarLayout(ChartLayout):
         y_args: Dict = {'grid': True}
 
         layout: go.Layout = go.Layout(
-            xaxis = self.__configuration.get_axis_layout(args=x_args),
-            yaxis = self.__configuration.get_axis_layout(args=y_args),
-            legend = self.__configuration.get_legend(),
-            shapes = self.__configuration.get_shapes(),
+            xaxis=self.__configuration.get_axis_layout(args=x_args),
+            yaxis=self.__configuration.get_axis_layout(args=y_args),
+            legend=self.__configuration.get_legend(),
+            shapes=self.__configuration.get_shapes(),
         )
 
-        return {'data': bar, 'layout': layout}
+        return {'data': [bar], 'layout': layout}
 
 
-    def get_configuration(self) -> ChartConfiguration:
+    def get_configuration(self) -> FigureConfiguration:
         return self.__configuration

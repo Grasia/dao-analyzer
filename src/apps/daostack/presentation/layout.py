@@ -7,17 +7,17 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List
+from typing import Dict, List, Callable
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly.graph_objs as go
-from plotly.subplots import make_subplots
+#import plotly.graph_objs as go
+#from plotly.subplots import make_subplots
 
 from src.apps.daostack.resources.strings import TEXT
-import src.apps.daostack.resources.colors as Color
 
+PANE_ID: int = 1
 
-def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
+def generate_layout(labels: List[Dict[str, str]], sections: Dict) -> html.Div:
     """
     Use this function to generate the app view.
     Params:
@@ -29,19 +29,14 @@ def generate_layout(labels: List[Dict[str, str]]) -> html.Div:
     return html.Div(
         children=[
             html.Div(
-                children=[
-                    __generate_header(),
-                ],
+                children=[__generate_header()],
                 className='main-header fix-height'
             ),
 
             html.Div(
                 children=[
                     __generate_dao_selector(labels),
-                    __generate_user_charts(),
-                    __generate_vote_charts(),
-                    __generate_stake_charts(),
-                    __generate_proposal_charts(),
+                    __generate_sections(sections)
                 ],
                 className='main-body'
             ),
@@ -71,6 +66,26 @@ def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
         ],
         className='dao-selector-pane',
     )
+
+
+def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
+    children: List = list()
+
+    for name, callables in sections.items():
+        charts = list()
+        for chart_pane in callables:
+            charts.append(chart_pane())
+        
+        sec = html.Div(
+            className='section',
+            children=[
+                html.Div(name, className='title-section'),
+                html.Div(children=charts, className='graph-section')
+            ],
+        )
+        children.append(sec)
+
+    return html.Div(children=children)
 
 
 def __generate_foot() -> html.Div:
@@ -108,222 +123,196 @@ def __generate_foot() -> html.Div:
                 ])
 
 
-def __generate_user_charts() -> html.Div:
-    return html.Div(
-        children=[
-            html.Div(TEXT['rep_holder_title'], className='title-section'),
-            html.Div(children=[
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='new-users',
-                    title=TEXT['new_users_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                ),
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='active-users',
-                    title=TEXT['active_users_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                ),
-            ],
-            className='graph-section'),
-        ],
-        className='section',
-    )
+# def __generate_vote_charts() -> html.Div:
+#     return html.Div(
+#         children=[
+#             html.Div(TEXT['vote_title'], className='title-section'),
+#             html.Div(children=[
+#                 # __generate_graph(
+#                 #     figure_gen = generate_bar_chart,
+#                 #     css_id = 'total-votes',
+#                 #     title = TEXT['total_votes_title'],
+#                 #     amount = TEXT['default_amount'],
+#                 #     subtitle = TEXT['no_data_selected'],
+#                 # ),
+#                 __generate_graph(
+#                     figure_gen=generate_bar_chart,
+#                     css_id='total-votes-option',
+#                     title=TEXT['total_votes_option_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                 ),
+#                 __generate_graph(
+#                     figure_gen = generate_bar_chart,
+#                     css_id='different-voters',
+#                     title=TEXT['different_voters_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                 ),
+#             ],
+#             className='graph-section'),
+#         ],
+#         className='section',
+#     )
 
 
-def __generate_vote_charts() -> html.Div:
-    return html.Div(
-        children=[
-            html.Div(TEXT['vote_title'], className='title-section'),
-            html.Div(children=[
-                # __generate_graph(
-                #     figure_gen = generate_bar_chart,
-                #     css_id = 'total-votes',
-                #     title = TEXT['total_votes_title'],
-                #     amount = TEXT['default_amount'],
-                #     subtitle = TEXT['no_data_selected'],
-                # ),
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='total-votes-option',
-                    title=TEXT['total_votes_option_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                ),
-                __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id='different-voters',
-                    title=TEXT['different_voters_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                ),
-            ],
-            className='graph-section'),
-        ],
-        className='section',
-    )
+# def __generate_stake_charts() -> html.Div:
+#     return html.Div(
+#         children=[
+#             html.Div(TEXT['stake_title'], className='title-section'),
+#             html.Div(children=[
+#                 __generate_graph(
+#                     figure_gen = generate_bar_chart,
+#                     css_id='total-stakes',
+#                     title=TEXT['total_stakes_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                 ),
+#                 # __generate_graph(
+#                 #     figure_gen = generate_bar_chart,
+#                 #     css_id = 'total-stakes-option',
+#                 #     title = TEXT['total_stakes_option_title'],
+#                 # ),
+#                 __generate_graph(
+#                     figure_gen=generate_bar_chart,
+#                     css_id='different-stakers',
+#                     title=TEXT['different_stakers_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                 ),
+#             ],
+#             className='graph-section'),
+#         ],
+#         className='section',
+#     )
 
 
-def __generate_stake_charts() -> html.Div:
-    return html.Div(
-        children=[
-            html.Div(TEXT['stake_title'], className='title-section'),
-            html.Div(children=[
-                __generate_graph(
-                    figure_gen = generate_bar_chart,
-                    css_id='total-stakes',
-                    title=TEXT['total_stakes_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                ),
-                # __generate_graph(
-                #     figure_gen = generate_bar_chart,
-                #     css_id = 'total-stakes-option',
-                #     title = TEXT['total_stakes_option_title'],
-                # ),
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='different-stakers',
-                    title=TEXT['different_stakers_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                ),
-            ],
-            className='graph-section'),
-        ],
-        className='section',
-    )
+# def __generate_proposal_charts() -> html.Div:
+#     return html.Div(
+#         children=[
+#             html.Div(TEXT['proposal_title'], className='title-section'),
+#             html.Div(children=[
+#                 __generate_graph(
+#                     figure_gen=generate_bar_chart,
+#                     css_id='new-proposal',
+#                     title=TEXT['new_proposals_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                 ),
+#                 __generate_graph(
+#                     figure_gen=generate_double_dot_chart,
+#                     css_id='proposal-outc-majority',
+#                     title=TEXT['proposal_outcome_majority_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                     show_subsection=False,
+#                 ),
+#                 __generate_graph(
+#                     figure_gen=generate_bar_chart,
+#                     css_id='proposal-boost-outcome',
+#                     title=TEXT['proposal_boost_outcome_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                     show_subsection=False,
+#                 ),
+#                 __generate_graph(
+#                     figure_gen=generate_bar_chart,
+#                     css_id='proposal-total-succ-ratio',
+#                     title=TEXT['proposal_total_succ_rate_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                     show_subsection=False,
+#                 ),
+#                 __generate_graph(
+#                     figure_gen=generate_bar_chart,
+#                     css_id='proposal-boost-succ-ratio',
+#                     title=TEXT['proposal_boost_succ_rate_title'],
+#                     amount=TEXT['default_amount'],
+#                     subtitle=TEXT['no_data_selected'],
+#                     show_subsection=False,
+#                 ),
+#             ],
+#             className='graph-section'),
+#         ],
+#         className='section')
 
 
-def __generate_proposal_charts() -> html.Div:
-    return html.Div(
-        children=[
-            html.Div(TEXT['proposal_title'], className='title-section'),
-            html.Div(children=[
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='new-proposal',
-                    title=TEXT['new_proposals_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                ),
-                __generate_graph(
-                    figure_gen=generate_double_dot_chart,
-                    css_id='proposal-outc-majority',
-                    title=TEXT['proposal_outcome_majority_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                    show_subsection=False,
-                ),
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='proposal-boost-outcome',
-                    title=TEXT['proposal_boost_outcome_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                    show_subsection=False,
-                ),
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='proposal-total-succ-ratio',
-                    title=TEXT['proposal_total_succ_rate_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                    show_subsection=False,
-                ),
-                __generate_graph(
-                    figure_gen=generate_bar_chart,
-                    css_id='proposal-boost-succ-ratio',
-                    title=TEXT['proposal_boost_succ_rate_title'],
-                    amount=TEXT['default_amount'],
-                    subtitle=TEXT['no_data_selected'],
-                    show_subsection=False,
-                ),
-            ],
-            className='graph-section'),
-        ],
-        className='section')
+# def generate_bar_chart(data: Dict = None, barmode: str = 'group') -> Dict:
+#     if not data:
+#         data = {'common': {'x': list(), 'type': '-', 'x_format': '', 
+#             'ordered_keys': []}}
+
+#     bars: List = list()
+#     for k in data['common']['ordered_keys']:
+#         bars.append(go.Bar(
+#                 x=data['common']['x'], 
+#                 y=data[k]['y'], 
+#                 name=data[k]['name'], 
+#                 marker_color=data[k]['color']))
+
+#     layout: go.Layout = go.Layout(
+#         barmode=barmode,
+#         xaxis=__get_axis_layout(args={
+#             'tickvals': data['common']['x'], 
+#             'type': data['common']['type'], 
+#             'tickformat': data['common']['x_format'],
+#             'tickangle': True}
+#         ),
+#         yaxis=__get_axis_layout(args={'grid': True}),
+#         legend=__get_legend())
+
+#     return {'data': bars, 'layout': layout}
 
 
-def generate_bar_chart(data: Dict = None, barmode: str = 'group') -> Dict:
-    if not data:
-        data = {'common': {'x': list(), 'type': '-', 'x_format': '', 
-            'ordered_keys': []}}
+# def generate_double_dot_chart(data: Dict = None) -> Dict:
+#     if not data:
+#         data = {'common': {'x': list(), 'type': '-', 'x_format': '',
+#             'ordered_keys': [], 'y_suffix': ''}}
 
-    bars: List = list()
-    for k in data['common']['ordered_keys']:
-        bars.append(go.Bar(
-                x=data['common']['x'], 
-                y=data[k]['y'], 
-                name=data[k]['name'], 
-                marker_color=data[k]['color']))
+#     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0)
 
-    layout: go.Layout = go.Layout(
-        barmode=barmode,
-        xaxis=__get_axis_layout(args={
-            'tickvals': data['common']['x'], 
-            'type': data['common']['type'], 
-            'tickformat': data['common']['x_format'],
-            'tickangle': True}
-        ),
-        yaxis=__get_axis_layout(args={'grid': True}),
-        legend=__get_legend())
+#     for k in data['common']['ordered_keys']:
+#         fig.add_trace(
+#             go.Scatter(
+#                 x=data[k]['x'], 
+#                 y=data[k]['y'], 
+#                 marker=dict(
+#                     color=data[k]['color'],
+#                     size=6,
+#                     opacity=0.5,
+#                     symbol=data[k]['marker_symbol'],
+#                     line=dict(
+#                         width=1.2,
+#                         color='black',
+#                     )),
+#                 mode="markers",
+#                 name=data[k]['name']),
+#             row=1 if data[k]['position'] == 'up' else 2,
+#             col=1)
 
-    return {'data': bars, 'layout': layout}
+#     fig.update_layout(
+#         xaxis=__get_axis_layout(args={'removemarkers': True}),
+#         xaxis2=__get_axis_layout(args={
+#             'tickvals': data['common']['x'], 
+#             'type': data['common']['type'], 
+#             'tickformat': data['common']['x_format'],
+#             'tickangle': True}
+#         ),
+#         yaxis=__get_axis_layout(args={
+#             'suffix': data['common']['y_suffix'],
+#             #'matches': 'y2',
+#             }
+#         ),
+#         yaxis2=__get_axis_layout(args={
+#             'suffix': data['common']['y_suffix'],
+#             #'matches': 'y',
+#             'reverse_range': True,
+#             }
+#         ),
+#         shapes=[
+#             __get_horizontal_line(y=0.0, y_ref='y'), 
+#             __get_horizontal_line(y=0.0, y_ref='y2')],
+#         legend=__get_legend(),
+#         plot_bgcolor="white")
 
-
-def generate_double_dot_chart(data: Dict = None) -> Dict:
-    if not data:
-        data = {'common': {'x': list(), 'type': '-', 'x_format': '',
-            'ordered_keys': [], 'y_suffix': ''}}
-
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0)
-
-    for k in data['common']['ordered_keys']:
-        fig.add_trace(
-            go.Scatter(
-                x=data[k]['x'], 
-                y=data[k]['y'], 
-                marker=dict(
-                    color=data[k]['color'],
-                    size=6,
-                    opacity=0.5,
-                    symbol=data[k]['marker_symbol'],
-                    line=dict(
-                        width=1.2,
-                        color='black',
-                    )),
-                mode="markers",
-                name=data[k]['name']),
-            row=1 if data[k]['position'] == 'up' else 2,
-            col=1)
-
-    fig.update_layout(
-        xaxis=__get_axis_layout(args={'removemarkers': True}),
-        xaxis2=__get_axis_layout(args={
-            'tickvals': data['common']['x'], 
-            'type': data['common']['type'], 
-            'tickformat': data['common']['x_format'],
-            'tickangle': True}
-        ),
-        yaxis=__get_axis_layout(args={
-            'suffix': data['common']['y_suffix'],
-            #'matches': 'y2',
-            }
-        ),
-        yaxis2=__get_axis_layout(args={
-            'suffix': data['common']['y_suffix'],
-            #'matches': 'y',
-            'reverse_range': True,
-            }
-        ),
-        shapes=[
-            __get_horizontal_line(y=0.0, y_ref='y'), 
-            __get_horizontal_line(y=0.0, y_ref='y2')],
-        legend=__get_legend(),
-        plot_bgcolor="white")
-
-    return fig
+#     return fig

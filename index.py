@@ -7,14 +7,12 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
-
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+#from dash.dependencies import Input, Output
 
 from src.app import app, DEBUG
 from src.apps.daostack.business.app_service import get_service
-import src.apps.daostack.presentation.controller as controller
 
 server = app.server
 
@@ -41,18 +39,18 @@ app.index_string = '''
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
+    html.Div(id='page-content', children=get_service().get_layout())
 ])
 
 
-@app.callback(Output('page-content', 'children'),
-              [Input('url', 'pathname')])
-def display_page(pathname):
-    if pathname == '/apps/daostack' or '/':
-        controller.init()
-        return get_service().get_layout()
-    else:
-        return '404'
+# @app.callback( Output('page-content', 'children'),
+#               [Input('url', 'pathname')])
+# def display_page(pathname):
+#     print(pathname)
+#     if pathname == '/apps/daostack' or '/':
+#         return get_service().get_layout()
+#     else:
+#         return '404'
 
 
 if __name__ == '__main__':

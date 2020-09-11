@@ -10,16 +10,15 @@
 from dash.dependencies import Input, Output
 
 from src.app import app
-from src.apps.daostack.presentation.charts.chart_pane_layout \
+from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
 
 class ChartController():
 
     def __init__(self, css_id: str, layout: ChartPaneLayout, adapter: MetricAdapter) -> None:
-        self.__layout = layout
-        self.__adapter = adapter
-
+        self.__layout: ChartPaneLayout = layout
+        self.__adapter: MetricAdapter = adapter
         self.bind_callback(
             app = app, 
             pane = css_id,
@@ -29,12 +28,12 @@ class ChartController():
     def bind_callback(self, app, pane, input_callback) -> None:
 
         @app.callback(
-            [Output(pane, 'children')],
+             Output(pane, 'children'),
             [Input(input_callback, 'value')]
         )
         def update_chart(org_id):
             if not org_id:
                 self.__layout.get_layout()
 
-            data = self.__adapter.get_plot_data(org_id = org_id)
+            data = self.__adapter.get_plot_data(org_id)
             return self.__layout.fill_child(plot_data=data)

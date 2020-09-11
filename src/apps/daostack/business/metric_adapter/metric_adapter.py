@@ -8,9 +8,8 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List
+from typing import Dict, List, Callable
 
-from src.apps.daostack.business.app_service import get_service
 import src.apps.daostack.resources.colors as Color
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 import src.apps.daostack.data_access.daos.metric.\
@@ -20,8 +19,9 @@ class MetricAdapter():
 
     DATE_FORMAT: str = '%b, %Y'
 
-    def __init__(self, metric_id: int) -> None:
-        self.__metric_id = metric_id
+    def __init__(self, metric_id: int, organizations: Callable) -> None:
+        self.__metric_id: int = metric_id
+        self.__organizations: Callable = organizations
 
     
     def get_plot_data(self, o_id: str) -> Dict:
@@ -29,8 +29,8 @@ class MetricAdapter():
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids = get_service().get_organizations().get_ids_from_id(o_id),
-            metric = self.__metric_id
+            ids=self.__organizations().get_ids_from_id(o_id),
+            metric=self.__metric_id
         )
         metric: StackedSerie = dao.get_metric()
 

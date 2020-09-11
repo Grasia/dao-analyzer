@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Callable
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
@@ -20,6 +20,11 @@ import src.apps.daostack.data_access.requesters.cache_requester as cache
 from src.apps.daostack.business.transfers.organization import OrganizationList
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
+from src.apps.daostack.presentation.charts.chart_controller import ChartController
+from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
+from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
+    import ChartPaneLayout
+from src.apps.daostack.presentation.charts.layout.figure.bar_figure import BarFigure
 from src.apps.daostack.resources.strings import TEXT
 import src.apps.daostack.resources.colors as Color
 
@@ -41,6 +46,7 @@ class Service():
     def __init__(self):
         # app state
         self.__orgs: OrganizationList = None
+        self.__controllers: List[ChartController] = list()
 
 
     def get_organizations(self) -> OrganizationList:
@@ -55,84 +61,129 @@ class Service():
 
     def get_layout(self) -> html.Div:
         """
-        Returns the app's view. 
+        Returns the app's layout. 
         """
         orgs: OrganizationList = self.get_organizations()
-        return ly.generate_layout(orgs.get_dict_representation())
+        return ly.generate_layout(
+            labels=orgs.get_dict_representation(),
+            sections=self.__get_sections()
+        )
 
 
-    def __get_sserie_by_metric(self, metric: int, o_id: str) -> Any:
-        dao = s_factory.get_dao(
-            ids=self.get_organizations().get_ids_from_id(o_id),
-            metric=metric)
-
-        return dao.get_metric()
-
-
-    def __get_common_representation(self, metric: StackedSerie, 
-    complements: bool = True) -> Dict:
-
-        y: List[float] = metric.get_i_stack(0)
-        color = [Color.LIGHT_BLUE] * len(y)
-        if color:
-            color[-1] = Color.DARK_BLUE
-
-        data: Dict = {
-            'serie': {
-                'y': y,
-                'color': color,
-                'name': '',
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie'],
-            }
+    def __get_sections(self) -> Dict[str, List[Callable]]:
+        """
+        Returns a dict with each section filled with a callable function which
+         returns the chart layout
+        """
+        return {
+            TEXT['rep_holder_title']: self.__get_rep_holder_charts(),
+            TEXT['vote_title']: self.__get_vote_charts(),
+            TEXT['stake_title']: self.__get_stake_charts(),
+            TEXT['proposal_title']: self.__get_proposal_charts(),
         }
 
-        if complements:
-            data['common']['last_serie_elem'] = metric.get_last_serie_elem()
-            data['common']['last_value'] = metric.get_last_value(0)
-            data['common']['diff'] = metric.get_diff_last_values()
 
-        return data
+    def __get_rep_holder_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of reputation holder section, this includes 
+         its layout and its controller.
+        """
+        charts: List[Callable] = list()
+
+        # new reputation holders
+        self.__common_chart(
+            title=TEXT['new_users_title'],
+            metric_id=s_factory.NEW_USERS,
+            charts=charts
+        )
+        # active reputation holders
+        self.__common_chart(
+            title=TEXT['active_users_title'],
+            metric_id=s_factory.ACTIVE_USERS,
+            charts=charts
+        )
+        return charts
 
 
-    def get_metric_new_users(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.NEW_USERS, o_id)
+    def __get_vote_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of vote section.
+        """
+        charts: List[Callable] = list()
 
-        return self.__get_common_representation(metric=metric)
+        # different voters
+        self.__common_chart(
+            title=TEXT['different_voters_title'],
+            metric_id=s_factory.DIFFERENT_VOTERS,
+            charts=charts
+        )
+        return charts
 
 
-    def get_metric_active_users(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.ACTIVE_USERS, o_id)
+    def __get_stake_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of stake section.
+        """
+        charts: List[Callable] = list()
 
-        return self.__get_common_representation(metric=metric)
+        # total stakes
+        self.__common_chart(
+            title=TEXT['total_stakes_title'],
+            metric_id=s_factory.TOTAL_STAKES,
+            charts=charts
+        )
+        # different stakers
+        self.__common_chart(
+            title=TEXT['different_stakers_title'],
+            metric_id=s_factory.DIFFERENT_STAKERS,
+            charts=charts
+        )
+        return charts
+
+
+    def __get_proposal_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of proposal section.
+        """
+        charts: List[Callable] = list()
+
+        # new proposals
+        self.__common_chart(
+            title=TEXT['new_proposals_title'],
+            metric_id=s_factory.NEW_PROPOSALS,
+            charts=charts
+        )
+        return charts
+
+
+    def __common_chart(self, title: str, metric_id: int, charts: List) -> None:
+        css_id: str = f"{TEXT['pane_css_prefix']}{self.get_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=BarFigure()
+        )
+        # layout configuration
+        layout.get_configuration().disable_legend()
+
+        adapter: MetricAdapter = MetricAdapter(
+            metric_id=metric_id,
+            organizations=self.get_organizations
+        )
+        controller: ChartController = ChartController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter)
+
+        self.__controllers.append(controller)
+        charts.append(layout.get_layout)
+
+
+    def get_id(self) -> int:
+        pane_id: int = ly.PANE_ID
+        ly.PANE_ID += 1
+        return pane_id
         
-
-    def get_metric_different_voters(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.DIFFERENT_VOTERS, o_id)
-
-        return self.__get_common_representation(metric=metric)
-
-
-    def get_metric_different_stakers(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.DIFFERENT_STAKERS, o_id)
-
-        return self.__get_common_representation(metric=metric)
-
-
-    def get_metric_new_proposals(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.NEW_PROPOSALS, o_id)
-        
-        return self.__get_common_representation(metric=metric)
-
 
     def get_metric_proposal_boost_outcome(self, o_id: str) -> Dict:
         metric: StackedSerie = self.__get_sserie_by_metric(
@@ -171,20 +222,6 @@ class Service():
             },
         }
         return data
-
-
-    def get_metric_total_votes(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_VOTES, o_id)
-
-        return self.__get_common_representation(metric=metric)
-
-
-    def get_metric_total_stakes(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_STAKES, o_id)
-
-        return self.__get_common_representation(metric=metric)
 
 
     def get_metric_proposal_majority(self, o_id: str) -> Dict:

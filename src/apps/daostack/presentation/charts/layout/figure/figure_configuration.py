@@ -1,5 +1,5 @@
 """
-   Descp: Wraps the chart layout configuration.
+   Descp: Wraps the figure configuration.
 
    Created on: 10-sep-2020
 
@@ -11,7 +11,7 @@ from typing import Dict, List, Tuple
 
 import src.apps.daostack.resources.colors as Color
 
-class ChartConfiguration():
+class FigureConfiguration():
 
     def __init__(self) -> None:
         self.__show_legend: bool = True
@@ -64,7 +64,7 @@ class ChartConfiguration():
         return shapes
 
 
-    def get_axis_layout(args: Dict) -> Dict:
+    def get_axis_layout(self, args: Dict) -> Dict:
         """
         Returns the axis layout using params in args.
         TODO: remove args parameter to simplify.

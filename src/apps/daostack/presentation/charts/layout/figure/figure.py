@@ -1,5 +1,5 @@
 """
-   Descp: The interface of charts layout.
+   Descp: The interface which each figure must implement.
 
    Created on: 09-sep-2020
 
@@ -10,17 +10,17 @@
 import abc
 from typing import Dict
 
-from src.apps.daostack.presentation.charts.chart_configuration\
-.chart_configuration import ChartConfiguration
+from src.apps.daostack.presentation.charts.layout.figure.figure_configuration \
+    import FigureConfiguration
 
-class ChartLayout(metaclass=abc.ABCMeta):
+class Figure(metaclass=abc.ABCMeta):
 
     @classmethod
     def __subclasshook__(cls, subclass):
-        return (hasattr(subclass, 'get_empty_layout') and
-                callable(subclass.get_empty_layout) and
-                hasattr(subclass, 'get_layout') and
-                callable(subclass.get_layout) and
+        return (hasattr(subclass, 'get_empty_figure') and
+                callable(subclass.get_empty_figure) and
+                hasattr(subclass, 'get_figure') and
+                callable(subclass.get_figure) and
                 hasattr(subclass, 'get_configuration') and
                 callable(subclass.get_configuration) and
                 hasattr(subclass, 'get_empty_plot_data') and
@@ -29,23 +29,23 @@ class ChartLayout(metaclass=abc.ABCMeta):
 
     
     @abc.abstractmethod
-    def get_empty_layout(self) -> Dict:
+    def get_empty_figure(self) -> Dict:
         """
-        Returns an empty layout. 
-        """
-        raise NotImplementedError
-
-
-    @abc.abstractmethod
-    def get_layout(self, plot_data: Dict) -> Dict:
-        """
-        Returns the chart layout filled with the plot_data argument.
+        Returns an empty figure. 
         """
         raise NotImplementedError
 
 
     @abc.abstractmethod
-    def get_configuration(self) -> ChartConfiguration:
+    def get_figure(self, plot_data: Dict) -> Dict:
+        """
+        Returns the figure filled with the plot_data argument.
+        """
+        raise NotImplementedError
+
+
+    @abc.abstractmethod
+    def get_configuration(self) -> FigureConfiguration:
         """
         Returns the chart layout configuration.
         """
