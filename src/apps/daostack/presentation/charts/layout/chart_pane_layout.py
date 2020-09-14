@@ -14,8 +14,8 @@ from typing import List, Dict
 from src.apps.daostack.resources.strings import TEXT
 import src.apps.daostack.resources.colors as Color
 from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
-from src.apps.daostack.presentation.charts.layout.figure.figure_configuration \
-    import FigureConfiguration
+from src.apps.daostack.presentation.charts.layout.chart_pane_configuration \
+    import ChartPaneConfiguration
 
 
 class ChartPaneLayout():
@@ -23,11 +23,13 @@ class ChartPaneLayout():
     SUFFIX_ID_SUBTITLE1: str = '-subtitle1'
     SUFFIX_ID_SUBTITLE2: str = '-subtitle2'
 
+
     def __init__(self, title: str, css_id: str, figure: Figure) -> None:
         self.__title: str = title
         self.__css_id: str = css_id
         self.__figure: Figure = figure
-        self.__show_subtitles: bool = True
+        self.__configuration: ChartPaneConfiguration = ChartPaneConfiguration(
+            figure.configuration)
 
 
     def get_layout(self) -> html.Div:
@@ -57,7 +59,7 @@ class ChartPaneLayout():
         subtitle1: str = TEXT['default_amount']
         subtitle2: str = TEXT['no_data_selected']
 
-        if self.__show_subtitles:
+        if self.configuration.show_subtitles:
             subtitle1 = TEXT['graph_amount'].format(
                 plot_data['last_serie_elem'], 
                 plot_data['last_value']
@@ -68,7 +70,7 @@ class ChartPaneLayout():
 
 
     def _get_children(self, subtitle1, subtitle2, figure) -> List:
-        hide: str = '' if self.__show_subtitles else 'hide'
+        hide: str = '' if self.configuration.show_subtitles else 'hide'
 
         return [
             html.Span(
@@ -92,13 +94,6 @@ class ChartPaneLayout():
         ]
 
 
-    def enable_subtitles(self) -> None:
-        self.__show_subtitles = True
-
-
-    def disable_subtitles(self) -> None:
-        self.__show_subtitles = False
-
-
-    def get_configuration(self) -> FigureConfiguration:
-        return self.__figure.configuration
+    @property
+    def configuration(self) -> ChartPaneConfiguration:
+        return self.__configuration

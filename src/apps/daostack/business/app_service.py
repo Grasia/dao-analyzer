@@ -181,7 +181,7 @@ class Service():
             adapter=MajorityType(s_factory.PROPOSAL_MAJORITY, call),
             figure=DoubleScatterFigure()
         ))
-        self.__controllers[-1].layout.disable_subtitles()
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
         # proposal boost_outcome
         charts.append(self.__create_chart(
@@ -189,7 +189,7 @@ class Service():
             adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
         ))
-        self.__controllers[-1].layout.disable_subtitles()
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
         # total succes rate of the stakes
         charts.append(self.__create_chart(
@@ -197,7 +197,7 @@ class Service():
             adapter=MetricAdapter(s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, call),
             figure=BarFigure()
         ))
-        self.__controllers[-1].layout.disable_subtitles()
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
         # success rate by type
         charts.append(self.__create_chart(
@@ -205,7 +205,7 @@ class Service():
             adapter=SuccessRatioType(s_factory.PROPOSALS_BOOST_SUCCES_RATIO, call),
             figure=MultiBarFigure(bar_type=MultiBarFigure.GROUP)
         ))
-        self.__controllers[-1].layout.disable_subtitles()
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
         return charts
 
