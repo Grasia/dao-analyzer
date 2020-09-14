@@ -42,7 +42,7 @@ app.layout = html.Div([
     html.Div(id='page-content', children=get_service().get_layout())
 ])
 
-
+# TODO: issue 15
 # @app.callback( Output('page-content', 'children'),
 #               [Input('url', 'pathname')])
 # def display_page(pathname):

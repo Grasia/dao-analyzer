@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List, Any, Callable
+from typing import Dict, List, Callable
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
@@ -91,13 +91,13 @@ class Service():
         charts: List[Callable] = list()
 
         # new reputation holders
-        self.__common_chart(
+        self.__create_bar_chart(
             title=TEXT['new_users_title'],
             metric_id=s_factory.NEW_USERS,
             charts=charts
         )
         # active reputation holders
-        self.__common_chart(
+        self.__create_bar_chart(
             title=TEXT['active_users_title'],
             metric_id=s_factory.ACTIVE_USERS,
             charts=charts
@@ -112,7 +112,7 @@ class Service():
         charts: List[Callable] = list()
 
         # different voters
-        self.__common_chart(
+        self.__create_bar_chart(
             title=TEXT['different_voters_title'],
             metric_id=s_factory.DIFFERENT_VOTERS,
             charts=charts
@@ -127,13 +127,13 @@ class Service():
         charts: List[Callable] = list()
 
         # total stakes
-        self.__common_chart(
+        self.__create_bar_chart(
             title=TEXT['total_stakes_title'],
             metric_id=s_factory.TOTAL_STAKES,
             charts=charts
         )
         # different stakers
-        self.__common_chart(
+        self.__create_bar_chart(
             title=TEXT['different_stakers_title'],
             metric_id=s_factory.DIFFERENT_STAKERS,
             charts=charts
@@ -148,15 +148,24 @@ class Service():
         charts: List[Callable] = list()
 
         # new proposals
-        self.__common_chart(
+        self.__create_bar_chart(
             title=TEXT['new_proposals_title'],
             metric_id=s_factory.NEW_PROPOSALS,
             charts=charts
         )
+
+        # total succes rate of the stakes
+        self.__create_bar_chart(
+            title=TEXT['proposal_total_succ_rate_title'],
+            metric_id=s_factory.PROPOSALS_TOTAL_SUCCES_RATIO,
+            charts=charts
+        )
+        self.__controllers[-1].layout.disable_subtitles()
+
         return charts
 
 
-    def __common_chart(self, title: str, metric_id: int, charts: List) -> None:
+    def __create_bar_chart(self, title: str, metric_id: int, charts: List) -> None:
         css_id: str = f"{TEXT['pane_css_prefix']}{self.get_id()}"
         layout: ChartPaneLayout = ChartPaneLayout(
             title=title,

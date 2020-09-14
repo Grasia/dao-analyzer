@@ -25,6 +25,11 @@ class ChartController():
             input_callback = 'org-dropdown')
 
 
+    @property
+    def layout(self) -> ChartPaneLayout:
+        return self.__layout
+
+
     def bind_callback(self, app, pane, input_callback) -> None:
 
         @app.callback(
