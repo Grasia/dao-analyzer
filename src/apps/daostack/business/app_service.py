@@ -59,7 +59,8 @@ class Service():
         self.__controllers: List[ChartController] = list()
 
 
-    def get_organizations(self) -> OrganizationList:
+    @property
+    def organizations(self) -> OrganizationList:
         if not self.__orgs:
             orgs: OrganizationList = OrganizationListDao(cache.CacheRequester(
                 srcs=[cache.DAOS])).get_organizations()
@@ -73,7 +74,7 @@ class Service():
         """
         Returns the app's layout. 
         """
-        orgs: OrganizationList = self.get_organizations()
+        orgs: OrganizationList = self.organizations
         return ly.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections()
@@ -99,7 +100,7 @@ class Service():
          its layout and its controller.
         """
         charts: List[Callable] = list()
-        call: Callable = self.get_organizations
+        call: Callable = self.organizations
 
         # new reputation holders
         charts.append(self.__create_chart(
@@ -121,7 +122,7 @@ class Service():
         Creates charts of vote section.
         """
         charts: List[Callable] = list()
-        call: Callable = self.get_organizations
+        call: Callable = self.organizations
 
         # total votes by type
         charts.append(self.__create_chart(
@@ -144,7 +145,7 @@ class Service():
         Creates charts of stake section.
         """
         charts: List[Callable] = list()
-        call: Callable = self.get_organizations
+        call: Callable = self.organizations
 
         # total stakes
         charts.append(self.__create_chart(
@@ -166,7 +167,7 @@ class Service():
         Creates charts of proposal section.
         """
         charts: List[Callable] = list()
-        call: Callable = self.get_organizations
+        call: Callable = self.organizations
 
         # new proposals
         charts.append(self.__create_chart(
@@ -216,7 +217,7 @@ class Service():
         Creates the chart layout and its controller, and returns a callable
         to get the html representation.
         """
-        css_id: str = f"{TEXT['pane_css_prefix']}{self.get_id()}"
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
         layout: ChartPaneLayout = ChartPaneLayout(
             title=title,
             css_id=css_id,
@@ -230,9 +231,3 @@ class Service():
 
         self.__controllers.append(controller)
         return layout.get_layout
-
-
-    def get_id(self) -> int:
-        pane_id: int = ly.PANE_ID
-        ly.PANE_ID += 1
-        return pane_id

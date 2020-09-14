@@ -20,9 +20,9 @@ class ChartController():
         self.__layout: ChartPaneLayout = layout
         self.__adapter: MetricAdapter = adapter
         self.bind_callback(
-            app = app, 
-            pane = css_id,
-            input_callback = 'org-dropdown')
+            app=app, 
+            pane=css_id,
+            input_callback='org-dropdown')
 
 
     @property

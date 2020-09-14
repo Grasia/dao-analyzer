@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, Callable
+from typing import Dict
 
 import src.apps.daostack.resources.colors as Color
 from src.apps.daostack.resources.strings import TEXT
@@ -19,7 +19,7 @@ import src.apps.daostack.data_access.daos.metric.\
 
 class ProposalBoostOutcome(MetricAdapter):
 
-    def __init__(self, metric_id: int, organizations: Callable) -> None:
+    def __init__(self, metric_id: int, organizations) -> None:
         super().__init__(metric_id, organizations)
 
     
@@ -28,7 +28,7 @@ class ProposalBoostOutcome(MetricAdapter):
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids=super().organizations().get_ids_from_id(o_id),
+            ids=super().organizations.get_ids_from_id(o_id),
             metric=super().metric_id
         )
         metric: StackedSerie = dao.get_metric()

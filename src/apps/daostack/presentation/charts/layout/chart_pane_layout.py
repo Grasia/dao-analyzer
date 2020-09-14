@@ -19,6 +19,7 @@ from src.apps.daostack.presentation.charts.layout.chart_pane_configuration \
 
 
 class ChartPaneLayout():
+    PANE_ID: int = 1
     SUFFIX_ID_CHART: str = '-chart'
     SUFFIX_ID_SUBTITLE1: str = '-subtitle1'
     SUFFIX_ID_SUBTITLE2: str = '-subtitle2'
@@ -30,6 +31,13 @@ class ChartPaneLayout():
         self.__figure: Figure = figure
         self.__configuration: ChartPaneConfiguration = ChartPaneConfiguration(
             figure.configuration)
+
+
+    @staticmethod
+    def pane_id() -> int:
+        pane_id: int = ChartPaneLayout.PANE_ID
+        ChartPaneLayout.PANE_ID += 1
+        return pane_id
 
 
     def get_layout(self) -> html.Div:

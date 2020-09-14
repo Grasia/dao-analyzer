@@ -13,7 +13,6 @@ import dash_html_components as html
 
 from src.apps.daostack.resources.strings import TEXT
 
-PANE_ID: int = 1
 
 def generate_layout(labels: List[Dict[str, str]], sections: Dict) -> html.Div:
     """
@@ -33,7 +32,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict) -> html.Div:
 
             html.Div(
                 children=[
-                    __generate_dao_selector(labels),
+                    __generate_selector(labels),
                     __generate_sections(sections)
                 ],
                 className='main-body'
@@ -52,7 +51,7 @@ def __generate_header() -> html.H1:
     return html.H1(TEXT['app_title'])
     
 
-def __generate_dao_selector(labels: List[Dict[str, str]]) -> html.Div:
+def __generate_selector(labels: List[Dict[str, str]]) -> html.Div:
     return html.Div( 
         children = [
             html.Span(TEXT['dao_selector_title']),
