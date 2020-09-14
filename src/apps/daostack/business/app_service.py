@@ -18,8 +18,6 @@ import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 import src.apps.daostack.data_access.requesters.cache_requester as cache
 from src.apps.daostack.business.transfers.organization import OrganizationList
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
-from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
 from src.apps.daostack.presentation.charts.chart_controller import ChartController
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
 from src.apps.daostack.business.metric_adapter.proposal_boost_outcome \
@@ -28,14 +26,17 @@ from src.apps.daostack.business.metric_adapter.success_ratio_type \
     import SuccessRatioType
 from src.apps.daostack.business.metric_adapter.vote_type \
     import VoteType
+from src.apps.daostack.business.metric_adapter.majority_type \
+    import MajorityType
 from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
 from src.apps.daostack.presentation.charts.layout.figure.bar_figure import BarFigure
 from src.apps.daostack.presentation.charts.layout.figure.multi_bar_figure \
-    import MultiBarFigure 
+    import MultiBarFigure
+from src.apps.daostack.presentation.charts.layout.figure.double_scatter_figure \
+    import DoubleScatterFigure
 from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.resources.strings import TEXT
-import src.apps.daostack.resources.colors as Color
 
 
 __service = None
@@ -174,6 +175,14 @@ class Service():
             figure=BarFigure()
         ))
 
+        # majority type
+        charts.append(self.__create_chart(
+            title=TEXT['proposal_outcome_majority_title'],
+            adapter=MajorityType(s_factory.PROPOSAL_MAJORITY, call),
+            figure=DoubleScatterFigure()
+        ))
+        self.__controllers[-1].layout.disable_subtitles()
+
         # proposal boost_outcome
         charts.append(self.__create_chart(
             title=TEXT['proposal_boost_outcome_title'],
@@ -227,59 +236,3 @@ class Service():
         pane_id: int = ly.PANE_ID
         ly.PANE_ID += 1
         return pane_id
-        
-
-
-    def get_metric_proposal_majority(self, o_id: str) -> Dict:
-        metric: NStackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSAL_MAJORITY, o_id)
-
-        y1: StackedSerie = metric.get_i_sserie(0)
-        y2: StackedSerie = metric.get_i_sserie(1)
-        y3: StackedSerie = metric.get_i_sserie(2)
-        y4: StackedSerie = metric.get_i_sserie(3)
-        x: List = y1.get_serie()
-
-        data: Dict = {
-            'serie1': {
-                'x': y1.get_serie(),
-                'y': y1.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_GREEN, 0.5)}',
-                'marker_symbol': 'triangle-up',
-                'name': TEXT['abs_pass'],
-                'position': 'up',
-            },
-            'serie2': {
-                'x': y2.get_serie(),
-                'y': y2.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_GREEN, 0.5)}',
-                'marker_symbol': 'circle',
-                'name': TEXT['rel_pass'],
-                'position': 'up',
-            },
-            'serie3': {
-                'x': y3.get_serie(),
-                'y': y3.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_RED, 0.5)}',
-                'marker_symbol': 'circle',
-                'name': TEXT['rel_fail'],
-                'position': 'down',
-            },
-            'serie4': {
-                'x': y4.get_serie(),
-                'y': y4.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_RED, 0.5)}',
-                'marker_symbol': 'triangle-down',
-                'name': TEXT['abs_fail'],
-                'position': 'down',
-            },
-            'common': {
-                'x': x,
-                'type': 'date', 
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'], 
-                'y_suffix': '%',
-            }
-        }
-
-        return data
