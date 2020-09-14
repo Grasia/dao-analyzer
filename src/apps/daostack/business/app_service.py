@@ -22,9 +22,14 @@ from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
 from src.apps.daostack.presentation.charts.chart_controller import ChartController
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
+from src.apps.daostack.business.metric_adapter.proposal_boost_outcome \
+    import ProposalBoostOutcome
 from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
 from src.apps.daostack.presentation.charts.layout.figure.bar_figure import BarFigure
+from src.apps.daostack.presentation.charts.layout.figure.multi_bar_figure \
+    import MultiBarFigure 
+from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.resources.strings import TEXT
 import src.apps.daostack.resources.colors as Color
 
@@ -89,19 +94,20 @@ class Service():
          its layout and its controller.
         """
         charts: List[Callable] = list()
+        call: Callable = self.get_organizations
 
         # new reputation holders
-        self.__create_bar_chart(
+        charts.append(self.__create_chart(
             title=TEXT['new_users_title'],
-            metric_id=s_factory.NEW_USERS,
-            charts=charts
-        )
+            adapter=MetricAdapter(s_factory.NEW_USERS, call),
+            figure=BarFigure()
+        ))
         # active reputation holders
-        self.__create_bar_chart(
+        charts.append(self.__create_chart(
             title=TEXT['active_users_title'],
-            metric_id=s_factory.ACTIVE_USERS,
-            charts=charts
-        )
+            adapter=MetricAdapter(s_factory.ACTIVE_USERS, call),
+            figure=BarFigure()
+        ))
         return charts
 
 
@@ -110,13 +116,14 @@ class Service():
         Creates charts of vote section.
         """
         charts: List[Callable] = list()
+        call: Callable = self.get_organizations
 
         # different voters
-        self.__create_bar_chart(
+        charts.append(self.__create_chart(
             title=TEXT['different_voters_title'],
-            metric_id=s_factory.DIFFERENT_VOTERS,
-            charts=charts
-        )
+            adapter=MetricAdapter(s_factory.DIFFERENT_VOTERS, call),
+            figure=BarFigure()
+        ))
         return charts
 
 
@@ -125,19 +132,20 @@ class Service():
         Creates charts of stake section.
         """
         charts: List[Callable] = list()
+        call: Callable = self.get_organizations
 
         # total stakes
-        self.__create_bar_chart(
+        charts.append(self.__create_chart(
             title=TEXT['total_stakes_title'],
-            metric_id=s_factory.TOTAL_STAKES,
-            charts=charts
-        )
+            adapter=MetricAdapter(s_factory.TOTAL_STAKES, call),
+            figure=BarFigure()
+        ))
         # different stakers
-        self.__create_bar_chart(
+        charts.append(self.__create_chart(
             title=TEXT['different_stakers_title'],
-            metric_id=s_factory.DIFFERENT_STAKERS,
-            charts=charts
-        )
+            adapter=MetricAdapter(s_factory.DIFFERENT_STAKERS, call),
+            figure=BarFigure()
+        ))
         return charts
 
 
@@ -146,46 +154,54 @@ class Service():
         Creates charts of proposal section.
         """
         charts: List[Callable] = list()
+        call: Callable = self.get_organizations
 
         # new proposals
-        self.__create_bar_chart(
+        charts.append(self.__create_chart(
             title=TEXT['new_proposals_title'],
-            metric_id=s_factory.NEW_PROPOSALS,
-            charts=charts
-        )
+            adapter=MetricAdapter(s_factory.NEW_PROPOSALS, call),
+            figure=BarFigure()
+        ))
 
         # total succes rate of the stakes
-        self.__create_bar_chart(
+        charts.append(self.__create_chart(
             title=TEXT['proposal_total_succ_rate_title'],
-            metric_id=s_factory.PROPOSALS_TOTAL_SUCCES_RATIO,
-            charts=charts
-        )
+            adapter=MetricAdapter(s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, call),
+            figure=BarFigure()
+        ))
+        self.__controllers[-1].layout.disable_subtitles()
+
+        # proposal boost_outcome
+        charts.append(self.__create_chart(
+            title=TEXT['proposal_boost_outcome_title'],
+            adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+        ))
         self.__controllers[-1].layout.disable_subtitles()
 
         return charts
 
 
-    def __create_bar_chart(self, title: str, metric_id: int, charts: List) -> None:
+    def __create_chart(self, title: str, adapter: MetricAdapter, figure: Figure
+    ) -> Callable:
+        """
+        Creates the chart layout and its controller, and returns a callable
+        to get the html representation.
+        """
         css_id: str = f"{TEXT['pane_css_prefix']}{self.get_id()}"
         layout: ChartPaneLayout = ChartPaneLayout(
             title=title,
             css_id=css_id,
-            figure=BarFigure()
+            figure=figure
         )
-        # layout configuration
-        layout.get_configuration().disable_legend()
 
-        adapter: MetricAdapter = MetricAdapter(
-            metric_id=metric_id,
-            organizations=self.get_organizations
-        )
         controller: ChartController = ChartController(
             css_id=css_id,
             layout=layout,
             adapter=adapter)
 
         self.__controllers.append(controller)
-        charts.append(layout.get_layout)
+        return layout.get_layout
 
 
     def get_id(self) -> int:
@@ -286,13 +302,6 @@ class Service():
         }
 
         return data 
-
-
-    def get_metric_prop_total_succes_ratio(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, o_id)
-
-        return self.__get_common_representation(metric=metric, complements=False)
 
 
     def get_metric_prop_boost_succes_ratio(self, o_id: str) -> Dict:

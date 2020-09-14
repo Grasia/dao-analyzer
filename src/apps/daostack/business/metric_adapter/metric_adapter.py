@@ -23,7 +23,17 @@ class MetricAdapter():
         self.__metric_id: int = metric_id
         self.__organizations: Callable = organizations
 
-    
+
+    @property
+    def metric_id(self) -> int:
+        return self.__metric_id
+
+
+    @property
+    def organizations(self) -> Callable:
+        return self.__organizations
+
+
     def get_plot_data(self, o_id: str) -> Dict:
         """
         Returns the metric data in a Dict using o_id param.

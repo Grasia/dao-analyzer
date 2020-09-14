@@ -61,6 +61,7 @@ class BarFigure(Figure):
             }
 
         y_args: Dict = {'grid': True}
+        super().configuration.disable_legend()
 
         layout: go.Layout = go.Layout(
             xaxis=super().configuration.get_axis_layout(args=x_args),
