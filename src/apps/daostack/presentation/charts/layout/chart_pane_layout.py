@@ -40,9 +40,15 @@ class ChartPaneLayout():
         children = self._get_children(subtitle1, subtitle2, figure)
 
         return html.Div(
-            children=children, 
-            id=self.__css_id, 
-            className='pane graph-pane'
+            children=dcc.Loading(
+                type="circle",
+                color=Color.DARK_BLUE,
+                children=html.Div(
+                    children=children,
+                    id=self.__css_id,
+                    className='graph-pane'
+            )),  
+            className='pane'
         )
 
 
@@ -67,25 +73,21 @@ class ChartPaneLayout():
         return [
             html.Span(
                 self.__title,
-                className = 'graph-pane-title'
+                className='graph-pane-title'
             ),
             html.Span(
                 subtitle1,
-                id = f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE1}',
-                className = f'graph-pane-subtitle {hide}'
+                id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE1}',
+                className=f'graph-pane-subtitle {hide}'
             ),
             html.Span(
                 subtitle2, 
-                id = f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
-                className = hide
+                id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
+                className=hide
             ),
-            dcc.Loading(
-                type = "circle",
-                color = Color.DARK_BLUE,
-                children = dcc.Graph(
-                    id = f'{self.__css_id}{self.SUFFIX_ID_CHART}', 
-                    figure = figure
-                ),
+            dcc.Graph(
+                id=f'{self.__css_id}{self.SUFFIX_ID_CHART}',
+                figure=figure
             ),
         ]
 
@@ -99,4 +101,4 @@ class ChartPaneLayout():
 
 
     def get_configuration(self) -> FigureConfiguration:
-        return self.__figure.get_configuration()
+        return self.__figure.configuration

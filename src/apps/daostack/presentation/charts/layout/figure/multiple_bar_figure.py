@@ -1,7 +1,8 @@
 """
-   Descp: This class is used to represent a bar plot.
+   Descp: This class is used to represent a multiple bar figure, this means,
+        stacked multibar-bar figure, and grouped multi-bar figure.
 
-   Created on: 09-sep-2020
+   Created on: 14-sep-2020
 
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
@@ -12,10 +13,25 @@ import plotly.graph_objs as go
 from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
 import src.apps.daostack.resources.colors as Color
 
-class BarFigure(Figure):
+class MultipleBarFigure(Figure):
+    STACK: int = 0
+    GROUP: int = 1
+    __TYPE_STACK: str = 'stack'
+    __TYPE_GROUP: str = 'group'
 
-    def __init__(self) -> None:
+
+    def __init__(self, bar_type: int) -> None:
         super().__init__()
+        self.__bar_type: str = self.__get_type(bar_type)
+
+
+    def __get_type(self, bar_type: int) -> str:
+        btype: str = self.__TYPE_GROUP
+
+        if bar_type is self.STACK:
+            bar_type = self.__TYPE_STACK
+
+        return btype
 
 
     @staticmethod
@@ -63,10 +79,10 @@ class BarFigure(Figure):
         y_args: Dict = {'grid': True}
 
         layout: go.Layout = go.Layout(
-            xaxis=super().configuration.get_axis_layout(args=x_args),
-            yaxis=super().configuration.get_axis_layout(args=y_args),
-            legend=super().configuration.get_legend(),
-            shapes=super().configuration.get_shapes(),
+            xaxis=self.__configuration.get_axis_layout(args=x_args),
+            yaxis=self.__configuration.get_axis_layout(args=y_args),
+            legend=self.__configuration.get_legend(),
+            shapes=self.__configuration.get_shapes(),
         )
 
         return {'data': [bar], 'layout': layout}
