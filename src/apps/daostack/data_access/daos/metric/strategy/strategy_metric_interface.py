@@ -12,7 +12,7 @@ from typing import Any
 from pandas import DataFrame
 
 
-class StrategyInterface(metaclass=abc.ABCMeta):
+class IMetricStrategy(metaclass=abc.ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
         return (hasattr(subclass, 'clean_df') and

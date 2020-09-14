@@ -11,7 +11,7 @@ from typing import List
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import StrategyInterface
+        strategy_metric_interface import IMetricStrategy
 
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
@@ -22,7 +22,7 @@ VOTERS = 0
 STAKERS = 1
 
 
-class StDifferentVS(StrategyInterface):
+class StDifferentVS(IMetricStrategy):
     __DF_DATE = 'createdAt'
     __DF_VOTER = 'voter'
     __DF_STAKER = 'staker'
