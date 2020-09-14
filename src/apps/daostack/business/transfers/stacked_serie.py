@@ -79,7 +79,7 @@ class StackedSerie():
         op2 = y[i_2]
 
         if not op1 or not op2:
-            return -1
+            return 0
 
         if add_stacks:
             for j in range(i_stack+1, len(self.y_stack)):

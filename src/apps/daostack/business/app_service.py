@@ -24,6 +24,10 @@ from src.apps.daostack.presentation.charts.chart_controller import ChartControll
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
 from src.apps.daostack.business.metric_adapter.proposal_boost_outcome \
     import ProposalBoostOutcome
+from src.apps.daostack.business.metric_adapter.success_ratio_type \
+    import SuccessRatioType
+from src.apps.daostack.business.metric_adapter.vote_type \
+    import VoteType
 from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
 from src.apps.daostack.presentation.charts.layout.figure.bar_figure import BarFigure
@@ -118,6 +122,13 @@ class Service():
         charts: List[Callable] = list()
         call: Callable = self.get_organizations
 
+        # total votes by type
+        charts.append(self.__create_chart(
+            title=TEXT['total_votes_option_title'],
+            adapter=VoteType(s_factory.TOTAL_VOTES_OPTION, call, VoteType.VOTE),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+        ))
+
         # different voters
         charts.append(self.__create_chart(
             title=TEXT['different_voters_title'],
@@ -163,6 +174,14 @@ class Service():
             figure=BarFigure()
         ))
 
+        # proposal boost_outcome
+        charts.append(self.__create_chart(
+            title=TEXT['proposal_boost_outcome_title'],
+            adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+        ))
+        self.__controllers[-1].layout.disable_subtitles()
+
         # total succes rate of the stakes
         charts.append(self.__create_chart(
             title=TEXT['proposal_total_succ_rate_title'],
@@ -171,11 +190,11 @@ class Service():
         ))
         self.__controllers[-1].layout.disable_subtitles()
 
-        # proposal boost_outcome
+        # success rate by type
         charts.append(self.__create_chart(
-            title=TEXT['proposal_boost_outcome_title'],
-            adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
-            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+            title=TEXT['proposal_boost_succ_rate_title'],
+            adapter=SuccessRatioType(s_factory.PROPOSALS_BOOST_SUCCES_RATIO, call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.GROUP)
         ))
         self.__controllers[-1].layout.disable_subtitles()
 
@@ -209,44 +228,6 @@ class Service():
         ly.PANE_ID += 1
         return pane_id
         
-
-    def get_metric_proposal_boost_outcome(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSALS_BOOST_OUTCOME, o_id)
-
-        y1 = metric.get_i_stack(0)
-        y2 = metric.get_i_stack(1)
-        y3 = metric.get_i_stack(2)
-        y4 = metric.get_i_stack(3)
-        data: Dict = {
-            'serie1': {
-                'y': y1,
-                'color': [Color.DARK_GREEN]*len(y1),
-                'name': TEXT['queue_pass'],
-            },
-            'serie2': {
-                'y': y2,
-                'color': [Color.LIGHT_GREEN]*len(y2),
-                'name': TEXT['boost_pass'],
-            },
-            'serie3': {
-                'y': y3,
-                'color': [Color.LIGHT_RED]*len(y3),
-                'name': TEXT['boost_fail'],
-            },
-            'serie4': {
-                'y': y4,
-                'color': [Color.DARK_RED]*len(y4),
-                'name': TEXT['queue_fail'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'],
-            },
-        }
-        return data
 
 
     def get_metric_proposal_majority(self, o_id: str) -> Dict:
@@ -301,90 +282,4 @@ class Service():
             }
         }
 
-        return data 
-
-
-    def get_metric_prop_boost_succes_ratio(self, o_id: str) -> Dict:
-        metric: NStackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSALS_BOOST_SUCCES_RATIO, o_id)
-
-        y1 = metric.get_i_sserie(0).get_i_stack(0)
-        y2 = metric.get_i_sserie(1).get_i_stack(0)
-
-        data: Dict = {
-            'serie1': {
-                'y': y1,
-                'color': [Color.LIGHT_GREEN]*len(y1),
-                'name': TEXT['boost'],
-            },
-            'serie2': {
-                'y': y2,
-                'color': [Color.DARK_RED]*len(y2),
-                'name': TEXT['not_boost'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2'],
-            }
-        }
-
-        return data
-
-
-    def get_metric_total_votes_option(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_VOTES_OPTION, o_id)
-            
-        last_value: int = metric.get_last_value(0) + metric.get_last_value(1)
-        diff: float = metric.get_diff_last_values(add_stacks=True)
-
-        data: Dict = {
-            'serie1': {
-                'y': metric.get_i_stack(0),
-                'color': Color.LIGHT_RED,
-                'name': TEXT['votes_against'],
-            },
-            'serie2': {
-                'y': metric.get_i_stack(1),
-                'color': Color.LIGHT_GREEN,
-                'name': TEXT['votes_for'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2'],
-                'last_serie_elem': metric.get_last_serie_elem(),
-                'last_value': last_value,
-                'diff': diff, 
-            }
-        }
-
-        return data
-
-
-    def get_metric_total_stakes_option(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_STAKES_OPTION, o_id)
-
-        data: Dict = {
-            'serie1': {
-                'y': metric.get_i_stack(0),
-                'color': Color.LIGHT_RED,
-                'name': TEXT['downstakes'],
-            },
-            'serie2': {
-                'y': metric.get_i_stack(1),
-                'color': Color.LIGHT_GREEN,
-                'name': TEXT['upstakes'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2'],
-            }
-        }
         return data
