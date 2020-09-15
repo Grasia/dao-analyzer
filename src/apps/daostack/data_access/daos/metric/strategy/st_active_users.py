@@ -12,14 +12,14 @@ from typing import List
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import StrategyInterface
+        strategy_metric_interface import IMetricStrategy
 
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-class StActiveUsers(StrategyInterface):
+class StActiveUsers(IMetricStrategy):
     __DF_DATE = 'createdAt'
     __DF_PROPOSER = 'proposer'
     __DF_VOTER = 'voter'

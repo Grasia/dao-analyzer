@@ -9,14 +9,14 @@
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import StrategyInterface
+        strategy_metric_interface import IMetricStrategy
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 
-class StProposalMajority(StrategyInterface):
+class StProposalMajority(IMetricStrategy):
     __DF_DATE = 'executedAt'
     __DF_PASS = 'winningOutcome'
     __DF_REP = 'totalRepWhenExecuted'

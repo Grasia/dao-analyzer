@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List, Any
+from typing import Dict, List, Callable
 import dash_html_components as html
 
 import src.apps.daostack.presentation.layout as ly
@@ -18,10 +18,25 @@ import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 import src.apps.daostack.data_access.requesters.cache_requester as cache
 from src.apps.daostack.business.transfers.organization import OrganizationList
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
-from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
+from src.apps.daostack.presentation.charts.chart_controller import ChartController
+from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
+from src.apps.daostack.business.metric_adapter.proposal_boost_outcome \
+    import ProposalBoostOutcome
+from src.apps.daostack.business.metric_adapter.success_ratio_type \
+    import SuccessRatioType
+from src.apps.daostack.business.metric_adapter.vote_type \
+    import VoteType
+from src.apps.daostack.business.metric_adapter.majority_type \
+    import MajorityType
+from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
+    import ChartPaneLayout
+from src.apps.daostack.presentation.charts.layout.figure.bar_figure import BarFigure
+from src.apps.daostack.presentation.charts.layout.figure.multi_bar_figure \
+    import MultiBarFigure
+from src.apps.daostack.presentation.charts.layout.figure.double_scatter_figure \
+    import DoubleScatterFigure
+from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.resources.strings import TEXT
-import src.apps.daostack.resources.colors as Color
 
 
 __service = None
@@ -37,15 +52,15 @@ def get_service():
 
 
 class Service():
-    __DATE_FORMAT: str = '%b, %Y'
-
-
+ 
     def __init__(self):
         # app state
         self.__orgs: OrganizationList = None
+        self.__controllers: List[ChartController] = list()
 
 
-    def get_organizations(self) -> OrganizationList:
+    @property
+    def organizations(self) -> OrganizationList:
         if not self.__orgs:
             orgs: OrganizationList = OrganizationListDao(cache.CacheRequester(
                 srcs=[cache.DAOS])).get_organizations()
@@ -57,281 +72,162 @@ class Service():
 
     def get_layout(self) -> html.Div:
         """
-        Returns the app's view. 
+        Returns the app's layout. 
         """
-        orgs: OrganizationList = self.get_organizations()
-        return ly.generate_layout(orgs.get_dict_representation())
+        orgs: OrganizationList = self.organizations
+        return ly.generate_layout(
+            labels=orgs.get_dict_representation(),
+            sections=self.__get_sections()
+        )
 
 
-    def __get_sserie_by_metric(self, metric: int, o_id: str) -> Any:
-        dao = s_factory.get_dao(
-            ids=self.get_organizations().get_ids_from_id(o_id),
-            metric=metric)
-
-        return dao.get_metric()
-
-
-    def __get_common_representation(self, metric: StackedSerie, 
-    complements: bool = True) -> Dict:
-
-        y: List[float] = metric.get_i_stack(0)
-        color = [Color.LIGHT_BLUE] * len(y)
-        if color:
-            color[-1] = Color.DARK_BLUE
-
-        data: Dict = {
-            'serie': {
-                'y': y,
-                'color': color,
-                'name': '',
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie'],
-            }
+    def __get_sections(self) -> Dict[str, List[Callable]]:
+        """
+        Returns a dict with each section filled with a callable function which
+         returns the chart layout
+        """
+        return {
+            TEXT['rep_holder_title']: self.__get_rep_holder_charts(),
+            TEXT['vote_title']: self.__get_vote_charts(),
+            TEXT['stake_title']: self.__get_stake_charts(),
+            TEXT['proposal_title']: self.__get_proposal_charts(),
         }
 
-        if complements:
-            data['common']['last_serie_elem'] = metric.get_last_serie_elem()
-            data['common']['last_value'] = metric.get_last_value(0)
-            data['common']['diff'] = metric.get_diff_last_values()
 
-        return data
+    def __get_rep_holder_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of reputation holder section, this includes 
+         its layout and its controller.
+        """
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
 
-
-    def get_metric_new_users(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.NEW_USERS, o_id)
-
-        return self.__get_common_representation(metric=metric)
-
-
-    def get_metric_active_users(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.ACTIVE_USERS, o_id)
-
-        return self.__get_common_representation(metric=metric)
-        
-
-    def get_metric_different_voters(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.DIFFERENT_VOTERS, o_id)
-
-        return self.__get_common_representation(metric=metric)
+        # new reputation holders
+        charts.append(self.__create_chart(
+            title=TEXT['new_users_title'],
+            adapter=MetricAdapter(s_factory.NEW_USERS, call),
+            figure=BarFigure()
+        ))
+        # active reputation holders
+        charts.append(self.__create_chart(
+            title=TEXT['active_users_title'],
+            adapter=MetricAdapter(s_factory.ACTIVE_USERS, call),
+            figure=BarFigure()
+        ))
+        return charts
 
 
-    def get_metric_different_stakers(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.DIFFERENT_STAKERS, o_id)
+    def __get_vote_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of vote section.
+        """
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
 
-        return self.__get_common_representation(metric=metric)
+        # total votes by type
+        charts.append(self.__create_chart(
+            title=TEXT['total_votes_option_title'],
+            adapter=VoteType(s_factory.TOTAL_VOTES_OPTION, call, VoteType.VOTE),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+        ))
 
-
-    def get_metric_new_proposals(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.NEW_PROPOSALS, o_id)
-        
-        return self.__get_common_representation(metric=metric)
-
-
-    def get_metric_proposal_boost_outcome(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSALS_BOOST_OUTCOME, o_id)
-
-        y1 = metric.get_i_stack(0)
-        y2 = metric.get_i_stack(1)
-        y3 = metric.get_i_stack(2)
-        y4 = metric.get_i_stack(3)
-        data: Dict = {
-            'serie1': {
-                'y': y1,
-                'color': [Color.DARK_GREEN]*len(y1),
-                'name': TEXT['queue_pass'],
-            },
-            'serie2': {
-                'y': y2,
-                'color': [Color.LIGHT_GREEN]*len(y2),
-                'name': TEXT['boost_pass'],
-            },
-            'serie3': {
-                'y': y3,
-                'color': [Color.LIGHT_RED]*len(y3),
-                'name': TEXT['boost_fail'],
-            },
-            'serie4': {
-                'y': y4,
-                'color': [Color.DARK_RED]*len(y4),
-                'name': TEXT['queue_fail'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'],
-            },
-        }
-        return data
+        # different voters
+        charts.append(self.__create_chart(
+            title=TEXT['different_voters_title'],
+            adapter=MetricAdapter(s_factory.DIFFERENT_VOTERS, call),
+            figure=BarFigure()
+        ))
+        return charts
 
 
-    def get_metric_total_votes(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_VOTES, o_id)
+    def __get_stake_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of stake section.
+        """
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
 
-        return self.__get_common_representation(metric=metric)
-
-
-    def get_metric_total_stakes(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_STAKES, o_id)
-
-        return self.__get_common_representation(metric=metric)
-
-
-    def get_metric_proposal_majority(self, o_id: str) -> Dict:
-        metric: NStackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSAL_MAJORITY, o_id)
-
-        y1: StackedSerie = metric.get_i_sserie(0)
-        y2: StackedSerie = metric.get_i_sserie(1)
-        y3: StackedSerie = metric.get_i_sserie(2)
-        y4: StackedSerie = metric.get_i_sserie(3)
-        x: List = y1.get_serie()
-
-        data: Dict = {
-            'serie1': {
-                'x': y1.get_serie(),
-                'y': y1.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_GREEN, 0.5)}',
-                'marker_symbol': 'triangle-up',
-                'name': TEXT['abs_pass'],
-                'position': 'up',
-            },
-            'serie2': {
-                'x': y2.get_serie(),
-                'y': y2.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_GREEN, 0.5)}',
-                'marker_symbol': 'circle',
-                'name': TEXT['rel_pass'],
-                'position': 'up',
-            },
-            'serie3': {
-                'x': y3.get_serie(),
-                'y': y3.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_RED, 0.5)}',
-                'marker_symbol': 'circle',
-                'name': TEXT['rel_fail'],
-                'position': 'down',
-            },
-            'serie4': {
-                'x': y4.get_serie(),
-                'y': y4.get_i_stack(0),
-                'color': f'rgba{Color.hex_to_rgba(Color.DARK_RED, 0.5)}',
-                'marker_symbol': 'triangle-down',
-                'name': TEXT['abs_fail'],
-                'position': 'down',
-            },
-            'common': {
-                'x': x,
-                'type': 'date', 
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2', 'serie3', 'serie4'], 
-                'y_suffix': '%',
-            }
-        }
-
-        return data 
+        # total stakes
+        charts.append(self.__create_chart(
+            title=TEXT['total_stakes_title'],
+            adapter=MetricAdapter(s_factory.TOTAL_STAKES, call),
+            figure=BarFigure()
+        ))
+        # different stakers
+        charts.append(self.__create_chart(
+            title=TEXT['different_stakers_title'],
+            adapter=MetricAdapter(s_factory.DIFFERENT_STAKERS, call),
+            figure=BarFigure()
+        ))
+        return charts
 
 
-    def get_metric_prop_total_succes_ratio(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, o_id)
+    def __get_proposal_charts(self) -> List[Callable[[], html.Div]]:
+        """
+        Creates charts of proposal section.
+        """
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
 
-        return self.__get_common_representation(metric=metric, complements=False)
+        # new proposals
+        charts.append(self.__create_chart(
+            title=TEXT['new_proposals_title'],
+            adapter=MetricAdapter(s_factory.NEW_PROPOSALS, call),
+            figure=BarFigure()
+        ))
 
+        # majority type
+        charts.append(self.__create_chart(
+            title=TEXT['proposal_outcome_majority_title'],
+            adapter=MajorityType(s_factory.PROPOSAL_MAJORITY, call),
+            figure=DoubleScatterFigure()
+        ))
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
-    def get_metric_prop_boost_succes_ratio(self, o_id: str) -> Dict:
-        metric: NStackedSerie = self.__get_sserie_by_metric(
-            s_factory.PROPOSALS_BOOST_SUCCES_RATIO, o_id)
+        # proposal boost_outcome
+        charts.append(self.__create_chart(
+            title=TEXT['proposal_boost_outcome_title'],
+            adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+        ))
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
-        y1 = metric.get_i_sserie(0).get_i_stack(0)
-        y2 = metric.get_i_sserie(1).get_i_stack(0)
+        # total succes rate of the stakes
+        charts.append(self.__create_chart(
+            title=TEXT['proposal_total_succ_rate_title'],
+            adapter=MetricAdapter(s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, call),
+            figure=BarFigure()
+        ))
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
-        data: Dict = {
-            'serie1': {
-                'y': y1,
-                'color': [Color.LIGHT_GREEN]*len(y1),
-                'name': TEXT['boost'],
-            },
-            'serie2': {
-                'y': y2,
-                'color': [Color.DARK_RED]*len(y2),
-                'name': TEXT['not_boost'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2'],
-            }
-        }
+        # success rate by type
+        charts.append(self.__create_chart(
+            title=TEXT['proposal_boost_succ_rate_title'],
+            adapter=SuccessRatioType(s_factory.PROPOSALS_BOOST_SUCCES_RATIO, call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.GROUP)
+        ))
+        self.__controllers[-1].layout.configuration.disable_subtitles()
 
-        return data
-
-
-    def get_metric_total_votes_option(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_VOTES_OPTION, o_id)
-            
-        last_value: int = metric.get_last_value(0) + metric.get_last_value(1)
-        diff: float = metric.get_diff_last_values(add_stacks=True)
-
-        data: Dict = {
-            'serie1': {
-                'y': metric.get_i_stack(0),
-                'color': Color.LIGHT_RED,
-                'name': TEXT['votes_against'],
-            },
-            'serie2': {
-                'y': metric.get_i_stack(1),
-                'color': Color.LIGHT_GREEN,
-                'name': TEXT['votes_for'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2'],
-                'last_serie_elem': metric.get_last_serie_elem(),
-                'last_value': last_value,
-                'diff': diff, 
-            }
-        }
-
-        return data
+        return charts
 
 
-    def get_metric_total_stakes_option(self, o_id: str) -> Dict:
-        metric: StackedSerie = self.__get_sserie_by_metric(
-            s_factory.TOTAL_STAKES_OPTION, o_id)
+    def __create_chart(self, title: str, adapter: MetricAdapter, figure: Figure
+    ) -> Callable:
+        """
+        Creates the chart layout and its controller, and returns a callable
+        to get the html representation.
+        """
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=figure
+        )
 
-        data: Dict = {
-            'serie1': {
-                'y': metric.get_i_stack(0),
-                'color': Color.LIGHT_RED,
-                'name': TEXT['downstakes'],
-            },
-            'serie2': {
-                'y': metric.get_i_stack(1),
-                'color': Color.LIGHT_GREEN,
-                'name': TEXT['upstakes'],
-            },
-            'common': {
-                'x': metric.get_serie(),
-                'type': 'date',
-                'x_format': self.__DATE_FORMAT,
-                'ordered_keys': ['serie1', 'serie2'],
-            }
-        }
-        return data
+        controller: ChartController = ChartController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter)
+
+        self.__controllers.append(controller)
+        return layout.get_layout
