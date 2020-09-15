@@ -9,7 +9,7 @@
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import StrategyInterface
+        strategy_metric_interface import IMetricStrategy
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
@@ -21,7 +21,7 @@ TOTAL_VOTES: int = 2
 TOTAL_STAKES: int = 3
 
 
-class StTimeSerie(StrategyInterface):
+class StTimeSerie(IMetricStrategy):
     __DF_DATE = 'createdAt'
     __DF_COUNT = 'count'
     __DF_COLS = [__DF_DATE, __DF_COUNT]

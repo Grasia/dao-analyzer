@@ -34,11 +34,11 @@ class OrganizationList:
     __ALL_ORGS_ID: str = '1'
 
 
-    def __init__(self, orgs: List[Organization] = None):
+    def __init__(self, orgs: List[Organization] = None) -> None:
         self.__orgs: List[Organization] = orgs if orgs else list()
 
 
-    def add_organization(self, org: Organization):
+    def add_organization(self, org: Organization) -> None:
         if org:
             self.__orgs.append(org)
 

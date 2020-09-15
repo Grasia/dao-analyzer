@@ -11,7 +11,7 @@ from typing import List
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import StrategyInterface
+        strategy_metric_interface import IMetricStrategy
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
@@ -21,7 +21,7 @@ VOTES = 0
 STAKES = 1
 
 
-class StTotalVSOption(StrategyInterface):
+class StTotalVSOption(IMetricStrategy):
     __DF_DATE = 'createdAt'
     __DF_OUTCOME = 'outcome'
     __DF_IS_POSITIVE = 'isPositive'

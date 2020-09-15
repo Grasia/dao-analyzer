@@ -11,7 +11,7 @@ from typing import List, Tuple, Any
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import StrategyInterface
+        strategy_metric_interface import IMetricStrategy
 from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie 
 from src.apps.daostack.business.transfers.serie import Serie
@@ -23,7 +23,7 @@ BOOST_SUCCESS_RATIO: int = 1
 TOTAL_SUCCESS_RATIO: int = 2
 
 
-class StProposalOutcome(StrategyInterface):
+class StProposalOutcome(IMetricStrategy):
     __DF_DATE = 'executedAt'
     __DF_PASS = 'hasPassed'
     __DF_BOOST = 'isBoosted'

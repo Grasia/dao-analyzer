@@ -13,12 +13,12 @@ from typing import List
 import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
-    strategy_metric_interface import StrategyInterface
+    strategy_metric_interface import IMetricStrategy
 from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester
 
 
 class MetricDao():
-    def __init__(self, ids: List[str], strategy: StrategyInterface,
+    def __init__(self, ids: List[str], strategy: IMetricStrategy,
      requester: CacheRequester):
         self.__ids = ids
         self.__st = strategy

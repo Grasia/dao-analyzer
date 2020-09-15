@@ -78,6 +78,9 @@ class StackedSerie():
         op1 = y[i_1]
         op2 = y[i_2]
 
+        if not op1 or not op2:
+            return 0
+
         if add_stacks:
             for j in range(i_stack+1, len(self.y_stack)):
                 y = self.y_stack[j]
@@ -86,6 +89,7 @@ class StackedSerie():
 
         denominator = (op1 + op2)
         numerator = (op1 - op2)
+
         if denominator > 0:
             val = numerator / denominator * 100
 
