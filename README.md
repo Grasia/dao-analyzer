@@ -1,5 +1,5 @@
 # dao-analyzer
-DAO visualization tool
+It is a tool to visualize DAO metrics. Now, it's focused on the [DAOstack](https://daostack.io/) ecosystem.
 
 ## Download
 Enter in your terminal (git must be installed) and write down:
