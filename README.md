@@ -1,4 +1,4 @@
-# dao-analyzer
+# DAO-Analyzer
 It is a tool to visualize DAO metrics. Now, it's focused on the [DAOstack](https://daostack.io/) ecosystem.
 
 ## Download
