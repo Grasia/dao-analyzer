@@ -19,7 +19,7 @@ So, you must install the following dependencies to run the tool:
 * python3-pip
 * virtualenv (not essential)
 
-Even if you install the above dependencies, you must also install the Python dependencies:
+Now, install the Python dependencies:
 
 `pip3 install -r requirements.txt`
 
@@ -46,7 +46,7 @@ After a few minutes, you can now run the app with:
 
 `python3 index.py`
 
-Now, visit `http://127.0.0.1:8050/apps/daostack` in your web browser.
+Now, visit `http://127.0.0.1:8050` in your web browser.
 
 ### Debug mode
 Setting the environment variable, `DEBUG`, before running the app, will enable the debug mode.
@@ -55,9 +55,20 @@ Setting the environment variable, `DEBUG`, before running the app, will enable t
 
 ## How to test it?
 Run all tests with:
+
 `python3 -m pytest test/`
 
 ### Flags for hypothesis testing
 Use this flag `--hypothesis-show-statistics` to show statistics.
 
 Use the flag `--hypothesis-seed=<int>` to set a fixed seed, it's useful to reproduce a failure.
+
+## Deploy
+In order to fully deploy the app, use the `deploy.sh` script, which installs all the Python dependencies, updates the datawarehouse, and runs the web-app with gunicorn, using the `gunicorn_config.py` file.
+
+## Publications
+* El Faqir, Y., Arroyo, J., Hassan, S. (2020). An overview of Decentralized Autonomous Organizations on the blockchain. Proceedings of the 16th International Symposium on Open Collaboration (Opensym 2020) 11:1-11:8. ACM. 
+    * [Freely available here](https://opensym.org/wp-content/uploads/2020/08/os20-paper-a11-el-faqir.pdf).
+
+## Acknowledgements
+This work is funded by the Spanish Ministry of Science and Innovation and the [P2P Models](https://p2pmodels.eu/) project, which is funded by the European Research Council.
