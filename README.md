@@ -1,6 +1,9 @@
 # DAO-Analyzer
 It is a tool to visualize DAO metrics. Now, it's focused on the [DAOstack](https://daostack.io/) ecosystem.
 
+## Architecture
+There is available a class diagram [here](https://github.com/Grasia/dao-analyzer/src/apps/daostack/class_diagram.png).
+
 ## Download
 Enter in your terminal (git must be installed) and write down:
 
