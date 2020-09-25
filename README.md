@@ -1,5 +1,23 @@
 # DAO-Analyzer
-It is a tool to visualize DAO metrics. Now, it's focused on the [DAOstack](https://daostack.io/) ecosystem.
+It is a tool to visualize DAO metrics. Now, it's focused on the [DAOstack](https://daostack.io/) ecosystem, and it's available in [http://dao-analyzer.science/](http://dao-analyzer.science/).
+
+## Available metrics
+* DAOstack:
+    * Reputation Holders:
+        * New reputation holders
+        * Active reputation holders
+    * Votes:
+        * Total votes option
+        * Different voters
+    * Stakes:
+        * Total stakes
+        * Different stakers
+    * Proposals:
+        * New proposals
+        * Closed proposal's majority outcome
+        * Closed proposal's outcome
+        * Total success rate of the stakes
+        * Success rate of the stakes by type
 
 ## Architecture
 There is available a class diagram [here](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png).
