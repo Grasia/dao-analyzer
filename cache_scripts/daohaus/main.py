@@ -11,6 +11,7 @@ import os
 import json
 from typing import Dict, List
 from daohaus.collectors import moloch_collector as moloch
+from daohaus.collectors import member_collector as member
 
 DIRS: str = os.path.join('datawarehouse', 'daohaus')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -20,6 +21,7 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
     keys: List[str] = [
         moloch.META_KEY,
+        member.META_KEY
         ] # add here new keys
 
     for k in keys:
@@ -57,6 +59,7 @@ def run() -> None:
     # add new collectors
     collectors: List = [
         moloch.update_moloches,
+        member.update_members,
         ]
 
     for c in collectors:
