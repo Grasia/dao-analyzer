@@ -1,33 +1,25 @@
 """
-   Descp: Main script to create the DAOstack cache, it call all the collectors.
+   Descp: Main script to create the DAOhaus cache, it call all the collectors.
 
-   Created on: 10-jul-2020
+   Created on: 29-sep-2020
 
-   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
 
 import os
 import json
 from typing import Dict, List
-import daostack.collectors.dao_collector as dao
-import daostack.collectors.rep_holder_collector as rep_h
-import daostack.collectors.vote_collector as vote
-import daostack.collectors.stake_collector as stake
-import daostack.collectors.proposal_collector as proposal
+from daohaus.collectors import moloch_collector as moloch
 
-DIRS: str = os.path.join('datawarehouse', 'daostack')
+DIRS: str = os.path.join('datawarehouse', 'daohaus')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
 
 
 def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
     keys: List[str] = [
-        dao.META_KEY, 
-        rep_h.META_KEY, 
-        vote.META_KEY,
-        stake.META_KEY,
-        proposal.META_KEY
+        moloch.META_KEY,
         ] # add here new keys
 
     for k in keys:
@@ -64,11 +56,7 @@ def run() -> None:
 
     # add new collectors
     collectors: List = [
-        dao.update_daos, 
-        rep_h.update_rep_holders,
-        vote.update_votes,
-        stake.update_stakes,
-        proposal.update_proposals
+        moloch.update_moloches,
         ]
 
     for c in collectors:
