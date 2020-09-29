@@ -13,6 +13,7 @@ from typing import Dict, List
 from daohaus.collectors import moloch_collector as moloch
 from daohaus.collectors import member_collector as member
 from daohaus.collectors import vote_collector as vote
+from daohaus.collectors import rage_quit_collector as rage_quit
 
 DIRS: str = os.path.join('datawarehouse', 'daohaus')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -24,6 +25,7 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
         moloch.META_KEY,
         member.META_KEY,
         vote.META_KEY,
+        rage_quit.META_KEY,
         ] # add here new keys
 
     for k in keys:
@@ -63,6 +65,7 @@ def run() -> None:
         moloch.update_moloches,
         member.update_members,
         vote.update_votes,
+        rage_quit.update_rage_quits,
         ]
 
     for c in collectors:
