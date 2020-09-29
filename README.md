@@ -59,9 +59,9 @@ Finally, you can install the dependencies:
 `pip install -r requirements.txt`
 
 ## How to run it?
-Before launch the app, you have to run the following script in order to enable the cache stored in `datawarehouse/daostack`:
+Before launch the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
 
-`python3 cache_scripts/daostack/main.py`
+`python3 cache_scripts/main.py`
 
 After a few minutes, you can now run the app with:
 

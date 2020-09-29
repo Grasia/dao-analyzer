@@ -12,7 +12,7 @@ import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
 
-from api_requester import n_requests
+from api_requester import ApiRequester
 
 
 STAKE_QUERY: str = '{{proposalStakes(first: {0}, skip: {1})\
@@ -22,10 +22,11 @@ META_KEY: str = 'proposalStakes'
 
 
 def _request_stakes(current_rows: int) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
     print("Requesting stakes\'s data ...")
     start: datetime = datetime.now()
 
-    stakes: List[Dict] = n_requests(query=STAKE_QUERY, skip_n=current_rows, 
+    stakes: List[Dict] = requester.n_requests(query=STAKE_QUERY, skip_n=current_rows, 
         result_key=META_KEY)
 
     print(f'Stake\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')

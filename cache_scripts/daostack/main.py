@@ -10,11 +10,11 @@
 import os
 import json
 from typing import Dict, List
-import collectors.dao_collector as dao
-import collectors.rep_holder_collector as rep_h
-import collectors.vote_collector as vote
-import collectors.stake_collector as stake
-import collectors.proposal_collector as proposal
+import daostack.collectors.dao_collector as dao
+import daostack.collectors.rep_holder_collector as rep_h
+import daostack.collectors.vote_collector as vote
+import daostack.collectors.stake_collector as stake
+import daostack.collectors.proposal_collector as proposal
 
 DIRS: str = os.path.join('datawarehouse', 'daostack')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -56,7 +56,7 @@ def _write_meta_data(meta: Dict) -> None:
     print(f'Updated meta-data in {META_PATH}')
 
 
-if __name__ == '__main__':
+def run() -> None:
     if not os.path.isdir(DIRS):
         os.makedirs(DIRS)
 
@@ -75,3 +75,7 @@ if __name__ == '__main__':
         c(meta_data)
 
     _write_meta_data(meta=meta_data)
+
+
+if __name__ == '__main__':
+    run()
