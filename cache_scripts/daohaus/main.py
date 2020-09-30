@@ -57,6 +57,7 @@ def _write_meta_data(meta: Dict) -> None:
 
 
 def run() -> None:
+    print('------------- Updating DAOhaus\' datawarehouse -------------\n')
     if not os.path.isdir(DIRS):
         os.makedirs(DIRS)
 
@@ -75,6 +76,7 @@ def run() -> None:
         c(meta_data)
 
     _write_meta_data(meta=meta_data)
+    print('------------- DAOhaus\' datawarehouse updated -------------\n')
 
 
 if __name__ == '__main__':
