@@ -15,7 +15,7 @@ from dateutil import relativedelta
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
     st_different_voters_stakers import StDifferentVS
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
 class StDifferentVSTest(unittest.TestCase):
@@ -52,7 +52,7 @@ class StDifferentVSTest(unittest.TestCase):
             {'createdAt': 1577923200, 'staker': '3', 'trash': 'trash'}, #2020-01-02T00:00:00+00:00
         ])
         delta = relativedelta.relativedelta(datetime.now(), datetime.utcfromtimestamp(1577923200))
-        out: List[int] = [3, 1, 0, 1] + [0] * delta.months
+        out: List[int] = [3, 1, 0, 1] + [0] * (delta.months + 1)
 
         self.__check_lists(df=in_df, out=out, stype=1)
 

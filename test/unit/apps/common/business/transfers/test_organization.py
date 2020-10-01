@@ -12,8 +12,8 @@ import unittest
 from hypothesis import given, example, settings, strategies as st
 from random import Random
 
-from src.apps.daostack.business.transfers.organization import Organization
-from src.apps.daostack.business.transfers.organization import OrganizationList
+from src.apps.common.business.transfers.organization import Organization
+from src.apps.common.business.transfers.organization import OrganizationList
 
 
 OrganizationStrategy = st.builds(

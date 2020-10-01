@@ -89,6 +89,7 @@ class StActiveUsers(IMetricStrategy):
         df.sort_values(self.__DF_DATE, inplace=True)
 
         serie: Serie = Serie(x=df[self.__DF_DATE].tolist())
+        print(df[self.__DF_DATE].tolist())
         metric: StackedSerie = StackedSerie(
             serie = serie, 
             y_stack = [df[self.__DF_COUNT].tolist()])

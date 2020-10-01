@@ -15,7 +15,7 @@ from dateutil import relativedelta
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
     st_proposal_majority import StProposalMajority
-from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie    
+from src.apps.common.business.transfers.n_stacked_serie import NStackedSerie    
 
 class StProposalMajorityTest(unittest.TestCase):
 
@@ -51,7 +51,7 @@ class StProposalMajorityTest(unittest.TestCase):
         ])
         delta = relativedelta.relativedelta(datetime.now(), datetime.utcfromtimestamp(1578182400))
         out: List[List[int]] = self.__get_out(
-            num_months=delta.months, 
+            num_months=(delta.months + 1), 
             abs_passes=[50.0, np.nan, np.nan, np.nan],
             rel_passes=[np.nan, 10.0, np.nan, np.nan],
             rel_fails=[np.nan, 30.0, np.nan, 0.0],

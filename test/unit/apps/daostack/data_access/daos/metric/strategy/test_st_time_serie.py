@@ -16,7 +16,7 @@ from datetime import datetime
 from src.apps.daostack.data_access.daos.metric.strategy.\
     st_time_serie import StTimeSerie
 
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
 class StTimeSerieTest(unittest.TestCase):

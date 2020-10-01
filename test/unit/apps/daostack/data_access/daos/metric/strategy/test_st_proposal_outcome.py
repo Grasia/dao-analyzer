@@ -16,8 +16,8 @@ from datetime import datetime
 from src.apps.daostack.data_access.daos.metric.strategy.\
     st_proposal_outcome import StProposalOutcome
 
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
-from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.n_stacked_serie import NStackedSerie
 
 class StProposalOutcomeTest(unittest.TestCase):
 
