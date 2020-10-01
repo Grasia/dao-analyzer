@@ -10,8 +10,8 @@ import pandas as pd
 
 from src.apps.daostack.data_access.daos.metric.strategy.\
         strategy_metric_interface import IMetricStrategy
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
-from src.apps.daostack.business.transfers.serie import Serie
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.serie import Serie
 import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
 
 

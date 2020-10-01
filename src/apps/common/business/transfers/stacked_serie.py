@@ -10,7 +10,7 @@
 from typing import List
 
 from src.logs import LOGS
-from src.apps.daostack.business.transfers.serie import Serie
+from src.apps.common.business.transfers.serie import Serie
 
 class StackedSerie():
     """

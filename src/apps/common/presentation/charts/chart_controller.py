@@ -12,13 +12,13 @@ from dash.dependencies import Input, Output
 from src.app import app
 from src.apps.common.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
-from src.apps.common.business.metric_adapter.metric_adapter import MetricAdapter
+from src.apps.common.business.i_metric_adapter import IMetricAdapter
 
 class ChartController():
 
-    def __init__(self, css_id: str, layout: ChartPaneLayout, adapter: MetricAdapter) -> None:
+    def __init__(self, css_id: str, layout: ChartPaneLayout, adapter: IMetricAdapter) -> None:
         self.__layout: ChartPaneLayout = layout
-        self.__adapter: MetricAdapter = adapter
+        self.__adapter: IMetricAdapter = adapter
         self.bind_callback(
             app=app, 
             pane=css_id,

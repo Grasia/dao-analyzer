@@ -11,14 +11,14 @@
 from typing import Dict, List, Callable
 import dash_html_components as html
 
-import src.apps.daostack.presentation.layout as ly
+import src.apps.common.presentation.layout as ly
 from src.apps.daostack.data_access.daos.organization_dao\
     import OrganizationListDao
 import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 import src.apps.daostack.data_access.requesters.cache_requester as cache
-from src.apps.daostack.business.transfers.organization import OrganizationList
-from src.apps.daostack.presentation.charts.chart_controller import ChartController
+from src.apps.common.business.transfers.organization import OrganizationList
+from src.apps.common.presentation.charts.chart_controller import ChartController
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
 from src.apps.daostack.business.metric_adapter.proposal_boost_outcome \
     import ProposalBoostOutcome
@@ -28,14 +28,14 @@ from src.apps.daostack.business.metric_adapter.vote_type \
     import VoteType
 from src.apps.daostack.business.metric_adapter.majority_type \
     import MajorityType
-from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
+from src.apps.common.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
-from src.apps.daostack.presentation.charts.layout.figure.bar_figure import BarFigure
-from src.apps.daostack.presentation.charts.layout.figure.multi_bar_figure \
+from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
+from src.apps.common.presentation.charts.layout.figure.multi_bar_figure \
     import MultiBarFigure
-from src.apps.daostack.presentation.charts.layout.figure.double_scatter_figure \
+from src.apps.common.presentation.charts.layout.figure.double_scatter_figure \
     import DoubleScatterFigure
-from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
+from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.resources.strings import TEXT
 
 

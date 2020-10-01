@@ -9,8 +9,8 @@
 """
 import pandas as pd
 
-from src.apps.daostack.business.transfers.organization import Organization
-from src.apps.daostack.business.transfers.organization import OrganizationList
+from src.apps.common.business.transfers.organization import Organization
+from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester
 
 

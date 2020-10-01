@@ -11,12 +11,13 @@
 from typing import Dict, List
 
 import src.apps.common.resources.colors as Color
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
-from src.apps.daostack.business.transfers.organization import OrganizationList
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.organization import OrganizationList
+from src.apps.common.business.i_metric_adapter import IMetricAdapter
 import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 
-class MetricAdapter():
+class MetricAdapter(IMetricAdapter):
 
     DATE_FORMAT: str = '%b, %Y'
 
