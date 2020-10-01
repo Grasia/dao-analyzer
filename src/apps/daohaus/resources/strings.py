@@ -8,4 +8,8 @@
 """
 
 TEXT: dict = {
+    'title_member': 'Members',
+    'title_proposal': 'Proposals',
+    'title_rage_quits': 'Rage Quits',
+    'title_vote': 'Votes',
 }

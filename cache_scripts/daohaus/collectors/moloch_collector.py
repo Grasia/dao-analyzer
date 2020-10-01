@@ -34,7 +34,9 @@ def _request_moloches(current_rows: int) -> List[Dict]:
 
 
 def _transform_to_df(moloches: List[Dict]) -> pd.DataFrame:
-    return pd.DataFrame(moloches)
+    df: pd.DataFrame = pd.DataFrame(moloches)
+    df.rename(columns={'title':'name'})
+    return df
 
 
 def update_moloches(meta_data: Dict) -> None:

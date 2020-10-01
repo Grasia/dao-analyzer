@@ -12,7 +12,8 @@ import dash_html_components as html
 #from dash.dependencies import Input, Output
 
 from src.app import app, DEBUG
-from src.apps.daostack.business.app_service import get_service
+import src.apps.daostack.business.app_service as daostack
+#import src.apps.daohaus.business.app_service as daohaus
 
 server = app.server
 
@@ -39,7 +40,7 @@ app.index_string = '''
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content', children=get_service().get_layout())
+    html.Div(id='page-content', children=daostack.get_service().get_layout())
 ])
 
 # TODO: issue 15
