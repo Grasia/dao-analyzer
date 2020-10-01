@@ -11,7 +11,7 @@
 from typing import Dict, List, Callable
 import dash_html_components as html
 
-import src.apps.common.presentation.layout as ly
+import src.apps.common.presentation.dashboard_view as view
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 import src.apps.daohaus.data_access.requesters.cache_requester as cache
@@ -59,7 +59,7 @@ class Service():
         Returns the app's layout. 
         """
         orgs: OrganizationList = self.organizations
-        return ly.generate_layout(
+        return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections()
         )
