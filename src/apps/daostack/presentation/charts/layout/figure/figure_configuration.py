@@ -9,7 +9,7 @@
 
 from typing import Dict, List, Tuple
 
-import src.apps.daostack.resources.colors as Color
+import src.apps.common.resources.colors as Color
 
 class FigureConfiguration():
 

@@ -11,8 +11,8 @@ import dash_html_components as html
 import dash_core_components as dcc
 from typing import List, Dict
 
-from src.apps.daostack.resources.strings import TEXT
-import src.apps.daostack.resources.colors as Color
+from src.apps.common.resources.strings import TEXT
+import src.apps.common.resources.colors as Color
 from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.presentation.charts.layout.chart_pane_configuration \
     import ChartPaneConfiguration

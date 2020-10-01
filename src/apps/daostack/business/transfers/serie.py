@@ -10,7 +10,7 @@
 from typing import List
 from datetime import date
 
-from src.apps.daostack.resources.strings import TEXT
+from src.apps.common.resources.strings import TEXT
 
 class Serie():
     """

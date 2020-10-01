@@ -11,7 +11,7 @@ from typing import Dict, List, Callable
 import dash_core_components as dcc
 import dash_html_components as html
 
-from src.apps.daostack.resources.strings import TEXT
+from src.apps.common.resources.strings import TEXT
 
 
 def generate_layout(labels: List[Dict[str, str]], sections: Dict) -> html.Div:

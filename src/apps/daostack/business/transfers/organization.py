@@ -9,7 +9,7 @@
 
 from typing import List, Dict
 
-from src.apps.daostack.resources.strings import TEXT
+from src.apps.common.resources.strings import TEXT
 
 
 class Organization:

@@ -10,7 +10,7 @@
 
 from typing import Dict
 
-import src.apps.daostack.resources.colors as Color
+import src.apps.common.resources.colors as Color
 from src.apps.daostack.resources.strings import TEXT
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
 from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
