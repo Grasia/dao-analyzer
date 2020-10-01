@@ -11,11 +11,11 @@ import pandas as pd
 
 from src.apps.common.business.transfers.organization import Organization
 from src.apps.common.business.transfers.organization import OrganizationList
-from src.apps.daostack.data_access.requesters.cache_requester import CacheRequester
+from src.apps.common.data_access.requesters.irequester import IRequester
 
 
 class OrganizationListDao:
-    def __init__(self, requester: CacheRequester):
+    def __init__(self, requester: IRequester):
         self.__requester = requester
 
 

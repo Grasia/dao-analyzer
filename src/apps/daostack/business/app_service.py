@@ -12,7 +12,7 @@ from typing import Dict, List, Callable
 import dash_html_components as html
 
 import src.apps.common.presentation.layout as ly
-from src.apps.daostack.data_access.daos.organization_dao\
+from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory

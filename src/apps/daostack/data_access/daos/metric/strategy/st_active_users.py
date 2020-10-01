@@ -11,12 +11,12 @@
 from typing import List
 import pandas as pd
 
-from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import IMetricStrategy
+from src.apps.common.data_access.daos.metric.imetric_strategy \
+    import IMetricStrategy
 
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
 from src.apps.common.business.transfers.serie import Serie
-import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
+import src.apps.common.data_access.pandas_utils as pd_utl
 
 
 class StActiveUsers(IMetricStrategy):

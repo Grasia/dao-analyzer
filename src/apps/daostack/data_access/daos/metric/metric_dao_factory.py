@@ -8,7 +8,7 @@
 """
 from typing import List
 
-from src.apps.daostack.data_access.daos.metric.metric_dao \
+from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
 import src.apps.daostack.data_access.requesters.cache_requester as cache
 import src.apps.daostack.data_access.daos.metric.strategy.\
