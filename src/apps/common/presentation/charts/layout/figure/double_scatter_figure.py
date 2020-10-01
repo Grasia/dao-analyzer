@@ -11,7 +11,7 @@ from typing import Dict
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
-from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
+from src.apps.common.presentation.charts.layout.figure.figure import Figure
 import src.apps.common.resources.colors as Color
 
 class DoubleScatterFigure(Figure):

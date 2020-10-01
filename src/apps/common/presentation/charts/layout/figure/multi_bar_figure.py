@@ -10,7 +10,7 @@
 from typing import Dict, List
 import plotly.graph_objs as go
 
-from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
+from src.apps.common.presentation.charts.layout.figure.figure import Figure
 
 class MultiBarFigure(Figure):
     STACK: int = 0

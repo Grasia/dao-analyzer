@@ -13,8 +13,8 @@ from typing import List, Dict
 
 from src.apps.common.resources.strings import TEXT
 import src.apps.common.resources.colors as Color
-from src.apps.daostack.presentation.charts.layout.figure.figure import Figure
-from src.apps.daostack.presentation.charts.layout.chart_pane_configuration \
+from src.apps.common.presentation.charts.layout.figure.figure import Figure
+from src.apps.common.presentation.charts.layout.chart_pane_configuration \
     import ChartPaneConfiguration
 
 

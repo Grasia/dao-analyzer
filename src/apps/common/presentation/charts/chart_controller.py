@@ -10,9 +10,9 @@
 from dash.dependencies import Input, Output
 
 from src.app import app
-from src.apps.daostack.presentation.charts.layout.chart_pane_layout \
+from src.apps.common.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
-from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
+from src.apps.common.business.metric_adapter.metric_adapter import MetricAdapter
 
 class ChartController():
 

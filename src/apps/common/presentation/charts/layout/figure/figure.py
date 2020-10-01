@@ -10,7 +10,7 @@
 import abc
 from typing import Dict
 
-from src.apps.daostack.presentation.charts.layout.figure.figure_configuration \
+from src.apps.common.presentation.charts.layout.figure.figure_configuration \
     import FigureConfiguration
 
 class Figure(metaclass=abc.ABCMeta):

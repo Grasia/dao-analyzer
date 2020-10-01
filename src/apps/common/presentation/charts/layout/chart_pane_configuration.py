@@ -9,7 +9,7 @@
 
 from typing import Dict, List
 
-from src.apps.daostack.presentation.charts.layout.figure.figure_configuration \
+from src.apps.common.presentation.charts.layout.figure.figure_configuration \
     import FigureConfiguration
 
 class ChartPaneConfiguration(FigureConfiguration):
