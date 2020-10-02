@@ -10,6 +10,7 @@ import dash_html_components as html
 
 from src.apps.common.resources.strings import TEXT
 
+REL_PATH: str = '../../../../assets/'
 
 def generate_layout() -> html.Div:
     return html.Div(children=[
@@ -37,8 +38,14 @@ def __generate_header() -> html.H1:
 def __generate_body() -> html.Div:
     return html.Div(children=[
         html.Div(children=[
-            __generate_ecosystem_pane(title=TEXT['daostack'], bt_id='daostack-bt'),
-            __generate_ecosystem_pane(title=TEXT['daohaus'], bt_id='daohaus-bt'),
+            __generate_ecosystem_pane(
+                img=f'{REL_PATH}daostack.png',
+                title=TEXT['daostack'],
+                bt_id='daostack-bt'),
+            __generate_ecosystem_pane(
+                img=f'{REL_PATH}daohaus.png',
+                title=TEXT['daohaus'],
+                bt_id='daohaus-bt'),
         ], 
         className='eco-body '),
         html.Div(className='page-filler')
@@ -46,12 +53,13 @@ def __generate_body() -> html.Div:
     className='')
 
 
-def __generate_ecosystem_pane(title: str, bt_id: str) -> html.Div:
+def __generate_ecosystem_pane(img: str, title: str, bt_id: str) -> html.Div:
     return html.Div(children=[
         html.Div(children=[
             html.H2(title, className=''),
             html.Span(TEXT['ecosystem'], className=''), 
         ]),
+        html.Img(src=img, className='eco-img'),
         html.Button(TEXT['bt_analyze'], id=bt_id, n_clicks=0),
     ], 
     className='eco-pane ')
