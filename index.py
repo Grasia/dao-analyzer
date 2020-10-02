@@ -12,6 +12,7 @@ import dash_html_components as html
 
 from src.app import app, DEBUG
 from src.apps.common.presentation.main_view.main_view import generate_layout
+from src.apps.common.presentation.main_view.main_view_controller import bind_callbacks
 
 server = app.server
 
@@ -41,6 +42,7 @@ app.layout = html.Div([
     html.Div(id='page-content', children=generate_layout())
 ])
 
+bind_callbacks(app)
 
 if __name__ == '__main__':
     app.run_server(debug=DEBUG, dev_tools_ui=DEBUG)

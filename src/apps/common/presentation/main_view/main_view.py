@@ -19,7 +19,8 @@ def generate_layout() -> html.Div:
         ),
         html.Div(
             children=[__generate_body()],
-            className='main-body'
+            className='main-body',
+            id='body',
         ),
         html.Div(
             children=[__generate_foot()],
@@ -33,7 +34,19 @@ def __generate_header() -> html.H1:
 
 
 def __generate_body() -> html.Div:
-    pass
+    return html.Div(children=[
+        __generate_ecosystem_pane(title=TEXT['daostack'], bt_id='daostack-bt'),
+        __generate_ecosystem_pane(title=TEXT['daohaus'], bt_id='daohaus-bt'),
+    ], 
+    className='')
+
+
+def __generate_ecosystem_pane(title: str, bt_id: str) -> html.Div:
+    return html.Div(children=[
+        html.H2(title, className=''),
+        html.Button(TEXT['bt_analyze'], id=bt_id, n_clicks=0),
+    ], 
+    className='')
 
 
 def __generate_foot() -> html.Div:
