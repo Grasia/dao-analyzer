@@ -12,12 +12,14 @@ from dash.exceptions import PreventUpdate
 
 import src.apps.daostack.business.app_service as daostack
 import src.apps.daohaus.business.app_service as daohaus
+from src.apps.common.presentation.main_view.main_view import generate_foot
 
 
 def bind_callbacks(app) -> None:
 
     @app.callback(
-         Output('body', 'children'),
+        [Output('body', 'children'),
+         Output('foot', 'children')],
         [Input('daostack-bt', 'n_clicks'),
          Input('daohaus-bt', 'n_clicks')]
     )
@@ -35,7 +37,7 @@ def bind_callbacks(app) -> None:
         elif trigger == 'daohaus-bt':
             body = daohaus.get_service().get_layout()
 
-        return body
+        return [body, generate_foot()]
 
 
 # TODO: issue 15

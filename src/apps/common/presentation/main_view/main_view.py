@@ -23,8 +23,9 @@ def generate_layout() -> html.Div:
             id='body',
         ),
         html.Div(
-            children=[__generate_foot()],
-            className='main-foot'
+            children=[],
+            className='main-foot',
+            id='foot',
         ),
     ], className='root',)
 
@@ -49,7 +50,7 @@ def __generate_ecosystem_pane(title: str, bt_id: str) -> html.Div:
     className='')
 
 
-def __generate_foot() -> html.Div:
+def generate_foot() -> html.Div:
     return html.Div(children=[
         html.Div(children=[
             html.Span(TEXT['github'], className='right-separator bold'),
