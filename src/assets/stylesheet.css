@@ -152,3 +152,27 @@
 .padding-70 {
     width: 70%;
 }
+
+/* main view classes*/
+.eco-body {
+    display: flex;
+    flex-direction: row;
+    margin-top: 15%;
+    justify-content: space-around;
+}
+
+.eco-pane {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: white;
+    border: 2px #CFD8DC solid;
+    border-radius: 5px;
+    min-width: 20rem;
+    min-height: 15rem;
+    text-align: center;
+}
+
+.page-filler {
+    height: 18.2rem;
+}

@@ -36,18 +36,25 @@ def __generate_header() -> html.H1:
 
 def __generate_body() -> html.Div:
     return html.Div(children=[
-        __generate_ecosystem_pane(title=TEXT['daostack'], bt_id='daostack-bt'),
-        __generate_ecosystem_pane(title=TEXT['daohaus'], bt_id='daohaus-bt'),
+        html.Div(children=[
+            __generate_ecosystem_pane(title=TEXT['daostack'], bt_id='daostack-bt'),
+            __generate_ecosystem_pane(title=TEXT['daohaus'], bt_id='daohaus-bt'),
+        ], 
+        className='eco-body '),
+        html.Div(className='page-filler')
     ], 
     className='')
 
 
 def __generate_ecosystem_pane(title: str, bt_id: str) -> html.Div:
     return html.Div(children=[
-        html.H2(title, className=''),
+        html.Div(children=[
+            html.H2(title, className=''),
+            html.Span(TEXT['ecosystem'], className=''), 
+        ]),
         html.Button(TEXT['bt_analyze'], id=bt_id, n_clicks=0),
     ], 
-    className='')
+    className='eco-pane ')
 
 
 def generate_foot() -> html.Div:
