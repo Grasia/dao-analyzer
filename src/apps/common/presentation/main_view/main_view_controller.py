@@ -17,7 +17,7 @@ import src.apps.daohaus.business.app_service as daohaus
 def bind_callback(app) -> None:
 
     @app.callback(
-         Output('page-content', 'children'),
+         Output('main-body', 'children'),
         [Input('daostack-bt', 'n_clicks')]
     )
     def load_daostack(n_clicks):
@@ -28,7 +28,7 @@ def bind_callback(app) -> None:
 
 
     @app.callback(
-         Output('page-content', 'children'),
+         Output('main-body', 'children'),
         [Input('daohaus-bt', 'n_clicks')]
     )
     def load_daohaus(n_clicks):
