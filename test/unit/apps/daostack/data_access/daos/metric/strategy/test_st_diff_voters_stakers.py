@@ -52,7 +52,7 @@ class StDifferentVSTest(unittest.TestCase):
             {'createdAt': 1577923200, 'staker': '3', 'trash': 'trash'}, #2020-01-02T00:00:00+00:00
         ])
         delta = relativedelta.relativedelta(datetime.now(), datetime.utcfromtimestamp(1577923200))
-        out: List[int] = [3, 1, 0, 1] + [0] * (delta.months + 1)
+        out: List[int] = [3, 1, 0, 1] + [0] * (delta.months)
 
         self.__check_lists(df=in_df, out=out, stype=1)
 
