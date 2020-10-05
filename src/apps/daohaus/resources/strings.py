@@ -9,6 +9,7 @@
 
 TEXT: dict = {
     'title_member': 'Members',
+    'title_new_members': 'New Members',
     'title_proposal': 'Proposals',
     'title_rage_quits': 'Rage Quits',
     'title_vote': 'Votes',

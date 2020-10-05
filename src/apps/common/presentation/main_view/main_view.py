@@ -12,21 +12,23 @@ from src.apps.common.resources.strings import TEXT
 
 REL_PATH: str = '../../../../assets/'
 
-def generate_layout() -> html.Div:
+
+def generate_layout(body: html.Div = None) -> html.Div:
+    if not body:
+        body = __generate_body()
+
     return html.Div(children=[
         html.Div(
             children=[__generate_header()],
             className='main-header fix-height'
         ),
         html.Div(
-            children=[__generate_body()],
+            children=body,
             className='main-body',
-            id='body',
         ),
         html.Div(
             children=[],
             className='main-foot',
-            id='foot',
         ),
     ], className='root',)
 

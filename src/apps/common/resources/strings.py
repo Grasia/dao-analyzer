@@ -32,8 +32,12 @@ TEXT: dict = {
     'graph_subtitle': '{:.2f}% month over month',
     'no_data': 'No data',
     'no_data_selected': 'There\'s no DAO selected',
+    'not_found': 'Error 404: Page not found',
     'p2p_models': 'P2P Models',
     'p2p_models_url': 'https://p2pmodels.eu/',
     'spanish_ministry_image_url': 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRfq3CJzLUtY8NUahJOUBdn35aAMHMhqcihyA&usqp=CAU',
     'spanish_ministry_url': 'https://www.ciencia.gob.es/',
+    'url_main': '/',
+    'url_daostack': '/daostack',
+    'url_daohaus': '/daohaus',
 }

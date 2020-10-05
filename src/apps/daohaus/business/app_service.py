@@ -17,9 +17,13 @@ from src.apps.common.data_access.daos.organization_dao\
 import src.apps.daohaus.data_access.requesters.cache_requester as cache
 from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.presentation.charts.chart_controller import ChartController
-# from src.apps.common.presentation.charts.layout.chart_pane_layout \
-#     import ChartPaneLayout
-# from src.apps.common.presentation.charts.layout.figure.figure import Figure
+from src.apps.common.presentation.charts.layout.chart_pane_layout \
+    import ChartPaneLayout
+from src.apps.common.presentation.charts.layout.figure.figure import Figure
+from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
+from src.apps.common.business.i_metric_adapter import IMetricAdapter
+from src.apps.daohaus.business.metric_adapter.new_members import NewMembers
+#import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.daohaus.resources.strings import TEXT
 
 
@@ -79,7 +83,16 @@ class Service():
 
 
     def __get_member_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # new members
+        charts.append(self.__create_chart(
+            title=TEXT['title_new_members'],
+            adapter=NewMembers(call),
+            figure=BarFigure()
+        ))
+        return charts
 
 
     def __get_vote_charts(self) -> List[Callable[[], html.Div]]:
@@ -94,23 +107,23 @@ class Service():
         return [lambda: html.Div()]
 
 
-    # def __create_chart(self, title: str, adapter: MetricAdapter, figure: Figure
-    # ) -> Callable:
-    #     """
-    #     Creates the chart layout and its controller, and returns a callable
-    #     to get the html representation.
-    #     """
-    #     css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
-    #     layout: ChartPaneLayout = ChartPaneLayout(
-    #         title=title,
-    #         css_id=css_id,
-    #         figure=figure
-    #     )
+    def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
+    ) -> Callable:
+        """
+        Creates the chart layout and its controller, and returns a callable
+        to get the html representation.
+        """
+        css_id: str = f"pane{ChartPaneLayout.pane_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=figure
+        )
 
-    #     controller: ChartController = ChartController(
-    #         css_id=css_id,
-    #         layout=layout,
-    #         adapter=adapter)
+        controller: ChartController = ChartController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter)
 
-    #     self.__controllers.append(controller)
-    #     return layout.get_layout
+        self.__controllers.append(controller)
+        return layout.get_layout

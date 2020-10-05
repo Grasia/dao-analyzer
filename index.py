@@ -11,7 +11,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 from src.app import app, DEBUG
-from src.apps.common.presentation.main_view.main_view import generate_layout
 from src.apps.common.presentation.main_view.main_view_controller import bind_callbacks
 
 server = app.server
@@ -39,7 +38,7 @@ app.index_string = '''
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content', children=generate_layout())
+    html.Div(id='page-content')
 ])
 
 bind_callbacks(app)
