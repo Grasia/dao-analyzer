@@ -19,16 +19,17 @@ from src.apps.common.data_access.requesters.irequester import IRequester
 
 class MetricDao():
     def __init__(self, ids: List[str], strategy: IMetricStrategy,
-     requester: IRequester):
+     requester: IRequester, address_key: str):
         self.__ids = ids
         self.__st = strategy
         self.__requester = requester
+        self.__address_key = address_key
 
 
     def get_metric(self):
         df: pd.DataFrame = self.__requester.request()
         
         # get only data from daos in ids
-        df = df.loc[df['dao'].isin(self.__ids)]
+        df = df.loc[df[self.__address_key].isin(self.__ids)]
 
         return self.__st.process_data(df)

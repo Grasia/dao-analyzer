@@ -25,4 +25,4 @@ def get_dao(ids: List[str], metric: int) -> MetricDao:
         stg = mem.StNewMembers()
         requester = cache.CacheRequester(srcs=[cache.MEMBERS])
 
-    return MetricDao(ids=ids, strategy=stg, requester=requester)
+    return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='molochAddress')

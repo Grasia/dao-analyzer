@@ -86,4 +86,4 @@ def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
             cache.VOTES, 
             cache.STAKES])
 
-    return MetricDao(ids=ids, strategy=stg, requester=requester)
+    return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='dao')
