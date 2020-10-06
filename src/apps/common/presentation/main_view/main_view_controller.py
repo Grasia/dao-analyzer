@@ -17,11 +17,14 @@ from src.apps.common.resources.strings import TEXT
 
 def bind_callbacks(app) -> None:
 
-    # TODO: issue 15
+    # Callbacks need to be loaded twice. 
+    daostack.get_service().get_layout()
+    daohaus.get_service().get_layout()
+
+
     @app.callback(
          Output('page-content', 'children'),
-        [Input('url', 'pathname')],
-         prevent_initial_call=True
+        [Input('url', 'pathname')]
     )
     def display_page(pathname):
         #print(pathname)
