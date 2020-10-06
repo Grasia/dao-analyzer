@@ -19,10 +19,8 @@ class ChartController():
     def __init__(self, css_id: str, layout: ChartPaneLayout, adapter: IMetricAdapter) -> None:
         self.__layout: ChartPaneLayout = layout
         self.__adapter: IMetricAdapter = adapter
-        self.bind_callback(
-            app=app, 
-            pane=css_id,
-            input_callback='org-dropdown')
+        self.__css_id: str = css_id
+        self.bind_callback()
 
 
     @property
@@ -30,11 +28,11 @@ class ChartController():
         return self.__layout
 
 
-    def bind_callback(self, app, pane, input_callback) -> None:
+    def bind_callback(self) -> None:
 
         @app.callback(
-             Output(pane, 'children'),
-            [Input(input_callback, 'value')]
+             Output(self.__css_id, 'children'),
+            [Input('org-dropdown', 'value')]
         )
         def update_chart(org_id):
             if not org_id:
