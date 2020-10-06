@@ -27,24 +27,35 @@ from src.apps.daohaus.business.metric_adapter.new_members import NewMembers
 from src.apps.daohaus.resources.strings import TEXT
 
 
-__service = None
+_daohaus_service = None
 
 def get_service():
     """
     Singelton object.
     """
-    global __service
-    if not __service:
-        __service = Service()
-    return __service
+    global _daohaus_service
+
+    if not _daohaus_service:
+        _daohaus_service = DaohausService()
+
+    return _daohaus_service
 
 
-class Service():
- 
+class DaohausService():
+    _MEMBER: int = 0
+    _VOTE: int = 1
+    _RAGE_QUIT: int = 2
+    _PROPOSAL: int = 3
+
     def __init__(self):
         # app state
         self.__orgs: OrganizationList = None
-        self.__controllers: List[ChartController] = list()
+        self.__controllers: Dict[int, List[ChartController]] = {
+            self._MEMBER: list(),
+            self._VOTE: list(),
+            self._RAGE_QUIT: list(),
+            self._PROPOSAL: list(),
+        }
 
 
     @property
@@ -56,6 +67,19 @@ class Service():
                 self.__orgs = orgs
                 
         return self.__orgs
+
+
+    @property
+    def are_panes(self) -> bool:
+        """
+        Checks if panes and their controllers are already created.
+        """
+        is_empty: bool = False
+
+        for _, v in self.__controllers.items():
+            is_empty = is_empty or (len(v) != 0)
+
+        return is_empty
 
 
     def get_layout(self) -> html.Div:
@@ -74,11 +98,28 @@ class Service():
         Returns a dict with each section filled with a callable function which
          returns the chart layout
         """
+        l_member: List[Callable] = list()
+        l_vote: List[Callable] = list()
+        l_rage_q: List[Callable] = list()
+        l_proposal: List[Callable] = list()
+
+        # Panes are already created.
+        if self.are_panes:
+            l_member = [c.layout.get_layout for c in self.__controllers[self._MEMBER]]
+            l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
+            l_rage_q = [c.layout.get_layout for c in self.__controllers[self._RAGE_QUIT]]
+            l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
+        else:
+            l_member = self.__get_member_charts()
+            l_vote = self.__get_vote_charts()
+            l_rage_q = self.__get_rage_quits_charts()
+            l_proposal = self.__get_proposal_charts()
+
         return {
-            TEXT['title_member']: self.__get_member_charts(),
-            TEXT['title_vote']: self.__get_vote_charts(),
-            TEXT['title_rage_quits']: self.__get_rage_quits_charts(),
-            TEXT['title_proposal']: self.__get_proposal_charts(),
+            TEXT['title_member']: l_member,
+            TEXT['title_vote']: l_vote,
+            TEXT['title_rage_quits']: l_rage_q,
+            TEXT['title_proposal']: l_proposal,
         }
 
 
@@ -90,7 +131,8 @@ class Service():
         charts.append(self.__create_chart(
             title=TEXT['title_new_members'],
             adapter=NewMembers(call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._MEMBER
         ))
         return charts
 
@@ -108,12 +150,12 @@ class Service():
 
 
     def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
-    ) -> Callable:
+    , cont_key: int) -> Callable:
         """
         Creates the chart layout and its controller, and returns a callable
         to get the html representation.
         """
-        css_id: str = f"pane{ChartPaneLayout.pane_id()}"
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
         layout: ChartPaneLayout = ChartPaneLayout(
             title=title,
             css_id=css_id,
@@ -125,5 +167,5 @@ class Service():
             layout=layout,
             adapter=adapter)
 
-        self.__controllers.append(controller)
+        self.__controllers[cont_key].append(controller)
         return layout.get_layout

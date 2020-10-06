@@ -20,7 +20,7 @@ TEXT: dict = {
     'new_proposals_title': 'New proposals',
     'new_users_title': 'New reputation holders',
     'not_boost': 'Rate of non-boosted proposals that were rejected',
-    'pane_css_prefix': 'pane',
+    'pane_css_prefix': 'daostack-pane',
     'proposal_boost_outcome_title': 'Closed proposal\'s outcome',
     'proposal_boost_succ_rate_title': 'Success rate of the stakes by type',
     'proposal_outcome_majority_title': 'Closed proposal\'s majority outcome',

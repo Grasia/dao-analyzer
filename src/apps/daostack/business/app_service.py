@@ -39,24 +39,36 @@ from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.resources.strings import TEXT
 
 
-__service = None
+_daostack_service = None
 
 def get_service():
     """
     Singelton object.
     """
-    global __service
-    if not __service:
-        __service = Service()
-    return __service
+    global _daostack_service
+
+    if not _daostack_service:
+        _daostack_service = DaostackService()
+
+    return _daostack_service
 
 
-class Service():
+class DaostackService():
  
+    _REP_H: int = 0
+    _VOTE: int = 1
+    _STAKE: int = 2
+    _PROPOSAL: int = 3
+
     def __init__(self):
         # app state
         self.__orgs: OrganizationList = None
-        self.__controllers: List[ChartController] = list()
+        self.__controllers: Dict[int, List[ChartController]] = {
+            self._REP_H: list(),
+            self._VOTE: list(),
+            self._STAKE: list(),
+            self._PROPOSAL: list(),
+        }
 
 
     @property
@@ -68,6 +80,19 @@ class Service():
                 self.__orgs = orgs
                 
         return self.__orgs
+
+
+    @property
+    def are_panes(self) -> bool:
+        """
+        Checks if panes and their controllers are already created.
+        """
+        is_empty: bool = False
+
+        for _, v in self.__controllers.items():
+            is_empty = is_empty or (len(v) != 0)
+
+        return is_empty
 
 
     def get_layout(self) -> html.Div:
@@ -83,14 +108,31 @@ class Service():
 
     def __get_sections(self) -> Dict[str, List[Callable]]:
         """
-        Returns a dict with each section filled with a callable function which
-         returns the chart layout
+        Returns a dict with each section filled with a callable function, which
+         returns the chart layout.
         """
+        l_rep_h: List[Callable] = list()
+        l_vote: List[Callable] = list()
+        l_stake: List[Callable] = list()
+        l_proposal: List[Callable] = list()
+
+        # Panes are already created.
+        if self.are_panes:
+            l_rep_h = [c.layout.get_layout for c in self.__controllers[self._REP_H]]
+            l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
+            l_stake = [c.layout.get_layout for c in self.__controllers[self._STAKE]]
+            l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
+        else:
+            l_rep_h = self.__get_rep_holder_charts()
+            l_vote = self.__get_vote_charts()
+            l_stake = self.__get_stake_charts()
+            l_proposal = self.__get_proposal_charts()
+
         return {
-            TEXT['rep_holder_title']: self.__get_rep_holder_charts(),
-            TEXT['vote_title']: self.__get_vote_charts(),
-            TEXT['stake_title']: self.__get_stake_charts(),
-            TEXT['proposal_title']: self.__get_proposal_charts(),
+            TEXT['rep_holder_title']: l_rep_h,
+            TEXT['vote_title']: l_vote,
+            TEXT['stake_title']: l_stake,
+            TEXT['proposal_title']: l_proposal,
         }
 
 
@@ -106,13 +148,15 @@ class Service():
         charts.append(self.__create_chart(
             title=TEXT['new_users_title'],
             adapter=MetricAdapter(s_factory.NEW_USERS, call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._REP_H
         ))
         # active reputation holders
         charts.append(self.__create_chart(
             title=TEXT['active_users_title'],
             adapter=MetricAdapter(s_factory.ACTIVE_USERS, call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._REP_H
         ))
         return charts
 
@@ -128,14 +172,16 @@ class Service():
         charts.append(self.__create_chart(
             title=TEXT['total_votes_option_title'],
             adapter=VoteType(s_factory.TOTAL_VOTES_OPTION, call, VoteType.VOTE),
-            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
+            cont_key=self._VOTE
         ))
 
         # different voters
         charts.append(self.__create_chart(
             title=TEXT['different_voters_title'],
             adapter=MetricAdapter(s_factory.DIFFERENT_VOTERS, call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._VOTE
         ))
         return charts
 
@@ -151,13 +197,15 @@ class Service():
         charts.append(self.__create_chart(
             title=TEXT['total_stakes_title'],
             adapter=MetricAdapter(s_factory.TOTAL_STAKES, call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._STAKE
         ))
         # different stakers
         charts.append(self.__create_chart(
             title=TEXT['different_stakers_title'],
             adapter=MetricAdapter(s_factory.DIFFERENT_STAKERS, call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._STAKE
         ))
         return charts
 
@@ -173,46 +221,51 @@ class Service():
         charts.append(self.__create_chart(
             title=TEXT['new_proposals_title'],
             adapter=MetricAdapter(s_factory.NEW_PROPOSALS, call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._PROPOSAL
         ))
 
         # majority type
         charts.append(self.__create_chart(
             title=TEXT['proposal_outcome_majority_title'],
             adapter=MajorityType(s_factory.PROPOSAL_MAJORITY, call),
-            figure=DoubleScatterFigure()
+            figure=DoubleScatterFigure(),
+            cont_key=self._PROPOSAL
         ))
-        self.__controllers[-1].layout.configuration.disable_subtitles()
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
 
         # proposal boost_outcome
         charts.append(self.__create_chart(
             title=TEXT['proposal_boost_outcome_title'],
             adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
-            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK)
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
+            cont_key=self._PROPOSAL
         ))
-        self.__controllers[-1].layout.configuration.disable_subtitles()
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
 
         # total succes rate of the stakes
         charts.append(self.__create_chart(
             title=TEXT['proposal_total_succ_rate_title'],
             adapter=MetricAdapter(s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, call),
-            figure=BarFigure()
+            figure=BarFigure(),
+            cont_key=self._PROPOSAL
         ))
-        self.__controllers[-1].layout.configuration.disable_subtitles()
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
 
         # success rate by type
         charts.append(self.__create_chart(
             title=TEXT['proposal_boost_succ_rate_title'],
             adapter=SuccessRatioType(s_factory.PROPOSALS_BOOST_SUCCES_RATIO, call),
-            figure=MultiBarFigure(bar_type=MultiBarFigure.GROUP)
+            figure=MultiBarFigure(bar_type=MultiBarFigure.GROUP),
+            cont_key=self._PROPOSAL
         ))
-        self.__controllers[-1].layout.configuration.disable_subtitles()
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
 
         return charts
 
 
     def __create_chart(self, title: str, adapter: MetricAdapter, figure: Figure
-    ) -> Callable:
+    , cont_key: int) -> Callable:
         """
         Creates the chart layout and its controller, and returns a callable
         to get the html representation.
@@ -229,5 +282,5 @@ class Service():
             layout=layout,
             adapter=adapter)
 
-        self.__controllers.append(controller)
+        self.__controllers[cont_key].append(controller)
         return layout.get_layout
