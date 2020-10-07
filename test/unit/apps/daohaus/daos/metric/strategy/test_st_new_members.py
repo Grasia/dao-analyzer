@@ -1,7 +1,7 @@
 """
-   Descp: Tester for StTimeSerie.
+   Descp: New members test.
 
-   Created on: 14-mar-2020
+   Created on: 7-oct-2020
 
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
@@ -12,17 +12,16 @@ from typing import List
 import pandas as pd
 
 from test.mocks.unix_date_builder import UnixDateBuilder
-from src.apps.daostack.data_access.daos.metric.strategy.\
-    st_time_serie import StTimeSerie
+from src.apps.daohaus.data_access.daos.metric.strategy.\
+    st_new_members import StNewMembers
 
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
-class StTimeSerieTest(unittest.TestCase):
+class StNewMembersTest(unittest.TestCase):
 
     def __check_lists(self, df: pd.DataFrame, out: List[int]) -> None:
-        # m_type it not used, in the future -1 will break it
-        strategy: StTimeSerie = StTimeSerie(m_type=-1)
+        strategy: StNewMembers = StNewMembers()
         result: StackedSerie = strategy.process_data(df=df)
 
         self.assertListEqual(out, result.get_i_stack(i_stack=0))
@@ -30,7 +29,7 @@ class StTimeSerieTest(unittest.TestCase):
 
     def test_process_data(self):
         bl: UnixDateBuilder = UnixDateBuilder()
-        bl.sub(month=3).change(day=1, hour=0, minute=0, second=0)
+        bl.sub(month=4).change(day=1, hour=0, minute=0, second=0)
 
         in_df: pd.DataFrame = pd.DataFrame([
             {'id': '-1', 'trash': 'trash', 'createdAt': bl.unix()},#2019-09-01T00:00:00+00:00
