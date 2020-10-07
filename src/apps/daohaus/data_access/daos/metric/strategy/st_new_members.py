@@ -25,7 +25,6 @@ class StNewMembers(IMetricStrategy):
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
         dff.loc[:, :] = dff[dff[self.__DF_EXISTS]]
-        dff.dropna(subset=[self.__DF_DATE], inplace=True)
         dff.loc[:, [self.__DF_DATE]] = dff[[self.__DF_DATE]]
         return dff
 
