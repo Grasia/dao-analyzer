@@ -37,8 +37,8 @@ class StActiveUsersTest(unittest.TestCase):
             {'voter': '1', 'trash': 'trash', 'createdAt': bl.sub(month=1).change(minute=59, second=59).unix()}, #today_year-(today_month-2)-01T23:59:59+00:00
             {'voter': '1', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-2)-01T23:59:59+00:00
             {'proposer': '3', 'trash': 'trash', 'createdAt': bl.add(month=2).change(day=15, hour=0).unix()}, #today_year-today_month-15T00:00:00+00:00
-            {'voter': '2', 'trash': 'trash', 'createdAt': bl.change(day=31).unix()}, #today_year-today_month-31T00:00:00+00:00
-            {'staker': '3', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-today_month-31T00:00:00+00:00
+            {'voter': '2', 'trash': 'trash', 'createdAt': bl.change(day=21).unix()}, #today_year-today_month-21T00:00:00+00:00
+            {'staker': '3', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-today_month-21T00:00:00+00:00
         ])
         out: List[int] = [2, 1, 2]
 
@@ -47,15 +47,15 @@ class StActiveUsersTest(unittest.TestCase):
         
     def test_process_data_stakers(self):
         bl: UnixDateBuilder = UnixDateBuilder()
-        bl.sub(month=2).change(day=25, hour=0, minute=0, second=0)
+        bl.sub(month=3).change(day=25, hour=0, minute=0, second=0)
 
         in_df: pd.DataFrame = pd.DataFrame([
-            {'staker': '0', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-2)-25T00:00:00+00:00
-            {'staker': '1', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-2)-25T00:00:00+00:00
-            {'staker': '1', 'trash': 'trash', 'createdAt': bl.add(month=1).change(day=1, hour=23).unix()}, #today_year-(today_month-1)-01T23:00:00+00:00
-            {'staker': '2', 'trash': 'trash', 'createdAt': bl.sub(month=1).change(minute=59, second=59).unix()}, #today_year-(today_month-2)-01T23:59:59+00:00
-            {'staker': '2', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-2)-01T23:59:59+00:00
-            {'staker': '3', 'trash': 'trash', 'createdAt': bl.add(month=3).change(day=2, hour=0, minute=0, second=0).unix()}, #today_year-(today_month+1)-02T00:00:00+00:00
+            {'staker': '0', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-3)-25T00:00:00+00:00
+            {'staker': '1', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-3)-25T00:00:00+00:00
+            {'staker': '1', 'trash': 'trash', 'createdAt': bl.add(month=1).change(day=1, hour=23).unix()}, #today_year-(today_month-2)-01T23:00:00+00:00
+            {'staker': '2', 'trash': 'trash', 'createdAt': bl.sub(month=1).change(minute=59, second=59).unix()}, #today_year-(today_month-3)-01T23:59:59+00:00
+            {'staker': '2', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-3)-01T23:59:59+00:00
+            {'staker': '3', 'trash': 'trash', 'createdAt': bl.add(month=3).change(day=2, hour=0, minute=0, second=0).unix()}, #today_year-today_month-02T00:00:00+00:00
         ])
         out: List[int] = [3, 1, 0, 1]
 

@@ -38,7 +38,7 @@ class StNewMembersTest(unittest.TestCase):
             {'exists': False, 'trash': 'trash', 'createdAt': bl.add(month=1).change(day=1, hour=23).unix()},#today_year-(today_month-1)-01T23:00:00+00:00
             {'exists': True, 'trash': 'trash', 'createdAt': bl.sub(month=1).change(minute=59, second=59).unix()},#today_year-(today_month-2)-01T23:59:59+00:00
             {'exists': True, 'trash': 'trash', 'createdAt': bl.unix()},#today_year-(today_month-2)-01T23:59:59+00:00
-            {'exists': True, 'trash': 'trash', 'createdAt': bl.add(month=2, second=1).change(day=31).unix()},#today_year-today_month-31T00:00:00+00:00
+            {'exists': True, 'trash': 'trash', 'createdAt': bl.add(month=2, second=1).change(day=21).unix()},#today_year-today_month-21T00:00:00+00:00
         ])
 
         out: List[int] = [1, 3, 0, 1]
