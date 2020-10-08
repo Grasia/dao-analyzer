@@ -21,9 +21,10 @@ from src.apps.common.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
 from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
+from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.daohaus.business.metric_adapter.new_members import NewMembers
-#import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
+from src.apps.daohaus.business.metric_adapter.votes_type import VotesType
 from src.apps.daohaus.resources.strings import TEXT
 
 
@@ -138,7 +139,17 @@ class DaohausService():
 
 
     def __get_vote_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # votes by type
+        charts.append(self.__create_chart(
+            title=TEXT['title_vote_type'],
+            adapter=VotesType(call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
+            cont_key=self._VOTE
+        ))
+        return charts
 
 
     def __get_rage_quits_charts(self) -> List[Callable[[], html.Div]]:

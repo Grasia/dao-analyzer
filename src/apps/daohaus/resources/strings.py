@@ -14,4 +14,7 @@ TEXT: dict = {
     'title_proposal': 'Proposals',
     'title_rage_quits': 'Rage Quits',
     'title_vote': 'Votes',
+    'title_vote_type': 'Votes for and against',
+    'votes_against': 'Votes against',
+    'votes_for': 'Votes for',
 }
