@@ -1,6 +1,6 @@
 """
    Descp: Class to adapt StakedSeries in a chart. This class is used to adapt
-          the 'new members' metric
+          the 'new additions' metric
 
    Created on: 5-oct-2020
 
@@ -17,12 +17,13 @@ from src.apps.common.business.i_metric_adapter import IMetricAdapter
 import src.apps.daohaus.data_access.daos.metric.\
     metric_dao_factory as s_factory
 
-class NewMembers(IMetricAdapter):
+class NewAdditions(IMetricAdapter):
 
     DATE_FORMAT: str = '%b, %Y'
 
-    def __init__(self, organizations: OrganizationList) -> None:
+    def __init__(self, metric_id: int, organizations: OrganizationList) -> None:
         self.__organizations = organizations
+        self.__metric = metric_id
 
 
     @property
@@ -36,7 +37,7 @@ class NewMembers(IMetricAdapter):
         """
         dao = s_factory.get_dao(
             ids=self.__organizations.get_ids_from_id(o_id),
-            metric=s_factory.NEW_MEMBERS
+            metric=self.__metric
         )
         metric: StackedSerie = dao.get_metric()
 
@@ -52,7 +53,7 @@ class NewMembers(IMetricAdapter):
             'name': '',
             'color': color,
             'type': 'date',
-            'x_format': NewMembers.DATE_FORMAT,
+            'x_format': NewAdditions.DATE_FORMAT,
             'last_serie_elem': metric.get_last_serie_elem(),
             'last_value': metric.get_last_value(0),
             'diff': metric.get_diff_last_values(),

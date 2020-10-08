@@ -23,9 +23,10 @@ from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
 from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
-from src.apps.daohaus.business.metric_adapter.new_members import NewMembers
+from src.apps.daohaus.business.metric_adapter.new_additions import NewAdditions
 from src.apps.daohaus.business.metric_adapter.votes_type import VotesType
-from src.apps.daohaus.business.metric_adapter.active_voters import ActiveVoters 
+from src.apps.daohaus.business.metric_adapter.active_voters import ActiveVoters
+import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.daohaus.resources.strings import TEXT
 
 
@@ -132,7 +133,9 @@ class DaohausService():
         # new members
         charts.append(self.__create_chart(
             title=TEXT['title_new_members'],
-            adapter=NewMembers(call),
+            adapter=NewAdditions(
+                metric_id=s_factory.NEW_MEMBERS, 
+                organizations=call),
             figure=BarFigure(),
             cont_key=self._MEMBER
         ))
@@ -162,11 +165,35 @@ class DaohausService():
 
 
     def __get_rage_quits_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # rage quits
+        charts.append(self.__create_chart(
+            title=TEXT['title_rage_quits'],
+            adapter=NewAdditions(
+                metric_id=s_factory.RAGE_QUITS, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._RAGE_QUIT
+        ))
+        return charts
 
 
     def __get_proposal_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # new proposals
+        charts.append(self.__create_chart(
+            title=TEXT['title_new_proposals'],
+            adapter=NewAdditions(
+                metric_id=s_factory.NEW_PROPOSALS, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._PROPOSAL
+        ))
+        return charts
 
 
     def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure

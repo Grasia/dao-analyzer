@@ -1,5 +1,5 @@
 """
-   Descp: Strategy pattern to create a metric of new members.
+   Descp: Strategy pattern to create a metric of new additions.
 
    Created on: 5-oct-2020
 
@@ -7,6 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 import pandas as pd
+from typing import List
 
 from src.apps.common.data_access.daos.metric.imetric_strategy \
     import IMetricStrategy
@@ -15,16 +16,36 @@ from src.apps.common.business.transfers.serie import Serie
 import src.apps.common.data_access.pandas_utils as pd_utl
 
 
-class StNewMembers(IMetricStrategy):
+class StNewAdditions(IMetricStrategy):
+    MEMBERS = 0
+    RAGE_QUITS = 1
+    PROPOSALS = 2
+    VOTES = 3
+    __TYPES: List[int] = [MEMBERS, RAGE_QUITS, PROPOSALS, VOTES]
+
     __DF_DATE = 'createdAt'
     __DF_COUNT = 'count'
     __DF_EXISTS = 'exists'
     __DF_COLS = [__DF_DATE, __DF_COUNT]
 
 
+    def __init__(self, typ: int) -> None:
+        self.__typ: int = self.__get_type(typ)
+
+
+    def __get_type(self, typ: int) -> int:
+        """
+        Checks if typ exists, if not return by default the first type
+        """
+        return typ if typ in self.__TYPES else self.__TYPES[0]
+
+
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff.loc[:, :] = dff[dff[self.__DF_EXISTS]]
+
+        if self.__typ is self.MEMBERS:
+            dff.loc[:, :] = dff[dff[self.__DF_EXISTS]]
+
         dff.loc[:, [self.__DF_DATE]] = dff[[self.__DF_DATE]]
         return dff
 
