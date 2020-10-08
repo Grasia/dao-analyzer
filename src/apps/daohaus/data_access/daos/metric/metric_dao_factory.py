@@ -11,12 +11,13 @@ from typing import List
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
 import src.apps.daohaus.data_access.requesters.cache_requester as cache
-import src.apps.daohaus.data_access.daos.metric.strategy.st_new_members as mem
-import src.apps.daohaus.data_access.daos.metric.strategy.st_votes_type as votes
-
+from src.apps.daohaus.data_access.daos.metric.strategy.st_new_members import StNewMembers
+from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_type import StVotesType
+from src.apps.daohaus.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
 
 NEW_MEMBERS = 0
 VOTES_TYPE = 1
+ACTIVE_VOTERS = 2
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao:
@@ -24,10 +25,13 @@ def get_dao(ids: List[str], metric: int) -> MetricDao:
     stg = None
     
     if metric == NEW_MEMBERS:
-        stg = mem.StNewMembers()
+        stg = StNewMembers()
         requester = cache.CacheRequester(srcs=[cache.MEMBERS])
     elif metric == VOTES_TYPE:
-        stg = votes.StVotesType()
+        stg = StVotesType()
+        requester = cache.CacheRequester(srcs=[cache.VOTES])
+    elif metric == ACTIVE_VOTERS:
+        stg = StActiveVoters()
         requester = cache.CacheRequester(srcs=[cache.VOTES])
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='molochAddress')

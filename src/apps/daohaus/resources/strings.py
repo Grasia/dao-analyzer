@@ -9,6 +9,7 @@
 
 TEXT: dict = {
     'pane_css_prefix': 'daohaus-pane',
+    'title_active_voters': 'Active voters',
     'title_member': 'Members',
     'title_new_members': 'New Members',
     'title_proposal': 'Proposals',

@@ -25,6 +25,7 @@ from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import M
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.daohaus.business.metric_adapter.new_members import NewMembers
 from src.apps.daohaus.business.metric_adapter.votes_type import VotesType
+from src.apps.daohaus.business.metric_adapter.active_voters import ActiveVoters 
 from src.apps.daohaus.resources.strings import TEXT
 
 
@@ -147,6 +148,14 @@ class DaohausService():
             title=TEXT['title_vote_type'],
             adapter=VotesType(call),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
+            cont_key=self._VOTE
+        ))
+
+        # active voters
+        charts.append(self.__create_chart(
+            title=TEXT['title_active_voters'],
+            adapter=ActiveVoters(call),
+            figure=BarFigure(),
             cont_key=self._VOTE
         ))
         return charts
