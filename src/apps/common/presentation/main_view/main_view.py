@@ -13,9 +13,13 @@ from src.apps.common.resources.strings import TEXT
 REL_PATH: str = '../../../../assets/'
 
 
-def generate_layout(body: html.Div = None) -> html.Div:
+def generate_layout(body: html.Div = None, has_foot: bool = True) -> html.Div:
+    foot = []
+
     if not body:
         body = __generate_body()
+    if has_foot:
+        foot = __generate_foot()
 
     return html.Div(children=[
         html.Div(
@@ -27,7 +31,7 @@ def generate_layout(body: html.Div = None) -> html.Div:
             className='main-body',
         ),
         html.Div(
-            children=[],
+            children=foot,
             className='main-foot',
         ),
     ], className='root',)
@@ -67,7 +71,7 @@ def __generate_ecosystem_pane(img: str, title: str, bt_id: str) -> html.Div:
     className='eco-pane ')
 
 
-def generate_foot() -> html.Div:
+def __generate_foot() -> html.Div:
     return html.Div(children=[
         html.Div(children=[
             html.Span(TEXT['github'], className='right-separator bold'),

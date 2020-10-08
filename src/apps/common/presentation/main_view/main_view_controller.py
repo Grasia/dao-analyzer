@@ -29,7 +29,7 @@ def bind_callbacks(app) -> None:
     def display_page(pathname):
         #print(pathname)
         if pathname == TEXT['url_main']:
-            return generate_layout()
+            return generate_layout(has_foot=False)
         elif pathname == TEXT['url_daostack']:
             return generate_layout(body=daostack.get_service().get_layout())
         elif pathname == TEXT['url_daohaus']:
