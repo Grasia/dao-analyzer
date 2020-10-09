@@ -10,6 +10,9 @@
 TEXT: dict = {
     'approved_proposals': 'Approved proposals',
     'pane_css_prefix': 'daohaus-pane',
+    'proposal_grant': 'Grant proposals',
+    'proposal_new_member': 'New member proposals',
+    'proposal_other': 'Other proposals',
     'rejected_proposals': 'Rejected proposals',
     'title_active_members': 'Active members',
     'title_active_voters': 'Active voters',
@@ -18,6 +21,7 @@ TEXT: dict = {
     'title_new_proposals': 'New proposals',
     'title_proposal': 'Proposals',
     'title_proposal_outcomes': 'Proposal outcomes',
+    'title_proposal_type': 'Proposals by type',
     'title_rage_quits': 'Rage Quits',
     'title_vote': 'Votes',
     'title_vote_type': 'Votes for and against',

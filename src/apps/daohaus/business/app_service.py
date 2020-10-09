@@ -26,7 +26,8 @@ from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.daohaus.business.metric_adapter.basic_adapter import BasicAdapter
 from src.apps.daohaus.business.metric_adapter.votes_type import VotesType
 from src.apps.daohaus.business.metric_adapter.active_voters import ActiveVoters
-from src.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOutcome 
+from src.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOutcome
+from src.apps.daohaus.business.metric_adapter.proposal_type import ProposalType 
 import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.daohaus.resources.strings import TEXT
 
@@ -213,6 +214,15 @@ class DaohausService():
             cont_key=self._PROPOSAL
         ))
 
+        # proposal types
+        charts.append(self.__create_chart(
+            title=TEXT['title_proposal_type'],
+            adapter=ProposalType(call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
+            cont_key=self._PROPOSAL
+        ))
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
+        
         return charts
 
 
