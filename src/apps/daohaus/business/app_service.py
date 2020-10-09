@@ -23,7 +23,7 @@ from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
 from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
-from src.apps.daohaus.business.metric_adapter.new_additions import NewAdditions
+from src.apps.daohaus.business.metric_adapter.basic_adapter import BasicAdapter
 from src.apps.daohaus.business.metric_adapter.votes_type import VotesType
 from src.apps.daohaus.business.metric_adapter.active_voters import ActiveVoters
 from src.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOutcome 
@@ -134,8 +134,18 @@ class DaohausService():
         # new members
         charts.append(self.__create_chart(
             title=TEXT['title_new_members'],
-            adapter=NewAdditions(
+            adapter=BasicAdapter(
                 metric_id=s_factory.NEW_MEMBERS, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._MEMBER
+        ))
+
+        # active members
+        charts.append(self.__create_chart(
+            title=TEXT['title_active_members'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.ACTIVE_MEMBERS, 
                 organizations=call),
             figure=BarFigure(),
             cont_key=self._MEMBER
@@ -172,7 +182,7 @@ class DaohausService():
         # rage quits
         charts.append(self.__create_chart(
             title=TEXT['title_rage_quits'],
-            adapter=NewAdditions(
+            adapter=BasicAdapter(
                 metric_id=s_factory.RAGE_QUITS, 
                 organizations=call),
             figure=BarFigure(),
@@ -188,7 +198,7 @@ class DaohausService():
         # new proposals
         charts.append(self.__create_chart(
             title=TEXT['title_new_proposals'],
-            adapter=NewAdditions(
+            adapter=BasicAdapter(
                 metric_id=s_factory.NEW_PROPOSALS, 
                 organizations=call),
             figure=BarFigure(),

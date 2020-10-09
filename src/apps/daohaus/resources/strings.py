@@ -11,6 +11,7 @@ TEXT: dict = {
     'approved_proposals': 'Approved proposals',
     'pane_css_prefix': 'daohaus-pane',
     'rejected_proposals': 'Rejected proposals',
+    'title_active_members': 'Active members',
     'title_active_voters': 'Active voters',
     'title_member': 'Members',
     'title_new_members': 'New Members',

@@ -1,6 +1,6 @@
 """
    Descp: Class to adapt StakedSeries in a chart. This class is used to adapt
-          the 'new additions' metric
+          basic metrics.
 
    Created on: 5-oct-2020
 
@@ -17,7 +17,7 @@ from src.apps.common.business.i_metric_adapter import IMetricAdapter
 import src.apps.daohaus.data_access.daos.metric.\
     metric_dao_factory as s_factory
 
-class NewAdditions(IMetricAdapter):
+class BasicAdapter(IMetricAdapter):
 
     DATE_FORMAT: str = '%b, %Y'
 
@@ -53,7 +53,7 @@ class NewAdditions(IMetricAdapter):
             'name': '',
             'color': color,
             'type': 'date',
-            'x_format': NewAdditions.DATE_FORMAT,
+            'x_format': self.DATE_FORMAT,
             'last_serie_elem': metric.get_last_serie_elem(),
             'last_value': metric.get_last_value(0),
             'diff': metric.get_diff_last_values(),

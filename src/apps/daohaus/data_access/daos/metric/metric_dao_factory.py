@@ -15,6 +15,7 @@ from src.apps.daohaus.data_access.daos.metric.strategy.st_new_additions import S
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_type import StVotesType
 from src.apps.daohaus.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
 from src.apps.daohaus.data_access.daos.metric.strategy.st_proposal_outcome import StProposalOutcome
+from src.apps.daohaus.data_access.daos.metric.strategy.st_active_members import StActiveMembers 
 
 NEW_MEMBERS = 0
 VOTES_TYPE = 1
@@ -22,6 +23,7 @@ ACTIVE_VOTERS = 2
 RAGE_QUITS = 3
 NEW_PROPOSALS = 4
 PROPOSALS_OUTCOME = 5
+ACTIVE_MEMBERS = 6
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao:
@@ -46,5 +48,11 @@ def get_dao(ids: List[str], metric: int) -> MetricDao:
     elif metric == PROPOSALS_OUTCOME:
         stg = StProposalOutcome()
         requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+    elif metric == ACTIVE_MEMBERS:
+        stg = StActiveMembers()
+        requester = cache.CacheRequester(srcs=[
+            cache.PROPOSALS,
+            cache.RAGE_QUITS,
+            cache.VOTES])
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='molochAddress')
