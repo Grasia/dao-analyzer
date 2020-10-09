@@ -12,7 +12,7 @@ import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
 
-from api_requester import n_requests
+from api_requester import ApiRequester
 
 
 REP_HOLDER_QUERY: str = '{{reputationHolders(first: {0}, skip: {1})\
@@ -22,10 +22,11 @@ META_KEY: str = 'reputationHolders'
 
 
 def _request_rep_holders(current_rows: int) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
     print("Requesting reputation holder\'s data ...")
     start: datetime = datetime.now()
 
-    reps: List[Dict] = n_requests(query=REP_HOLDER_QUERY, skip_n=current_rows, 
+    reps: List[Dict] = requester.n_requests(query=REP_HOLDER_QUERY, skip_n=current_rows, 
         result_key=META_KEY)
 
     print(f'Reputation holder\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')

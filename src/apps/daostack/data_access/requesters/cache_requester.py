@@ -11,7 +11,7 @@ import pandas as pd
 import os
 from typing import List
 
-from src.apps.daostack.data_access.requesters.irequester import IRequester
+from src.apps.common.data_access.requesters.irequester import IRequester
 
 CACHE_PATH: str = os.path.join('datawarehouse', 'daostack')
 DAOS: str = os.path.join(CACHE_PATH, 'daos.csv')

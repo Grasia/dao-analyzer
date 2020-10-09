@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Dict, List
 from graphqlclient import GraphQLClient
 
-from src.apps.daostack.data_access.requesters.irequester import IRequester
+from src.apps.common.data_access.requesters.irequester import IRequester
 from src.app import DEBUG
 from src.logs import LOGS
 

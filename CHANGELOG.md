@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.3.0 - 2020-10-09
+### Added
+- Compatibility with DAOhaus.
+- New main view.
+- Several metrics of DAOhaus DAOs. You can see them in the readme file.
+
 ## 0.2.1 - 2020-09-08
 ### Added
 - Added licenses in the web page and acknowledgements

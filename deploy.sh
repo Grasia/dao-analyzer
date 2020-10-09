@@ -8,5 +8,5 @@ fi
 virtualenv -p python3 venv
 source venv/bin/activate
 pip install -r requirements.txt
-python cache_scripts/daostack/main.py
+python cache_scripts/main.py
 gunicorn index:server -c gunicorn_config.py

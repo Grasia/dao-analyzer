@@ -8,12 +8,12 @@
 """
 import pandas as pd
 
-from src.apps.daostack.data_access.daos.metric.strategy.\
-        strategy_metric_interface import IMetricStrategy
-from src.apps.daostack.business.transfers.n_stacked_serie import NStackedSerie
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
-from src.apps.daostack.business.transfers.serie import Serie
-import src.apps.daostack.data_access.utils.pandas_utils as pd_utl
+from src.apps.common.data_access.daos.metric.imetric_strategy \
+    import IMetricStrategy
+from src.apps.common.business.transfers.n_stacked_serie import NStackedSerie
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.serie import Serie
+import src.apps.common.data_access.pandas_utils as pd_utl
 
 
 class StProposalMajority(IMetricStrategy):
@@ -53,16 +53,13 @@ class StProposalMajority(IMetricStrategy):
         return self.__generate_metric(df=df)
 
 
-    def __replicate_time_series(self, df: pd.DataFrame, first_date) -> pd.DataFrame:
+    def __replicate_time_series(self, df: pd.DataFrame, idx: pd.DatetimeIndex) -> pd.DataFrame:
         dff: pd.DataFrame = df
-
-        # generates a time serie
-        idx = pd_utl.get_monthly_serie_from_df(dff, self.__DF_DATE, start=first_date)
 
         # joinning all the data in a unique dataframe and fill with NA values
         df3 = pd_utl.get_df_from_lists([idx, None, None, None], self.__DF_COLS)
         df3 = pd_utl.datetime_to_date(df3, self.__DF_DATE)
-        # remove duplicated NA  
+        # remove duplicated NA
         pd_utl.drop_duplicate_date_rows(df=dff, dff=df3, date_col=self.__DF_DATE)
 
         dff = dff.append(df3, ignore_index=True)
@@ -82,6 +79,8 @@ class StProposalMajority(IMetricStrategy):
     -> (StackedSerie, StackedSerie):
 
         first_date = df[self.__DF_DATE].min()
+        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE, start=first_date)
+
         # invert has_pass 'cause the df col has True, False and None values.
         dff: pd.DataFrame = pd_utl.filter_by_col_value(df, self.__DF_PASS, 
             (not has_pass), [pd_utl.NEQ])
@@ -89,13 +88,13 @@ class StProposalMajority(IMetricStrategy):
         # absolute
         d3f: pd.DataFrame = pd_utl.filter_by_col_value(dff, self.__DF_IS_ABSOLUTE, 
             False, [pd_utl.NEQ])
-        d3f = self.__replicate_time_series(df=d3f, first_date=first_date)
+        d3f = self.__replicate_time_series(df=d3f, idx=idx)
         absolute: StackedSerie = self.__get_sserie_from_df(d3f)
 
         # relative
         d3f: pd.DataFrame = pd_utl.filter_by_col_value(dff, self.__DF_IS_ABSOLUTE, 
             True, [pd_utl.NEQ])
-        d3f = self.__replicate_time_series(df=d3f, first_date=first_date)
+        d3f = self.__replicate_time_series(df=d3f, idx=idx)
         relative: StackedSerie = self.__get_sserie_from_df(d3f)
 
         return (absolute, relative)

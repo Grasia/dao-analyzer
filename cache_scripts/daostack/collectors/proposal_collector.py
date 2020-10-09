@@ -12,7 +12,7 @@ import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
 
-from api_requester import n_requests, request
+from api_requester import ApiRequester
 
 
 PROPOSAL_QUERY: str = '{{proposals(first: {0}, skip: {1})\
@@ -30,10 +30,11 @@ OUT_FILE: str = os.path.join('datawarehouse', 'daostack', 'proposals.csv')
 
 
 def _request_proposals(current_rows: int) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
     print("Requesting proposal\'s data ...")
     start: datetime = datetime.now()
 
-    proposals: List[Dict] = n_requests(query=PROPOSAL_QUERY, skip_n=current_rows, 
+    proposals: List[Dict] = requester.n_requests(query=PROPOSAL_QUERY, skip_n=current_rows, 
         result_key=META_KEY)
 
     print(f'Proposal\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -41,6 +42,7 @@ def _request_proposals(current_rows: int) -> List[Dict]:
 
 
 def _request_open_proposals(ids: List[str]) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
     print("Requesting open proposals ...")
     start: datetime = datetime.now()
 
@@ -49,7 +51,7 @@ def _request_open_proposals(ids: List[str]) -> List[Dict]:
     try:
         for p_id in ids:
             query: str = O_PROPOSAL_QUERY.format(p_id)
-            result = request(query=query)
+            result = requester.request(query=query)
             open_props.append(result['proposal'])
     except Exception:
         print('\nError: Open proposals not updated.\n')

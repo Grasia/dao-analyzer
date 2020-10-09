@@ -9,10 +9,9 @@
 """
 import dash_core_components as dcc
 import dash_html_components as html
-#from dash.dependencies import Input, Output
 
 from src.app import app, DEBUG
-from src.apps.daostack.business.app_service import get_service
+from src.apps.common.presentation.main_view.main_view_controller import bind_callbacks
 
 server = app.server
 
@@ -39,19 +38,10 @@ app.index_string = '''
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content', children=get_service().get_layout())
+    html.Div(id='page-content')
 ])
 
-# TODO: issue 15
-# @app.callback( Output('page-content', 'children'),
-#               [Input('url', 'pathname')])
-# def display_page(pathname):
-#     print(pathname)
-#     if pathname == '/apps/daostack' or '/':
-#         return get_service().get_layout()
-#     else:
-#         return '404'
-
+bind_callbacks(app)
 
 if __name__ == '__main__':
     app.run_server(debug=DEBUG, dev_tools_ui=DEBUG)

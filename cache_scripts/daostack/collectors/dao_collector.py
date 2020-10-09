@@ -12,7 +12,7 @@ import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
 
-from api_requester import n_requests
+from api_requester import ApiRequester
 
 
 DAO_QUERY: str = '{{daos(where: {{register: "registered"}}, first: {0}, skip: {1}\
@@ -22,10 +22,11 @@ META_KEY: str = 'daos'
 
 
 def _request_daos(current_rows: int) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
     print("Requesting DAO\'s data ...")
     start: datetime = datetime.now()
 
-    daos: List[Dict] = n_requests(query=DAO_QUERY, skip_n=current_rows, 
+    daos: List[Dict] = requester.n_requests(query=DAO_QUERY, skip_n=current_rows, 
         result_key=META_KEY)
 
     print(f'DAO\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
