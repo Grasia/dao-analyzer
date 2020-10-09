@@ -12,8 +12,7 @@ import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
 
-from api_requester import n_requests
-
+from api_requester import ApiRequester
 
 VOTE_QUERY: str = '{{proposalVotes(first: {0}, skip: {1})\
 {{id createdAt voter outcome reputation dao{{id}} proposal{{id}}}}}}'
@@ -22,10 +21,11 @@ META_KEY: str = 'proposalVotes'
 
 
 def _request_votes(current_rows: int) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
     print("Requesting votes\'s data ...")
     start: datetime = datetime.now()
 
-    votes: List[Dict] = n_requests(query=VOTE_QUERY, skip_n=current_rows, 
+    votes: List[Dict] = requester.n_requests(query=VOTE_QUERY, skip_n=current_rows, 
         result_key=META_KEY)
 
     print(f'Votes\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')

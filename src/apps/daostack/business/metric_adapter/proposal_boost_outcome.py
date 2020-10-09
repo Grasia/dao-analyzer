@@ -10,10 +10,10 @@
 
 from typing import Dict
 
-import src.apps.daostack.resources.colors as Color
+import src.apps.common.resources.colors as Color
 from src.apps.daostack.resources.strings import TEXT
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
 import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 

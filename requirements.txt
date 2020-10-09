@@ -7,10 +7,10 @@ chardet==3.0.4
 Click==7.0
 colorama==0.4.3
 contextlib2==0.6.0
-dash==1.16.0
-dash-core-components==1.12.0
+dash==1.16.2
+dash-core-components==1.12.1
 dash-html-components==1.1.1
-dash-renderer==1.8.0
+dash-renderer==1.8.2
 dash-table==4.10.1
 distlib==0.3.0
 distro==1.4.0

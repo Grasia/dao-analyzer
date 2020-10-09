@@ -1,5 +1,5 @@
 # DAO-Analyzer
-It is a tool to visualize DAO metrics. Now, it's focused on the [DAOstack](https://daostack.io/) ecosystem, and it's available in [http://dao-analyzer.science/](http://dao-analyzer.science/).
+It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/).
 
 ## Available metrics
 * DAOstack:
@@ -19,8 +19,22 @@ It is a tool to visualize DAO metrics. Now, it's focused on the [DAOstack](https
         * Total success rate of the stakes
         * Success rate of the stakes by type
 
+* DAOhaus:
+    * Members:
+        * New members
+        * Active members
+    * Votes:
+        * Votes by type
+        * Active voters
+    * Rage Quit:
+        * Rage quits
+    * Proposals:
+        * New proposals
+        * Proposals outcome
+        * Proposals type
+
 ## Architecture
-There is available a class diagram [here](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png).
+There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), and the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png).
 
 ## Download
 Enter in your terminal (git must be installed) and write down:
@@ -59,9 +73,9 @@ Finally, you can install the dependencies:
 `pip install -r requirements.txt`
 
 ## How to run it?
-Before launch the app, you have to run the following script in order to enable the cache stored in `datawarehouse/daostack`:
+Before launch the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
 
-`python3 cache_scripts/daostack/main.py`
+`python3 cache_scripts/main.py`
 
 After a few minutes, you can now run the app with:
 

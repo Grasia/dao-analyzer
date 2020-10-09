@@ -10,12 +10,11 @@
 import unittest
 from typing import List
 import pandas as pd
-from datetime import datetime
-from dateutil import relativedelta
 
+from test.mocks.unix_date_builder import UnixDateBuilder
 from src.apps.daostack.data_access.daos.metric.strategy.\
     st_different_voters_stakers import StDifferentVS
-from src.apps.daostack.business.transfers.stacked_serie import StackedSerie
+from src.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
 class StDifferentVSTest(unittest.TestCase):
@@ -27,32 +26,36 @@ class StDifferentVSTest(unittest.TestCase):
         self.assertListEqual(out, result.get_i_stack(i_stack=0))
 
 
-    def test_process_data1(self):
+    def test_process_data_voters(self):
+        bl: UnixDateBuilder = UnixDateBuilder()
+        bl.sub(month=2).change(day=25, hour=0, minute=0, second=0)
+
         in_df: pd.DataFrame = pd.DataFrame([
-            {'createdAt': 1571961600, 'voter': '0', 'trash': 'trash'}, #2019-10-25T00:00:00+00:00
-            {'createdAt': 1571961600, 'voter': '0', 'trash': 'trash'}, #2019-10-25T00:00:00+00:00
-            {'createdAt': 1572649200, 'voter': '0', 'trash': 'trash'}, #2019-11-01T23:00:00+00:00
-            {'createdAt': 1569974399, 'voter': '1', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
-            {'createdAt': 1569974399, 'voter': '1', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
-            {'createdAt': 1577750400, 'voter': '2', 'trash': 'trash'}, #2019-12-31T00:00:00+00:00
+            {'voter': '0', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-2)-25T00:00:00+00:00
+            {'voter': '0', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-2)-25T00:00:00+00:00
+            {'voter': '0', 'trash': 'trash', 'createdAt': bl.add(month=1).change(day=1, hour=23).unix()}, #today_year-(today_month-1)-01T23:00:00+00:00
+            {'voter': '1', 'trash': 'trash', 'createdAt': bl.sub(month=1).change(second=59, minute=59).unix()}, #today_year-(today_month-2)-01T23:59:00+00:00
+            {'voter': '1', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-2)-01T23:59:59+00:00
+            {'voter': '2', 'trash': 'trash', 'createdAt': bl.add(month=2).change(day=21, hour=0).unix()}, #today_year-today_month-21T00:59:00+00:00
         ])
-        delta = relativedelta.relativedelta(datetime.now(), datetime.fromtimestamp(1577750400))
-        out: List[int] = [2, 1, 1] + [0] * (delta.months + 1)
+        out: List[int] = [2, 1, 1]
 
         self.__check_lists(df=in_df, out=out, stype=0)
 
         
-    def test_process_data2(self):
+    def test_process_data_stakers(self):
+        bl: UnixDateBuilder = UnixDateBuilder()
+        bl.sub(month=3).change(day=25, hour=0, minute=0, second=0)
+
         in_df: pd.DataFrame = pd.DataFrame([
-            {'createdAt': 1571961600, 'staker': '0', 'trash': 'trash'}, #2019-10-25T00:00:00+00:00
-            {'createdAt': 1571961600, 'staker': '1', 'trash': 'trash'}, #2019-10-25T00:00:00+00:00
-            {'createdAt': 1572649200, 'staker': '1', 'trash': 'trash'}, #2019-11-01T23:00:00+00:00
-            {'createdAt': 1569974399, 'staker': '2', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
-            {'createdAt': 1569974399, 'staker': '2', 'trash': 'trash'}, #2019-10-01T23:59:59+00:00
-            {'createdAt': 1577923200, 'staker': '3', 'trash': 'trash'}, #2020-01-02T00:00:00+00:00
+            {'staker': '0', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-3)-25T00:00:00+00:00
+            {'staker': '1', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-3)-25T00:00:00+00:00
+            {'staker': '1', 'trash': 'trash', 'createdAt': bl.add(month=1).change(day=1, hour=23).unix()}, #today_year-(today_month-2)-01T23:00:00+00:00
+            {'staker': '2', 'trash': 'trash', 'createdAt': bl.sub(month=1).change(second=59, minute=59).unix()}, #today_year-(today_month-3)-01T23:59:00+00:00
+            {'staker': '2', 'trash': 'trash', 'createdAt': bl.unix()}, #today_year-(today_month-3)-01T23:59:59+00:00
+            {'staker': '3', 'trash': 'trash', 'createdAt': bl.add(month=3).change(day=2, hour=0).unix()}, #today_year-today_month-2T00:59:00+00:00
         ])
-        delta = relativedelta.relativedelta(datetime.now(), datetime.utcfromtimestamp(1577923200))
-        out: List[int] = [3, 1, 0, 1] + [0] * delta.months
+        out: List[int] = [3, 1, 0, 1]
 
         self.__check_lists(df=in_df, out=out, stype=1)
 
