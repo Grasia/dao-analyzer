@@ -19,7 +19,8 @@ import src.apps.common.data_access.pandas_utils as pd_utl
 class StProposalType(IMetricStrategy):
     __GRANT_PROPOSAL = 0
     __NEW_MEMBER_PROPOSAL = 1
-    __OTHER_PROPOSAL = 2
+    __DONATION_PROPOSAL = 2
+    __OTHER_PROPOSAL = 3
 
     __DF_DATE = 'createdAt'
     __DF_COUNT = 'count'
@@ -53,11 +54,12 @@ class StProposalType(IMetricStrategy):
         serie: Serie = Serie(x=dff[self.__DF_DATE].tolist())
         grants: List = self.__get_proposals_type(self.__GRANT_PROPOSAL, df, dff)
         new_members: List = self.__get_proposals_type(self.__NEW_MEMBER_PROPOSAL, df, dff)
+        donations: List = self.__get_proposals_type(self.__DONATION_PROPOSAL, df, dff)
         others: List = self.__get_proposals_type(self.__OTHER_PROPOSAL, df, dff)
 
         metric: StackedSerie = StackedSerie(
             serie = serie,
-            y_stack = [others, new_members, grants])
+            y_stack = [others, donations, new_members, grants])
 
         return metric
 
@@ -102,5 +104,7 @@ class StProposalType(IMetricStrategy):
             typ = self.__GRANT_PROPOSAL
         elif int(share) > 0 and int(tribute) > 0:
             typ = self.__NEW_MEMBER_PROPOSAL
+        elif int(share) == 0 and int(tribute) > 0:
+            typ = self.__DONATION_PROPOSAL
 
         return typ

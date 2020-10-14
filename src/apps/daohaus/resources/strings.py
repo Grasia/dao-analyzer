@@ -10,9 +10,10 @@
 TEXT: dict = {
     'approved_proposals': 'Approved proposals',
     'pane_css_prefix': 'daohaus-pane',
+    'proposal_donation': 'Donation proposals',
     'proposal_grant': 'Grant proposals',
     'proposal_new_member': 'New member proposals',
-    'proposal_other': 'Other proposals',
+    'proposal_other': 'Others',
     'rejected_proposals': 'Rejected proposals',
     'title_active_members': 'Active members',
     'title_active_voters': 'Active voters',

@@ -44,16 +44,21 @@ class ProposalType(IMetricAdapter):
         return {
             'type1': {
                 'y': metric.get_i_stack(0),
-                'color': Color.LIGHT_BLUE,
+                'color': Color.LIGHT_YELLOW,
                 'name': TEXT['proposal_other'],
             },
             'type2': {
                 'y': metric.get_i_stack(1),
                 'color': Color.LIGHT_PURPLE,
-                'name': TEXT['proposal_new_member'],
+                'name': TEXT['proposal_donation'],
             },
             'type3': {
                 'y': metric.get_i_stack(2),
+                'color': Color.LIGHT_BLUE,
+                'name': TEXT['proposal_new_member'],
+            },
+            'type4': {
+                'y': metric.get_i_stack(3),
                 'color': Color.LIGHT_GREEN,
                 'name': TEXT['proposal_grant'],
             },
@@ -61,7 +66,7 @@ class ProposalType(IMetricAdapter):
                 'x': metric.get_serie(),
                 'type': 'date',
                 'x_format': self.DATE_FORMAT,
-                'ordered_keys': ['type1', 'type2', 'type3'],
+                'ordered_keys': ['type1', 'type2', 'type3', 'type4'],
             },
             'last_serie_elem': '',
             'last_value': '',
