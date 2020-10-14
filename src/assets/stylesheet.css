@@ -57,8 +57,7 @@
 
 .pane {
     background-color: white;
-    width: 49.5%;
-    margin-bottom: 0.9rem;
+    width: 49.5%;   
 }
 
 .dao-selector-pane {
@@ -77,6 +76,7 @@
 
 .section {
     padding: 0rem 0.5rem 0rem 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .title-section{
@@ -100,7 +100,7 @@
 .graph-pane-title {
     text-align: center;
     font-size: large;
-    margin: 1rem 0rem 1rem 0rem;
+    margin-top: 2rem;
 }
 
 .graph-pane-subtitle {

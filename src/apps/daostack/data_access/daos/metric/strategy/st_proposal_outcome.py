@@ -55,12 +55,16 @@ class StProposalOutcome(IMetricStrategy):
         s_pass: List[int] = list()
         s_not_pass: List[int] = list()
 
-        for _, row in df.iterrows():
-            if row[self.__DF_BOOST] == boosted:
-                if row[self.__DF_PASS]:
-                    s_pass.append(row[self.__DF_COUNT])
+        boost: List[int] = df[self.__DF_BOOST].tolist()
+        is_pass: List[int] = df[self.__DF_PASS].tolist()
+        count: List[int] = df[self.__DF_COUNT].tolist()
+
+        for i, b in enumerate(boost):
+            if b == boosted:
+                if is_pass[i]:
+                    s_pass.append(count[i])
                 else:
-                    s_not_pass.append(row[self.__DF_COUNT])
+                    s_not_pass.append(count[i])
 
         return (s_not_pass, s_pass)
 
