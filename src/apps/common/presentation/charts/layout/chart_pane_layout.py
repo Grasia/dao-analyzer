@@ -12,7 +12,6 @@ import dash_core_components as dcc
 from typing import List, Dict
 
 from src.apps.common.resources.strings import TEXT
-import src.apps.common.resources.colors as Color
 from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.common.presentation.charts.layout.chart_pane_configuration \
     import ChartPaneConfiguration
@@ -52,13 +51,13 @@ class ChartPaneLayout():
         return html.Div(
             children=dcc.Loading(
                 type="circle",
-                color=Color.DARK_BLUE,
+                color=self.configuration.color,
                 children=html.Div(
                     children=children,
                     id=self.__css_id,
                     className='graph-pane'
             )),  
-            className='pane'
+            className=f'pane {self.configuration.css_border}'
         )
 
 

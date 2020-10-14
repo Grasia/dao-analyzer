@@ -13,7 +13,8 @@ from src.apps.common.resources.strings import TEXT
 REL_PATH: str = '../../../../assets/'
 
 
-def generate_layout(body: html.Div = None, has_foot: bool = True) -> html.Div:
+def generate_layout(header_title: str, app_color: str = TEXT['css_color_app'], 
+body: html.Div = None, has_foot: bool = True) -> html.Div:
     foot = []
 
     if not body:
@@ -23,8 +24,8 @@ def generate_layout(body: html.Div = None, has_foot: bool = True) -> html.Div:
 
     return html.Div(children=[
         html.Div(
-            children=[__generate_header()],
-            className='main-header fix-height'
+            children=[__generate_header(header_title)],
+            className=f'main-header {app_color}'
         ),
         html.Div(
             children=body,
@@ -37,8 +38,8 @@ def generate_layout(body: html.Div = None, has_foot: bool = True) -> html.Div:
     ], className='root',)
 
 
-def __generate_header() -> html.H1:
-    return html.H1(TEXT['app_title'])
+def __generate_header(title: str) -> html.H1:
+    return html.H1(title)
 
 
 def __generate_body() -> html.Div:
@@ -47,11 +48,13 @@ def __generate_body() -> html.Div:
             __generate_ecosystem_pane(
                 img=f'{REL_PATH}daostack.png',
                 title=TEXT['daostack'],
-                bt_id='daostack-bt'),
+                bt_id='daostack-bt',
+                css_class='daostack'),
             __generate_ecosystem_pane(
                 img=f'{REL_PATH}daohaus.png',
                 title=TEXT['daohaus'],
-                bt_id='daohaus-bt'),
+                bt_id='daohaus-bt',
+                css_class='daohaus'),
         ], 
         className='eco-body '),
         html.Div(className='page-filler')
@@ -59,7 +62,7 @@ def __generate_body() -> html.Div:
     className='')
 
 
-def __generate_ecosystem_pane(img: str, title: str, bt_id: str) -> html.Div:
+def __generate_ecosystem_pane(img: str, title: str, bt_id: str, css_class: str) -> html.Div:
     return html.Div(children=[
         html.Div(children=[
             html.H2(title, className=''),
@@ -68,7 +71,7 @@ def __generate_ecosystem_pane(img: str, title: str, bt_id: str) -> html.Div:
         html.Img(src=img, className='eco-img'),
         html.Button(TEXT['bt_analyze'], id=bt_id, n_clicks=0),
     ], 
-    className='eco-pane ')
+    className=f'eco-pane {css_class}')
 
 
 def __generate_foot() -> html.Div:

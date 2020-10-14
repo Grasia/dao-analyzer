@@ -9,6 +9,7 @@
 
 TEXT: dict = {
     'approved_proposals': 'Approved proposals',
+    'css_pane_border': 'daohaus-border',
     'pane_css_prefix': 'daohaus-pane',
     'proposal_donation': 'Donation proposals',
     'proposal_grant': 'Grant proposals',

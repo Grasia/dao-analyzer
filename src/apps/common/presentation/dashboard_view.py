@@ -14,7 +14,7 @@ import dash_html_components as html
 from src.apps.common.resources.strings import TEXT
 
 
-def generate_layout(labels: List[Dict[str, str]], sections: Dict) -> List:
+def generate_layout(labels: List[Dict[str, str]], sections: Dict, color_app: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -23,7 +23,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict) -> List:
     Return:
         A html.Div filled with the app view 
     """
-    return [__generate_selector(labels), __generate_sections(sections)]
+    return [__generate_selector(labels), __generate_sections(sections, color_app)]
     
 
 def __generate_selector(labels: List[Dict[str, str]]) -> html.Div:
@@ -40,7 +40,7 @@ def __generate_selector(labels: List[Dict[str, str]]) -> html.Div:
     )
 
 
-def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
+def __generate_sections(sections: Dict[str, List[Callable]], color_app: str) -> html.Div:
     children: List = list()
 
     for name, callables in sections.items():
@@ -51,7 +51,7 @@ def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
         sec = html.Div(
             className='section',
             children=[
-                html.Div(name, className='title-section'),
+                html.Div(name, className=f'title-section {color_app}'),
                 html.Div(children=charts, className='graph-section')
             ],
         )

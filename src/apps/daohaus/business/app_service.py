@@ -30,6 +30,8 @@ from src.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOu
 from src.apps.daohaus.business.metric_adapter.proposal_type import ProposalType 
 import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.daohaus.resources.strings import TEXT
+from src.apps.common.resources.strings import TEXT as COMMON_TEXT
+import src.apps.common.resources.colors as COLOR
 
 
 _daohaus_service = None
@@ -94,7 +96,8 @@ class DaohausService():
         orgs: OrganizationList = self.organizations
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
-            sections=self.__get_sections()
+            sections=self.__get_sections(),
+            color_app=COMMON_TEXT['css_color_daohaus']
         )
 
 
@@ -238,6 +241,8 @@ class DaohausService():
             css_id=css_id,
             figure=figure
         )
+        layout.configuration.set_color(color=COLOR.DARK_ORANGE)
+        layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
         controller: ChartController = ChartController(
             css_id=css_id,
