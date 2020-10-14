@@ -122,8 +122,8 @@ class DaohausService():
 
         return {
             TEXT['title_member']: l_member,
-            TEXT['title_vote']: l_vote,
             TEXT['title_rage_quits']: l_rage_q,
+            TEXT['title_vote']: l_vote,
             TEXT['title_proposal']: l_proposal,
         }
 
@@ -182,9 +182,9 @@ class DaohausService():
 
         # rage quits
         charts.append(self.__create_chart(
-            title=TEXT['title_rage_quits'],
+            title=TEXT['title_out_members'],
             adapter=BasicAdapter(
-                metric_id=s_factory.RAGE_QUITS, 
+                metric_id=s_factory.OUTGOING_MEMBERS, 
                 organizations=call),
             figure=BarFigure(),
             cont_key=self._RAGE_QUIT

@@ -18,10 +18,10 @@ import src.apps.common.data_access.pandas_utils as pd_utl
 
 class StNewAdditions(IMetricStrategy):
     MEMBERS = 0
-    RAGE_QUITS = 1
+    OUTGOING_MEMBERS = 1
     PROPOSALS = 2
     VOTES = 3
-    __TYPES: List[int] = [MEMBERS, RAGE_QUITS, PROPOSALS, VOTES]
+    __TYPES: List[int] = [MEMBERS, OUTGOING_MEMBERS, PROPOSALS, VOTES]
 
     __DF_DATE = 'createdAt'
     __DF_COUNT = 'count'
