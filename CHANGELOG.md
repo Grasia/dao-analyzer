@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.3.1 - 2020-10-14
+### Added
+- Small visual changes.
+
 ## 0.3.0 - 2020-10-09
 ### Added
 - Compatibility with DAOhaus.
