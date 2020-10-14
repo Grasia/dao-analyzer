@@ -14,6 +14,7 @@ TEXT: dict = {
     'boost': 'Rate of boosted proposals that were approved',
     'boost_fail': 'Boosted rejections',
     'boost_pass': 'Boosted approvals',
+    'css_pane_border': 'daostack-border',
     'different_stakers_title': 'Different stakers',
     'different_voters_title': 'Different voters',
     'downstakes': 'Downstakes',

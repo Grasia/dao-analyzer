@@ -9,6 +9,7 @@
 
 from typing import Dict, List
 
+import src.apps.common.resources.colors as Color
 from src.apps.common.presentation.charts.layout.figure.figure_configuration \
     import FigureConfiguration
 
@@ -17,6 +18,8 @@ class ChartPaneConfiguration(FigureConfiguration):
     def __init__(self, fig_conf: FigureConfiguration) -> None:
         self.__fig_conf = fig_conf
         self.__show_subtitles: bool = True
+        self.__css_border: str = ''
+        self.__color: str = Color.DARK_BLUE
 
 
     @property
@@ -27,6 +30,16 @@ class ChartPaneConfiguration(FigureConfiguration):
     @property
     def show_subtitles(self) -> bool:
         return self.__show_subtitles
+
+
+    @property
+    def css_border(self) -> str:
+        return self.__css_border
+
+
+    @property
+    def color(self) -> str:
+        return self.__color
 
 
     def enable_legend(self) -> None:
@@ -59,3 +72,12 @@ class ChartPaneConfiguration(FigureConfiguration):
 
     def disable_subtitles(self) -> None:
         self.__show_subtitles = False
+
+
+    def set_color(self, color: str) -> None:
+        if color:
+            self.__color = color
+
+
+    def set_css_border(self, css_border: str) -> None:
+        self.__css_border = css_border

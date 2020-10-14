@@ -47,10 +47,6 @@ class StTotalVSOption(IMetricStrategy):
         df = self.clean_df(df=df)
         df = self.__transform_df(df=df)
 
-        # takes just the month
-        df = pd_utl.unix_to_date(df, self.__DF_DATE)
-        df = pd_utl.transform_to_monthly_date(df, self.__DF_DATE)
-
         # join by dates
         df = pd_utl.count_cols_repetitions(df, self.__DF_COLS, self.__DF_COUNT)
 
@@ -86,12 +82,14 @@ class StTotalVSOption(IMetricStrategy):
 
     
     def __transform_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        dff: pd.DataFrame = pd_utl.get_empty_data_frame(self.__DF_COLS)
+        dff: pd.DataFrame = df
+        outcomes: List[str] = dff[self.__DF_OUTCOME].tolist()
 
-        for _, row in df.iterrows():
-            date: int = int(row[self.__DF_DATE])
-            is_positive: bool = True if row[self.__DF_OUTCOME] == 'Pass' else False
+        outcomes: List[bool] = list(map(lambda o: True if o == 'Pass' else False, outcomes))
+        dff[self.__DF_IS_POSITIVE] = outcomes
 
-            dff = pd_utl.append_rows(dff, [date, is_positive])
+        # takes just the month
+        dff = pd_utl.unix_to_date(dff, self.__DF_DATE)
+        dff = pd_utl.transform_to_monthly_date(dff, self.__DF_DATE)
 
         return dff

@@ -40,7 +40,7 @@ class StNewMembersTest(unittest.TestCase):
         self.assertListEqual(out, result.get_i_stack(i_stack=0))
 
 
-    def test_rage_quits_process_data(self):
+    def test_outgoing_members_process_data(self):
         bl: UnixDateBuilder = UnixDateBuilder()
         bl.sub(month=3).change(day=4, hour=0, minute=0, second=0)
 
@@ -51,7 +51,7 @@ class StNewMembersTest(unittest.TestCase):
             {'createdAt': bl.change(day=9, hour=23).unix()},#today_year-(today_month-2)-09T23:00:00+00:00
             {'createdAt': bl.sub(month=1).change(minute=59, second=59).unix()},#today_year-(today_month-3)-01T23:59:59+00:00
         ])
-        strategy: StNewAdditions = StNewAdditions(typ=StNewAdditions.RAGE_QUITS)
+        strategy: StNewAdditions = StNewAdditions(typ=StNewAdditions.OUTGOING_MEMBERS)
         result: StackedSerie = strategy.process_data(df=in_df)
         out: List[int] = [2, 3, 0, 0]
 

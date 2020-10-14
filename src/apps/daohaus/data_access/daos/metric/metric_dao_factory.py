@@ -21,7 +21,7 @@ from src.apps.daohaus.data_access.daos.metric.strategy.st_proposal_type import S
 NEW_MEMBERS = 0
 VOTES_TYPE = 1
 ACTIVE_VOTERS = 2
-RAGE_QUITS = 3
+OUTGOING_MEMBERS = 3
 NEW_PROPOSALS = 4
 PROPOSALS_OUTCOME = 5
 ACTIVE_MEMBERS = 6
@@ -41,8 +41,8 @@ def get_dao(ids: List[str], metric: int) -> MetricDao:
     elif metric == ACTIVE_VOTERS:
         stg = StActiveVoters()
         requester = cache.CacheRequester(srcs=[cache.VOTES])
-    elif metric == RAGE_QUITS:
-        stg = StNewAdditions(typ=StNewAdditions.RAGE_QUITS)
+    elif metric == OUTGOING_MEMBERS:
+        stg = StNewAdditions(typ=StNewAdditions.OUTGOING_MEMBERS)
         requester = cache.CacheRequester(srcs=[cache.RAGE_QUITS])
     elif metric == NEW_PROPOSALS:
         stg = StNewAdditions(typ=StNewAdditions.PROPOSALS)
