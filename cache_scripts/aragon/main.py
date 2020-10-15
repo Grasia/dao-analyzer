@@ -14,6 +14,7 @@ from typing import Dict, List
 import aragon.collectors.organizations as organizations
 import aragon.collectors.apps as apps
 import aragon.collectors.mini_me_token as token
+import aragon.collectors.token_holders as holders 
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -25,6 +26,7 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
         organizations.META_KEY,
         apps.META_KEY,
         token.META_KEY,
+        holders.META_KEY
     ] # add here new keys
 
     for k in keys:
@@ -65,6 +67,7 @@ def run() -> None:
         organizations.update_organizations,
         apps.update_apps,
         token.update_tokens,
+        holders.update_holders,
     ]
 
     for c in collectors:
