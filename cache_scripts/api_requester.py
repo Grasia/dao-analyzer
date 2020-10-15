@@ -15,10 +15,20 @@ from typing import Dict, List
 class ApiRequester:
 
     ELEMS_PER_CHUNK: int = 1000
+
     DAOSTACK: int = 0
     DAOHAUS: int = 1
-    __DAOSTACK_URL: str = 'https://api.thegraph.com/subgraphs/name/daostack/master'
-    __DAOHAUS_URL: str = 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus'
+    ARAGON_MAINNET: int = 2
+    ARAGON_TOKENS: int = 3
+    ARAGON_VOTING: int = 4
+    ARAGON_FINANCE: int = 5
+
+    __URL_DAOSTACK: str = 'https://api.thegraph.com/subgraphs/name/daostack/master'
+    __URL_DAOHAUS: str = 'https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus'
+    __URL_ARAGON_MAINNET: str = 'https://api.thegraph.com/subgraphs/name/aragon/aragon-mainnet'
+    __URL_ARAGON_TOKENS: str = 'https://api.thegraph.com/subgraphs/name/aragon/aragon-tokens-mainnet'
+    __URL_ARAGON_VOTING: str = 'https://api.thegraph.com/subgraphs/name/aragon/aragon-voting-mainnet'
+    __URL_ARAGON_FINANCE: str = 'https://api.thegraph.com/subgraphs/name/aragon/aragon-finance-mainnet'
 
 
     def __init__(self, endpoint: int) -> None:
@@ -33,6 +43,14 @@ class ApiRequester:
             url = self.__DAOSTACK_URL
         elif endpoint is self.DAOHAUS:
             url = self.__DAOHAUS_URL
+        elif endpoint is self.ARAGON_MAINNET:
+            url = self.__URL_ARAGON_MAINNET
+        elif endpoint is self.ARAGON_TOKENS:
+            url = self.__URL_ARAGON_TOKENS
+        elif endpoint is self.ARAGON_VOTING:
+            url = self.__URL_ARAGON_VOTING
+        elif endpoint is self.ARAGON_FINANCE:
+            url = self.__URL_ARAGON_FINANCE
 
         return url
 
