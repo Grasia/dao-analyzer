@@ -16,7 +16,7 @@ from api_requester import ApiRequester
 
 
 APP_QUERY: str = '{{apps(first: {0}, skip: {1}\
-){{id isForwarder isUpgradeable repoName organization{{id}} }}}}'
+){{id isForwarder isUpgradeable repoName repoAddress organization{{id}} }}}}'
 
 META_KEY: str = 'apps'
 

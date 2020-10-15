@@ -40,9 +40,9 @@ class ApiRequester:
         url: str = ''
 
         if endpoint is self.DAOSTACK:
-            url = self.__DAOSTACK_URL
+            url = self.__URL_DAOSTACK
         elif endpoint is self.DAOHAUS:
-            url = self.__DAOHAUS_URL
+            url = self.__URL_DAOHAUS
         elif endpoint is self.ARAGON_MAINNET:
             url = self.__URL_ARAGON_MAINNET
         elif endpoint is self.ARAGON_TOKENS:

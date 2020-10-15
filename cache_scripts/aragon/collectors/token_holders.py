@@ -38,6 +38,9 @@ def _request_token_holders(current_rows: int) -> List[Dict]:
 
 
 def _transform_to_df(holders: List[Dict]) -> pd.DataFrame:
+    if not holders:
+        return pd.DataFrame()
+
     df: pd.DataFrame = pd.DataFrame(holders)
 
     requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_TOKENS)
