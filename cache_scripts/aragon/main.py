@@ -11,7 +11,8 @@ import os
 import json
 from typing import Dict, List
 
-import aragon.collectors.organizations as organizations 
+import aragon.collectors.organizations as organizations
+import aragon.collectors.apps as apps 
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -21,6 +22,7 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
     keys: List[str] = [
         organizations.META_KEY,
+        apps.META_KEY,
     ] # add here new keys
 
     for k in keys:
@@ -59,6 +61,7 @@ def run() -> None:
     # add new collectors
     collectors: List = [
         organizations.update_organizations,
+        apps.update_apps,
     ]
 
     for c in collectors:
