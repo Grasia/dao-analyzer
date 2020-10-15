@@ -44,7 +44,7 @@ def _get_meta_data() -> Dict:
         with open(META_PATH) as json_file:
             meta_data = json.load(json_file)
     else:
-        meta_data = dict() # there is not previous executions
+        meta_data = dict() # there are not previous executions
 
     return _fill_empty_keys(meta_data=meta_data)
 

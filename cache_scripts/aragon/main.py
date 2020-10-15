@@ -1,33 +1,23 @@
 """
-   Descp: Main script to create the DAOstack cache, it call all the collectors.
+   Descp: Main script to create Aragon datawarehouse, it call all the collectors.
 
-   Created on: 10-jul-2020
+   Created on: 15-oct-2020
 
-   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
+   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
 
 import os
 import json
 from typing import Dict, List
-import daostack.collectors.dao_collector as dao
-import daostack.collectors.rep_holder_collector as rep_h
-import daostack.collectors.vote_collector as vote
-import daostack.collectors.stake_collector as stake
-import daostack.collectors.proposal_collector as proposal
 
-DIRS: str = os.path.join('datawarehouse', 'daostack')
+DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
 
 
 def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
     keys: List[str] = [
-        dao.META_KEY, 
-        rep_h.META_KEY, 
-        vote.META_KEY,
-        stake.META_KEY,
-        proposal.META_KEY
         ] # add here new keys
 
     for k in keys:
@@ -57,7 +47,7 @@ def _write_meta_data(meta: Dict) -> None:
 
 
 def run() -> None:
-    print('------------- Updating DAOstack\' datawarehouse -------------\n')
+    print('------------- Updating Aragon\' datawarehouse -------------\n')
     if not os.path.isdir(DIRS):
         os.makedirs(DIRS)
 
@@ -65,19 +55,13 @@ def run() -> None:
 
     # add new collectors
     collectors: List = [
-        dao.update_daos, 
-        rep_h.update_rep_holders,
-        vote.update_votes,
-        stake.update_stakes,
-        proposal.update_proposals
         ]
 
     for c in collectors:
         c(meta_data)
 
     _write_meta_data(meta=meta_data)
-
-    print('------------- DAOstack\'s datawarehouse updated -------------\n')
+    print('------------- Aragon\' datawarehouse updated -------------\n')
 
 
 if __name__ == '__main__':
