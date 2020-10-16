@@ -34,10 +34,13 @@ def _request_organizations(current_rows: int) -> List[Dict]:
 
 
 def _transform_to_df(orgs: List[Dict], n_daos: int) -> pd.DataFrame:
+    if not orgs:
+        return pd.DataFrame()
+
     df: pd.DataFrame = pd.DataFrame(orgs)
     
     #TODO: temporal solution to non-attribute name
-    names: List[str] = [f'Noname-{i}' for i in range(n_daos, len(df))]
+    names: List[str] = [f'Noname-{i+n_daos}' for i in range(len(df))]
     df['name'] = names
 
     return df
