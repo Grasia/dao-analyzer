@@ -17,6 +17,7 @@ import aragon.collectors.mini_me_token as token
 import aragon.collectors.token_holders as holders
 import aragon.collectors.repo as repos
 import aragon.collectors.vote as votes
+import aragon.collectors.cast as casts
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -27,6 +28,7 @@ KEYS: List[str] = [
     holders.META_KEY,
     repos.META_KEY,
     votes.META_KEY,
+    casts.META_KEY,
 ] # add here new keys
 COLLECTORS: List[Callable] = [
     organizations.update_organizations,
@@ -35,6 +37,7 @@ COLLECTORS: List[Callable] = [
     holders.update_holders,
     repos.update_repos,
     votes.update_votes,
+    casts.update_casts,
 ] # add new collectors
 
 
