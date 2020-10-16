@@ -18,6 +18,7 @@ import aragon.collectors.token_holders as holders
 import aragon.collectors.repo as repos
 import aragon.collectors.vote as votes
 import aragon.collectors.cast as casts
+import aragon.collectors.transaction as transactions
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -29,6 +30,7 @@ KEYS: List[str] = [
     repos.META_KEY,
     votes.META_KEY,
     casts.META_KEY,
+    transactions.META_KEY,
 ] # add here new keys
 COLLECTORS: List[Callable] = [
     organizations.update_organizations,
@@ -38,6 +40,7 @@ COLLECTORS: List[Callable] = [
     repos.update_repos,
     votes.update_votes,
     casts.update_casts,
+    transactions.update_transactions,
 ] # add new collectors
 
 
