@@ -117,11 +117,11 @@ class AragonService():
             l_transaction = [c.layout.get_layout for c in self.__controllers[self._TRANSACTION]]
             l_app = [c.layout.get_layout for c in self.__controllers[self._APP]]
         else:
-            l_token_holders = self.__get_token_holder_charts
-            l_vote = self.__get_vote_charts
-            l_cast = self.__get_cast_charts
-            l_transaction = self.__get_transaction_charts
-            l_app = self.__get_app_charts
+            l_token_holders = self.__get_token_holder_charts()
+            l_vote = self.__get_vote_charts()
+            l_cast = self.__get_cast_charts()
+            l_transaction = self.__get_transaction_charts()
+            l_app = self.__get_app_charts()
 
         return {
             TEXT['title-section-token-holders']: l_token_holders,
