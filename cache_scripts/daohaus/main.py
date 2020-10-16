@@ -18,19 +18,26 @@ from daohaus.collectors import proposal_collector as proposal
 
 DIRS: str = os.path.join('datawarehouse', 'daohaus')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
+KEYS: List[str] = [
+    moloch.META_KEY,
+    member.META_KEY,
+    vote.META_KEY,
+    rage_quit.META_KEY,
+    proposal.META_KEY,
+] # add here new keys
+COLLECTORS: List = [
+    moloch.update_moloches,
+    member.update_members,
+    vote.update_votes,
+    rage_quit.update_rage_quits,
+    proposal.update_proposals,
+] # add new collectors
 
 
 def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
-    keys: List[str] = [
-        moloch.META_KEY,
-        member.META_KEY,
-        vote.META_KEY,
-        rage_quit.META_KEY,
-        proposal.META_KEY,
-        ] # add here new keys
 
-    for k in keys:
+    for k in KEYS:
         if k not in meta_data:
             meta_fill[k] = {'rows': 0}
 
@@ -63,16 +70,7 @@ def run() -> None:
 
     meta_data: Dict = _get_meta_data()
 
-    # add new collectors
-    collectors: List = [
-        moloch.update_moloches,
-        member.update_members,
-        vote.update_votes,
-        rage_quit.update_rage_quits,
-        proposal.update_proposals,
-        ]
-
-    for c in collectors:
+    for c in COLLECTORS:
         c(meta_data)
 
     _write_meta_data(meta=meta_data)

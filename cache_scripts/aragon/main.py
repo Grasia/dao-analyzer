@@ -9,7 +9,7 @@
 
 import os
 import json
-from typing import Dict, List
+from typing import Dict, List, Callable
 
 import aragon.collectors.organizations as organizations
 import aragon.collectors.apps as apps
@@ -18,18 +18,24 @@ import aragon.collectors.token_holders as holders
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
+KEYS: List[str] = [
+    organizations.META_KEY,
+    apps.META_KEY,
+    token.META_KEY,
+    holders.META_KEY
+] # add here new keys
+COLLECTORS: List[Callable] = [
+    organizations.update_organizations,
+    apps.update_apps,
+    token.update_tokens,
+    holders.update_holders,
+] # add new collectors
 
 
 def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
-    keys: List[str] = [
-        organizations.META_KEY,
-        apps.META_KEY,
-        token.META_KEY,
-        holders.META_KEY
-    ] # add here new keys
 
-    for k in keys:
+    for k in KEYS:
         if k not in meta_data:
             meta_fill[k] = {'rows': 0}
 
@@ -62,15 +68,7 @@ def run() -> None:
 
     meta_data: Dict = _get_meta_data()
 
-    # add new collectors
-    collectors: List = [
-        organizations.update_organizations,
-        apps.update_apps,
-        token.update_tokens,
-        holders.update_holders,
-    ]
-
-    for c in collectors:
+    for c in COLLECTORS:
         c(meta_data)
 
     _write_meta_data(meta=meta_data)
