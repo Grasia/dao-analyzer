@@ -14,7 +14,8 @@ from typing import Dict, List, Callable
 import aragon.collectors.organizations as organizations
 import aragon.collectors.apps as apps
 import aragon.collectors.mini_me_token as token
-import aragon.collectors.token_holders as holders 
+import aragon.collectors.token_holders as holders
+import aragon.collectors.repo as repos
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
@@ -22,13 +23,15 @@ KEYS: List[str] = [
     organizations.META_KEY,
     apps.META_KEY,
     token.META_KEY,
-    holders.META_KEY
+    holders.META_KEY,
+    repos.META_KEY
 ] # add here new keys
 COLLECTORS: List[Callable] = [
     organizations.update_organizations,
     apps.update_apps,
     token.update_tokens,
     holders.update_holders,
+    repos.update_repos,
 ] # add new collectors
 
 
