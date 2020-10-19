@@ -17,16 +17,18 @@ from src.apps.common.data_access.daos.organization_dao\
 import src.apps.aragon.data_access.requesters.cache_requester as cache
 from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.presentation.charts.chart_controller import ChartController
-# from src.apps.common.presentation.charts.layout.chart_pane_layout \
-#     import ChartPaneLayout
-# from src.apps.common.presentation.charts.layout.figure.figure import Figure
-# from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
+from src.apps.common.presentation.charts.layout.chart_pane_layout \
+    import ChartPaneLayout
+from src.apps.common.presentation.charts.layout.figure.figure import Figure
+from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
 # from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
-# from src.apps.common.business.i_metric_adapter import IMetricAdapter
+import src.apps.aragon.data_access.daos.metric.metric_dao_factory as s_factory
+from src.apps.common.business.i_metric_adapter import IMetricAdapter
+from src.apps.aragon.business.metric_adapter.basic_adapter import BasicAdapter
 
 from src.apps.aragon.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
-# import src.apps.common.resources.colors as COLOR
+import src.apps.common.resources.colors as COLOR
 
 
 _aragon_service = None
@@ -124,11 +126,11 @@ class AragonService():
             l_app = self.__get_app_charts()
 
         return {
-            TEXT['title-section-token-holders']: l_token_holders,
-            TEXT['title-section-vote']: l_vote,
-            TEXT['title-section-cast']: l_cast,
-            TEXT['title-section-transaction']: l_transaction,
-            TEXT['title-section-app']: l_app,
+            TEXT['title_section_token_holders']: l_token_holders,
+            TEXT['title_section_vote']: l_vote,
+            TEXT['title_section_cast']: l_cast,
+            TEXT['title_section_transaction']: l_transaction,
+            TEXT['title_section_app']: l_app,
         }
 
 
@@ -137,7 +139,19 @@ class AragonService():
 
 
     def __get_vote_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # new proposal
+        charts.append(self.__create_chart(
+            title=TEXT['title_new_votations'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.NEW_VOTES, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        return charts
 
 
     def __get_cast_charts(self) -> List[Callable[[], html.Div]]:
@@ -145,32 +159,44 @@ class AragonService():
 
 
     def __get_transaction_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # new transactions
+        charts.append(self.__create_chart(
+            title=TEXT['title_new_transactions'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.NEW_TRANSACTIONS, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._TRANSACTION
+        ))
+        return charts
 
 
     def __get_app_charts(self) -> List[Callable[[], html.Div]]:
         return [lambda: html.Div()]
 
 
-    # def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
-    # , cont_key: int) -> Callable:
-    #     """
-    #     Creates the chart layout and its controller, and returns a callable
-    #     to get the html representation.
-    #     """
-    #     css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
-    #     layout: ChartPaneLayout = ChartPaneLayout(
-    #         title=title,
-    #         css_id=css_id,
-    #         figure=figure
-    #     )
-    #     layout.configuration.set_color(color=COLOR.DARK_BLUE)
-    #     layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
+    def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
+    , cont_key: int) -> Callable:
+        """
+        Creates the chart layout and its controller, and returns a callable
+        to get the html representation.
+        """
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=figure
+        )
+        layout.configuration.set_color(color=COLOR.DARK_BLUE)
+        layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
-    #     controller: ChartController = ChartController(
-    #         css_id=css_id,
-    #         layout=layout,
-    #         adapter=adapter)
+        controller: ChartController = ChartController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter)
 
-    #     self.__controllers[cont_key].append(controller)
-    #     return layout.get_layout
+        self.__controllers[cont_key].append(controller)
+        return layout.get_layout
