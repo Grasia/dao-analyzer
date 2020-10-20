@@ -10,6 +10,7 @@
 TEXT: dict = {
     'css_pane_border': 'aragon-border',
     'pane_css_prefix': 'aragon-pane',
+    'title_installed_apps': 'Installed apps',
     'title_new_transactions': 'New transactions',
     'title_new_votations': 'New votations',
     'title_section_token_holders': 'Token Holders',

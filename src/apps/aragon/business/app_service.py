@@ -25,6 +25,7 @@ from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigu
 import src.apps.aragon.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.aragon.business.metric_adapter.basic_adapter import BasicAdapter
+from src.apps.aragon.business.metric_adapter.installed_apps import InstalledApps 
 
 from src.apps.aragon.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
@@ -175,8 +176,19 @@ class AragonService():
 
 
     def __get_app_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
 
+        # installed apps
+        charts.append(self.__create_chart(
+            title=TEXT['title_installed_apps'],
+            adapter=InstalledApps(organizations=call),
+            figure=BarFigure(),
+            cont_key=self._APP
+        ))
+        self.__controllers[self._APP][-1].layout.configuration.disable_subtitles()
+
+        return charts
 
     def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
     , cont_key: int) -> Callable:
