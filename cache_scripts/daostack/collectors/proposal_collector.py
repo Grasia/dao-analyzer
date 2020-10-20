@@ -22,8 +22,10 @@ expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst \
 genesisProtocolParams{{queuedVoteRequiredPercentage}} dao{{id}} }}}}'
 
 O_PROPOSAL_QUERY: str = '{{proposal(id: \"{0}\")\
-{{id stage preBoostedAt boostedAt executedAt totalRepWhenExecuted executionState \
-expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst}}}}'
+{{id proposer stage createdAt preBoostedAt boostedAt closingAt executedAt \
+totalRepWhenExecuted totalRepWhenCreated executionState \
+expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst \
+genesisProtocolParams{{queuedVoteRequiredPercentage}} dao{{id}} }}}}'
 
 META_KEY: str = 'proposals'
 OUT_FILE: str = os.path.join('datawarehouse', 'daostack', 'proposals.csv')
@@ -86,14 +88,13 @@ def join_data(df: pd.DataFrame, df2: pd.DataFrame, df3: pd.DataFrame) -> pd.Data
     """
     dff: pd.DataFrame = df
 
-    dff.set_index('id', inplace=True)
-
     if len(df2) > 0:
-        df2.set_index('id', inplace=True)
-        dff.update(df2)
+        ids: List[str] = df2['id'].tolist()
+        index = dff[dff['id'].isin(ids)].index
+        dff.drop(index, inplace=True)
+        dff = dff.append(df2)
 
     if len(df3) > 0:
-        df3.set_index('id', inplace=True)
         dff = dff.append(df3)
 
     return dff
@@ -105,16 +106,18 @@ def update_proposals(meta_data: Dict) -> None:
     proposals: List[Dict] = _request_proposals(current_rows=
         meta_data[META_KEY]['rows'])
     df3: pd.DataFrame = _transform_to_df(proposals=proposals)
+    size: int = len(df3)
 
     # fetch new proposals and update opened proposals
     if os.path.isfile(OUT_FILE):
         df = pd.read_csv(OUT_FILE, header=0)
 
         open_prop: List[Dict] = _request_open_proposals(ids=_get_opened_proposals(df))
-        df2: pd.DataFrame = pd.DataFrame(open_prop)
+        df2: pd.DataFrame = _transform_to_df(proposals=open_prop)
 
         df = join_data(df=df, df2=df2, df3=df3)
-        df.to_csv(OUT_FILE)
+        df.to_csv(OUT_FILE, index=False)
+        size = len(df)
 
     # save all proposals
     else:
@@ -123,7 +126,7 @@ def update_proposals(meta_data: Dict) -> None:
     print(f'Data stored in {OUT_FILE}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(proposals)
+    meta_data[META_KEY]['rows'] = size
     meta_data[META_KEY]['lastUpdate'] = str(date.today())
 
 

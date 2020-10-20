@@ -33,22 +33,21 @@ def _request_organizations(current_rows: int) -> List[Dict]:
     return orgs
 
 
-def _transform_to_df(orgs: List[Dict], n_daos: int) -> pd.DataFrame:
+def _transform_to_df(orgs: List[Dict]) -> pd.DataFrame:
     if not orgs:
         return pd.DataFrame()
 
     df: pd.DataFrame = pd.DataFrame(orgs)
     
     #TODO: temporal solution to non-attribute name
-    names: List[str] = [f'Noname-{i+n_daos}' for i in range(len(df))]
-    df['name'] = names
+    df['name'] = df['id'].tolist()
 
     return df
 
 
 def update_organizations(meta_data: Dict) -> None:
     orgs: List[Dict] = _request_organizations(current_rows=meta_data[META_KEY]['rows'])
-    df: pd.DataFrame = _transform_to_df(orgs=orgs, n_daos=meta_data[META_KEY]['rows'])
+    df: pd.DataFrame = _transform_to_df(orgs=orgs)
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
