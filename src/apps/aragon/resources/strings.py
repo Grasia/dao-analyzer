@@ -8,17 +8,20 @@
 """
 
 TEXT: dict = {
+    'approved_votes': 'Approved votes',
     'css_pane_border': 'aragon-border',
     'pane_css_prefix': 'aragon-pane',
-    'title_cast_type': 'Votes casted by support',
+    'rejected_votes': 'Rejected votes',
+    'title_cast_type': 'Casted votes by support',
     'title_installed_apps': 'Installed apps',
     'title_new_transactions': 'New transactions',
-    'title_new_votations': 'New votations',
+    'title_new_votes': 'New votes',
     'title_section_token_holders': 'Token Holders',
-    'title_section_vote': 'Votations',
-    'title_section_cast': 'Votes',
+    'title_section_vote': 'Votes',
+    'title_section_cast': 'Casted votes',
     'title_section_transaction': 'Transactions',
     'title_section_app': 'Aragon apps',
-    'votes_against': 'Votes against',
-    'votes_for': 'Votes for',
+    'title_vote_outcome': 'Vote\'s outcome',
+    'votes_against': 'Casted votes against',
+    'votes_for': 'Casted votes for',
 }

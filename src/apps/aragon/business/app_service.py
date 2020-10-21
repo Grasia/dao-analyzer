@@ -27,6 +27,7 @@ from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.aragon.business.metric_adapter.basic_adapter import BasicAdapter
 from src.apps.aragon.business.metric_adapter.installed_apps import InstalledApps
 from src.apps.aragon.business.metric_adapter.cast_type import CastType
+from src.apps.aragon.business.metric_adapter.vote_outcome import VoteOutcome
 
 from src.apps.aragon.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
@@ -144,15 +145,24 @@ class AragonService():
         charts: List[Callable] = list()
         call: Callable = self.organizations
 
-        # new votation
+        # new votes
         charts.append(self.__create_chart(
-            title=TEXT['title_new_votations'],
+            title=TEXT['title_new_votes'],
             adapter=BasicAdapter(
                 metric_id=s_factory.NEW_VOTES, 
                 organizations=call),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
+
+        # vote's outcome
+        charts.append(self.__create_chart(
+            title=TEXT['title_vote_outcome'],
+            adapter=VoteOutcome(organizations=call),
+            figure=MultiBarFigure(MultiBarFigure.STACK),
+            cont_key=self._VOTE
+        ))
+
         return charts
 
 
