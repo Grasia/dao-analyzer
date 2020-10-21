@@ -21,11 +21,12 @@ from src.apps.common.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
 from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
-# from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
+from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
 import src.apps.aragon.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.aragon.business.metric_adapter.basic_adapter import BasicAdapter
-from src.apps.aragon.business.metric_adapter.installed_apps import InstalledApps 
+from src.apps.aragon.business.metric_adapter.installed_apps import InstalledApps
+from src.apps.aragon.business.metric_adapter.cast_type import CastType
 
 from src.apps.aragon.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
@@ -143,7 +144,7 @@ class AragonService():
         charts: List[Callable] = list()
         call: Callable = self.organizations
 
-        # new proposal
+        # new votation
         charts.append(self.__create_chart(
             title=TEXT['title_new_votations'],
             adapter=BasicAdapter(
@@ -156,7 +157,17 @@ class AragonService():
 
 
     def __get_cast_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # cast type
+        charts.append(self.__create_chart(
+            title=TEXT['title_cast_type'],
+            adapter=CastType(organizations=call),
+            figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
+            cont_key=self._CAST
+        ))
+        return charts
 
 
     def __get_transaction_charts(self) -> List[Callable[[], html.Div]]:

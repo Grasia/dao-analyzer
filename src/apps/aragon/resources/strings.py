@@ -10,6 +10,7 @@
 TEXT: dict = {
     'css_pane_border': 'aragon-border',
     'pane_css_prefix': 'aragon-pane',
+    'title_cast_type': 'Votes casted by support',
     'title_installed_apps': 'Installed apps',
     'title_new_transactions': 'New transactions',
     'title_new_votations': 'New votations',
@@ -18,4 +19,6 @@ TEXT: dict = {
     'title_section_cast': 'Votes',
     'title_section_transaction': 'Transactions',
     'title_section_app': 'Aragon apps',
+    'votes_against': 'Votes against',
+    'votes_for': 'Votes for',
 }
