@@ -110,7 +110,7 @@ class StVoteOutcome(IMetricStrategy):
             positive_support: int = self.__ratio((yea[i] - nay[i]), (yea[i] + nay[i])) * 100
             total_support: int = self.__ratio(yea[i], total[i]) * 100
             
-            has_pass.append( positive_support >= support and total_support >= quorum )
+            has_pass.append( (positive_support >= support) and (total_support >= quorum) )
 
         dff.loc[:, self.__DF_PASS] = has_pass
         dff.loc[:, [self.__DF_DATE, self.__DF_PASS]] = \
