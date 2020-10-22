@@ -11,7 +11,9 @@
 from typing import Dict, List, Callable
 import dash_html_components as html
 
-import src.apps.common.presentation.dashboard_view as view
+from src.app import app
+import src.apps.common.presentation.dashboard_view.dashboard_view as view
+import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 import src.apps.aragon.data_access.requesters.cache_requester as cache
@@ -54,6 +56,7 @@ class AragonService():
     _CAST: int = 2
     _TRANSACTION: int = 3
     _APP: int = 4
+    _ORGANIZATION: int = 5
 
     def __init__(self):
         # app state
@@ -64,6 +67,7 @@ class AragonService():
             self._CAST: list(),
             self._TRANSACTION: list(),
             self._APP: list(),
+            self._ORGANIZATION: list(),
         }
 
 
@@ -96,6 +100,12 @@ class AragonService():
         Returns the app's layout. 
         """
         orgs: OrganizationList = self.organizations
+        
+        if not self.are_panes:
+            view_cont.bind_callbacks(
+                app=app, 
+                section_id=TEXT['css_id_organization'])
+        
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
@@ -113,6 +123,7 @@ class AragonService():
         l_cast: List[Callable] = list()
         l_transaction: List[Callable] = list()
         l_app: List[Callable] = list()
+        l_organization: List[Callable] = list()
 
         # Panes are already created.
         if self.are_panes:
@@ -121,20 +132,45 @@ class AragonService():
             l_cast = [c.layout.get_layout for c in self.__controllers[self._CAST]]
             l_transaction = [c.layout.get_layout for c in self.__controllers[self._TRANSACTION]]
             l_app = [c.layout.get_layout for c in self.__controllers[self._APP]]
+            l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
         else:
             l_token_holders = self.__get_token_holder_charts()
             l_vote = self.__get_vote_charts()
             l_cast = self.__get_cast_charts()
             l_transaction = self.__get_transaction_charts()
             l_app = self.__get_app_charts()
+            l_organization = self.__get_organization_charts()
 
         return {
-            TEXT['title_section_token_holders']: l_token_holders,
-            TEXT['title_section_vote']: l_vote,
-            TEXT['title_section_cast']: l_cast,
-            TEXT['title_section_transaction']: l_transaction,
-            TEXT['title_section_app']: l_app,
+            COMMON_TEXT['no_data_selected']: {
+                'callables': l_organization,
+                'css_id': TEXT['css_id_organization'],
+            },
+            TEXT['title_section_token_holders']: {
+                'callables': l_token_holders,
+                'css_id': TEXT['css_id_token_holder'],
+            },
+            TEXT['title_section_vote']: {
+                'callables': l_vote,
+                'css_id': TEXT['css_id_vote'],
+            },
+            TEXT['title_section_cast']: {
+                'callables': l_cast,
+                'css_id': TEXT['css_id_cast']
+            },
+            TEXT['title_section_transaction']: {
+                'callables': l_transaction,
+                'css_id': TEXT['css_id_transactions'],
+            },
+            TEXT['title_section_app']: {
+                'callables': l_app,
+                'css_id': TEXT['css_id_app'],
+            },
         }
+
+
+    def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
+        return [lambda: html.Div()]
 
 
     def __get_token_holder_charts(self) -> List[Callable[[], html.Div]]:

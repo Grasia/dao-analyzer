@@ -11,7 +11,9 @@
 from typing import Dict, List, Callable
 import dash_html_components as html
 
-import src.apps.common.presentation.dashboard_view as view
+from src.app import app
+import src.apps.common.presentation.dashboard_view.dashboard_view as view
+import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 import src.apps.daostack.data_access.daos.metric.\
@@ -61,6 +63,7 @@ class DaostackService():
     _VOTE: int = 1
     _STAKE: int = 2
     _PROPOSAL: int = 3
+    _ORGANIZATION: int = 4
 
     def __init__(self):
         # app state
@@ -70,6 +73,7 @@ class DaostackService():
             self._VOTE: list(),
             self._STAKE: list(),
             self._PROPOSAL: list(),
+            self._ORGANIZATION: list(),
         }
 
 
@@ -102,6 +106,12 @@ class DaostackService():
         Returns the app's layout. 
         """
         orgs: OrganizationList = self.organizations
+
+        if not self.are_panes:
+            view_cont.bind_callbacks(
+                app=app, 
+                section_id=TEXT['css_id_organization'])
+
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
@@ -118,6 +128,7 @@ class DaostackService():
         l_vote: List[Callable] = list()
         l_stake: List[Callable] = list()
         l_proposal: List[Callable] = list()
+        l_organization: List[Callable] = list()
 
         # Panes are already created.
         if self.are_panes:
@@ -125,18 +136,40 @@ class DaostackService():
             l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
             l_stake = [c.layout.get_layout for c in self.__controllers[self._STAKE]]
             l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
+            l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
         else:
             l_rep_h = self.__get_rep_holder_charts()
             l_vote = self.__get_vote_charts()
             l_stake = self.__get_stake_charts()
             l_proposal = self.__get_proposal_charts()
+            l_organization = self.__get_organization_charts()
 
         return {
-            TEXT['rep_holder_title']: l_rep_h,
-            TEXT['vote_title']: l_vote,
-            TEXT['stake_title']: l_stake,
-            TEXT['proposal_title']: l_proposal,
+            COMMON_TEXT['no_data_selected']: {
+                'callables': l_organization,
+                'css_id': TEXT['css_id_organization'],
+            },
+            TEXT['rep_holder_title']: {
+                'callables': l_rep_h,
+                'css_id': TEXT['css_id_reputation_holders'],
+            },
+            TEXT['vote_title']: {
+                'callables': l_vote,
+                'css_id': TEXT['css_id_votes'],
+            },
+            TEXT['stake_title']: {
+                'callables': l_stake,
+                'css_id': TEXT['css_id_stake'],
+            },
+            TEXT['proposal_title']: {
+                'callables': l_proposal,
+                'css_id': TEXT['css_id_proposal'],
+            },
         }
+
+
+    def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
+        return [lambda: html.Div()]
 
 
     def __get_rep_holder_charts(self) -> List[Callable[[], html.Div]]:

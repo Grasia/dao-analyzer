@@ -10,6 +10,11 @@
 TEXT: dict = {
     'approved_proposals': 'Approved proposals',
     'css_pane_border': 'daohaus-border',
+    'css_id_member': 'daohaus-members',
+    'css_id_organization': 'daohaus-organization',
+    'css_id_rage_quit': 'daohaus-rage-quit',
+    'css_id_vote': 'daohaus-vote',
+    'css_id_proposal': 'daohaus-proposal',
     'pane_css_prefix': 'daohaus-pane',
     'proposal_donation': 'Donation proposals',
     'proposal_grant': 'Grant proposals',

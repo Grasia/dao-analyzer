@@ -10,6 +10,12 @@
 TEXT: dict = {
     'approved_votes': 'Approved votes',
     'css_pane_border': 'aragon-border',
+    'css_id_app': 'aragon-apps',
+    'css_id_cast': 'aragon-casts',
+    'css_id_organization': 'aragon-organization',
+    'css_id_token_holder': 'aragon-token-holders',
+    'css_id_transactions': 'aragon-transactions',
+    'css_id_vote': 'aragon-votes',
     'pane_css_prefix': 'aragon-pane',
     'rejected_votes': 'Rejected votes',
     'title_active_token_holders': 'Active token holders',

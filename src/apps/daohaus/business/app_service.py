@@ -11,7 +11,9 @@
 from typing import Dict, List, Callable
 import dash_html_components as html
 
-import src.apps.common.presentation.dashboard_view as view
+from src.app import app
+import src.apps.common.presentation.dashboard_view.dashboard_view as view
+import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 import src.apps.daohaus.data_access.requesters.cache_requester as cache
@@ -53,6 +55,7 @@ class DaohausService():
     _VOTE: int = 1
     _RAGE_QUIT: int = 2
     _PROPOSAL: int = 3
+    _ORGANIZATION: int = 4
 
     def __init__(self):
         # app state
@@ -62,6 +65,7 @@ class DaohausService():
             self._VOTE: list(),
             self._RAGE_QUIT: list(),
             self._PROPOSAL: list(),
+            self._ORGANIZATION: list(),
         }
 
 
@@ -94,6 +98,12 @@ class DaohausService():
         Returns the app's layout. 
         """
         orgs: OrganizationList = self.organizations
+
+        if not self.are_panes:
+            view_cont.bind_callbacks(
+                app=app, 
+                section_id=TEXT['css_id_organization'])
+
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
@@ -110,6 +120,7 @@ class DaohausService():
         l_vote: List[Callable] = list()
         l_rage_q: List[Callable] = list()
         l_proposal: List[Callable] = list()
+        l_organization: List[Callable] = list()
 
         # Panes are already created.
         if self.are_panes:
@@ -117,18 +128,40 @@ class DaohausService():
             l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
             l_rage_q = [c.layout.get_layout for c in self.__controllers[self._RAGE_QUIT]]
             l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
+            l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
         else:
             l_member = self.__get_member_charts()
             l_vote = self.__get_vote_charts()
             l_rage_q = self.__get_rage_quits_charts()
             l_proposal = self.__get_proposal_charts()
+            l_organization = self.__get_organization_charts()
 
         return {
-            TEXT['title_member']: l_member,
-            TEXT['title_rage_quits']: l_rage_q,
-            TEXT['title_vote']: l_vote,
-            TEXT['title_proposal']: l_proposal,
+            COMMON_TEXT['no_data_selected']: {
+                'callables': l_organization,
+                'css_id': TEXT['css_id_organization'],
+            },
+            TEXT['title_member']: {
+                'callables': l_member,
+                'css_id': TEXT['css_id_member'],
+            },
+            TEXT['title_rage_quits']: {
+                'callables': l_rage_q,
+                'css_id': TEXT['css_id_rage_quit'],
+            },
+            TEXT['title_vote']: {
+                'callables': l_vote,
+                'css_id': TEXT['css_id_vote'],
+            },
+            TEXT['title_proposal']: {
+                'callables': l_proposal,
+                'css_id': TEXT['css_id_proposal'],
+            },
         }
+
+
+    def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
+        return [lambda: html.Div()]
 
 
     def __get_member_charts(self) -> List[Callable[[], html.Div]]:
