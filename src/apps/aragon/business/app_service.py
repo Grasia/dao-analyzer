@@ -177,6 +177,16 @@ class AragonService():
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._CAST
         ))
+
+        # active voters
+        charts.append(self.__create_chart(
+            title=TEXT['title_active_voters'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.ACTIVE_VOTERS,
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._CAST
+        ))
         return charts
 
 
