@@ -12,6 +12,7 @@ TEXT: dict = {
     'css_pane_border': 'aragon-border',
     'pane_css_prefix': 'aragon-pane',
     'rejected_votes': 'Rejected votes',
+    'title_active_token_holders': 'Active token holders',
     'title_active_voters': 'Active voters',
     'title_cast_type': 'Casted votes by support',
     'title_installed_apps': 'Installed apps',

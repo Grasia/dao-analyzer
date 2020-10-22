@@ -16,7 +16,7 @@ from src.apps.common.business.transfers.serie import Serie
 import src.apps.common.data_access.pandas_utils as pd_utl
 
 
-class StActiveMembers(IMetricStrategy):
+class StActiveTokenHolders(IMetricStrategy):
     __DF_CAST_DATE = 'createdAt'
     __DF_VOTE_DATE = 'startDate'
     __DF_TRANSACTION_DATE = 'date'

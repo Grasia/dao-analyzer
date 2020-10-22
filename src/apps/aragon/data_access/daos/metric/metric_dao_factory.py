@@ -15,7 +15,9 @@ from src.apps.aragon.data_access.daos.metric.strategy.st_new_additions import St
 from src.apps.aragon.data_access.daos.metric.strategy.st_installed_apps import StInstalledApps
 from src.apps.aragon.data_access.daos.metric.strategy.st_cast_type import StCastType
 from src.apps.aragon.data_access.daos.metric.strategy.st_vote_outcome import StVoteOutcome
-from src.apps.aragon.data_access.daos.metric.strategy.st_active_voters import StActiveVoters 
+from src.apps.aragon.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
+from src.apps.aragon.data_access.daos.metric.strategy.st_active_token_holders import StActiveTokenHolders
+
 
 NEW_VOTES = 0
 NEW_TRANSACTIONS = 1
@@ -23,6 +25,7 @@ INSTALLED_APPS = 2
 CAST_TYPE = 3
 VOTE_OUTCOME = 4
 ACTIVE_VOTERS = 5
+ACTIVE_TOKEN_HOLDERS = 6
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao:
@@ -53,6 +56,13 @@ def get_dao(ids: List[str], metric: int) -> MetricDao:
     elif metric == ACTIVE_VOTERS:
         stg = StActiveVoters()
         requester = cache.CacheRequester(srcs=[cache.CASTS])
+        address_key = 'orgAddress'
+    elif metric == ACTIVE_TOKEN_HOLDERS:
+        stg = StActiveTokenHolders()
+        requester = cache.CacheRequester(srcs=[
+            cache.CASTS,
+            cache.VOTES,
+            cache.TRANSACTIONS])
         address_key = 'orgAddress'
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key=address_key)
