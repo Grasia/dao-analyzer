@@ -23,6 +23,8 @@ import src.apps.daostack.data_access.daos.metric.strategy.\
     st_total_votes_stakes_option as st_tvso
 from src.apps.daostack.data_access.daos.metric.strategy.st_active_users\
     import StActiveUsers
+from src.apps.daostack.data_access.daos.metric.strategy.st_active_organization\
+    import StActiveOrganization
 
 NEW_USERS = 0
 NEW_PROPOSALS = 1
@@ -37,6 +39,7 @@ PROPOSALS_BOOST_SUCCES_RATIO = 9
 TOTAL_VOTES_OPTION = 10
 TOTAL_STAKES_OPTION = 11
 ACTIVE_USERS = 12
+ACTIVE_ORGANIZATION = 13
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
@@ -84,6 +87,12 @@ def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
         requester = cache.CacheRequester(srcs=[
             cache.PROPOSALS, 
             cache.VOTES, 
+            cache.STAKES])
+    elif metric == ACTIVE_ORGANIZATION:
+        stg = StActiveOrganization()
+        requester = cache.CacheRequester(srcs=[
+            cache.PROPOSALS,
+            cache.VOTES,
             cache.STAKES])
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='dao')

@@ -43,15 +43,15 @@ def __generate_selector(labels: List[Dict[str, str]]) -> html.Div:
 def __generate_sections(sections: Dict[str, List[Callable]], color_app: str) -> html.Div:
     children: List = list()
 
-    for name, callables in sections.items():
+    for name, data in sections.items():
         charts = list()
-        for chart_pane in callables:
+        for chart_pane in data['callables']:
             charts.append(chart_pane())
         
         sec = html.Div(
             className='section',
             children=[
-                html.Div(name, className=f'title-section {color_app}'),
+                html.Div(name, id=data['css_id'], className=f'title-section {color_app}'),
                 html.Div(children=charts, className='graph-section')
             ],
         )

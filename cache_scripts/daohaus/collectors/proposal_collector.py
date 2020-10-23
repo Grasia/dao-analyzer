@@ -21,8 +21,9 @@ sharesRequested lootRequested tributeOffered paymentRequested yesVotes noVotes \
 sponsored sponsoredAt processed didPass yesShares noShares}}}}'
 
 O_PROPOSAL_QUERY: str = '{{proposal(id: \"{0}\")\
-{{id yesVotes noVotes sponsor sponsored sponsoredAt processed didPass yesShares \
-noShares}}}}'
+{{id createdAt proposalId molochAddress memberAddress proposer sponsor \
+sharesRequested lootRequested tributeOffered paymentRequested yesVotes noVotes \
+sponsored sponsoredAt processed didPass yesShares noShares}}}}'
 
 META_KEY: str = 'proposals'
 
@@ -73,14 +74,13 @@ def join_data(df: pd.DataFrame, df2: pd.DataFrame, df3: pd.DataFrame) -> pd.Data
     """
     dff: pd.DataFrame = df
 
-    dff.set_index('id', inplace=True)
-
     if len(df2) > 0:
-        df2.set_index('id', inplace=True)
-        dff.update(df2)
+        ids: List[str] = df2['id'].tolist()
+        index = dff[dff['id'].isin(ids)].index
+        dff.drop(index, inplace=True)
+        dff = dff.append(df2)
 
     if len(df3) > 0:
-        df3.set_index('id', inplace=True)
         dff = dff.append(df3)
 
     return dff
@@ -90,8 +90,8 @@ def update_proposals(meta_data: Dict) -> None:
     df: pd.DataFrame
 
     data: List[Dict] = _request_proposals(current_rows=meta_data[META_KEY]['rows'])
-    
     df3: pd.DataFrame = _transform_to_df(data=data)
+    size: int = len(df3)
 
     filename: str = os.path.join('datawarehouse', 'daohaus', 'proposals.csv')
 
@@ -103,7 +103,8 @@ def update_proposals(meta_data: Dict) -> None:
         df2: pd.DataFrame = pd.DataFrame(open_prop)
 
         df = join_data(df=df, df2=df2, df3=df3)
-        df.to_csv(filename)
+        df.to_csv(filename, index=False)
+        size = len(df)
 
     # save all proposals
     else:
@@ -112,7 +113,7 @@ def update_proposals(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(data)
+    meta_data[META_KEY]['rows'] = size
     meta_data[META_KEY]['lastUpdate'] = str(date.today())
 
 
