@@ -1,5 +1,5 @@
 """
-   Descp: New members test.
+   Descp: New additions test.
 
    Created on: 7-oct-2020
 

@@ -13,13 +13,15 @@ from dash.exceptions import PreventUpdate
 from src.apps.common.presentation.main_view.main_view import generate_layout
 import src.apps.daostack.business.app_service as daostack
 import src.apps.daohaus.business.app_service as daohaus
+import src.apps.aragon.business.app_service as aragon
 from src.apps.common.resources.strings import TEXT
 
-def bind_callbacks(app) -> None:
+def bind_callbacks(app) -> None: # noqa: C901
 
     # Callbacks need to be loaded twice. 
     daostack.get_service().get_layout()
     daohaus.get_service().get_layout()
+    aragon.get_service().get_layout()
 
 
     @app.callback(
@@ -27,7 +29,6 @@ def bind_callbacks(app) -> None:
         [Input('url', 'pathname')]
     )
     def display_page(pathname):
-        #print(pathname)
         if pathname == TEXT['url_main']:
             return generate_layout(
                 header_title=TEXT['app_title'], 
@@ -42,6 +43,11 @@ def bind_callbacks(app) -> None:
                 header_title=TEXT['app_title_daohaus'],
                 app_color=TEXT['css_color_daohaus'],
                 body=daohaus.get_service().get_layout())
+        elif pathname == TEXT['url_aragon']:
+            return generate_layout(
+                header_title=TEXT['app_title_aragon'],
+                app_color=TEXT['css_color_aragon'],
+                body=aragon.get_service().get_layout())
         else:
             return TEXT['not_found']
 
@@ -49,12 +55,13 @@ def bind_callbacks(app) -> None:
     @app.callback(
         Output('url', 'pathname'),
         [Input('daostack-bt', 'n_clicks'),
-         Input('daohaus-bt', 'n_clicks')]
+         Input('daohaus-bt', 'n_clicks'),
+         Input('aragon-bt', 'n_clicks')]
     )
-    def load_ecosystem(bt_daostack: int, bt_daohaus: int) -> str:
+    def load_ecosystem(bt_daostack: int, bt_daohaus: int, bt_aragon: int) -> str:
         ctx = dash.callback_context
 
-        if not bt_daostack and not bt_daohaus:
+        if not bt_daostack and not bt_daohaus and not bt_aragon:
             raise PreventUpdate
         
         trigger = ctx.triggered[0]['prop_id'].split('.')[0]
@@ -64,5 +71,7 @@ def bind_callbacks(app) -> None:
             pathname = TEXT['url_daostack']
         elif trigger == 'daohaus-bt':
             pathname = TEXT['url_daohaus']
+        elif trigger == 'aragon-bt':
+            pathname = TEXT['url_aragon']
 
         return pathname

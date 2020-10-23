@@ -51,6 +51,11 @@ def __generate_body() -> html.Div:
                 bt_id='daostack-bt',
                 css_class='daostack'),
             __generate_ecosystem_pane(
+                img=f'{REL_PATH}aragon.png',
+                title=TEXT['aragon'],
+                bt_id='aragon-bt',
+                css_class='aragon'),
+            __generate_ecosystem_pane(
                 img=f'{REL_PATH}daohaus.png',
                 title=TEXT['daohaus'],
                 bt_id='daohaus-bt',
