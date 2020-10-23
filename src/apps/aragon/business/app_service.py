@@ -170,7 +170,20 @@ class AragonService():
 
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # active organization
+        charts.append(self.__create_chart(
+            title=TEXT['title_active_organization'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.ACTIVE_ORGANIZATION, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._ORGANIZATION
+        ))
+
+        return charts
 
 
     def __get_token_holder_charts(self) -> List[Callable[[], html.Div]]:

@@ -18,6 +18,7 @@ TEXT: dict = {
     'css_id_vote': 'aragon-votes',
     'pane_css_prefix': 'aragon-pane',
     'rejected_votes': 'Rejected votes',
+    'title_active_organization': 'Months which the DAO has registered activity',
     'title_active_token_holders': 'Active token holders',
     'title_active_voters': 'Active voters',
     'title_cast_type': 'Casted votes by support',
