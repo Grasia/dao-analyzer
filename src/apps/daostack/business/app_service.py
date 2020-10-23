@@ -169,7 +169,18 @@ class DaostackService():
 
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # active organizations
+        charts.append(self.__create_chart(
+            title=TEXT['title_active_organization'],
+            adapter=MetricAdapter(s_factory.ACTIVE_ORGANIZATION, call),
+            figure=BarFigure(),
+            cont_key=self._ORGANIZATION
+        ))
+
+        return charts
 
 
     def __get_rep_holder_charts(self) -> List[Callable[[], html.Div]]:

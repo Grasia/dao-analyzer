@@ -38,6 +38,7 @@ TEXT: dict = {
     'rep_holder_title': 'Reputation holders',
     'rel_pass': 'Relative majority approval',
     'stake_title': 'Stakes',
+    'title_active_organization': 'Months which the DAO has registered activity',
     'total_stakes_option_title': 'Total stakes option',
     'total_stakes_title': 'Total stakes',
     'total_votes_option_title': 'Total votes option',

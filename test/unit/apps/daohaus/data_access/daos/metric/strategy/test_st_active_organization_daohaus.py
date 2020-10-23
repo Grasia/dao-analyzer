@@ -18,7 +18,7 @@ from src.apps.daohaus.data_access.daos.metric.strategy.\
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
-class StActiveMembersTest(unittest.TestCase):
+class StActiveOrganizationTest(unittest.TestCase):
 
     def __check_lists(self, df: pd.DataFrame, out: List[int]) -> None:
         strategy: StActiveOrganization = StActiveOrganization()
