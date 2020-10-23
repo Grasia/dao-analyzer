@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.4.0 - 2020-10-23
+### Added
+- Scripts to download and update Aragon's data
+- Aragon metrics:
+    * Months which the DAO has registered activity (Also availables for DAOstack, and DAOhaus)
+    * Active token holders
+    * New votes
+    * Votes's outcome
+    * Casted votes by support
+    * Active voters
+    * New transactions
+    * Installed apps
+
 ## 0.3.1 - 2020-10-14
 ### Added
 - Small visual changes.
