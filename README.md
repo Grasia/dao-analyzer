@@ -1,8 +1,10 @@
 # DAO-Analyzer
-It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/).
+It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/).
 
 ## Available metrics
 * DAOstack:
+    * DAO:
+        * Months which the DAO has registered activity
     * Reputation Holders:
         * New reputation holders
         * Active reputation holders
@@ -20,6 +22,8 @@ It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](h
         * Success rate of the stakes by type
 
 * DAOhaus:
+    * DAO:
+        * Months which the DAO has registered activity
     * Members:
         * New members
         * Active members
@@ -33,8 +37,24 @@ It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](h
         * Proposals outcome
         * Proposals type
 
+* Aragon:
+    * DAO:
+        * Months which the DAO has registered activity
+    * Token Holders:
+        * Active token holders
+    * Votes:
+        * New votes
+        * Votes's outcome
+    * Casted votes:
+        * Casted votes by support
+        * Active voters
+    * Transactions:
+        * New transactions
+    * Aragon apps:
+        * Installed apps
+
 ## Architecture
-There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), and the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png).
+There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/aragon/class_diagram.png).
 
 ## Download
 Enter in your terminal (git must be installed) and write down:
