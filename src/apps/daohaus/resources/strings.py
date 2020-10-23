@@ -22,6 +22,7 @@ TEXT: dict = {
     'proposal_other': 'Others',
     'rejected_proposals': 'Rejected proposals',
     'title_active_members': 'Active members',
+    'title_active_organization': 'Months which the DAO has registered activity',
     'title_active_voters': 'Active voters',
     'title_member': 'Members',
     'title_new_members': 'New Members',

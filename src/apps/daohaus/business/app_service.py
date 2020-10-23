@@ -27,7 +27,6 @@ from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import M
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.daohaus.business.metric_adapter.basic_adapter import BasicAdapter
 from src.apps.daohaus.business.metric_adapter.votes_type import VotesType
-from src.apps.daohaus.business.metric_adapter.active_voters import ActiveVoters
 from src.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOutcome
 from src.apps.daohaus.business.metric_adapter.proposal_type import ProposalType 
 import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
@@ -161,7 +160,20 @@ class DaohausService():
 
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
-        return [lambda: html.Div()]
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        # active organizations
+        charts.append(self.__create_chart(
+            title=TEXT['title_active_organization'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.ACTIVE_ORGANIZATION, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._ORGANIZATION
+        ))
+        return charts
+
 
 
     def __get_member_charts(self) -> List[Callable[[], html.Div]]:
@@ -205,7 +217,9 @@ class DaohausService():
         # active voters
         charts.append(self.__create_chart(
             title=TEXT['title_active_voters'],
-            adapter=ActiveVoters(call),
+            adapter=BasicAdapter(
+                metric_id=s_factory.ACTIVE_VOTERS, 
+                organizations=call),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
