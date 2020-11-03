@@ -25,25 +25,25 @@ TOKEN_QUERY: str = '{{miniMeTokens(first: {0}, skip: {1}\
 META_KEY: str = 'tokenHolders'
 
 
-def _request_token_holders(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_TOKENS)
+def _request_token_holders(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Token Holders\'s data ...")
     start: datetime = datetime.now()
 
-    holders: List[Dict] = requester.n_requests(query=TOKEN_HOLDER_QUERY, skip_n=current_rows, 
+    holders: List[Dict] = requester.n_requests(query=TOKEN_HOLDER_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Token Holders\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return holders
 
 
-def _transform_to_df(holders: List[Dict]) -> pd.DataFrame:
+def _transform_to_df(holders: List[Dict], endpoint: str) -> pd.DataFrame:
     if not holders:
         return pd.DataFrame()
 
     df: pd.DataFrame = pd.DataFrame(holders)
 
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_TOKENS)
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     tokens: List[Dict] = requester.n_requests(
         query=TOKEN_QUERY, 
         skip_n=0, 
@@ -59,9 +59,15 @@ def _transform_to_df(holders: List[Dict]) -> pd.DataFrame:
     return df
 
 
-def update_holders(meta_data: Dict) -> None:
-    holders: List[Dict] = _request_token_holders(current_rows=meta_data[META_KEY]['rows'])
-    df: pd.DataFrame = _transform_to_df(holders=holders)
+def update_holders(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    holders: List[Dict] = _request_token_holders(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['aragon_tokens'])
+
+    df: pd.DataFrame = _transform_to_df(
+        holders=holders,
+        endpoint=endpoints[net]['aragon_tokens'])
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
@@ -73,10 +79,5 @@ def update_holders(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(holders)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_holders(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(holders)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

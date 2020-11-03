@@ -23,8 +23,8 @@ supportRequiredPct minAcceptQuorum yea nay voteNum votingPower}}}}'
 META_KEY: str = 'votes'
 
 
-def _request_votes() -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_VOTING)
+def _request_votes(endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Vote data ...")
     start: datetime = datetime.now()
 
@@ -39,22 +39,25 @@ def _transform_to_df(votes: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(votes)
 
 
-def update_votes(meta_data: Dict) -> None:
-    votes: List[Dict] = _request_votes()
+def update_votes(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    votes: List[Dict] = _request_votes(endpoint=endpoints[net]['aragon_voting'])
     df: pd.DataFrame = _transform_to_df(votes=votes)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
-    # Always rewrite the whole file cause it is more efficient to do it than request all the open proposals.
-    df.to_csv(filename, index=False)
+    if not df.empty:
+        if os.path.isfile(filename):
+            # Always rewrite the whole file cause it is more efficient to do it than request all the open proposals.
+            dff = pd.read_csv(filename, header=0)
+            dff = [dff['network'] == net]
+            df = df.append(dff)
+            df.to_csv(filename, index=False)
+        else:
+            df.to_csv(filename)
 
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = len(votes)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_votes(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = len(votes)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
