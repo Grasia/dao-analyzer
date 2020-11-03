@@ -19,10 +19,10 @@ class DaoOrganizationListTest(unittest.TestCase):
 
     def __get_test_data(self) -> pd.DataFrame:
         return pd.DataFrame([
-            {'id': '0', 'name': 'dao1', 'trash': 'trash'},
-            {'id': '-1', 'name': 'dao-1', 'trash': 'trash'},
-            {'id': '4', 'name': 'dao4', 'trash': 'trash'},
-            {'id': '88pku88d8dd8d8', 'name': 'odd', 'trash': 'trash'},
+            {'id': '0', 'name': 'dao1', 'trash': 'trash', 'network': 'a'},
+            {'id': '-1', 'name': 'dao-1', 'trash': 'trash', 'network': 'b'},
+            {'id': '4', 'name': 'dao4', 'trash': 'trash', 'network': 'c'},
+            {'id': '88pku88d8dd8d8', 'name': 'odd', 'trash': 'trash', 'network': 'a'},
         ])
 
 
@@ -48,7 +48,8 @@ class DaoOrganizationListTest(unittest.TestCase):
 
         for org in orgs.get_organizations():
             self.assertIn(org.get_id(), df.index)
-            self.assertEqual(org.get_name(), df.loc[org.get_id(), 'name'])
+            name: str = f"{df.loc[org.get_id(), 'name']} ({df.loc[org.get_id(), 'network']})"
+            self.assertEqual(org.get_name(), name)
 
 
 if __name__ == "__main__":

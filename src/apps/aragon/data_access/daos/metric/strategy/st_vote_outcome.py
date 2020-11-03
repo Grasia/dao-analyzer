@@ -91,7 +91,7 @@ class StVoteOutcome(IMetricStrategy):
 
     def __calculate_outcome(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        outcome = (((positive voted tokens) - (negative voted tokens)) / total voted tokens * 100) >= support required
+        outcome = ((positive voted tokens) / total voted tokens * 100) >= support required
                 and
                 ((positive voted tokens) / total tokens * 100) >= minimum accepted quorum
         """

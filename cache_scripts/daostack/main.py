@@ -38,14 +38,13 @@ COLLECTORS: List = [
 ]# add new collectors
 
 
-def _fill_empty_keys(meta_data: Dict) -> Dict:
-    meta_fill: Dict = meta_data
+def _fill_empty_keys() -> Dict:
+    meta_fill: Dict = {}
 
     for n in NETWORKS:
         meta_fill[n] = {}
         for k in KEYS:
-            if k not in meta_data:
-                meta_fill[n][k] = {'rows': 0}
+            meta_fill[n][k] = {'rows': 0}
 
     return meta_fill
 
@@ -57,9 +56,9 @@ def _get_meta_data() -> Dict:
         with open(META_PATH) as json_file:
             meta_data = json.load(json_file)
     else:
-        meta_data = dict() # there are not previous executions
+        meta_data = _fill_empty_keys()
 
-    return _fill_empty_keys(meta_data=meta_data)
+    return meta_data
 
 
 def _write_meta_data(meta: Dict) -> None:
