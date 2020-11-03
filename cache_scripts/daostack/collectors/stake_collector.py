@@ -21,12 +21,12 @@ STAKE_QUERY: str = '{{proposalStakes(first: {0}, skip: {1})\
 META_KEY: str = 'proposalStakes'
 
 
-def _request_stakes(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
+def _request_stakes(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting stakes\'s data ...")
     start: datetime = datetime.now()
 
-    stakes: List[Dict] = requester.n_requests(query=STAKE_QUERY, skip_n=current_rows, 
+    stakes: List[Dict] = requester.n_requests(query=STAKE_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Stake\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -48,11 +48,13 @@ def _transform_to_df(stakes: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(stakes)
 
 
-def update_stakes(meta_data: Dict) -> None:
-    stakes: List[Dict] = _request_stakes(current_rows=
-        meta_data[META_KEY]['rows'])
+def update_stakes(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    stakes: List[Dict] = _request_stakes(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['daostack'])
 
     df: pd.DataFrame = _transform_to_df(stakes=stakes)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'daostack', 'stakes.csv')
 
@@ -64,10 +66,5 @@ def update_stakes(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(stakes)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_stakes(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(stakes)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

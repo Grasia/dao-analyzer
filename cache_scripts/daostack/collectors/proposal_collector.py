@@ -31,20 +31,20 @@ META_KEY: str = 'proposals'
 OUT_FILE: str = os.path.join('datawarehouse', 'daostack', 'proposals.csv')
 
 
-def _request_proposals(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
+def _request_proposals(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting proposal\'s data ...")
     start: datetime = datetime.now()
 
-    proposals: List[Dict] = requester.n_requests(query=PROPOSAL_QUERY, skip_n=current_rows, 
+    proposals: List[Dict] = requester.n_requests(query=PROPOSAL_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Proposal\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return proposals
 
 
-def _request_open_proposals(ids: List[str]) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
+def _request_open_proposals(ids: List[str], endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting open proposals ...")
     start: datetime = datetime.now()
 
@@ -77,8 +77,9 @@ def _transform_to_df(proposals: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(proposals)
 
 
-def _get_opened_proposals(df: pd.DataFrame) -> List[str]:
+def _get_opened_proposals(df: pd.DataFrame, network: str) -> List[str]:
     dff: pd.DataFrame = df[df['executedAt'].isnull()]
+    dff = dff[dff['network'] == network]
     return dff['id'].tolist()
 
 
@@ -100,20 +101,25 @@ def join_data(df: pd.DataFrame, df2: pd.DataFrame, df3: pd.DataFrame) -> pd.Data
     return dff
 
 
-def update_proposals(meta_data: Dict) -> None:
+def update_proposals(meta_data: Dict, net: str, endpoints: Dict) -> None:
     df: pd.DataFrame
 
-    proposals: List[Dict] = _request_proposals(current_rows=
-        meta_data[META_KEY]['rows'])
+    proposals: List[Dict] = _request_proposals(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['daostack'])
     df3: pd.DataFrame = _transform_to_df(proposals=proposals)
+    df3['network'] = net
     size: int = len(df3)
 
     # fetch new proposals and update opened proposals
     if os.path.isfile(OUT_FILE):
         df = pd.read_csv(OUT_FILE, header=0)
 
-        open_prop: List[Dict] = _request_open_proposals(ids=_get_opened_proposals(df))
+        open_prop: List[Dict] = _request_open_proposals(
+            ids=_get_opened_proposals(df, network=net),
+            endpoint=endpoints[net]['daostack'])
         df2: pd.DataFrame = _transform_to_df(proposals=open_prop)
+        df2['network'] = net
 
         df = join_data(df=df, df2=df2, df3=df3)
         df.to_csv(OUT_FILE, index=False)
@@ -126,10 +132,5 @@ def update_proposals(meta_data: Dict) -> None:
     print(f'Data stored in {OUT_FILE}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = size
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_proposals(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = size
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

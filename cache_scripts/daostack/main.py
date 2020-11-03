@@ -16,9 +16,12 @@ import daostack.collectors.vote_collector as vote
 import daostack.collectors.stake_collector as stake
 import daostack.collectors.proposal_collector as proposal
 
+with open(os.path.join('cache_scripts', 'endpoints.json')) as json_file:
+    ENDPOINTS: Dict = json.load(json_file)
+
 DIRS: str = os.path.join('datawarehouse', 'daostack')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
-NETWORKS: List[str] = ['mainnet', 'xdai']
+NETWORKS: List[str] = ENDPOINTS.keys()
 KEYS: List[str] = [
     dao.META_KEY, 
     rep_h.META_KEY, 
@@ -39,6 +42,7 @@ def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
 
     for n in NETWORKS:
+        meta_fill[n] = {}
         for k in KEYS:
             if k not in meta_data:
                 meta_fill[n][k] = {'rows': 0}
@@ -72,8 +76,12 @@ def run() -> None:
 
     meta_data: Dict = _get_meta_data()
 
-    for c in COLLECTORS:
-        c(meta_data)
+    for n in NETWORKS:
+        print(f'------------- Getting data from {n} -------------\n')
+        for c in COLLECTORS:
+            c(  meta_data=meta_data,
+                net=n,
+                endpoints=ENDPOINTS)
 
     _write_meta_data(meta=meta_data)
 

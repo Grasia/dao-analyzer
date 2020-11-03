@@ -20,12 +20,12 @@ VOTE_QUERY: str = '{{proposalVotes(first: {0}, skip: {1})\
 META_KEY: str = 'proposalVotes'
 
 
-def _request_votes(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
+def _request_votes(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting votes\'s data ...")
     start: datetime = datetime.now()
 
-    votes: List[Dict] = requester.n_requests(query=VOTE_QUERY, skip_n=current_rows, 
+    votes: List[Dict] = requester.n_requests(query=VOTE_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Votes\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -47,11 +47,13 @@ def _transform_to_df(votes: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(votes)
 
 
-def update_votes(meta_data: Dict) -> None:
-    votes: List[Dict] = _request_votes(current_rows=
-        meta_data[META_KEY]['rows'])
+def update_votes(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    votes: List[Dict] = _request_votes(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['daostack'])
 
     df: pd.DataFrame = _transform_to_df(votes=votes)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'daostack', 'votes.csv')
 
@@ -63,10 +65,5 @@ def update_votes(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(votes)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_votes(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(votes)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
