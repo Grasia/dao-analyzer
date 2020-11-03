@@ -54,7 +54,7 @@ def update_votes(meta_data: Dict, net: str, endpoints: Dict) -> None:
             df = df.append(dff)
             df.to_csv(filename, index=False)
         else:
-            df.to_csv(filename)
+            df.to_csv(filename, index=False)
 
     print(f'Data stored in {filename}.\n')
 
