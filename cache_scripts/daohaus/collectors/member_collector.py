@@ -21,12 +21,12 @@ MEMBER_QUERY: str = '{{members(first: {0}, skip: {1}\
 META_KEY: str = 'members'
 
 
-def _request_members(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOHAUS)
+def _request_members(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting members\'s data ...")
     start: datetime = datetime.now()
 
-    members: List[Dict] = requester.n_requests(query=MEMBER_QUERY, skip_n=current_rows, 
+    members: List[Dict] = requester.n_requests(query=MEMBER_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'members\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -37,9 +37,13 @@ def _transform_to_df(data: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def update_members(meta_data: Dict) -> None:
-    data: List[Dict] = _request_members(current_rows=meta_data[META_KEY]['rows'])
+def update_members(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    data: List[Dict] = _request_members(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['daohaus'])
+
     df: pd.DataFrame = _transform_to_df(data=data)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'daohaus', 'members.csv')
 
@@ -51,10 +55,5 @@ def update_members(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(data)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_members(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(data)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

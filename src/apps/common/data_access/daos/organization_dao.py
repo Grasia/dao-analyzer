@@ -24,6 +24,7 @@ class OrganizationListDao:
         orgs: OrganizationList = OrganizationList()
 
         for _, row in df.iterrows():
-            orgs.add_organization(Organization(o_id=row['id'], name=row['name']))
+            name: str = f"{row['name']} ({row['network']})"
+            orgs.add_organization(Organization(o_id=row['id'], name=name))
         
         return orgs

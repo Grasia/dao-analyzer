@@ -21,12 +21,12 @@ TRANSACTION_QUERY: str = '{{transactions(first: {0}, skip: {1}\
 META_KEY: str = 'transactions'
 
 
-def _request_transactions(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_FINANCE)
+def _request_transactions(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Transaction's data ...")
     start: datetime = datetime.now()
 
-    transactions: List[Dict] = requester.n_requests(query=TRANSACTION_QUERY, skip_n=current_rows, 
+    transactions: List[Dict] = requester.n_requests(query=TRANSACTION_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Transaction\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -37,9 +37,13 @@ def _transform_to_df(transactions: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(transactions)
 
 
-def update_transactions(meta_data: Dict) -> None:
-    transactions: List[Dict] = _request_transactions(current_rows=meta_data[META_KEY]['rows'])
+def update_transactions(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    transactions: List[Dict] = _request_transactions(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['aragon_finance'])
+
     df: pd.DataFrame = _transform_to_df(transactions=transactions)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
@@ -51,10 +55,5 @@ def update_transactions(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(transactions)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_transactions(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(transactions)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

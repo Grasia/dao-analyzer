@@ -21,12 +21,12 @@ APP_QUERY: str = '{{apps(first: {0}, skip: {1}\
 META_KEY: str = 'apps'
 
 
-def _request_apps(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_MAINNET)
+def _request_apps(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting App\'s data ...")
     start: datetime = datetime.now()
 
-    apps: List[Dict] = requester.n_requests(query=APP_QUERY, skip_n=current_rows, 
+    apps: List[Dict] = requester.n_requests(query=APP_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'App\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -42,9 +42,13 @@ def _transform_to_df(apps: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(apps)
 
 
-def update_apps(meta_data: Dict) -> None:
-    apps: List[Dict] = _request_apps(current_rows=meta_data[META_KEY]['rows'])
+def update_apps(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    apps: List[Dict] = _request_apps(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['aragon'])
+
     df: pd.DataFrame = _transform_to_df(apps=apps)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
@@ -56,10 +60,5 @@ def update_apps(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(apps)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_apps(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(apps)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

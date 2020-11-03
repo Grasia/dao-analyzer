@@ -21,12 +21,12 @@ REP_HOLDER_QUERY: str = '{{reputationHolders(first: {0}, skip: {1})\
 META_KEY: str = 'reputationHolders'
 
 
-def _request_rep_holders(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.DAOSTACK)
+def _request_rep_holders(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting reputation holder\'s data ...")
     start: datetime = datetime.now()
 
-    reps: List[Dict] = requester.n_requests(query=REP_HOLDER_QUERY, skip_n=current_rows, 
+    reps: List[Dict] = requester.n_requests(query=REP_HOLDER_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Reputation holder\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -43,11 +43,13 @@ def _transform_to_df(reps: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(reps)
 
 
-def update_rep_holders(meta_data: Dict) -> None:
-    reps: List[Dict] = _request_rep_holders(current_rows=
-        meta_data[META_KEY]['rows'])
+def update_rep_holders(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    reps: List[Dict] = _request_rep_holders(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['daostack'])
 
     df: pd.DataFrame = _transform_to_df(reps=reps)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'daostack', 
         'reputation_holders.csv')
@@ -60,10 +62,5 @@ def update_rep_holders(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(reps)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_rep_holders(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(reps)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

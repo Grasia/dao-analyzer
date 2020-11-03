@@ -19,12 +19,12 @@ REPO_QUERY: str = '{{repos(first: {0}, skip: {1}){{id address name node appCount
 META_KEY: str = 'repos'
 
 
-def _request_repos(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_MAINNET)
+def _request_repos(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Repo data ...")
     start: datetime = datetime.now()
 
-    repos: List[Dict] = requester.n_requests(query=REPO_QUERY, skip_n=current_rows, 
+    repos: List[Dict] = requester.n_requests(query=REPO_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Repo data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -35,9 +35,13 @@ def _transform_to_df(repos: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(repos)
 
 
-def update_repos(meta_data: Dict) -> None:
-    repos: List[Dict] = _request_repos(current_rows=meta_data[META_KEY]['rows'])
+def update_repos(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    repos: List[Dict] = _request_repos(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['aragon'])
+
     df: pd.DataFrame = _transform_to_df(repos=repos)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
@@ -49,10 +53,5 @@ def update_repos(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(repos)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_repos(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(repos)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())

@@ -17,6 +17,7 @@ import src.apps.common.data_access.pandas_utils as pd_utl
 
 
 class StVoteOutcome(IMetricStrategy):
+    __DECIMALS = 10000000000000000
     __DF_DATE = 'startDate'
     __DF_EXECUTED = 'executed'
     __DF_YEA = 'yea'
@@ -90,7 +91,7 @@ class StVoteOutcome(IMetricStrategy):
 
     def __calculate_outcome(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        outcome = (((positive voted tokens) - (negative voted tokens)) / total voted tokens * 100) >= support required
+        outcome = ((positive voted tokens) / total voted tokens * 100) >= support required
                 and
                 ((positive voted tokens) / total tokens * 100) >= minimum accepted quorum
         """
@@ -107,7 +108,7 @@ class StVoteOutcome(IMetricStrategy):
             support: int = self.__percentage(l_support[i])
             quorum: int = self.__percentage(l_quorum[i])
 
-            positive_support: int = self.__ratio((yea[i] - nay[i]), (yea[i] + nay[i])) * 100
+            positive_support: int = self.__ratio(yea[i], (yea[i] + nay[i])) * 100
             total_support: int = self.__ratio(yea[i], total[i]) * 100
             
             has_pass.append( (positive_support >= support) and (total_support >= quorum) )
@@ -123,10 +124,7 @@ class StVoteOutcome(IMetricStrategy):
         """
         transform big int Aragon percentage into a normal percentage
         """
-        if value <= 100:
-            return value
-        
-        return value % 101
+        return value / self.__DECIMALS
 
 
     def __ratio(self, num: int, divider: int) -> int:
