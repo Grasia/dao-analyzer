@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.4.1 - 2020-11-03
+### Added
+- Added xdai DAOs for each platform
+### Fixed
+- Aragon vote outcome calculation
+
 ## 0.4.0 - 2020-10-23
 ### Added
 - Scripts to download and update Aragon's data
