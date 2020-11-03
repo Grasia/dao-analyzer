@@ -18,6 +18,7 @@ from daohaus.collectors import proposal_collector as proposal
 
 DIRS: str = os.path.join('datawarehouse', 'daohaus')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
+NETWORKS: List[str] = ['mainnet', 'xdai']
 KEYS: List[str] = [
     moloch.META_KEY,
     member.META_KEY,
@@ -37,9 +38,10 @@ COLLECTORS: List = [
 def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
 
-    for k in KEYS:
-        if k not in meta_data:
-            meta_fill[k] = {'rows': 0}
+    for n in NETWORKS:
+        for k in KEYS:
+            if k not in meta_data:
+                meta_fill[n][k] = {'rows': 0}
 
     return meta_fill
 

@@ -22,6 +22,7 @@ import aragon.collectors.transaction as transactions
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
+NETWORKS: List[str] = ['mainnet', 'xdai']
 KEYS: List[str] = [
     organizations.META_KEY,
     apps.META_KEY,
@@ -47,9 +48,10 @@ COLLECTORS: List[Callable] = [
 def _fill_empty_keys(meta_data: Dict) -> Dict:
     meta_fill: Dict = meta_data
 
-    for k in KEYS:
-        if k not in meta_data:
-            meta_fill[k] = {'rows': 0}
+    for n in NETWORKS:
+        for k in KEYS:
+            if k not in meta_data:
+                meta_fill[n][k] = {'rows': 0}
 
     return meta_fill
 
