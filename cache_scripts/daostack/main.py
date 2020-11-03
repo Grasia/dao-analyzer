@@ -70,7 +70,7 @@ def _write_meta_data(meta: Dict) -> None:
 
 
 def run() -> None:
-    print('------------- Updating DAOstack\' datawarehouse -------------\n')
+    print('------------- Updating DAOstack\'s datawarehouse -------------\n')
     if not os.path.isdir(DIRS):
         os.makedirs(DIRS)
 
