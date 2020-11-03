@@ -1,0 +1,14 @@
+{
+    "daostack_mainnet": "https://api.thegraph.com/subgraphs/name/daostack/master",
+    "daostack_xdai": "https://api.thegraph.com/subgraphs/name/daostack/v8_13_exp_xdai",
+    "daohaus_mainnet": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus",
+    "daohaus_xdai": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai",
+    "aragon_mainnet": "https://api.thegraph.com/subgraphs/name/aragon/aragon-mainnet",
+    "aragon_xdai": "https://api.thegraph.com/subgraphs/name/1hive/aragon-xdai",
+    "aragon_mainnet_tokens": "https://api.thegraph.com/subgraphs/name/aragon/aragon-tokens-mainnet",
+    "aragon_xdai_tokens": "https://api.thegraph.com/subgraphs/name/aragon/aragon-tokens-xdai",
+    "aragon_mainnet_voting": "https://api.thegraph.com/subgraphs/name/aragon/aragon-voting-mainnet",
+    "aragon_xdai_voting": "https://api.thegraph.com/subgraphs/name/aragon/aragon-voting-xdai",
+    "aragon_mainnet_finance": "https://api.thegraph.com/subgraphs/name/aragon/aragon-finance-mainnet",
+    "aragon_xdai_finance": "https://api.thegraph.com/subgraphs/name/aragon/aragon-finance-xdai"
+}
