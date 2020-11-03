@@ -21,12 +21,12 @@ MINI_ME_TOKEN_QUERY: str = '{{miniMeTokens(first: {0}, skip: {1}\
 META_KEY: str = 'miniMeTokens'
 
 
-def _request_mini_me_tokens(current_rows: int) -> List[Dict]:
-    requester: ApiRequester = ApiRequester(endpoint=ApiRequester.ARAGON_TOKENS)
+def _request_mini_me_tokens(current_row: int, endpoint: str) -> List[Dict]:
+    requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Mini me token\'s data ...")
     start: datetime = datetime.now()
 
-    tokens: List[Dict] = requester.n_requests(query=MINI_ME_TOKEN_QUERY, skip_n=current_rows, 
+    tokens: List[Dict] = requester.n_requests(query=MINI_ME_TOKEN_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
     print(f'Mini me token\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -37,9 +37,13 @@ def _transform_to_df(tokens: List[Dict]) -> pd.DataFrame:
     return pd.DataFrame(tokens)
 
 
-def update_tokens(meta_data: Dict) -> None:
-    tokens: List[Dict] = _request_mini_me_tokens(current_rows=meta_data[META_KEY]['rows'])
+def update_tokens(meta_data: Dict, net: str, endpoints: Dict) -> None:
+    tokens: List[Dict] = _request_mini_me_tokens(
+        current_row=meta_data[net][META_KEY]['rows'],
+        endpoint=endpoints[net]['aragon_tokens'])
+
     df: pd.DataFrame = _transform_to_df(tokens=tokens)
+    df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
@@ -51,10 +55,5 @@ def update_tokens(meta_data: Dict) -> None:
     print(f'Data stored in {filename}.\n')
 
     # update meta
-    meta_data[META_KEY]['rows'] = meta_data[META_KEY]['rows'] + len(tokens)
-    meta_data[META_KEY]['lastUpdate'] = str(date.today())
-
-
-if __name__ == '__main__':
-    meta: dict = {META_KEY: {'rows': 0}}
-    update_tokens(meta_data=meta)
+    meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(tokens)
+    meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
