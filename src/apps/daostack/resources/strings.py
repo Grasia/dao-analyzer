@@ -45,6 +45,8 @@ TEXT: dict = {
     'total_votes_option_title': 'Total votes option',
     'total_votes_title': 'Total votes',
     'upstakes': 'Upstakes',
+    'vote_against_rate_title': 'Votes-against rate',
+    'vote_for_rate_title': 'Votes-for rate',
     'vote_voters_title': 'Votes-voters rate',
     'vote_title': 'Votes',
     'votes_against': 'Votes against',

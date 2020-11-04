@@ -223,6 +223,24 @@ class DaostackService():
             cont_key=self._VOTE
         ))
 
+        # votes for rate
+        charts.append(self.__create_chart(
+            title=TEXT['vote_for_rate_title'],
+            adapter=MetricAdapter(s_factory.VOTES_FOR_RATE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
+        # votes against rate
+        charts.append(self.__create_chart(
+            title=TEXT['vote_against_rate_title'],
+            adapter=MetricAdapter(s_factory.VOTES_AGAINST_RATE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
         # different voters
         charts.append(self.__create_chart(
             title=TEXT['different_voters_title'],
