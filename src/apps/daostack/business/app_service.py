@@ -230,6 +230,15 @@ class DaostackService():
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
+
+        # vote-voters rate
+        charts.append(self.__create_chart(
+            title=TEXT['vote_voters_title'],
+            adapter=MetricAdapter(s_factory.VOTE_VOTERS_RATE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+
         return charts
 
 
