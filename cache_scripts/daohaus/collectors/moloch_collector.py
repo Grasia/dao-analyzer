@@ -16,7 +16,7 @@ from api_requester import ApiRequester
 
 
 MOLOCH_QUERY: str = '{{moloches(where: {{deleted: false}}, first: {0}, skip: {1}\
-){{id title version totalShares totalLoot summoner}}}}'
+){{id title version totalShares totalLoot summoner summoningTime}}}}'
 
 META_KEY: str = 'moloches'
 
