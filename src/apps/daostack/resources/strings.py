@@ -11,6 +11,7 @@ TEXT: dict = {
     'abs_fail': 'Absolute majority rejection',
     'abs_pass': 'Absolute majority approval',
     'active_users_title': 'Active reputation holders',
+    'approval_proposal_rate_title': 'Approval proposal rate',
     'boost': 'Rate of boosted proposals that were approved',
     'boost_fail': 'Boosted rejections',
     'boost_pass': 'Boosted approvals',

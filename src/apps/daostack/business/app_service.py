@@ -290,6 +290,15 @@ class DaostackService():
         ))
         self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
 
+        # proposal approve rate
+        charts.append(self.__create_chart(
+            title=TEXT['approval_proposal_rate_title'],
+            adapter=MetricAdapter(s_factory.APPROVAL_PROPOSAL_RATE, call),
+            figure=BarFigure(),
+            cont_key=self._PROPOSAL
+        ))
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
+
         # total succes rate of the stakes
         charts.append(self.__create_chart(
             title=TEXT['proposal_total_succ_rate_title'],
