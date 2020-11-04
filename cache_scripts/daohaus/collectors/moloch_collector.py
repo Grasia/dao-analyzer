@@ -16,7 +16,7 @@ from api_requester import ApiRequester
 
 
 MOLOCH_QUERY: str = '{{moloches(where: {{deleted: false}}, first: {0}, skip: {1}\
-){{id title version totalShares totalLoot summoner summoningTime}}}}'
+){{id title version summoner summoningTime timestamp proposalCount memberCount voteCount rageQuitCount totalGas}}}}'
 
 META_KEY: str = 'moloches'
 
@@ -42,7 +42,7 @@ def _transform_to_df(moloches: List[Dict]) -> pd.DataFrame:
 def update_moloches(meta_data: Dict, net: str, endpoints: Dict) -> None:
     moloches: List[Dict] = _request_moloches(
         current_row=meta_data[net][META_KEY]['rows'],
-        endpoint=endpoints[net]['daohaus'])
+        endpoint=endpoints[net]['daohaus_stats'])
 
     df: pd.DataFrame = _transform_to_df(moloches=moloches)
     df['network'] = net
