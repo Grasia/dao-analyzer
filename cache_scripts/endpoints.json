@@ -11,7 +11,8 @@
         "daostack": "https://api.thegraph.com/subgraphs/name/daostack/v40_0_xdai",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai",
         "aragon": "https://api.thegraph.com/subgraphs/name/1hive/aragon-xdai",
-        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/aragon/aragon-tokens-xdai",
+        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/1hive/aragon-tokens-xdai",
+        "_comment_aragon_tokens": "https://api.thegraph.com/subgraphs/name/aragon/aragon-tokens-xdai",
         "aragon_voting": "https://api.thegraph.com/subgraphs/name/aragon/aragon-voting-xdai",
         "aragon_finance": "https://api.thegraph.com/subgraphs/name/aragon/aragon-finance-xdai"
     }
