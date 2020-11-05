@@ -107,7 +107,7 @@ class StVotersPercentage(IMetricStrategy):
         fill: List[int] = []
 
         for s in s1:
-            if(s == s2[0]):
+            if len(s2) and s is s2[0]:
                 break
             fill.append(0)
 

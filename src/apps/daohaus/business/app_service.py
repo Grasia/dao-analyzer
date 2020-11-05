@@ -190,6 +190,16 @@ class DaohausService():
             cont_key=self._MEMBER
         ))
 
+        # total members
+        charts.append(self.__create_chart(
+            title=TEXT['title_total_members'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.TOTAL_MEMBERS, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._MEMBER
+        ))
+
         # active members
         charts.append(self.__create_chart(
             title=TEXT['title_active_members'],

@@ -33,6 +33,7 @@ TEXT: dict = {
     'title_proposal_outcomes': 'Proposal outcomes',
     'title_proposal_type': 'Proposals by type',
     'title_rage_quits': 'Rage Quit',
+    'title_total_members': 'Members',
     'title_vote': 'Votes',
     'title_vote_for_rate': 'Votes-for rate',
     'title_vote_against_rate': 'Votes-against rate',
