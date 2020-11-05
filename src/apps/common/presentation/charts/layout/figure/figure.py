@@ -8,7 +8,7 @@
 """
 
 import abc
-from typing import Dict, List
+from typing import Dict
 
 from src.apps.common.presentation.charts.layout.figure.figure_configuration \
     import FigureConfiguration
@@ -16,10 +16,8 @@ from src.apps.common.presentation.charts.layout.figure.figure_configuration \
 class Figure(metaclass=abc.ABCMeta):
 
 
-    def __init__(self, x_axis: int = 1, y_axis: int = 1) -> None:
+    def __init__(self) -> None:
         self.__configuration: FigureConfiguration = FigureConfiguration()
-        self.__x_layout_params: List[Dict] = [{} for _ in range(x_axis)]
-        self.__y_layout_params: List[Dict] = [{} for _ in range(y_axis)]
 
 
     @classmethod
@@ -36,27 +34,6 @@ class Figure(metaclass=abc.ABCMeta):
     @property
     def configuration(self) -> FigureConfiguration:
         return self.__configuration
-
-
-    def x_layout_params(self, axis: int = 0) -> Dict:
-        return self.__x_layout_params[axis]
-
-
-    def y_layout_params(self, axis: int = 0) -> Dict:
-        return self.__y_layout_params[axis]
-
-
-    def add_x_params(self, params: Dict, axis: int = 0) -> None:
-        self.__add_params(params=params, axis=self.__x_layout_params[axis])
-
-
-    def add_y_params(self, params: Dict, axis: int = 0) -> None:
-        self.__add_params(params=params, axis=self.__y_layout_params[axis])
-
-
-    def __add_params(self, params: Dict, axis: Dict) -> None:
-        for k, v in params.items():
-            axis[k] = v
 
 
     @abc.abstractmethod
