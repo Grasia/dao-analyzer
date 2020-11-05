@@ -15,11 +15,12 @@ from src.apps.daohaus.data_access.daos.metric.strategy.st_new_additions import S
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_type import StVotesType
 from src.apps.daohaus.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
 from src.apps.daohaus.data_access.daos.metric.strategy.st_proposal_outcome import StProposalOutcome
-from src.apps.daohaus.data_access.daos.metric.strategy.st_active_members import StActiveMembers 
+from src.apps.daohaus.data_access.daos.metric.strategy.st_active_members import StActiveMembers
 from src.apps.daohaus.data_access.daos.metric.strategy.st_proposal_type import StProposalType
 from src.apps.daohaus.data_access.daos.metric.strategy.st_active_organization import StActiveOrganization
 from src.apps.daohaus.data_access.daos.metric.strategy.st_approval_proposal_rate import StApprovalProposalRate
-from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_voters_rate import StVoteVotersRate 
+from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_voters_rate import StVoteVotersRate
+from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_rate import StVotesRate
 
 NEW_MEMBERS = 0
 VOTES_TYPE = 1
@@ -32,6 +33,8 @@ PROPOSAL_TYPE = 7
 ACTIVE_ORGANIZATION = 8
 APPROVAL_PROPOSAL_RATE = 9
 VOTES_VOTERS_RATE = 10
+VOTES_FOR_RATE = 11
+VOTES_AGAINST_RATE = 12
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
@@ -76,6 +79,12 @@ def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
         requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
     elif metric == VOTES_VOTERS_RATE:
         stg = StVoteVotersRate()
+        requester = cache.CacheRequester(srcs=[cache.VOTES])
+    elif metric == VOTES_FOR_RATE:
+        stg = StVotesRate(m_type=StVotesRate.VOTES_FOR)
+        requester = cache.CacheRequester(srcs=[cache.VOTES])
+    elif metric == VOTES_AGAINST_RATE:
+        stg = StVotesRate(m_type=StVotesRate.VOTES_AGAINST)
         requester = cache.CacheRequester(srcs=[cache.VOTES])
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='molochAddress')

@@ -214,6 +214,28 @@ class DaohausService():
             cont_key=self._VOTE
         ))
 
+        # votes for rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_vote_for_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.VOTES_FOR_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
+        # votes against rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_vote_against_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.VOTES_AGAINST_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
         # active voters
         charts.append(self.__create_chart(
             title=TEXT['title_active_voters'],
