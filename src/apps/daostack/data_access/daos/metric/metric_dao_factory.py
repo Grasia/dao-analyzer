@@ -33,6 +33,8 @@ from src.apps.daostack.data_access.daos.metric.strategy.st_votes_rate\
     import StVotesRate
 from src.apps.daostack.data_access.daos.metric.strategy.st_total_reputation_holders\
     import StTotalRepHolders
+from src.apps.daostack.data_access.daos.metric.strategy.st_voters_percentage\
+    import StVotersPercentage
 
 NEW_USERS = 0
 NEW_PROPOSALS = 1
@@ -53,6 +55,7 @@ VOTE_VOTERS_RATE = 15
 VOTES_FOR_RATE = 16
 VOTES_AGAINST_RATE = 17
 TOTAL_REP_HOLDERS = 18
+VOTERS_PERCENTAGE = 19
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
@@ -122,5 +125,10 @@ def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
     elif metric == TOTAL_REP_HOLDERS:
         stg = StTotalRepHolders()
         requester = cache.CacheRequester(srcs=[cache.REP_HOLDERS])
+    elif metric == VOTERS_PERCENTAGE:
+        stg = StVotersPercentage()
+        requester = cache.CacheRequester(srcs=[
+            cache.REP_HOLDERS,
+            cache.VOTES])
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='dao')

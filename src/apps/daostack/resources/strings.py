@@ -52,4 +52,5 @@ TEXT: dict = {
     'vote_title': 'Votes',
     'votes_against': 'Votes against',
     'votes_for': 'Votes for',
+    'voters_percentage_title': 'Percentage of reputation holders who vote',
 }
