@@ -21,6 +21,7 @@ TEXT: dict = {
     'title_active_organization': 'Months which the DAO has registered activity',
     'title_active_token_holders': 'Active token holders',
     'title_active_voters': 'Active voters',
+    'title_rate_vote_rate': 'Approval vote rate',
     'title_cast_type': 'Casted votes by support',
     'title_installed_apps': 'Installed apps',
     'title_new_transactions': 'New transactions',

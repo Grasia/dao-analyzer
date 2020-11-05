@@ -225,6 +225,16 @@ class AragonService():
             cont_key=self._VOTE
         ))
 
+        # approval vote rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_rate_vote_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.APPROVAL_VOTE_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+
         return charts
 
 

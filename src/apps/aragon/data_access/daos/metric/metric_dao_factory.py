@@ -17,7 +17,8 @@ from src.apps.aragon.data_access.daos.metric.strategy.st_cast_type import StCast
 from src.apps.aragon.data_access.daos.metric.strategy.st_vote_outcome import StVoteOutcome
 from src.apps.aragon.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
 from src.apps.aragon.data_access.daos.metric.strategy.st_active_token_holders import StActiveTokenHolders
-from src.apps.aragon.data_access.daos.metric.strategy.st_active_organization import StActiveOrganization 
+from src.apps.aragon.data_access.daos.metric.strategy.st_active_organization import StActiveOrganization
+from src.apps.aragon.data_access.daos.metric.strategy.st_approval_vote_rate import StApprovalVoteRate
 
 
 NEW_VOTES = 0
@@ -28,6 +29,7 @@ VOTE_OUTCOME = 4
 ACTIVE_VOTERS = 5
 ACTIVE_TOKEN_HOLDERS = 6
 ACTIVE_ORGANIZATION = 7
+APPROVAL_VOTE_RATE = 8
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao:
@@ -72,6 +74,10 @@ def get_dao(ids: List[str], metric: int) -> MetricDao:
             cache.CASTS,
             cache.VOTES,
             cache.TRANSACTIONS])
+        address_key = 'orgAddress'
+    elif metric == APPROVAL_VOTE_RATE:
+        stg = StApprovalVoteRate()
+        requester = cache.CacheRequester(srcs=[cache.VOTES])
         address_key = 'orgAddress'
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key=address_key)
