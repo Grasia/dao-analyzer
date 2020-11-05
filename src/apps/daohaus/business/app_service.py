@@ -256,6 +256,17 @@ class DaohausService():
             cont_key=self._VOTE
         ))
 
+        # percentage of reputation holders which vote
+        charts.append(self.__create_chart(
+            title=TEXT['title_voters_percentage'],
+            adapter=BasicAdapter(s_factory.VOTERS_PERCENTAGE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+        self.__controllers[self._VOTE][-1].layout.figure\
+            .configuration.add_y_params(params={'suffix': '%'})
+
         # votes-voters rate
         charts.append(self.__create_chart(
             title=TEXT['title_votes_voters'],

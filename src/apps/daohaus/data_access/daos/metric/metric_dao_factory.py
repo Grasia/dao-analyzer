@@ -22,6 +22,7 @@ from src.apps.daohaus.data_access.daos.metric.strategy.st_approval_proposal_rate
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_voters_rate import StVoteVotersRate
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_rate import StVotesRate
 from src.apps.daohaus.data_access.daos.metric.strategy.st_total_members import StTotalMembers
+from src.apps.daohaus.data_access.daos.metric.strategy.st_voters_percentage import StVotersPercentage
 
 NEW_MEMBERS = 0
 VOTES_TYPE = 1
@@ -37,6 +38,7 @@ VOTES_VOTERS_RATE = 10
 VOTES_FOR_RATE = 11
 VOTES_AGAINST_RATE = 12
 TOTAL_MEMBERS = 13
+VOTERS_PERCENTAGE = 14
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
@@ -93,5 +95,11 @@ def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
         requester = cache.CacheRequester(srcs=[
             cache.MEMBERS,
             cache.RAGE_QUITS])
+    elif metric == VOTERS_PERCENTAGE:
+        stg = StVotersPercentage()
+        requester = cache.CacheRequester(srcs=[
+            cache.MEMBERS,
+            cache.RAGE_QUITS,
+            cache.VOTES])
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='molochAddress')
