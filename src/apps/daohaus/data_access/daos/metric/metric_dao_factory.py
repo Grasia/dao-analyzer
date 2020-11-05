@@ -34,7 +34,7 @@ APPROVAL_PROPOSAL_RATE = 9
 VOTES_VOTERS_RATE = 10
 
 
-def get_dao(ids: List[str], metric: int) -> MetricDao:
+def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
     requester: cache.CacheRequester = None
     stg = None
     
