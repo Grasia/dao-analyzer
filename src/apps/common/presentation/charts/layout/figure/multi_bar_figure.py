@@ -21,6 +21,8 @@ class MultiBarFigure(Figure):
 
     def __init__(self, bar_type: int) -> None:
         super().__init__()
+        super().add_x_params(params={'tickangle': True})
+        super().add_y_params(params={'grid': True})
         self.__bar_type: str = self.__get_type(bar_type)
 
 
@@ -79,20 +81,19 @@ class MultiBarFigure(Figure):
                     name=plot_data[k]['name'], 
                     marker_color=plot_data[k]['color']))
 
-        x_args: Dict = {
-            'tickvals': plot_data['common']['x'],
-            'type': plot_data['common']['type'],
-            'tickformat': plot_data['common']['x_format'],
-            'tickangle': True,
-            }
+        super().add_x_params(
+            params={
+                'tickvals': plot_data['common']['x'],
+                'type': plot_data['common']['type'],
+                'tickformat': plot_data['common']['x_format'],
+            })
 
-        y_args: Dict = {'grid': True}
         super().configuration.enable_legend()
 
         layout: go.Layout = go.Layout(
             barmode=self.__bar_type,
-            xaxis=super().configuration.get_axis_layout(args=x_args),
-            yaxis=super().configuration.get_axis_layout(args=y_args),
+            xaxis=super().configuration.get_axis_layout(args=super().x_layout_params()),
+            yaxis=super().configuration.get_axis_layout(args=super().y_layout_params()),
             legend=super().configuration.get_legend(),
             shapes=super().configuration.get_shapes(),
         )

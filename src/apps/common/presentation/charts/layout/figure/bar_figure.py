@@ -16,6 +16,8 @@ class BarFigure(Figure):
 
     def __init__(self) -> None:
         super().__init__()
+        super().add_x_params(params={'tickangle': True})
+        super().add_y_params(params={'grid': True})
 
 
     @staticmethod
@@ -53,19 +55,18 @@ class BarFigure(Figure):
                 name=plot_data['name'],
                 marker_color=plot_data['color'])
 
-        x_args: Dict = {
-            'tickvals': plot_data['x'],
-            'type': plot_data['type'],
-            'tickformat': plot_data['x_format'],
-            'tickangle': True,
-            }
+        super().add_x_params(
+            params={
+                'tickvals': plot_data['x'],
+                'type': plot_data['type'],
+                'tickformat': plot_data['x_format']
+            })
 
-        y_args: Dict = {'grid': True}
         super().configuration.disable_legend()
 
         layout: go.Layout = go.Layout(
-            xaxis=super().configuration.get_axis_layout(args=x_args),
-            yaxis=super().configuration.get_axis_layout(args=y_args),
+            xaxis=super().configuration.get_axis_layout(args=super().x_layout_params()),
+            yaxis=super().configuration.get_axis_layout(args=super().y_layout_params()),
             legend=super().configuration.get_legend(),
             shapes=super().configuration.get_shapes(),
         )
