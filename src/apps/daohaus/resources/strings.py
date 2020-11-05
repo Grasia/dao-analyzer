@@ -24,6 +24,7 @@ TEXT: dict = {
     'title_active_members': 'Active members',
     'title_active_organization': 'Months which the DAO has registered activity',
     'title_active_voters': 'Active voters',
+    'title_approval_proposal_rate': 'Approval proposal rate',
     'title_member': 'Members',
     'title_new_members': 'New Members',
     'title_new_proposals': 'New proposals',

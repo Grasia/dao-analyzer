@@ -264,6 +264,17 @@ class DaohausService():
             cont_key=self._PROPOSAL
         ))
 
+        # approval proposal rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_approval_proposal_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.APPROVAL_PROPOSAL_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._PROPOSAL
+        ))
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
+
         # proposal types
         charts.append(self.__create_chart(
             title=TEXT['title_proposal_type'],
