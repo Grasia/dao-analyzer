@@ -35,6 +35,7 @@ TEXT: dict = {
     'title_rage_quits': 'Rage Quit',
     'title_vote': 'Votes',
     'title_vote_type': 'Votes for and against',
+    'title_votes_voters': 'Votes-voters rate',
     'votes_against': 'Votes against',
     'votes_for': 'Votes for',
 }

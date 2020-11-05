@@ -223,6 +223,16 @@ class DaohausService():
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
+
+        # votes-voters rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_votes_voters'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.VOTES_VOTERS_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
         return charts
 
 

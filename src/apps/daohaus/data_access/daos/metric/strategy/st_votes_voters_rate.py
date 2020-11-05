@@ -1,7 +1,7 @@
 """
    Descp: Strategy pattern to create votes-voters rate.
 
-   Created on: 04-nov-2020
+   Created on: 05-nov-2020
 
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
@@ -14,9 +14,9 @@ from src.apps.common.data_access.daos.metric.imetric_strategy \
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
 from src.apps.common.business.transfers.serie import Serie 
 import src.apps.common.data_access.pandas_utils as pd_utl
-import src.apps.daostack.data_access.daos.metric.strategy.st_time_serie \
+import src.apps.daohaus.data_access.daos.metric.strategy.st_new_additions \
     as vote_metric
-import src.apps.daostack.data_access.daos.metric.strategy.st_different_voters_stakers \
+import src.apps.daohaus.data_access.daos.metric.strategy.st_active_voters \
     as voters_metric
 
 
@@ -31,9 +31,8 @@ class StVoteVotersRate(IMetricStrategy):
             return StackedSerie()
         
         votes: StackedSerie = vote_metric\
-            .StTimeSerie(m_type=vote_metric.TOTAL_VOTES).process_data(df.copy())
-        voters: StackedSerie = voters_metric\
-            .StDifferentVS(m_type=voters_metric.VOTERS).process_data(df)
+            .StNewAdditions(typ=vote_metric.StNewAdditions.VOTES).process_data(df.copy())
+        voters: StackedSerie = voters_metric.StActiveVoters().process_data(df)
 
         rate: List[float] = self.__calculate_rate(
             m_votes=votes,
