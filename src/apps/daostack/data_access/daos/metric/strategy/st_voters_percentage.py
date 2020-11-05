@@ -42,8 +42,8 @@ class StVotersPercentage(IMetricStrategy):
             m_holders=holders,
             m_voters=voters)
 
-        s: Serie = Serie(x=holders.get_serie() \
-            if len(holders.get_serie()) >= len(voters.get_serie()) \
+        s: Serie = Serie(x=holders.get_serie()
+            if len(holders.get_serie()) >= len(voters.get_serie())
             else voters.get_serie())
 
         metric: StackedSerie = StackedSerie(
@@ -93,11 +93,11 @@ class StVotersPercentage(IMetricStrategy):
         fill: List[int] = []
 
         if len(s1) > len(s2):
-            fill = self.__fill_holes(s1, s2)
+            fill = self.__fill_holes(s1=s1, s2=s2)
             voters = fill + voters
 
         elif len(s1) < len(s2):
-            fill = self.__fill_holes(s2, s1)
+            fill = self.__fill_holes(s1=s2, s2=s1)
             holders = fill + holders
 
         return (holders, voters)
@@ -106,8 +106,8 @@ class StVotersPercentage(IMetricStrategy):
     def __fill_holes(self, s1, s2) -> List[int]:
         fill: List[int] = []
 
-        for i, _ in enumerate(s1):
-            if(s1[i] == s2[i]):
+        for s in s1:
+            if(s == s2[0]):
                 break
             fill.append(0)
 
