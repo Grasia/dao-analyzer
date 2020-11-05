@@ -53,7 +53,7 @@ class StVoteVotersRate(IMetricStrategy):
         voters: List[int] = m_voters.get_i_stack(0)
 
         for i, _ in enumerate(votes):
-            rate: float = votes[i] / voters[i] if votes[i] else None
-            rates.append(round(rate, 2))
+            rate: float = round(votes[i] / voters[i], 2) if votes[i] else None
+            rates.append(rate)
 
         return rates
