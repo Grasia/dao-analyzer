@@ -198,6 +198,15 @@ class DaostackService():
             figure=BarFigure(),
             cont_key=self._REP_H
         ))
+
+        # total reputation holders
+        charts.append(self.__create_chart(
+            title=TEXT['total_users_title'],
+            adapter=MetricAdapter(s_factory.TOTAL_REP_HOLDERS, call),
+            figure=BarFigure(),
+            cont_key=self._REP_H
+        ))
+
         # active reputation holders
         charts.append(self.__create_chart(
             title=TEXT['active_users_title'],
