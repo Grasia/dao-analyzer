@@ -64,14 +64,15 @@ class StTotalMembers(IMetricStrategy):
 
 
     def __split_df(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
-        members_data: pd.DataFrame = df
-        rage_quits_data: pd.DataFrame = df.copy()
+        rage_quits_data: pd.DataFrame = df
+        members_data: pd.DataFrame = df.copy() if 'exists' in df.columns else pd.DataFrame() 
 
-        # unique attr of member df
-        members_data.loc[: ,:] = members_data[members_data.exists.notnull()]
-        members_data.dropna(inplace=True, how='all', axis=0)
-        rage_quits_data.loc[: ,:] = rage_quits_data[rage_quits_data.exists.isnull()]
-        rage_quits_data.dropna(inplace=True, how='all', axis=0)
+        if 'exists' in df.columns:
+            # unique attr of member df
+            members_data.loc[: ,:] = members_data[members_data.exists.notnull()]
+            members_data.dropna(inplace=True, how='all', axis=0)
+            rage_quits_data.loc[: ,:] = rage_quits_data[rage_quits_data.exists.isnull()]
+            rage_quits_data.dropna(inplace=True, how='all', axis=0)
 
         return (members_data, rage_quits_data)
 
@@ -102,7 +103,7 @@ class StTotalMembers(IMetricStrategy):
         fill: List[int] = []
 
         for s in s1:
-            if len(s2) and s is s2[0]:
+            if len(s2) > 0 and s == s2[0]:
                 break
             fill.append(0)
 

@@ -55,11 +55,12 @@ class StVotersPercentage(IMetricStrategy):
 
     def __split_df(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         holders_data: pd.DataFrame = df
-        vote_data: pd.DataFrame = df.copy()
+        vote_data: pd.DataFrame = df.copy() if 'voter' in df.columns else pd.DataFrame()
 
-        # attr of vote df
-        vote_data.loc[: ,:] = vote_data[vote_data.voter.notnull()]
-        holders_data.loc[: ,:] = holders_data[holders_data.voter.isnull()]
+        if 'voter' in df.columns:
+            # attr of vote df
+            vote_data.loc[: ,:] = vote_data[vote_data.voter.notnull()]
+            holders_data.loc[: ,:] = holders_data[holders_data.voter.isnull()]
 
         return (holders_data, vote_data)
 
@@ -107,7 +108,7 @@ class StVotersPercentage(IMetricStrategy):
         fill: List[int] = []
 
         for s in s1:
-            if len(s2) and s is s2[0]:
+            if len(s2) > 0 and s == s2[0]:
                 break
             fill.append(0)
 
