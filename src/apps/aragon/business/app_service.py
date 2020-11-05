@@ -234,6 +234,7 @@ class AragonService():
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
 
         return charts
 
@@ -259,6 +260,17 @@ class AragonService():
             figure=BarFigure(),
             cont_key=self._CAST
         ))
+
+        # casted votes-voters rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_votes_voters'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.CASTED_VOTE_VOTER_RATE,
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._CAST
+        ))
+
         return charts
 
 

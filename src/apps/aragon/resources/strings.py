@@ -32,6 +32,7 @@ TEXT: dict = {
     'title_section_transaction': 'Transactions',
     'title_section_app': 'Aragon apps',
     'title_vote_outcome': 'Vote\'s outcome',
+    'title_votes_voters': 'Casted votes/voters rate',
     'votes_against': 'Casted votes against',
     'votes_for': 'Casted votes for',
 }
