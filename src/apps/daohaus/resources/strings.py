@@ -39,7 +39,7 @@ TEXT: dict = {
     'title_vote_against_rate': 'Votes-against rate',
     'title_vote_type': 'Votes for and against',
     'title_voters_percentage': 'Percentage of members who vote',
-    'title_votes_voters': 'Votes-voters rate',
+    'title_votes_voters': 'Number of votes per voter',
     'votes_against': 'Votes against',
     'votes_for': 'Votes for',
 }
