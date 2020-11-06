@@ -1,5 +1,5 @@
 # DAO-Analyzer
-It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/). [http://dao-analyzer.science/](http://dao-analyzer.science/)
+It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/). Web site: [http://dao-analyzer.science/](http://dao-analyzer.science/)
 
 ## Architecture
 There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/aragon/class_diagram.png).
