@@ -99,7 +99,7 @@ class StTotalMembers(IMetricStrategy):
         return (news, outs)
 
 
-    def __fill_holes(self, s1, s2) -> List[int]:
+    def __fill_holes(self, s1: List, s2: List) -> List[int]:
         fill: List[int] = []
 
         for s in s1:
