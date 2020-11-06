@@ -15,9 +15,14 @@ from src.apps.daohaus.data_access.daos.metric.strategy.st_new_additions import S
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_type import StVotesType
 from src.apps.daohaus.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
 from src.apps.daohaus.data_access.daos.metric.strategy.st_proposal_outcome import StProposalOutcome
-from src.apps.daohaus.data_access.daos.metric.strategy.st_active_members import StActiveMembers 
+from src.apps.daohaus.data_access.daos.metric.strategy.st_active_members import StActiveMembers
 from src.apps.daohaus.data_access.daos.metric.strategy.st_proposal_type import StProposalType
-from src.apps.daohaus.data_access.daos.metric.strategy.st_active_organization import StActiveOrganization 
+from src.apps.daohaus.data_access.daos.metric.strategy.st_active_organization import StActiveOrganization
+from src.apps.daohaus.data_access.daos.metric.strategy.st_approval_proposal_rate import StApprovalProposalRate
+from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_voters_rate import StVoteVotersRate
+from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_rate import StVotesRate
+from src.apps.daohaus.data_access.daos.metric.strategy.st_total_members import StTotalMembers
+from src.apps.daohaus.data_access.daos.metric.strategy.st_voters_percentage import StVotersPercentage
 
 NEW_MEMBERS = 0
 VOTES_TYPE = 1
@@ -28,9 +33,15 @@ PROPOSALS_OUTCOME = 5
 ACTIVE_MEMBERS = 6
 PROPOSAL_TYPE = 7
 ACTIVE_ORGANIZATION = 8
+APPROVAL_PROPOSAL_RATE = 9
+VOTES_VOTERS_RATE = 10
+VOTES_FOR_RATE = 11
+VOTES_AGAINST_RATE = 12
+TOTAL_MEMBERS = 13
+VOTERS_PERCENTAGE = 14
 
 
-def get_dao(ids: List[str], metric: int) -> MetricDao:
+def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
     requester: cache.CacheRequester = None
     stg = None
     
@@ -65,6 +76,29 @@ def get_dao(ids: List[str], metric: int) -> MetricDao:
         stg = StActiveOrganization()
         requester = cache.CacheRequester(srcs=[
             cache.PROPOSALS,
+            cache.RAGE_QUITS,
+            cache.VOTES])
+    elif metric == APPROVAL_PROPOSAL_RATE:
+        stg = StApprovalProposalRate()
+        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+    elif metric == VOTES_VOTERS_RATE:
+        stg = StVoteVotersRate()
+        requester = cache.CacheRequester(srcs=[cache.VOTES])
+    elif metric == VOTES_FOR_RATE:
+        stg = StVotesRate(m_type=StVotesRate.VOTES_FOR)
+        requester = cache.CacheRequester(srcs=[cache.VOTES])
+    elif metric == VOTES_AGAINST_RATE:
+        stg = StVotesRate(m_type=StVotesRate.VOTES_AGAINST)
+        requester = cache.CacheRequester(srcs=[cache.VOTES])
+    elif metric == TOTAL_MEMBERS:
+        stg = StTotalMembers()
+        requester = cache.CacheRequester(srcs=[
+            cache.MEMBERS,
+            cache.RAGE_QUITS])
+    elif metric == VOTERS_PERCENTAGE:
+        stg = StVotersPercentage()
+        requester = cache.CacheRequester(srcs=[
+            cache.MEMBERS,
             cache.RAGE_QUITS,
             cache.VOTES])
 

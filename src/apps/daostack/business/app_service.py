@@ -198,6 +198,15 @@ class DaostackService():
             figure=BarFigure(),
             cont_key=self._REP_H
         ))
+
+        # total reputation holders
+        charts.append(self.__create_chart(
+            title=TEXT['total_users_title'],
+            adapter=MetricAdapter(s_factory.TOTAL_REP_HOLDERS, call),
+            figure=BarFigure(),
+            cont_key=self._REP_H
+        ))
+
         # active reputation holders
         charts.append(self.__create_chart(
             title=TEXT['active_users_title'],
@@ -223,6 +232,24 @@ class DaostackService():
             cont_key=self._VOTE
         ))
 
+        # votes for rate
+        charts.append(self.__create_chart(
+            title=TEXT['vote_for_rate_title'],
+            adapter=MetricAdapter(s_factory.VOTES_FOR_RATE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
+        # votes against rate
+        charts.append(self.__create_chart(
+            title=TEXT['vote_against_rate_title'],
+            adapter=MetricAdapter(s_factory.VOTES_AGAINST_RATE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
         # different voters
         charts.append(self.__create_chart(
             title=TEXT['different_voters_title'],
@@ -230,6 +257,27 @@ class DaostackService():
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
+
+        # percentage of reputation holders which vote
+        charts.append(self.__create_chart(
+            title=TEXT['voters_percentage_title'],
+            adapter=MetricAdapter(s_factory.VOTERS_PERCENTAGE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+        self.__controllers[self._VOTE][-1].layout.figure\
+            .configuration.add_y_params(params={
+                'suffix': '%'})
+
+        # vote-voters rate
+        charts.append(self.__create_chart(
+            title=TEXT['vote_voters_title'],
+            adapter=MetricAdapter(s_factory.VOTE_VOTERS_RATE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+
         return charts
 
 
@@ -286,6 +334,15 @@ class DaostackService():
             title=TEXT['proposal_boost_outcome_title'],
             adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
+            cont_key=self._PROPOSAL
+        ))
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
+
+        # proposal approve rate
+        charts.append(self.__create_chart(
+            title=TEXT['approval_proposal_rate_title'],
+            adapter=MetricAdapter(s_factory.APPROVAL_PROPOSAL_RATE, call),
+            figure=BarFigure(),
             cont_key=self._PROPOSAL
         ))
         self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()

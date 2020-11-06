@@ -46,15 +46,13 @@ def update_votes(meta_data: Dict, net: str, endpoints: Dict) -> None:
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
 
-    if not df.empty:
-        if os.path.isfile(filename):
-            # Always rewrite the whole file cause it is more efficient to do it than request all the open proposals.
-            dff = pd.read_csv(filename, header=0)
-            dff = [dff['network'] == net]
-            df = df.append(dff)
-            df.to_csv(filename, index=False)
-        else:
-            df.to_csv(filename)
+    if os.path.isfile(filename):
+        # Always rewrite the whole file cause it is more efficient to do it than request all the open proposals.
+        dff = pd.read_csv(filename, header=0)
+        dff = dff[dff['network'] != net]
+        df = df.append(dff, ignore_index=True)
+
+    df.to_csv(filename, index=False)
 
     print(f'Data stored in {filename}.\n')
 

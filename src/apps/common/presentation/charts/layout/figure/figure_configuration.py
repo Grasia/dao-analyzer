@@ -16,6 +16,8 @@ class FigureConfiguration():
     def __init__(self) -> None:
         self.__show_legend: bool = True
         self.__horizontal_lines: List[Tuple[float, str]] = list()
+        self.__x_layout_params: List[Dict] = [{}]
+        self.__y_layout_params: List[Dict] = [{}]
 
 
     def enable_legend(self) -> None:
@@ -64,7 +66,15 @@ class FigureConfiguration():
         return shapes
 
 
-    def get_axis_layout(self, args: Dict) -> Dict:
+    def get_x_axis_layout(self, axis: int = 0) -> Dict:
+        return self.__get_axis_layout(args=self.__x_layout_params[axis])
+
+
+    def get_y_axis_layout(self, axis: int = 0) -> Dict:
+        return self.__get_axis_layout(args=self.__y_layout_params[axis]) 
+
+
+    def __get_axis_layout(self, args: Dict) -> Dict:
         """
         Returns the axis layout using params in args.
         TODO: remove args parameter to simplify.
@@ -100,3 +110,21 @@ class FigureConfiguration():
             axis_l['matches'] = args['matches']
 
         return axis_l
+
+
+    def add_axis(self, x_axis: int, y_axis: int) -> None:
+        self.__x_layout_params = [{} for _ in range(x_axis)]
+        self.__y_layout_params = [{} for _ in range(y_axis)]
+
+
+    def add_x_params(self, params: Dict, axis: int = 0) -> None:
+        self.__add_params(params=params, axis=self.__x_layout_params[axis])
+
+
+    def add_y_params(self, params: Dict, axis: int = 0) -> None:
+        self.__add_params(params=params, axis=self.__y_layout_params[axis])
+
+
+    def __add_params(self, params: Dict, axis: Dict) -> None:
+        for k, v in params.items():
+            axis[k] = v

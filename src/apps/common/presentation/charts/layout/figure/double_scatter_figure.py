@@ -18,6 +18,10 @@ class DoubleScatterFigure(Figure):
 
     def __init__(self) -> None:
         super().__init__()
+        super().configuration.add_axis(x_axis=2, y_axis=2)
+        super().configuration.add_x_params(params={'removemarkers': True}, axis=0)
+        super().configuration.add_x_params(params={'tickangle': True}, axis=1)
+        super().configuration.add_y_params(params={'reverse_range': True}, axis=1)
 
 
     @staticmethod
@@ -88,29 +92,33 @@ class DoubleScatterFigure(Figure):
         super().configuration.add_horizontal_line(y=0, y_ref='y2')
         super().configuration.enable_legend()
 
-        x1_args: Dict = {'removemarkers': True}
-        x2_args: Dict = {
-            'tickvals': plot_data['common']['x'],
-            'type': plot_data['common']['type'],
-            'tickformat': plot_data['common']['x_format'],
-            'tickangle': True,
-            }
+        super().configuration.add_x_params(
+            params={
+                'tickvals': plot_data['common']['x'],
+                'type': plot_data['common']['type'],
+                'tickformat': plot_data['common']['x_format'],
+            },
+            axis=1)
 
-        y1_args: Dict = {
+        super().configuration.add_y_params(
+            params={
                 'suffix': plot_data['common']['y_suffix'],
                 #'matches': 'y2',
-            }
-        y2_args: Dict = {
+            },
+            axis=0)
+
+        super().configuration.add_y_params(
+            params={
                 'suffix': plot_data['common']['y_suffix'],
-                #'matches': 'y',
-                'reverse_range': True,
-            }
+                #'matches': 'y2',
+            },
+            axis=1)
 
         fig.update_layout(
-            xaxis=super().configuration.get_axis_layout(args=x1_args),
-            xaxis2=super().configuration.get_axis_layout(args=x2_args),
-            yaxis=super().configuration.get_axis_layout(args=y1_args),
-            yaxis2=super().configuration.get_axis_layout(args=y2_args),
+            xaxis=super().configuration.get_x_axis_layout(axis=0),
+            xaxis2=super().configuration.get_x_axis_layout(axis=1),
+            yaxis=super().configuration.get_y_axis_layout(axis=0),
+            yaxis2=super().configuration.get_y_axis_layout(axis=1),
             legend=super().configuration.get_legend(),
             shapes=super().configuration.get_shapes(),
             plot_bgcolor=Color.WHITE
