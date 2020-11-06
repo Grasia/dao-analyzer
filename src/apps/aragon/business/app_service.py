@@ -225,6 +225,17 @@ class AragonService():
             cont_key=self._VOTE
         ))
 
+        # approval vote rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_rate_vote_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.APPROVAL_VOTE_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
         return charts
 
 
@@ -240,6 +251,28 @@ class AragonService():
             cont_key=self._CAST
         ))
 
+        # casted votes for rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_casted_votes_for_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.CASTED_VOTE_FOR_RATE,
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._CAST
+        ))
+        self.__controllers[self._CAST][-1].layout.configuration.disable_subtitles()
+
+        # casted votes against rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_casted_votes_against_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.CASTED_VOTE_AGAINST_RATE,
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._CAST
+        ))
+        self.__controllers[self._CAST][-1].layout.configuration.disable_subtitles()
+
         # active voters
         charts.append(self.__create_chart(
             title=TEXT['title_active_voters'],
@@ -249,6 +282,17 @@ class AragonService():
             figure=BarFigure(),
             cont_key=self._CAST
         ))
+
+        # casted votes-voters rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_votes_voters'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.CASTED_VOTE_VOTER_RATE,
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._CAST
+        ))
+
         return charts
 
 

@@ -21,6 +21,9 @@ TEXT: dict = {
     'title_active_organization': 'Months which the DAO has registered activity',
     'title_active_token_holders': 'Active token holders',
     'title_active_voters': 'Active voters',
+    'title_casted_votes_for_rate': 'Casted votes-for rate',
+    'title_casted_votes_against_rate': 'Casted votes-against rate',
+    'title_rate_vote_rate': 'Approval vote rate',
     'title_cast_type': 'Casted votes by support',
     'title_installed_apps': 'Installed apps',
     'title_new_transactions': 'New transactions',
@@ -31,6 +34,7 @@ TEXT: dict = {
     'title_section_transaction': 'Transactions',
     'title_section_app': 'Aragon apps',
     'title_vote_outcome': 'Vote\'s outcome',
+    'title_votes_voters': 'NUmber of casted votes per voter',
     'votes_against': 'Casted votes against',
     'votes_for': 'Casted votes for',
 }

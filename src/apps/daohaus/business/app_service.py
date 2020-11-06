@@ -190,6 +190,16 @@ class DaohausService():
             cont_key=self._MEMBER
         ))
 
+        # total members
+        charts.append(self.__create_chart(
+            title=TEXT['title_total_members'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.TOTAL_MEMBERS, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._MEMBER
+        ))
+
         # active members
         charts.append(self.__create_chart(
             title=TEXT['title_active_members'],
@@ -214,11 +224,54 @@ class DaohausService():
             cont_key=self._VOTE
         ))
 
+        # votes for rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_vote_for_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.VOTES_FOR_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
+        # votes against rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_vote_against_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.VOTES_AGAINST_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+
         # active voters
         charts.append(self.__create_chart(
             title=TEXT['title_active_voters'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_VOTERS, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+
+        # percentage of reputation holders which vote
+        charts.append(self.__create_chart(
+            title=TEXT['title_voters_percentage'],
+            adapter=BasicAdapter(s_factory.VOTERS_PERCENTAGE, call),
+            figure=BarFigure(),
+            cont_key=self._VOTE
+        ))
+        self.__controllers[self._VOTE][-1].layout.configuration.disable_subtitles()
+        self.__controllers[self._VOTE][-1].layout.figure\
+            .configuration.add_y_params(params={'suffix': '%'})
+
+        # votes-voters rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_votes_voters'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.VOTES_VOTERS_RATE, 
                 organizations=call),
             figure=BarFigure(),
             cont_key=self._VOTE
@@ -263,6 +316,17 @@ class DaohausService():
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._PROPOSAL
         ))
+
+        # approval proposal rate
+        charts.append(self.__create_chart(
+            title=TEXT['title_approval_proposal_rate'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.APPROVAL_PROPOSAL_RATE, 
+                organizations=call),
+            figure=BarFigure(),
+            cont_key=self._PROPOSAL
+        ))
+        self.__controllers[self._PROPOSAL][-1].layout.configuration.disable_subtitles()
 
         # proposal types
         charts.append(self.__create_chart(

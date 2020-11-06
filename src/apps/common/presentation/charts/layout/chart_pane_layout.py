@@ -104,3 +104,8 @@ class ChartPaneLayout():
     @property
     def configuration(self) -> ChartPaneConfiguration:
         return self.__configuration
+
+
+    @property
+    def figure(self) -> Figure:
+        return self.__figure

@@ -1,57 +1,5 @@
 # DAO-Analyzer
-It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/).
-
-## Available metrics
-* DAOstack:
-    * DAO:
-        * Months which the DAO has registered activity
-    * Reputation Holders:
-        * New reputation holders
-        * Active reputation holders
-    * Votes:
-        * Total votes option
-        * Different voters
-    * Stakes:
-        * Total stakes
-        * Different stakers
-    * Proposals:
-        * New proposals
-        * Closed proposal's majority outcome
-        * Closed proposal's outcome
-        * Total success rate of the stakes
-        * Success rate of the stakes by type
-
-* DAOhaus:
-    * DAO:
-        * Months which the DAO has registered activity
-    * Members:
-        * New members
-        * Active members
-    * Votes:
-        * Votes by type
-        * Active voters
-    * Rage Quit:
-        * Rage quits
-    * Proposals:
-        * New proposals
-        * Proposals outcome
-        * Proposals type
-
-* Aragon:
-    * DAO:
-        * Months which the DAO has registered activity
-    * Token Holders:
-        * Active token holders
-    * Votes:
-        * New votes
-        * Votes's outcome
-    * Casted votes:
-        * Casted votes by support
-        * Active voters
-    * Transactions:
-        * New transactions
-    * Aragon apps:
-        * Installed apps
+It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/). [http://dao-analyzer.science/](http://dao-analyzer.science/)
 
 ## Architecture
 There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/aragon/class_diagram.png).
