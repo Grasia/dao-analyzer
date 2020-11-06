@@ -37,7 +37,7 @@ CASTED_VOTE_FOR_RATE = 10
 CASTED_VOTE_AGAINST_RATE = 11
 
 
-def get_dao(ids: List[str], metric: int) -> MetricDao:
+def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
     address_key: str = ''
     requester: cache.CacheRequester = None
     stg = None
