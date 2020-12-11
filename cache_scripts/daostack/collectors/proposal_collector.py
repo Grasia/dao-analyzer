@@ -123,7 +123,7 @@ def update_proposals(meta_data: Dict, net: str, endpoints: Dict) -> None:
 
         df = join_data(df=df, df2=df2, df3=df3)
         df.to_csv(OUT_FILE, index=False)
-        size = len(df)
+        size = len(df3) + len(df2)
 
     # save all proposals
     else:
