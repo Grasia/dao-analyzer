@@ -1,6 +1,6 @@
 import multiprocessing
 
-bind = ':8080'
+bind = ':80'
 timeout = 1200
 proc_name = 'DAO-Analyzer'
 loglevel = 'debug'
