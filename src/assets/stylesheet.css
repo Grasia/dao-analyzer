@@ -5,219 +5,97 @@
 
 .root {
     background-color: #F5F5F5;
-    display: flex;
-    flex-direction: column
+    font-family: 'Roboto Thin';
 }
 
+/*********************/
+/*    HEADER         */
 .main-header {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
+    height: 8rem;
+    background-color: blueviolet;
 }
 
-.main-body {
-    flex: 3;
-    display: flex;
-    flex-direction: column;
+.header-logo {
+
 }
+/*********************/
+
+/*********************/
+/*      FOOT         */
 
 .main-foot {
-    background-color: #ECEFF1;
+    display: flex;
+    flex-direction: row;
+    height: 10rem;
+    background-color: #2F2F2F;
+    color: #CCCCCC;
+    font-size: x-small;
 }
 
-.center-aligner {
+.foot-right {
     display: flex;
-    justify-content: center;
+    flex-direction: row;
     align-items: center;
 }
 
-.space-aligner {
-    display: flex;
-    justify-content: space-around;
-    
-}
-
-.medium-font {
-    font-size: medium;
-}
-
-.small-font {
-    font-size: small;
-}
-
-.row-container {
-    display: flex;
-    flex-direction: row;
-}
-
-.column-container {
+.foot-left {
     display: flex;
     flex-direction: column;
+    justify-content: space-evenly;
 }
 
-.pane {
-    background-color: white;
-    width: 49.5%;   
+.foot-ack {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
-.dao-selector-pane {
+.foot-ack-logos {
+    display: flex;
+    flex-direction: column;
+    margin-right: 1.5rem;
+    justify-content: space-around;
+}
+
+.github-section {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: medium;
-    padding: 1rem 0 1rem 0;
+}
+/*********************/
+
+/*************************/
+/*      Aligners         */
+.left-padding-aligner {
+    padding-left: 5%;
 }
 
-.drop-down {
-    margin-left: 0.5rem;
-    width: 20rem;
-    font-size: medium;
+.right-padding-aligner {
+    padding-right: 5%;
 }
 
-.section {
-    padding: 0rem 0.5rem 0rem 0.5rem;
-    margin-bottom: 1rem;
+.small-text-aligner {
+    margin: 0 0.2rem 0 0.2rem;
 }
 
-.title-section{
-    text-align: center;
-    font-size: x-large;
+.foot-left-aligner {
+    margin-left: 10rem;
+}
+/*********************/
+
+/*********************/
+/*      URL         */
+.url-color {
+    text-decoration: none;
 }
 
-.graph-section {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    flex-wrap: wrap;
+.url-color:link {
+    color: #74CAE8;
 }
 
-.graph-pane {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
+.url-color:visited {
+    color: #74CAE8;
 }
-
-.graph-pane-title {
-    text-align: center;
-    font-size: large;
-    margin-top: 2rem;
-}
-
-.graph-pane-subtitle {
-    text-align: center;
-    font-size: medium;
-}
-
-.hide {
-    visibility: hidden;
-}
-
-.right-separator {
-    margin-right: 0.3rem;
-}
-
-.bold {
-    font-weight: bold;
-}
-
-.license-img {
-    width: 88px;
-    height: 31px;
-}
-
-.sponsor-img {
-    display: block;
-    max-width: 200px;
-    max-height: 100px;
-    width: auto;
-    height: auto;
-}
-
-.small-vertical-margin {
-    margin: 0.5rem 0 0.5rem 0;
-}
-
-.medium-horizontal-margin {
-    margin: 0 1rem 0 1rem;
-}
-
-.medium-bottom-margin {
-    margin-bottom: 1rem;
-}
-
-.padding-70 {
-    width: 70%;
-}
-
-.page-filler {
-    height: 15.9rem;
-}
-
-/* main view classes*/
-.eco-body {
-    display: flex;
-    flex-direction: row;
-    margin-top: 15%;
-    justify-content: space-around;
-}
-
-.eco-pane {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background-color: white;
-    border: 3px #CFD8DC solid;
-    border-radius: 5px;
-    min-width: 20rem;
-    min-height: 15rem;
-    text-align: center;
-}
-
-.eco-img {
-    max-width: 200px;
-    height: auto;
-    align-self: center;
-}
-
-.daostack:hover {
-    border: 3px #A5D6A7 solid;
-}
-
-.daohaus:hover {
-    border: 3px #FFCC80 solid;
-}
-
-.aragon:hover {
-    border: 3px #90CAF9 solid;
-}
-
-.app-color {
-    background-color: #CFD8DC;
-}
-
-.daostack-color {
-    background-color: #A5D6A7;
-}
-
-.daohaus-color {
-    background-color: #FFCC80;
-}
-
-.aragon-color {
-    background-color:#90CAF9;
-}
-
-.daostack-border {
-    border: 1px #A5D6A7 solid;
-    border-top: 0;
-}
-
-.daohaus-border {
-    border: 1px#FFCC80 solid;
-    border-top: 0;
-}
-
-.aragon-border {
-    border: 1px#90CAF9 solid;
-    border-top: 0;
-}
+/*********************/

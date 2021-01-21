@@ -29,25 +29,13 @@ def bind_callbacks(app) -> None: # noqa: C901
         [Input('url', 'pathname')]
     )
     def display_page(pathname):
-        if pathname == TEXT['url_main']:
-            return generate_layout(
-                header_title=TEXT['app_title'], 
-                has_foot=False)
-        elif pathname == TEXT['url_daostack']:
-            return generate_layout(
-                header_title=TEXT['app_title_daostack'],
-                app_color=TEXT['css_color_daostack'],
-                body=daostack.get_service().get_layout())
+        if pathname == TEXT['url_main'] or pathname == TEXT['url_daostack']:
+            return generate_layout(body=[])
+            #return generate_layout(body=daostack.get_service().get_layout())
         elif pathname == TEXT['url_daohaus']:
-            return generate_layout(
-                header_title=TEXT['app_title_daohaus'],
-                app_color=TEXT['css_color_daohaus'],
-                body=daohaus.get_service().get_layout())
+            return generate_layout(body=daohaus.get_service().get_layout())
         elif pathname == TEXT['url_aragon']:
-            return generate_layout(
-                header_title=TEXT['app_title_aragon'],
-                app_color=TEXT['css_color_aragon'],
-                body=aragon.get_service().get_layout())
+            return generate_layout(body=aragon.get_service().get_layout())
         else:
             return TEXT['not_found']
 
