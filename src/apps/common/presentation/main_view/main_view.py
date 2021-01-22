@@ -18,10 +18,7 @@ def generate_layout(body: html.Div) -> html.Div:
 
     return html.Div(children=[
         __generate_header(),
-        # html.Div(
-        #     children=body,
-        #     className='main-body',
-        # ),
+        body,
         __generate_foot(),
     ], className='root',)
 
@@ -29,7 +26,7 @@ def generate_layout(body: html.Div) -> html.Div:
 def __generate_header() -> html.Div:
     return html.Div(children=[
         html.Span('DAO Analyzer', className='header-logo'),
-    ], className='main-header left-padding-aligner')
+    ], className='main-header left-padding-aligner flex-row')
 
 
 def __generate_foot() -> html.Div:
@@ -40,7 +37,7 @@ def __generate_foot() -> html.Div:
                 html.Span(TEXT['follow_us'], className='small-text-aligner'),
                 html.A(TEXT['github'], href=TEXT['github_url'],
                     target='_blank', className='url-color')
-            ], className='github-section'),
+            ], className='flex-row'),
 
             html.Div(children=[
 
@@ -51,7 +48,7 @@ def __generate_foot() -> html.Div:
                     html.A(children=[
                         html.Img(src=os.path.join(REL_PATH, TEXT['gpl_image_name']), className='license-img'),
                     ], href=TEXT['gpl_url'], target='_blank'),
-                ], className='foot-ack-logos'),
+                ], className='foot-ack-logos flex-column'),
 
                 html.Div(children=[
                     html.P(children=[
@@ -61,9 +58,9 @@ def __generate_foot() -> html.Div:
                         ],
                         className=''),
                 ], className=''),
-            ], className='foot-ack')
+            ], className='flex-row')
 
-        ], className='foot-left'),
+        ], className='foot-left flex-column'),
 
         html.Div(children=[
             html.A(children=[
@@ -82,6 +79,6 @@ def __generate_foot() -> html.Div:
                 html.Img(src=os.path.join(REL_PATH, TEXT['erc_image_name']),
                     className=''),
             ], href=TEXT['erc_url'], target='_blank'),
-        ], className='foot-right foot-left-aligner')
+        ], className='flex-row foot-left-aligner')
 
     ], className='main-foot left-padding-aligner right-padding-aligner')

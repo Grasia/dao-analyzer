@@ -106,7 +106,7 @@ class DaohausService():
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
-            color_app=COMMON_TEXT['css_color_daohaus']
+            ecosystem='daohaus'
         )
 
 

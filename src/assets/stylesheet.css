@@ -6,14 +6,12 @@
 .root {
     background-color: #F5F5F5;
     font-family: 'Roboto Thin';
+    color: #383838;
 }
 
 /*********************/
 /*    HEADER         */
 .main-header {
-    display: flex;
-    justify-content: start;
-    align-items: center;
     height: 8rem;
     background-color: blueviolet;
 }
@@ -21,6 +19,62 @@
 .header-logo {
 
 }
+/*********************/
+
+/*********************/
+/*      BODY         */
+
+/****** Body-Header ***/
+.body-header {
+    justify-content: space-around;
+    background-color: white;
+    margin-top: -1.5rem;
+}
+
+.ecosystem-img {
+    height: auto;
+    max-width: 150px;
+}
+
+.ecosystem-img:hover {
+    /*filter: opacity(100%);
+    -webkit-filter: opacity(100%);*/
+    filter: brightness(2);
+    -webkit-filter: brightness(2);
+    cursor: pointer;
+}
+
+.daostack-selected {
+    border: 4px solid #74CAE8;
+}
+
+.aragon-selected {
+    border: 4px solid #4DDEA4;
+}
+
+.daohaus-selected {
+    border: 4px solid #9960B1;
+}
+
+.daostack-ecosystem:hover {
+    border: 4px solid #74CAE8;
+}
+
+.daohaus-ecosystem:hover {
+    border: 4px solid #9960B1;
+}
+
+.aragon-ecosystem:hover {
+    border: 4px solid #4DDEA4;
+}
+
+#org-dropdown {
+    flex-grow: 3;
+    margin-left: 1rem;
+}
+
+/*********************/
+
 /*********************/
 
 /*********************/
@@ -35,35 +89,15 @@
     font-size: x-small;
 }
 
-.foot-right {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
 .foot-left {
-    display: flex;
-    flex-direction: column;
     justify-content: space-evenly;
 }
 
-.foot-ack {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
 .foot-ack-logos {
-    display: flex;
-    flex-direction: column;
     margin-right: 1.5rem;
     justify-content: space-around;
 }
 
-.github-section {
-    display: flex;
-    align-items: center;
-}
 /*********************/
 
 /*************************/
@@ -83,6 +117,33 @@
 .foot-left-aligner {
     margin-left: 10rem;
 }
+
+.small-padding {
+    padding: 2%;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-space-around {
+    justify-content: space-around;
+}
+
+.flex-space-between {
+    justify-content: space-between;
+}
+
+.flex-space-evenly {
+    justify-content: space-evenly;
+}
 /*********************/
 
 /*********************/
@@ -99,3 +160,25 @@
     color: #74CAE8;
 }
 /*********************/
+
+/*********************/
+/*      SIZERS         */
+
+.flex-size-1 {
+    flex-grow: 1;
+}
+
+.flex-size-2 {
+    flex-grow: 2;
+}
+
+.flex-size-3 {
+    flex-grow: 3;
+}
+
+/*********************/
+
+.v-separator {
+    border-left: 1px solid #979797;
+    height: 6vw;
+}
