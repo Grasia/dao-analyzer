@@ -25,8 +25,8 @@ def generate_layout(body: html.Div) -> html.Div:
 
 def __generate_header() -> html.Div:
     return html.Div(children=[
-        html.Span('DAO Analyzer', className='header-logo'),
-    ], className='main-header left-padding-aligner flex-row')
+        html.Img(src=os.path.join(REL_PATH, TEXT['dao_analyzer_logo_name'])),
+    ], className='main-header')
 
 
 def __generate_foot() -> html.Div:

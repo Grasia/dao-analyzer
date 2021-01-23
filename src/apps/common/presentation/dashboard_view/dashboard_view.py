@@ -32,6 +32,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str
     """
     return html.Div(children=[
         __generate_header(labels, ecosystem),
+        html.Div(className='h-separator'),
         #__generate_sections(sections)
     ], className='main-body left-padding-aligner right-padding-aligner')
     

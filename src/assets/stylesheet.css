@@ -13,11 +13,6 @@
 /*    HEADER         */
 .main-header {
     min-height: 10rem;
-    background-color: blueviolet;
-}
-
-.header-logo {
-
 }
 /*********************/
 
@@ -28,7 +23,9 @@
 .body-header {
     justify-content: space-around;
     background-color: white;
-    margin-top: -1.5rem;
+    margin-top: -2rem;
+    z-index: 2;
+    position: relative;
 }
 
 .ecosystem {
@@ -256,4 +253,8 @@
 .v-separator {
     border-left: 1px solid #979797;
     height: 6vw;
+}
+
+.h-separator {
+    border-top: 1px solid #979797;
 }
