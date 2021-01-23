@@ -46,19 +46,22 @@ def __generate_header(labels: List[Dict[str, str]], ecosystem: str) -> html.Div:
             html.Span(TEXT['ecosystem_selector_title']),
             html.Div(children=[
                 html.Div(children=[
-                    html.Img(src=os.path.join(REL_PATH, TEXT['daostack_image_name']),
-                        className='ecosystem-img flex-size-1',
+                    html.Div(className='ecosystem-overlay ecosystem daostack-color',
                         id='daostack-bt'),
+                    html.Img(src=os.path.join(REL_PATH, TEXT['daostack_image_name']),
+                        className='ecosystem-img flex-size-1'),
                 ], className=f'ecosystem daostack-ecosystem {selected[0]}'),
                 html.Div(children=[
-                    html.Img(src=os.path.join(REL_PATH, TEXT['aragon_image_name']),
-                        className='ecosystem-img flex-size-1',
+                    html.Div(className='ecosystem-overlay ecosystem aragon-color', 
                         id='aragon-bt'),
+                    html.Img(src=os.path.join(REL_PATH, TEXT['aragon_image_name']),
+                        className='ecosystem-img flex-size-1'),
                 ], className=f'ecosystem aragon-ecosystem {selected[1]}'),
                 html.Div(children=[
-                    html.Img(src=os.path.join(REL_PATH, TEXT['daohaus_image_name']),
-                        className='ecosystem-img flex-size-1',
+                    html.Div(className='ecosystem-overlay ecosystem daohaus-color',
                         id='daohaus-bt'),
+                    html.Img(src=os.path.join(REL_PATH, TEXT['daohaus_image_name']),
+                        className='ecosystem-img flex-size-1'),
                 ], className=f'ecosystem daohaus-ecosystem {selected[2]}'),
             ], className='flex-row flex-space-evenly flex-size-3')
 

@@ -12,7 +12,7 @@
 /*********************/
 /*    HEADER         */
 .main-header {
-    height: 8rem;
+    min-height: 10rem;
     background-color: blueviolet;
 }
 
@@ -31,17 +31,76 @@
     margin-top: -1.5rem;
 }
 
+.ecosystem {
+    height: 80px;
+    width: 150px;
+}
+
+.ecosystem-overlay {
+    position: relative;
+    float: left;
+    opacity: 0;
+    z-index: 2;
+}
+
+.ecosystem-overlay:hover {
+    opacity: 0.4;
+    cursor: pointer;
+}
+
 .ecosystem-img {
+    position: relative;
+    top: -80px;
     height: auto;
     max-width: 150px;
 }
 
-.ecosystem-img:hover {
-    /*filter: opacity(100%);
-    -webkit-filter: opacity(100%);*/
-    filter: brightness(2);
-    -webkit-filter: brightness(2);
-    cursor: pointer;
+@media screen and (min-width: 1920px) {
+    .body-header {
+        font-size: large;
+    }
+
+    .ecosystem {
+        height: 110px;
+        width: 200px;
+    }
+    
+    .ecosystem-img {
+        top: -110px;
+        max-width: 200px;
+    }
+
+    #org-dropdown {
+        font-size: medium;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    .body-header {
+        font-size: x-small;
+    }
+
+    .ecosystem {
+        height: 50px;
+        width: 100px;
+    }
+    
+    .ecosystem-img {
+        top: -50px;
+        max-width: 100px;
+    }
+}
+
+.daostack-color {
+    background-color: #74CAE8;
+}
+
+.aragon-color {
+    background-color: #4DDEA4;
+}
+
+.daohaus-color {
+    background-color: #9960B1;
 }
 
 .daostack-selected {
@@ -83,7 +142,7 @@
 .main-foot {
     display: flex;
     flex-direction: row;
-    height: 10rem;
+    min-height: 10rem;
     background-color: #2F2F2F;
     color: #CCCCCC;
     font-size: x-small;
@@ -96,6 +155,22 @@
 .foot-ack-logos {
     margin-right: 1.5rem;
     justify-content: space-around;
+}
+
+@media screen and (max-width: 1280px) {
+    .main-foot {
+        font-size: xx-small;
+    }
+
+    .sponsor-img {
+        max-width: 100px;
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .main-foot {
+        font-size: small;
+    }
 }
 
 /*********************/
@@ -115,7 +190,7 @@
 }
 
 .foot-left-aligner {
-    margin-left: 10rem;
+    margin-left: 5rem;
 }
 
 .small-padding {

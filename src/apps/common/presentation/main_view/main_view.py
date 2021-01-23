@@ -69,15 +69,15 @@ def __generate_foot() -> html.Div:
             ], href=TEXT['spanish_ministry_url'], target='_blank'),
             html.A(children=[
                 html.Img(src=os.path.join(REL_PATH, TEXT['logo_ucm_name']),
-                    className=''),
+                    className='sponsor-img'),
             ], href=TEXT['ucm_url'], target='_blank'),
             html.A(children=[
                 html.Img(src=os.path.join(REL_PATH, TEXT['logo_grasia_name']),
-                    className=''),
+                    className='sponsor-img'),
             ], href=TEXT['grasia_url'], target='_blank'),
             html.A(children=[
                 html.Img(src=os.path.join(REL_PATH, TEXT['erc_image_name']),
-                    className=''),
+                    className='sponsor-img'),
             ], href=TEXT['erc_url'], target='_blank'),
         ], className='flex-row foot-left-aligner')
 
