@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,7 +7,7 @@
 
 .root {
     background-color: #F5F5F5;
-    font-family: 'Roboto Thin';
+    font-family: 'Roboto', sans-serif;
     color: #383838;
 }
 
@@ -54,7 +56,7 @@
 
 @media screen and (min-width: 1920px) {
     .body-header {
-        font-size: large;
+        font-size: 1.4em;
     }
 
     .ecosystem {
@@ -128,9 +130,44 @@
     flex-grow: 3;
     margin-left: 1rem;
 }
-
 /*********************/
 
+/****** Body *********/
+.body {
+    background-color: white;
+}
+
+.two-column {
+    width: 50%;
+}
+
+.section-title {
+    color: #d4e6f1;
+    font-size: 3em;
+    margin-bottom: 2rem;
+}
+
+.graph-pane-title {
+    font-weight: bolder;
+    font-size: large;
+}
+
+.chart-header {
+    margin-bottom: -1rem;
+    z-index: 2;
+}
+
+@media screen and (max-width: 1280px) {
+    .chart-header {
+        margin-bottom: 0;
+    }
+}
+
+.chart {
+    margin-bottom: 4rem;
+}
+
+/*********************/
 /*********************/
 
 /*********************/
@@ -178,6 +215,14 @@
     padding-left: 5%;
 }
 
+.section-left-padding-aligner {
+    padding-left: 3%;
+}
+
+.chart-text-left-padding-aligner {
+    padding-left: 6.5%;
+}
+
 .right-padding-aligner {
     padding-right: 5%;
 }
@@ -215,6 +260,10 @@
 
 .flex-space-evenly {
     justify-content: space-evenly;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
 }
 /*********************/
 
@@ -257,4 +306,8 @@
 
 .h-separator {
     border-top: 1px solid #979797;
+}
+
+.hide {
+    visibility: hidden;
 }

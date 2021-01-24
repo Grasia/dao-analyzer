@@ -33,7 +33,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str
     return html.Div(children=[
         __generate_header(labels, ecosystem),
         html.Div(className='h-separator'),
-        #__generate_sections(sections)
+        __generate_sections(sections)
     ], className='main-body left-padding-aligner right-padding-aligner')
     
 
@@ -90,12 +90,16 @@ def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
             charts.append(chart_pane())
         
         sec = html.Div(
-            className='section',
+            className='flex-column small-padding',
             children=[
-                html.Div(name, id=data['css_id'], className=''),
-                html.Div(children=charts, className='graph-section')
+                html.Div(name, id=data['css_id'], className='section-title section-left-padding-aligner'),
+                html.Div(children=charts, className='flex-row flex-wrap')
             ],
         )
         children.append(sec)
+        children.append(html.Div(className='h-separator'))
 
-    return html.Div(children=children)
+    # removes last horizontal separator
+    children.pop()
+
+    return html.Div(children=children, className='flex-column body')
