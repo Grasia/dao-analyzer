@@ -55,9 +55,9 @@ class ChartPaneLayout():
                 children=html.Div(
                     children=children,
                     id=self.__css_id,
-                    className='graph-pane'
+                    className='flex-column'
             )),  
-            className=f'pane {self.configuration.css_border}'
+            className=f'pane {self.configuration.css_border} two-column'
         )
 
 
@@ -80,23 +80,26 @@ class ChartPaneLayout():
         hide: str = '' if self.configuration.show_subtitles else 'hide'
 
         return [
-            html.Span(
-                self.__title,
-                className='graph-pane-title'
-            ),
-            html.Span(
-                subtitle1,
-                id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE1}',
-                className=f'graph-pane-subtitle {hide}'
-            ),
-            html.Span(
-                subtitle2, 
-                id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
-                className=hide
-            ),
+            html.Div(children=[
+                html.Span(
+                    self.__title,
+                    className='graph-pane-title'
+                ),
+                html.Span(
+                    subtitle1,
+                    id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE1}',
+                    className=f'{hide}'
+                ),
+                html.Span(
+                    subtitle2, 
+                    id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
+                    className=f'{hide}'
+                ),
+            ], className='chart-text-left-padding-aligner flex-column chart-header'),
             dcc.Graph(
                 id=f'{self.__css_id}{self.SUFFIX_ID_CHART}',
-                figure=figure
+                figure=figure,
+                className='chart',
             ),
         ]
 
