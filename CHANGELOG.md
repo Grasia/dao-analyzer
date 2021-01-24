@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 ## 0.5.0 - 2021-01-15
 ### Added
 - New interface design
+### Fixed
+- DAOstack proposal metric bug
 
 ## 0.4.2 - 2020-11-06
 ### Added
