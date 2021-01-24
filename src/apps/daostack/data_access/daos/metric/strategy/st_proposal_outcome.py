@@ -218,7 +218,8 @@ class StProposalOutcome(IMetricStrategy):
     def __has_passed(self, data, is_boost: bool) -> bool:
         # winning outcome means more votes for than votes against
         outcome: bool = True if data[self.__DF_OUTCOME] == 'Pass' else False
-        percentage = int(data[self.__DF_VOTES_F]) / int(data[self.__DF_REP]) * 100
+        percentage = int(data[self.__DF_VOTES_F]) / int(data[self.__DF_REP]) * 100 \
+            if int(data[self.__DF_REP]) > 0 else 0
         limit: int = int(data[self.__DF_QUORUM])
 
         has_passed: bool = outcome and is_boost

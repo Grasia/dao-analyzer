@@ -40,7 +40,6 @@ from src.apps.common.presentation.charts.layout.figure.double_scatter_figure \
 from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
-import src.apps.common.resources.colors as COLOR
 
 
 _daostack_service = None
@@ -115,7 +114,7 @@ class DaostackService():
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
-            color_app=COMMON_TEXT['css_color_daostack']
+            ecosystem='daostack'
         )
 
 
@@ -380,7 +379,6 @@ class DaostackService():
             css_id=css_id,
             figure=figure
         )
-        layout.configuration.set_color(color=COLOR.DARK_GREEN)
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
         controller: ChartController = ChartController(

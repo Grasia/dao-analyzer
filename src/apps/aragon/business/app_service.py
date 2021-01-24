@@ -33,7 +33,6 @@ from src.apps.aragon.business.metric_adapter.vote_outcome import VoteOutcome
 
 from src.apps.aragon.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
-import src.apps.common.resources.colors as COLOR
 
 
 _aragon_service = None
@@ -109,7 +108,7 @@ class AragonService():
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
-            color_app=COMMON_TEXT['css_color_aragon']
+            ecosystem='aragon'
         )
 
 
@@ -339,7 +338,6 @@ class AragonService():
             css_id=css_id,
             figure=figure
         )
-        layout.configuration.set_color(color=COLOR.DARK_BLUE)
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
         controller: ChartController = ChartController(
