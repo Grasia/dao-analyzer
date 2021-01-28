@@ -15,6 +15,24 @@
 /*    HEADER         */
 .main-header {
     min-height: 10rem;
+    width: 100%;
+    background-image: url("/assets/dao-analyzer_header.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-left: -0.1rem;
+}
+
+.header-logo {
+    height: auto;
+    width: 14rem;
+    margin: 1% 0 0 2%;
+}
+
+@media screen and (max-width: 1280px) {
+    .header-logo {
+        width: 10rem;
+        margin: 4% 0 0 4%;
+    }
 }
 /*********************/
 
