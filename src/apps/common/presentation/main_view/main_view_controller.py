@@ -25,18 +25,22 @@ def bind_callbacks(app) -> None: # noqa: C901
 
 
     @app.callback(
-         Output('page-content', 'children'),
+        [Output('page-content', 'children'),
+         Output('header-loading-state', 'children')],
         [Input('url', 'pathname')]
     )
     def display_page(pathname):
+        content = TEXT['not_found']
+        state = 'loading'
+
         if pathname == TEXT['url_main'] or pathname == TEXT['url_daostack']:
-            return generate_layout(body=daostack.get_service().get_layout())
+            content = generate_layout(body=daostack.get_service().get_layout())
         elif pathname == TEXT['url_daohaus']:
-            return generate_layout(body=daohaus.get_service().get_layout())
+            content = generate_layout(body=daohaus.get_service().get_layout())
         elif pathname == TEXT['url_aragon']:
-            return generate_layout(body=aragon.get_service().get_layout())
-        else:
-            return TEXT['not_found']
+            content = generate_layout(body=aragon.get_service().get_layout())
+        
+        return [content, state]
 
 
     @app.callback(

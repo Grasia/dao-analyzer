@@ -11,6 +11,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 from src.app import app, DEBUG
+import src.apps.common.resources.colors as COLOR
 from src.apps.common.presentation.main_view.main_view_controller import bind_callbacks
 
 server = app.server
@@ -38,7 +39,12 @@ app.index_string = '''
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
+    html.Div(id='page-content'),
+    dcc.Loading(
+        type="circle",
+        color=COLOR.DARK_BLUE,
+        fullscreen=True,
+        children=html.Div(id='header-loading-state', className='display-none')),
 ])
 
 bind_callbacks(app)
