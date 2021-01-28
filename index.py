@@ -12,11 +12,13 @@ import dash_html_components as html
 
 from src.app import app, DEBUG
 import src.apps.common.resources.colors as COLOR
+from src.apps.common.resources.strings import TEXT
 from src.apps.common.presentation.main_view.main_view_controller import bind_callbacks
 
 server = app.server
 
 # see https://dash.plot.ly/external-resources to alter header, footer and favicon
+app.title = TEXT['app_title']
 app.index_string = '''
     <!DOCTYPE html>
     <html>
