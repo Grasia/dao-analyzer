@@ -33,7 +33,7 @@ TEXT: dict = {
     'daostack_image_name': 'daostack.png',
     'default_amount': 'NAN',
     'ecosystem': 'ecosystem',
-    'ecosystem_selector_title': 'Select the ecosystem:',
+    'ecosystem_selector_title': 'Select the platform:',
     'erc_image_name': 'logo-erc.png',
     'erc_url': 'https://erc.europa.eu/',
     'follow_us': 'Follow us on ',
