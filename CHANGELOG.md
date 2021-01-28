@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.1 - 2021-01-28
+### Added
+- App icon
+- Visual loading state during platform selection loading 
+### Changed
+- "All DAOs" are selected by default
+
 ## 0.5.0 - 2021-01-15
 ### Added
 - New interface design
