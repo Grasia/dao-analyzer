@@ -74,6 +74,7 @@ def __generate_header(labels: List[Dict[str, str]], ecosystem: str) -> html.Div:
             dcc.Dropdown(
                 id='org-dropdown',
                 options=labels,
+                value=labels[0]['value'],
                 className='flex-size-3',
             )
         ], className='flex-row flex-size-1'),
