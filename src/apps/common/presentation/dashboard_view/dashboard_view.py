@@ -21,7 +21,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daohaus': ['', '', 'daohaus-selected'],
 }
 
-def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str) -> List:
+def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str, update: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -31,20 +31,23 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str
         A html.Div filled with the app view 
     """
     return html.Div(children=[
-        __generate_header(labels, ecosystem),
+        __generate_header(labels, ecosystem, update),
         html.Div(className='h-separator'),
         __generate_sections(sections)
     ], className='main-body left-padding-aligner right-padding-aligner')
     
 
-def __generate_header(labels: List[Dict[str, str]], ecosystem: str) -> html.Div:
+def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str) -> html.Div:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
 
     return html.Div(children=[
         html.Div(children=[
-            html.Span(TEXT['ecosystem_selector_title']),
+            html.Div(children=[
+                html.Span(TEXT['ecosystem_selector_title']),
+                html.Span(f"({TEXT['last_update']} {update})", className='xsmall-font'),
+            ], className='flex-column'),
             html.Div(children=[
                 html.Div(children=[
                     html.Div(className='ecosystem-overlay ecosystem daostack-color',
