@@ -33,9 +33,9 @@ def bind_callbacks(app) -> None: # noqa: C901
         content = TEXT['not_found']
         state = 'loading'
 
-        if pathname == TEXT['url_main'] or pathname == TEXT['url_daostack']:
+        if pathname == TEXT['url_daostack']:
             content = generate_layout(body=daostack.get_service().get_layout())
-        elif pathname == TEXT['url_daohaus']:
+        elif pathname == TEXT['url_main'] or pathname == TEXT['url_daohaus']:
             content = generate_layout(body=daohaus.get_service().get_layout())
         elif pathname == TEXT['url_aragon']:
             content = generate_layout(body=aragon.get_service().get_layout())
