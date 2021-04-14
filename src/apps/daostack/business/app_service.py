@@ -12,6 +12,7 @@ from typing import Dict, List, Callable
 import dash_html_components as html
 
 from src.app import app
+from src.apps.common.data_access.update_date import UpdateDate
 import src.apps.common.presentation.dashboard_view.dashboard_view as view
 import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
@@ -114,7 +115,8 @@ class DaostackService():
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
-            ecosystem='daostack'
+            ecosystem='daostack',
+            update=UpdateDate().get_date()
         )
 
 

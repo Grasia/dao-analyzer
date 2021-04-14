@@ -53,7 +53,7 @@ class OrganizationList:
         
         result: List[Dict[str, str]] = list(
             map(lambda x: x.get_dict_representation(), self.__orgs))
-        result = sorted(result, key = lambda k: k['label'])
+        result = sorted(result, key = lambda k: k['label'].casefold())
         # Add All Orgs selector
         all_orgs = {'value': self.__ALL_ORGS_ID, 'label': TEXT['all_orgs']}
 

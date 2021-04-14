@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.2 - 2021-04-14
+### Added
+- Shows last updated date
+### Changed
+- DAOs now are case insensitive sorted
+- DAOhaus is loaded by default
+
 ## 0.5.1 - 2021-01-28
 ### Added
 - App icon
