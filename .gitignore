@@ -5,3 +5,4 @@ __pycache__/
 .hypothesis
 test_commit.sh
 datawarehouse/
+daohaus

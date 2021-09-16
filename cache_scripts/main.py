@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import daostack.main as daostack
 import daohaus.main as daohaus
 import aragon.main as aragon
