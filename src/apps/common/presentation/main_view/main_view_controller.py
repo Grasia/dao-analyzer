@@ -19,10 +19,13 @@ from src.apps.common.resources.strings import TEXT
 def bind_callbacks(app) -> None: # noqa: C901
 
     # Callbacks need to be loaded twice. 
-    daostack.get_service().get_layout()
-    daohaus.get_service().get_layout()
-    aragon.get_service().get_layout()
+    service_daostack = daostack.DaostackService()
+    service_daohaus = daohaus.DaohausService()
+    service_aragon = aragon.AragonService()
 
+    service_daostack.bind_callbacks()
+    service_daohaus.bind_callbacks()
+    service_aragon.bind_callbacks()
 
     @app.callback(
         [Output('page-content', 'children'),
@@ -34,11 +37,11 @@ def bind_callbacks(app) -> None: # noqa: C901
         state = 'loading'
 
         if pathname == TEXT['url_daostack']:
-            content = generate_layout(body=daostack.get_service().get_layout())
+            content = generate_layout(body=service_daostack.get_layout())
         elif pathname == TEXT['url_main'] or pathname == TEXT['url_daohaus']:
-            content = generate_layout(body=daohaus.get_service().get_layout())
+            content = generate_layout(body=service_daohaus.get_layout())
         elif pathname == TEXT['url_aragon']:
-            content = generate_layout(body=aragon.get_service().get_layout())
+            content = generate_layout(body=service_aragon.get_layout())
         
         return [content, state]
 
