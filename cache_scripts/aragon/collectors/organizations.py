@@ -39,8 +39,7 @@ def _transform_to_df(orgs: List[Dict]) -> pd.DataFrame:
 
     df: pd.DataFrame = pd.DataFrame(orgs)
     
-    #TODO: temporal solution to non-attribute name
-    df['name'] = df['id'].tolist()
+    df['name'] = pd.NA
 
     return df
 
