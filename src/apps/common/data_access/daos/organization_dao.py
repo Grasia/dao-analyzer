@@ -24,7 +24,9 @@ class OrganizationListDao:
         orgs: OrganizationList = OrganizationList()
 
         for _, row in df.iterrows():
-            name: str = f"{row['name']} ({row['network']})"
-            orgs.add_organization(Organization(o_id=row['id'], name=name))
+            name = row['name'] if not pd.isnull(row['name']) else None
+            network = row['network'] if not pd.isnull(row['network']) else None
+
+            orgs.add_organization(Organization(o_id=row['id'], name=name, network=network))
         
         return orgs

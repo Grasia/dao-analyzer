@@ -13,13 +13,40 @@ from src.apps.common.resources.strings import TEXT
 
 
 class Organization:
-    def __init__(self, o_id: str = TEXT['no_data'], name: str = TEXT['no_data']):
+    def __init__(self, o_id: str = TEXT['no_data'], name: str = TEXT['no_data'], network: str = TEXT['no_data']):
         self.__id: str = o_id
         self.__name: str = name
+        self.__network: str = network
 
+    # Redefinition of sorting functions
+    def __eq__(self, other) -> bool:
+        return self.__id == other.__id
+
+    """ First we have the items with a name sorted by name. Then the ones without
+        name sorted by id
+    """
+    def __lt__(self, other) -> bool:
+        # If self doesn't have a name, we check if other has a name
+        if self.__name is None:
+            if other.__name is None: return self.__id < other.__id
+            else: return False
+
+        # If self has a name, but other does not have a name,
+        # then self is lower than the other
+        if other.__name is None:
+            return True
+        
+        # If the name is the same, we sort by network, then by id
+        if self.__name.casefold() == other.__name.casefold():
+            if self.__network.casefold() == other.__network.casefold():
+                return self.__id < other.__id
+            else:
+                return self.__network.casefold() < other.__network.casefold()
+        else:
+            return self.__name.casefold() < other.__name.casefold()
     
     def get_dict_representation(self) -> Dict[str, str]:
-        return {'value': self.__id, 'label': self.__name}
+        return {'value': self.__id, 'label': self.get_label()}
 
 
     def get_id(self) -> str:
@@ -29,6 +56,11 @@ class Organization:
     def get_name(self) -> str:
         return self.__name
 
+    def get_label(self) -> str:
+        if not self.__name:
+            return f"{self.__id[:16]}... ({self.__network})"
+        
+        return f"{self.__name} ({self.__id[:8]}... {self.__network})"
 
 class OrganizationList:
     __ALL_ORGS_ID: str = '1'
@@ -51,9 +83,8 @@ class OrganizationList:
         if not self.__orgs:
             return list()
         
-        result: List[Dict[str, str]] = list(
-            map(lambda x: x.get_dict_representation(), self.__orgs))
-        result = sorted(result, key = lambda k: k['label'].casefold())
+        result: List[Dict[str, str]] = [x.get_dict_representation() for x in sorted(self.__orgs)]
+
         # Add All Orgs selector
         all_orgs = {'value': self.__ALL_ORGS_ID, 'label': TEXT['all_orgs']}
 
@@ -82,4 +113,4 @@ class OrganizationList:
         if not o_id == self.__ALL_ORGS_ID:
             return [o_id]
 
-        return list(map(lambda x: x.get_id(), self.__orgs))
+        return [x.get_id() for x in self.__orgs]
