@@ -1,8 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## 0.5.4 - 2021-09-28
+- Fixed #26 & #27
+- Changed DAO selector label
+- Changed DAO selector sorting method
+
 ## 0.5.3 - 2021-09-22
 - Fixed #17
 - Removed small jerk on hover of organization selector
+
 
 ## 0.5.2 - 2021-04-14
 ### Added
