@@ -20,7 +20,7 @@ class Organization:
 
     # Redefinition of sorting functions
     def __eq__(self, other) -> bool:
-        return self.__id == other.__id
+        return self.__id == other.__id and self.__network == other.__network
 
     """ First we have the items with a name sorted by name. Then the ones without
         name sorted by id

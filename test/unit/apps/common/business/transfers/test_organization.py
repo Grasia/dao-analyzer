@@ -25,15 +25,15 @@ OrganizationStrategy = st.builds(
 class OrganizationTest(unittest.TestCase):
 
     def test_get_dict_representation_1(self):
-        org1: Organization = Organization(o_id='222', name='test2')
-        org2: Organization = Organization(o_id='111', name='test1')
+        org1: Organization = Organization(o_id='222', name='test2', network="n")
+        org2: Organization = Organization(o_id='111', name='test1', network="n")
         orgs: OrganizationList = OrganizationList(orgs=[org1, org2])
         result: List[Dict[str, str]] = orgs.get_dict_representation()
 
         sol: List[Dict[str, str]] = [
             {'value': '1', 'label': 'All DAOs'},
-            {'value': '111', 'label': 'test1'},
-            {'value': '222', 'label': 'test2'},
+            {'value': '111', 'label': 'test1 (111... n)'},
+            {'value': '222', 'label': 'test2 (222... n)'},
         ]
 
         for i, r in enumerate(result):

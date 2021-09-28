@@ -48,7 +48,7 @@ class DaoOrganizationListTest(unittest.TestCase):
 
         for org in orgs.get_organizations():
             self.assertIn(org.get_id(), df.index)
-            name: str = f"{df.loc[org.get_id(), 'name']} ({df.loc[org.get_id(), 'network']})"
+            name: str = df.loc[org.get_id(), 'name']
             self.assertEqual(org.get_name(), name)
 
 
