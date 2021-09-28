@@ -28,8 +28,10 @@ class Organization:
     def __lt__(self, other) -> bool:
         # If self doesn't have a name, we check if other has a name
         if self.__name is None:
-            if other.__name is None: return self.__id < other.__id
-            else: return False
+            if other.__name is None:
+                return self.__id < other.__id
+            else:
+                return False
 
         # If self has a name, but other does not have a name,
         # then self is lower than the other
