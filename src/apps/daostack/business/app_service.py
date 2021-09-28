@@ -21,6 +21,7 @@ import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 import src.apps.daostack.data_access.requesters.cache_requester as cache
 from src.apps.common.business.transfers.organization import OrganizationList
+from src.apps.common.business.singleton import Singleton
 from src.apps.common.presentation.charts.chart_controller import ChartController
 from src.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
 from src.apps.daostack.business.metric_adapter.proposal_boost_outcome \
@@ -42,22 +43,7 @@ from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.daostack.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
 
-
-_daostack_service = None
-
-def get_service():
-    """
-    Singelton object.
-    """
-    global _daostack_service
-
-    if not _daostack_service:
-        _daostack_service = DaostackService()
-
-    return _daostack_service
-
-
-class DaostackService():
+class DaostackService(metaclass=Singleton):
  
     _REP_H: int = 0
     _VOTE: int = 1
@@ -75,6 +61,17 @@ class DaostackService():
             self._PROPOSAL: list(),
             self._ORGANIZATION: list(),
         }
+        self.__already_bound: bool = False
+
+
+    def bind_callbacks(self) -> None:
+        if not self.__already_bound:
+            self.__already_bound = True
+            view_cont.bind_callbacks(
+                app=app,
+                section_id=TEXT['css_id_organization']
+            )
+            self.__gen_sections()
 
 
     @property
@@ -93,12 +90,7 @@ class DaostackService():
         """
         Checks if panes and their controllers are already created.
         """
-        is_empty: bool = False
-
-        for _, v in self.__controllers.items():
-            is_empty = is_empty or (len(v) != 0)
-
-        return is_empty
+        return any(self.__controllers.values())
 
 
     def get_layout(self) -> html.Div:
@@ -107,10 +99,8 @@ class DaostackService():
         """
         orgs: OrganizationList = self.organizations
 
-        if not self.are_panes:
-            view_cont.bind_callbacks(
-                app=app, 
-                section_id=TEXT['css_id_organization'])
+        if not self.__already_bound:
+            self.bind_callbacks()
 
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
@@ -119,6 +109,12 @@ class DaostackService():
             update=UpdateDate().get_date()
         )
 
+    def __gen_sections(self) -> None:
+        self.__get_rep_holder_charts()
+        self.__get_vote_charts()
+        self.__get_stake_charts()
+        self.__get_proposal_charts()
+        self.__get_organization_charts()
 
     def __get_sections(self) -> Dict[str, List[Callable]]:
         """
@@ -131,19 +127,15 @@ class DaostackService():
         l_proposal: List[Callable] = list()
         l_organization: List[Callable] = list()
 
+        if not self.are_panes:
+            self.__gen_sections()
+
         # Panes are already created.
-        if self.are_panes:
-            l_rep_h = [c.layout.get_layout for c in self.__controllers[self._REP_H]]
-            l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
-            l_stake = [c.layout.get_layout for c in self.__controllers[self._STAKE]]
-            l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
-            l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
-        else:
-            l_rep_h = self.__get_rep_holder_charts()
-            l_vote = self.__get_vote_charts()
-            l_stake = self.__get_stake_charts()
-            l_proposal = self.__get_proposal_charts()
-            l_organization = self.__get_organization_charts()
+        l_rep_h = [c.layout.get_layout for c in self.__controllers[self._REP_H]]
+        l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
+        l_stake = [c.layout.get_layout for c in self.__controllers[self._STAKE]]
+        l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
+        l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
 
         return {
             COMMON_TEXT['no_data_selected']: {

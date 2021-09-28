@@ -26,6 +26,7 @@ from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
 from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
+from src.apps.common.business.singleton import Singleton
 from src.apps.daohaus.business.metric_adapter.basic_adapter import BasicAdapter
 from src.apps.daohaus.business.metric_adapter.votes_type import VotesType
 from src.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOutcome
@@ -34,22 +35,7 @@ import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.daohaus.resources.strings import TEXT
 from src.apps.common.resources.strings import TEXT as COMMON_TEXT
 
-
-_daohaus_service = None
-
-def get_service():
-    """
-    Singelton object.
-    """
-    global _daohaus_service
-
-    if not _daohaus_service:
-        _daohaus_service = DaohausService()
-
-    return _daohaus_service
-
-
-class DaohausService():
+class DaohausService(metaclass=Singleton):
     _MEMBER: int = 0
     _VOTE: int = 1
     _RAGE_QUIT: int = 2
@@ -66,7 +52,16 @@ class DaohausService():
             self._PROPOSAL: list(),
             self._ORGANIZATION: list(),
         }
+        self.__already_bound: bool = False
 
+
+    def bind_callbacks(self) -> None:
+        if not self.__already_bound:
+            self.__already_bound = True
+            view_cont.bind_callbacks(
+                app=app,
+                section_id=TEXT['css_id_organization'])
+            self.__gen_sections()
 
     @property
     def organizations(self) -> OrganizationList:
@@ -84,12 +79,7 @@ class DaohausService():
         """
         Checks if panes and their controllers are already created.
         """
-        is_empty: bool = False
-
-        for _, v in self.__controllers.items():
-            is_empty = is_empty or (len(v) != 0)
-
-        return is_empty
+        return any(self.__controllers.values())
 
 
     def get_layout(self) -> html.Div:
@@ -98,10 +88,8 @@ class DaohausService():
         """
         orgs: OrganizationList = self.organizations
 
-        if not self.are_panes:
-            view_cont.bind_callbacks(
-                app=app, 
-                section_id=TEXT['css_id_organization'])
+        if not self.__already_bound:
+            self.bind_callbacks()
 
         return view.generate_layout(
             labels=orgs.get_dict_representation(),
@@ -110,6 +98,13 @@ class DaohausService():
             update=UpdateDate().get_date()
         )
 
+
+    def __gen_sections(self) -> None:
+        self.__get_member_charts()
+        self.__get_vote_charts()
+        self.__get_rage_quits_charts()
+        self.__get_proposal_charts()
+        self.__get_organization_charts()
 
     def __get_sections(self) -> Dict[str, List[Callable]]:
         """
@@ -122,19 +117,15 @@ class DaohausService():
         l_proposal: List[Callable] = list()
         l_organization: List[Callable] = list()
 
+        if not self.are_panes:
+            self.__gen_sections()
+
         # Panes are already created.
-        if self.are_panes:
-            l_member = [c.layout.get_layout for c in self.__controllers[self._MEMBER]]
-            l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
-            l_rage_q = [c.layout.get_layout for c in self.__controllers[self._RAGE_QUIT]]
-            l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
-            l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
-        else:
-            l_member = self.__get_member_charts()
-            l_vote = self.__get_vote_charts()
-            l_rage_q = self.__get_rage_quits_charts()
-            l_proposal = self.__get_proposal_charts()
-            l_organization = self.__get_organization_charts()
+        l_member = [c.layout.get_layout for c in self.__controllers[self._MEMBER]]
+        l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
+        l_rage_q = [c.layout.get_layout for c in self.__controllers[self._RAGE_QUIT]]
+        l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
+        l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
 
         return {
             COMMON_TEXT['no_data_selected']: {
