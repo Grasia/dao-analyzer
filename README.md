@@ -59,6 +59,10 @@ Setting the environment variable, `DEBUG`, before running the app, will enable t
 ## How to test it?
 Run all tests with:
 
+`pytest`
+
+or
+
 `python3 -m pytest test/`
 
 ### Flags for hypothesis testing
