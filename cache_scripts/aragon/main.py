@@ -25,7 +25,7 @@ with open(os.path.join('cache_scripts', 'endpoints.json')) as json_file:
 
 DIRS: str = os.path.join('datawarehouse', 'aragon')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
-NETWORKS: List[str] = ENDPOINTS.keys()
+NETWORKS: List[str] = [n for n, v in ENDPOINTS.items() if 'aragon' in v]
 KEYS: List[str] = [
     organizations.META_KEY,
     apps.META_KEY,

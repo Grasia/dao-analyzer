@@ -21,7 +21,8 @@ with open(os.path.join('cache_scripts', 'endpoints.json')) as json_file:
 
 DIRS: str = os.path.join('datawarehouse', 'daostack')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
-NETWORKS: List[str] = ENDPOINTS.keys()
+# Filtering the networks without daostack
+NETWORKS: List[str] = [n for n, v in ENDPOINTS.items() if 'daostack' in v]
 KEYS: List[str] = [
     dao.META_KEY, 
     rep_h.META_KEY, 

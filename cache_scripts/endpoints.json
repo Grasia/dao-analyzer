@@ -17,5 +17,13 @@
         "_comment_aragon_tokens": "https://api.thegraph.com/subgraphs/name/aragon/aragon-tokens-xdai",
         "aragon_voting": "https://api.thegraph.com/subgraphs/name/aragon/aragon-voting-xdai",
         "aragon_finance": "https://api.thegraph.com/subgraphs/name/aragon/aragon-finance-xdai"
+    },
+    "polygon": {
+        "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-matic",
+        "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-matic"
+    },
+    "arbitrum": {
+        "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-arbitrum",
+        "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-arbitrum"
     }
 }

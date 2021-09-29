@@ -21,7 +21,7 @@ with open(os.path.join('cache_scripts', 'endpoints.json')) as json_file:
 
 DIRS: str = os.path.join('datawarehouse', 'daohaus')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
-NETWORKS: List[str] = ENDPOINTS.keys()
+NETWORKS: List[str] = [n for n, v in ENDPOINTS.items() if 'daohaus' in v]
 KEYS: List[str] = [
     moloch.META_KEY,
     member.META_KEY,
