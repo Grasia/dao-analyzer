@@ -11,6 +11,7 @@ import os
 import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
+import logging
 
 from api_requester import ApiRequester
 
@@ -29,7 +30,7 @@ def _request_apps(current_row: int, endpoint: str) -> List[Dict]:
     apps: List[Dict] = requester.n_requests(query=APP_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
-    print(f'App\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
+    logging.info(f'App\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return apps
 
 

@@ -16,7 +16,7 @@ from api_requester import ApiRequester
 
 
 CAST_QUERY: str = '{{casts(first: {0}, skip: {1}\
-){{id voteId voter supports voterStake createdAt vote{{orgAddress appAddress}} }}}}'
+){{id vote {{id}} voter {{id}} supports stake createdAt vote{{orgAddress appAddress}} }}}}'
 
 META_KEY: str = 'casts'
 
@@ -37,11 +37,16 @@ def _transform_to_df(casts: List[Dict]) -> pd.DataFrame:
     for cast in casts:
         org: str = cast['vote']['orgAddress']
         app: str = cast['vote']['appAddress']
+        voteId: str = cast['vote']['id']
+        voterId: str = cast['voter']['id']
 
         del cast['vote']
+        del cast['voter']
         
         cast['orgAddress'] = org
         cast['appAddress'] = app
+        cast['voteId'] = voteId
+        cast['voter'] = voterId
 
     return pd.DataFrame(casts)
 

@@ -11,6 +11,7 @@ import os
 import pandas as pd
 from typing import Dict, List
 from datetime import datetime, date
+import logging
 
 from api_requester import ApiRequester
 
@@ -29,7 +30,7 @@ def _request_organizations(current_row: int, endpoint: str) -> List[Dict]:
     orgs: List[Dict] = requester.n_requests(query=ORGANIZATION_QUERY, skip_n=current_row, 
         result_key=META_KEY)
 
-    print(f'Organization\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
+    logging.debug(f'Organization\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return orgs
 
 
@@ -59,7 +60,7 @@ def update_organizations(meta_data: Dict, net: str, endpoints: Dict) -> None:
     else:
         df.to_csv(filename, index=False)
 
-    print(f'Data stored in {filename}.\n')
+    logging.debug(f'Data stored in {filename}.\n')
 
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(orgs)
