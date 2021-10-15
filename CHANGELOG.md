@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.6.0 - 2021-10-15
+The `cache_scripts` update!
+
+- Added CLI to cache_scripts
+  - You can choose which platforms to update
+  - You can select if you want to stop on errors
+  - Added progress bar for long processes
+- Added logger to cache_scripts
+- Added support for more networks in cache_scripts
+- Solved some Aragon issues in cache_scripts ([#18](https://github.com/Grasia/dao-analyzer/issues/18))
+- Now obtaining all DAOHaus DAO names ([#30](https://github.com/Grasia/dao-analyzer/issues/30))
+
 ## 0.5.4 - 2021-09-28
 - Fixed #26 & #27
 - Changed DAO selector label
