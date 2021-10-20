@@ -10,6 +10,8 @@ import dash
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
+import logging
+
 from src.apps.common.presentation.main_view.main_view import generate_layout
 import src.apps.daostack.business.app_service as daostack
 import src.apps.daohaus.business.app_service as daohaus
@@ -36,11 +38,18 @@ def bind_callbacks(app) -> None: # noqa: C901
         content = TEXT['not_found']
         state = 'loading'
 
-        if pathname == TEXT['url_daostack']:
+        patharr = pathname.split("/")
+        platform = patharr[1] if len(patharr) >= 2 else TEXT['url_main']
+        network = patharr[2] if len(patharr) >= 4 else None
+        dao_id = patharr[3] if len(patharr) >= 4 else None
+
+        logging.info(f"request with platform: {platform}, network: {network}, dao: {dao_id}")
+
+        if platform == TEXT['url_daostack']:
             content = generate_layout(body=service_daostack.get_layout())
-        elif pathname == TEXT['url_main'] or pathname == TEXT['url_daohaus']:
+        elif platform == TEXT['url_main'] or platform == TEXT['url_daohaus']:
             content = generate_layout(body=service_daohaus.get_layout())
-        elif pathname == TEXT['url_aragon']:
+        elif platform == TEXT['url_aragon']:
             content = generate_layout(body=service_aragon.get_layout())
         
         return [content, state]
@@ -68,4 +77,4 @@ def bind_callbacks(app) -> None: # noqa: C901
         elif trigger == 'aragon-bt':
             pathname = TEXT['url_aragon']
 
-        return pathname
+        return "/" + pathname

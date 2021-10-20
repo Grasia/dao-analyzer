@@ -48,7 +48,12 @@ class Organization:
             return self.__name.casefold() < other.__name.casefold()
     
     def get_dict_representation(self) -> Dict[str, str]:
-        return {'value': self.__id, 'label': self.get_label()}
+        return {
+            'value': self.__id, 
+            'label': self.get_label(), 
+            'name': self.get_name(),
+            'network_name': self.get_network()
+        }
 
 
     def get_id(self) -> str:
@@ -57,6 +62,9 @@ class Organization:
 
     def get_name(self) -> str:
         return self.__name
+
+    def get_network(self) -> str:
+        return self.__network
 
     def get_label(self) -> str:
         if not self.__name:
