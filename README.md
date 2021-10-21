@@ -4,6 +4,19 @@ It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](h
 ## Architecture
 There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/aragon/class_diagram.png).
 
+## Using Docker
+If you use Docker, you can just use the images at [grasia/dao-analyzer](https://hub.docker.com/r/grasia/dao-analyzer). The tags with the `-cached` suffix have a pre-populated data warehouse (this means the image uses more space, but takes less time to load). To use it, just run the command:
+
+```
+docker run -p80:80 grasia/dao-analyzer:latest
+```
+
+or
+
+```
+docker run -p80:80 grasia/dao-analyzer:latest-cached
+```
+
 ## Download
 Enter in your terminal (git must be installed) and write down:
 
