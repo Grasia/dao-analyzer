@@ -1,6 +1,6 @@
 FROM python:3.9
 LABEL maintainer "David Davó <ddavo@ucm.es>"
-ARG populate_cache="0"
+ARG POPULATE_CACHE="0"
 
 WORKDIR /dao-analyzer
 
@@ -9,11 +9,11 @@ RUN pip install -r /requirements.txt
 
 COPY . /dao-analyzer/
 
-RUN if [ "$populate_cache" = "1" ] ; then ./cache_scripts/main.py --ignore-errors --skip-daohaus-names; fi
+RUN if [ "$POPULATE_CACHE" = "1" ] ; then ./cache_scripts/main.py --ignore-errors --skip-daohaus-names; fi
 
 HEALTHCHECK --interval=5m --timeout=3s --start-period=1m --retries=3 \
   CMD "curl -f localhost" || exit 1
 
 EXPOSE 80
 
-CMD ["gunicorn", "index:server", "-c", "gunicorn_config.py"]
+CMD ./init.sh

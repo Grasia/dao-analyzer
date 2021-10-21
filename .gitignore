@@ -6,3 +6,5 @@ __pycache__/
 test_commit.sh
 datawarehouse/
 daohaus
+.secrets
+*.ipynb
