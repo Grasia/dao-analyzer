@@ -1,0 +1,14 @@
+# Ignore everything
+**
+
+# Allow some things
+!/src/**
+!/test/**
+!/cache_scripts/**
+!/gunicorn_config.py
+!/index.py
+!/LICENSE
+!/requirements.txt
+
+# Ignore again
+**/__pycache__/
