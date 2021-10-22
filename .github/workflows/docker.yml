@@ -19,7 +19,7 @@ jobs:
     - name: "Get cached tag name"
       run: |
         branch=${GITHUB_REF#refs/heads/}
-        [[ "$branch" =~ "^master$" ]] && branch=latest
+        [[ "$branch" =~ "^master\$" ]] && branch=latest
         echo "::set-output name=tag_cached::$branch-cached"
       id: cached_envs
     - name: Publish to Docker Hub with cache
