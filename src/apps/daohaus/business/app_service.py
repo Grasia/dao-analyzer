@@ -60,7 +60,9 @@ class DaohausService(metaclass=Singleton):
             self.__already_bound = True
             view_cont.bind_callbacks(
                 app=app,
-                section_id=TEXT['css_id_organization'])
+                section_id=TEXT['css_id_organization'],
+                organizations=self.organizations
+                )
             self.__gen_sections()
 
     @property
@@ -82,7 +84,7 @@ class DaohausService(metaclass=Singleton):
         return any(self.__controllers.values())
 
 
-    def get_layout(self) -> html.Div:
+    def get_layout(self, org_value: str=None) -> html.Div:
         """
         Returns the app's layout. 
         """
@@ -95,7 +97,8 @@ class DaohausService(metaclass=Singleton):
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
             ecosystem='daohaus',
-            update=UpdateDate().get_date()
+            update=UpdateDate().get_date(),
+            org_value=org_value
         )
 
 

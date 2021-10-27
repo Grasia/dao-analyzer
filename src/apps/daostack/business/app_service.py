@@ -67,9 +67,11 @@ class DaostackService(metaclass=Singleton):
     def bind_callbacks(self) -> None:
         if not self.__already_bound:
             self.__already_bound = True
+            # Changing the DAO name if it changes
             view_cont.bind_callbacks(
                 app=app,
-                section_id=TEXT['css_id_organization']
+                section_id=TEXT['css_id_organization'],
+                organizations=self.organizations
             )
             self.__gen_sections()
 
@@ -93,7 +95,7 @@ class DaostackService(metaclass=Singleton):
         return any(self.__controllers.values())
 
 
-    def get_layout(self) -> html.Div:
+    def get_layout(self, org_value: str = None) -> html.Div:
         """
         Returns the app's layout. 
         """
@@ -106,7 +108,8 @@ class DaostackService(metaclass=Singleton):
             labels=orgs.get_dict_representation(),
             sections=self.__get_sections(),
             ecosystem='daostack',
-            update=UpdateDate().get_date()
+            update=UpdateDate().get_date(),
+            org_value=org_value
         )
 
     def __gen_sections(self) -> None:

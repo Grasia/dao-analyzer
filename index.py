@@ -47,6 +47,7 @@ app.layout = html.Div([
         color=COLOR.DARK_BLUE,
         fullscreen=True,
         children=html.Div(id='header-loading-state', className='display-none')),
+    html.Div(id='current-platform', hidden=True)
 ])
 
 bind_callbacks(app)

@@ -21,7 +21,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daohaus': ['', '', 'daohaus-selected'],
 }
 
-def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str, update: str) -> List:
+def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str, update: str, org_value: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -30,14 +30,17 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str
     Return:
         A html.Div filled with the app view 
     """
+    if not org_value:
+        org_value = labels[0]["value"]
+
     return html.Div(children=[
-        __generate_header(labels, ecosystem, update),
+        __generate_header(labels, ecosystem, update, org_value),
         html.Div(className='h-separator'),
         __generate_sections(sections)
     ], className='main-body left-padding-aligner right-padding-aligner')
     
 
-def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str) -> html.Div:
+def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str, org_value: str) -> html.Div:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
@@ -77,7 +80,7 @@ def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str)
             dcc.Dropdown(
                 id='org-dropdown',
                 options=labels,
-                value=labels[0]['value'],
+                value=org_value,
                 className='flex-size-3',
             )
         ], className='flex-row flex-size-1'),
