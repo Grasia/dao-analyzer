@@ -32,11 +32,13 @@ def bind_callbacks(app) -> None: # noqa: C901
     @app.callback(
         Output('page-content', 'children'),
         Output('header-loading-state', 'children'),
+        Output('current-platform', 'data-current-platform'),
         Input('url', 'pathname'),
+        State('current-platform', 'data-current-platform')
     )
-    def display_page(pathname):
+    def display_page(pathname, current_platform):
         if pathname == "/":
-            return [dcc.Location(pathname="daohaus", id="default_redirect"), "redirect"]
+            return [dcc.Location(pathname="/daohaus", id="default_redirect"), "redirect", "daohaus"]
 
         content = TEXT['not_found']
         state = 'loading'
@@ -46,12 +48,14 @@ def bind_callbacks(app) -> None: # noqa: C901
         platform = patharr[1]
         value = patharr[2] if len(patharr) >= 3 else None
 
-        # TODO: Don't regenerate layout when the platform is the same and only the
-        # value has changed
+        # Dont regenerate layout if we are already using it
+        if platform == current_platform:
+            raise PreventUpdate
+
         if platform in services:
             content = generate_layout(body=services[platform].get_layout(value))
         
-        return content, state
+        return content, state, platform
 
 
     @app.callback(
