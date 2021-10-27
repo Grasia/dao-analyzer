@@ -50,15 +50,12 @@ class Organization:
     def get_dict_representation(self) -> Dict[str, str]:
         return {
             'value': self.__id, 
-            'label': self.get_label(), 
-            'name': self.get_name(),
-            'network_name': self.get_network()
+            'label': self.get_label()
         }
 
 
     def get_id(self) -> str:
         return self.__id
-
 
     def get_name(self) -> str:
         return self.__name
@@ -71,6 +68,12 @@ class Organization:
             return f"{self.__id[:16]}... ({self.__network})"
         
         return f"{self.__name} ({self.__id[:8]}... {self.__network})"
+
+    def get_label_long(self) -> str:
+        if not self.__name:
+            return f"{self.__id} ({self.__network})"
+
+        return f"{self.__name} — {self.__id} ({self.__network})"
 
 class OrganizationList:
     __ALL_ORGS_ID: str = '1'
@@ -102,6 +105,10 @@ class OrganizationList:
         result = [all_orgs] + result
         return result
 
+    @classmethod
+    def is_all_orgs(cls, o_id: str):
+        return o_id == cls.__ALL_ORGS_ID
+
 
     def is_empty(self) -> bool:
         return len(self.__orgs) == 0
@@ -120,7 +127,11 @@ class OrganizationList:
         if self.is_empty():
             return list()
 
-        if not o_id == self.__ALL_ORGS_ID:
+        if not self.is_all_orgs(o_id):
             return [o_id]
 
         return [x.get_id() for x in self.__orgs]
+
+    # Iterable functions
+    def __iter__(self):
+        return self.__orgs.__iter__()

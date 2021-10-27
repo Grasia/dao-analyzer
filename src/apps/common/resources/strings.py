@@ -59,7 +59,6 @@ TEXT: dict = {
     'spanish_ministry_url': 'https://www.ciencia.gob.es/',
     'ucm_url': 'https://www.ucm.es/',
     'url_aragon': 'aragon',
-    'url_main': '',
     'url_daostack': 'daostack',
     'url_daohaus': 'daohaus',
 }

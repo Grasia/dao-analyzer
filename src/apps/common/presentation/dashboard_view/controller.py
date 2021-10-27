@@ -7,13 +7,15 @@
         <f.r.youssef@hotmail.com>
 """
 from dash.dependencies import Input, Output, State
+from src.apps.common.business.transfers.organization import OrganizationList
 
 from src.apps.common.resources.strings import TEXT
 
-def bind_callbacks(app, section_id: str) -> None:
+
+def bind_callbacks(app, section_id: str, organizations: OrganizationList) -> None:
 
     @app.callback(
-         Output(section_id, 'children'),
+        Output(section_id, 'children'),
         [Input('org-dropdown', 'value')],
         [State('org-dropdown', 'options')]
     )
@@ -21,6 +23,8 @@ def bind_callbacks(app, section_id: str) -> None:
         if not value:
             return TEXT['no_data_selected']
 
-        result = list(filter(lambda x: x['value'] == value, options))
-
-        return result[0]['label']
+        if organizations.is_all_orgs(value):
+            return options[0]["label"]
+        
+        result = next((x for x in organizations if x.get_id() == value))
+        return result.get_label_long()

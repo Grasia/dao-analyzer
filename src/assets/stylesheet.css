@@ -166,6 +166,11 @@
     color: #8bbcda;
     font-size: 3em;
     margin-bottom: 2rem;
+
+    /* Break long names and URLS */
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .graph-pane-title {
