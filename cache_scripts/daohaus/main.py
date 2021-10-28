@@ -9,6 +9,7 @@
 
 import os
 import json
+import logging
 from typing import Dict, List
 from daohaus.collectors import moloch_collector as moloch
 from daohaus.collectors import member_collector as member
@@ -21,7 +22,7 @@ with open(os.path.join('cache_scripts', 'endpoints.json')) as json_file:
 
 DIRS: str = os.path.join('datawarehouse', 'daohaus')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
-NETWORKS: List[str] = [n for n, v in ENDPOINTS.items() if 'daohaus' in v]
+NETWORKS: List[str] = {n for n, v in ENDPOINTS.items() if 'daohaus' in v}
 KEYS: List[str] = [
     moloch.META_KEY,
     member.META_KEY,
@@ -68,14 +69,17 @@ def _write_meta_data(meta: Dict) -> None:
     print(f'Updated meta-data in {META_PATH}')
 
 
-def run() -> None:
+def run(do_networks=NETWORKS) -> None:
     print('------------- Updating DAOhaus\'s datawarehouse -------------\n')
     if not os.path.isdir(DIRS):
         os.makedirs(DIRS)
 
     meta_data: Dict = _get_meta_data()
 
-    for n in NETWORKS:
+    if not NETWORKS.intersection(do_networks):
+        logging.warning(f"Network(s) {','.join(do_networks)} not found")
+
+    for n in NETWORKS.intersection(do_networks):
         print(f'------------- Getting data from {n} -------------\n')
         for c in COLLECTORS:
             c(  meta_data=meta_data,

@@ -10,6 +10,7 @@
 import os
 import json
 from typing import Dict, List
+import logging
 import daostack.collectors.dao_collector as dao
 import daostack.collectors.rep_holder_collector as rep_h
 import daostack.collectors.vote_collector as vote
@@ -22,7 +23,7 @@ with open(os.path.join('cache_scripts', 'endpoints.json')) as json_file:
 DIRS: str = os.path.join('datawarehouse', 'daostack')
 META_PATH: str = os.path.join(DIRS, 'meta.json')
 # Filtering the networks without daostack
-NETWORKS: List[str] = [n for n, v in ENDPOINTS.items() if 'daostack' in v]
+NETWORKS: List[str] = {n for n, v in ENDPOINTS.items() if 'daostack' in v}
 KEYS: List[str] = [
     dao.META_KEY, 
     rep_h.META_KEY, 
@@ -69,14 +70,17 @@ def _write_meta_data(meta: Dict) -> None:
     print(f'Updated meta-data in {META_PATH}')
 
 
-def run() -> None:
+def run(do_networks=NETWORKS) -> None:
     print('------------- Updating DAOstack\'s datawarehouse -------------\n')
     if not os.path.isdir(DIRS):
         os.makedirs(DIRS)
 
     meta_data: Dict = _get_meta_data()
 
-    for n in NETWORKS:
+    if not NETWORKS.intersection(do_networks):
+        logging.warning(f"Network(s) {','.join(do_networks)} not found")
+
+    for n in NETWORKS.intersection(do_networks):
         print(f'------------- Getting data from {n} -------------\n')
         for c in COLLECTORS:
             c(  meta_data=meta_data,
