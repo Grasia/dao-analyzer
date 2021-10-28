@@ -1,0 +1,31 @@
+name: Update Aragon names
+on:
+  workflow_dispatch:
+  schedule:
+    # Run every Monday at 5:42 UTC
+    - cron: "42 5 * * 1"
+jobs:
+  update_names:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      with:
+        ref: develop
+    - name: Run Script
+      run: python ./updateAragonNames.py > ./cache_scripts/aragon/dao_names.json
+    - name: Commit files
+      run: |
+        git config user.email "noreply@github.com"
+        git config user.name "GitHub"
+        git add ./cache_scripts/aragon/dao_names.json
+        git diff --staged --quiet || git commit -m "Updated Aragon DAO Names `date -I`"
+    - name: Push Changes
+      uses: peter-evans/create-pull-request@v3
+      with:
+        title: New Aragon Names
+        reviewers: daviddavo
+        labels: automated
+        branch: autoimport-aragon-names
+        body: |
+          This has been an automated pull-request. Before merging, please
+          check if the commited file seems OK to merge.
