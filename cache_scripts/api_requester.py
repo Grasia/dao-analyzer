@@ -83,6 +83,6 @@ class ApiRequester:
             elements.extend(result)
 
             # if return data (result) has less than ELEMS_PER_CHUNK means that it was the last chunk 
-            exit = len(result) <= self.ELEMS_PER_CHUNK
+            exit = len(result) < self.ELEMS_PER_CHUNK
 
         return elements

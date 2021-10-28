@@ -9,6 +9,7 @@
 
 import os
 import pandas as pd
+import json
 from typing import Dict, List
 from datetime import datetime, date
 import logging
@@ -18,6 +19,9 @@ from api_requester import ApiRequester
 
 ORGANIZATION_QUERY: str = '{{organizations(first: {0}, skip: {1}\
 ){{id createdAt recoveryVault}}}}'
+
+with open(os.path.join('cache_scripts', 'aragon', 'dao_names.json')) as json_file:
+    NAMES: Dict = json.load(json_file)
 
 META_KEY: str = 'organizations'
 
@@ -33,6 +37,18 @@ def _request_organizations(current_row: int, endpoint: str) -> List[Dict]:
     logging.debug(f'Organization\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return orgs
 
+def _apply_names(df: pd.DataFrame, net: str):
+    if net in NAMES.keys():
+        names_df: pd.DataFrame = pd.json_normalize(NAMES[net])
+        names_df['id'] = names_df['address'].str.lower()
+        names_df = names_df[['id', 'name']]
+        df = df.drop(columns='name')
+        df = df.merge(names_df, 
+            on='id', 
+            how='left'
+        )
+    
+    return df
 
 def _transform_to_df(orgs: List[Dict]) -> pd.DataFrame:
     if not orgs:
@@ -51,6 +67,7 @@ def update_organizations(meta_data: Dict, net: str, endpoints: Dict) -> None:
         endpoint=endpoints[net]['aragon'])
 
     df: pd.DataFrame = _transform_to_df(orgs=orgs)
+    df = _apply_names(df, net)
     df['network'] = net
 
     filename: str = os.path.join('datawarehouse', 'aragon', f'{META_KEY}.csv')
