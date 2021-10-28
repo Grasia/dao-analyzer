@@ -20,4 +20,4 @@ def _parse_item(item):
     return {k:v.findall(item)[0] for k,v in REGEX_ITEM_DICT.items()}
 
 processed_list = [_parse_item(x) for x in extracted_list]
-print(json.dumps(processed_list, indent=2))
+print(json.dumps({"mainnet":processed_list}, indent=2))
