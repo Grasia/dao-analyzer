@@ -15,13 +15,13 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-PROPOSAL_QUERY: str = '{{proposals(first: {0}, skip: {1})\
+PROPOSAL_QUERY: str = '{{proposals(first: {first}, where: {{ id_gt: "{last_id}" }})\
 {{id proposer stage createdAt preBoostedAt boostedAt closingAt executedAt \
 totalRepWhenExecuted totalRepWhenCreated executionState \
 expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst \
 genesisProtocolParams{{queuedVoteRequiredPercentage}} dao{{id}} }}}}'
 
-O_PROPOSAL_QUERY: str = '{{proposal(id: \"{0}\")\
+O_PROPOSAL_QUERY: str = '{{proposal(id: "{id}")\
 {{id proposer stage createdAt preBoostedAt boostedAt closingAt executedAt \
 totalRepWhenExecuted totalRepWhenCreated executionState \
 expiresInQueueAt votesFor votesAgainst winningOutcome stakesFor stakesAgainst \
@@ -52,7 +52,7 @@ def _request_open_proposals(ids: List[str], endpoint: str) -> List[Dict]:
     result: Dict = list()
     try:
         for p_id in ids:
-            query: str = O_PROPOSAL_QUERY.format(p_id)
+            query: str = O_PROPOSAL_QUERY.format(id=p_id)
             result = requester.request(query=query)
             open_props.append(result['proposal'])
     except Exception:

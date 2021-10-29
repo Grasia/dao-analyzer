@@ -16,7 +16,7 @@ import logging
 from api_requester import ApiRequester
 
 
-APP_QUERY: str = '{{apps(first: {0}, skip: {1}\
+APP_QUERY: str = '{{apps(first: {first}, where: {{ id_gt: "{last_id}" }} \
 ){{id isForwarder isUpgradeable repoName repoAddress organization{{id}} }}}}'
 
 META_KEY: str = 'apps'

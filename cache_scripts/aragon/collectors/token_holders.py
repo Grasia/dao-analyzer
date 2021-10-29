@@ -16,11 +16,11 @@ from api_requester import ApiRequester
 from aragon.collectors.mini_me_token import META_KEY as TOKEN_KEY
 
 
-TOKEN_HOLDER_QUERY: str = '{{tokenHolders(first: {0}, skip: {1}\
+TOKEN_HOLDER_QUERY: str = '{{tokenHolders(first: {first}, where: {{ id_gt: "{last_id}" }}\
 ){{id address tokenAddress balance}}}}'
 
-TOKEN_QUERY: str = '{{miniMeTokens(first: {0}, skip: {1}\
-){{address orgAddress}}}}'
+TOKEN_QUERY: str = '{{miniMeTokens(first: {first}, where: {{ id_gt: "{last_id}" }}\
+){{id address orgAddress}}}}'
 
 META_KEY: str = 'tokenHolders'
 

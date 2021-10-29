@@ -17,8 +17,8 @@ import logging
 from api_requester import ApiRequester
 
 
-ORGANIZATION_QUERY: str = '{{organizations(first: {0}, skip: {1}\
-){{id createdAt recoveryVault}}}}'
+ORGANIZATION_QUERY: str = '{{organizations(first: {first}, where: {{ id_gt: "{last_id}" }}) \
+{{id createdAt recoveryVault}}}}'
 
 with open(os.path.join('cache_scripts', 'aragon', 'dao_names.json')) as json_file:
     NAMES: Dict = json.load(json_file)

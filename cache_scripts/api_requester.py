@@ -54,13 +54,14 @@ class ApiRequester:
             * result_key: dict key to access the list
         """
         elements: List[Dict] = list()
+        last_id: str = ""
         result = Dict
         
         # do-while structure
         exit: bool = False
 
         while not exit:
-            query_filled: str = query.format(self.ELEMS_PER_CHUNK, skip_n + len(elements))
+            query_filled: str = query.format(first=self.ELEMS_PER_CHUNK, last_id=last_id)
             logging.debug(f"Requesting: {query_filled}")
 
             try:
@@ -71,18 +72,23 @@ class ApiRequester:
             except KeyError as k:
                 if config.ignore_errors:
                     logging.error("Could not find keys: " + ",".join(k.args))
+                    break
                 else:
                     raise k
             except Exception as e:
                 if config.ignore_errors:
                     logging.exception(e)
-                    return elements
+                    break
                 else:
                     raise e
 
             elements.extend(result)
 
-            # if return data (result) has less than ELEMS_PER_CHUNK means that it was the last chunk 
-            exit = len(result) < self.ELEMS_PER_CHUNK
+            # if return data (result) has no elements, we have finished
+            if result: 
+                assert(last_id != result[-1]["id"])
+                last_id = result[-1]["id"]
+            else:
+                exit = True
 
         return elements

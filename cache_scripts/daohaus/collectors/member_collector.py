@@ -15,7 +15,7 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-MEMBER_QUERY: str = '{{members(first: {0}, skip: {1}\
+MEMBER_QUERY: str = '{{members(first: {first}, where: {{ id_gt: "{last_id}" }}\
 ){{id createdAt molochAddress memberAddress shares loot exists didRagequit}}}}'
 
 META_KEY: str = 'members'

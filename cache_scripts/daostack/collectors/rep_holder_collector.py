@@ -15,8 +15,8 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-REP_HOLDER_QUERY: str = '{{reputationHolders(first: {0}, skip: {1})\
-{{id contract address balance createdAt dao{{id}}}}}}'
+REP_HOLDER_QUERY: str = '{{reputationHolders(first: {first}, where: {{ id_gt: "{last_id}" }}\
+){{id contract address balance createdAt dao{{id}}}}}}'
 
 META_KEY: str = 'reputationHolders'
 

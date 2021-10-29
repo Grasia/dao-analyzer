@@ -15,7 +15,7 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-DAO_QUERY: str = '{{daos(where: {{register: "registered"}}, first: {0}, skip: {1}\
+DAO_QUERY: str = '{{daos(where: {{register: "registered", id_gt: "{last_id}" }}, first: {first}\
 ){{id name nativeToken{{id}} nativeReputation{{id}}}}}}'
 
 META_KEY: str = 'daos'

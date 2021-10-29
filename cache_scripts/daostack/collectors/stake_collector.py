@@ -15,8 +15,8 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-STAKE_QUERY: str = '{{proposalStakes(first: {0}, skip: {1})\
-{{id createdAt staker outcome amount dao{{id}} proposal{{id}}}}}}'
+STAKE_QUERY: str = '{{proposalStakes(first: {first}, where: {{ id_gt: "{last_id}" }}\
+){{id createdAt staker outcome amount dao{{id}} proposal{{id}}}}}}'
 
 META_KEY: str = 'proposalStakes'
 

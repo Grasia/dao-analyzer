@@ -15,7 +15,7 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-CAST_QUERY: str = '{{casts(first: {0}, skip: {1}\
+CAST_QUERY: str = '{{casts(first: {first}, where: {{ id_gt: "{last_id}" }}\
 ){{id vote {{id}} voter {{id}} supports stake createdAt vote{{orgAddress appAddress}} }}}}'
 
 META_KEY: str = 'casts'

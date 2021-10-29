@@ -15,7 +15,7 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-MINI_ME_TOKEN_QUERY: str = '{{miniMeTokens(first: {0}, skip: {1}\
+MINI_ME_TOKEN_QUERY: str = '{{miniMeTokens(first: {first}, where: {{ id_gt: "{last_id}" }}\
 ){{id address totalSupply transferable name symbol orgAddress appAddress}}}}'
 
 META_KEY: str = 'miniMeTokens'

@@ -15,7 +15,7 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-RAGE_QUIT_QUERY: str = '{{rageQuits(first: {0}, skip: {1}\
+RAGE_QUIT_QUERY: str = '{{rageQuits(first: {first}, where: {{ id_gt: "{last_id}" }}\
 ){{id createdAt molochAddress memberAddress shares loot}}}}'
 
 META_KEY: str = 'rageQuits'

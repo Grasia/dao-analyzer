@@ -15,7 +15,7 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-TRANSACTION_QUERY: str = '{{transactions(first: {0}, skip: {1}\
+TRANSACTION_QUERY: str = '{{transactions(first: {first}, where: {{ id_gt: "{last_id}" }}\
 ){{id orgAddress appAddress token entity isIncoming amount date reference }}}}'
 
 META_KEY: str = 'transactions'

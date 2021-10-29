@@ -14,8 +14,8 @@ from datetime import datetime, date
 
 from api_requester import ApiRequester
 
-VOTE_QUERY: str = '{{proposalVotes(first: {0}, skip: {1})\
-{{id createdAt voter outcome reputation dao{{id}} proposal{{id}}}}}}'
+VOTE_QUERY: str = '{{proposalVotes(first: {first}, where: {{ id_gt: "{last_id}" }}\
+){{id createdAt voter outcome reputation dao{{id}} proposal{{id}}}}}}'
 
 META_KEY: str = 'proposalVotes'
 

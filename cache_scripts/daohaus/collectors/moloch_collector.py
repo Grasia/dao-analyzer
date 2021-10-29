@@ -20,7 +20,7 @@ from api_requester import ApiRequester
 import config
 
 
-MOLOCH_QUERY: str = '{{moloches(where: {{deleted: false}}, first: {0}, skip: {1}\
+MOLOCH_QUERY: str = '{{moloches(where: {{deleted: false, id_gt: "{last_id}" }}, first: {first}\
 ){{id title version summoner summoningTime timestamp proposalCount memberCount voteCount rageQuitCount totalGas}}}}'
 
 META_KEY: str = 'moloches'

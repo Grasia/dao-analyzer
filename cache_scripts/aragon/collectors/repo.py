@@ -15,7 +15,8 @@ from datetime import datetime, date
 from api_requester import ApiRequester
 
 
-REPO_QUERY: str = '{{repos(first: {0}, skip: {1}){{id address name node appCount}}}}'
+REPO_QUERY: str = '{{repos(first: {first}, where: {{ id_gt: "{last_id}" }})\
+    {{id address name node appCount}}}}'
 META_KEY: str = 'repos'
 
 
