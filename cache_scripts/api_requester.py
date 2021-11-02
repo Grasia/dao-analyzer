@@ -8,10 +8,12 @@
 """
 
 import json
+
+from gql.dsl import DSLQuery, DSLSchema, dsl_gql
 import config
 import logging
 from graphqlclient import GraphQLClient
-from typing import Dict, List
+from typing import Callable, Dict, List
 
 
 class ApiQueryException(Exception):
@@ -34,7 +36,7 @@ class ApiRequester:
         self.__client: GraphQLClient = GraphQLClient(endpoint)
         logging.debug(f"Invoked ApiRequester with endpoint: {endpoint}")
 
-    def request(self, query: str) -> Dict:
+    def request(self, query: DSLQuery) -> Dict:
         """
         Requests data from endpoint.
         """
@@ -45,7 +47,7 @@ class ApiRequester:
 
         return result['data'] if 'data' in result else dict()
 
-    def n_requests(self, query: str, result_key: str, last_id: str = "") -> List[Dict]:
+    def n_requests(self, build_query, result_key: str, index='id', last_index: str = "") -> List[Dict]:
         """
         Requests all chunks from endpoint.
 
@@ -60,11 +62,15 @@ class ApiRequester:
         # do-while structure
         exit: bool = False
 
+        with self.client as session:
+            assert(self.client.schema is not None)
+            ds: DSLSchema = DSLSchema(self.client.schema)
+
         while not exit:
-            query_filled: str = query.format(first=self.ELEMS_PER_CHUNK, last_id=last_id)
+            q: DSLQuery = DSLQuery(build_query(ds, where={index+"_gt": last_index}))
 
             try:
-                result = self.request(query=query_filled)
+                result = self.request(session, q)
                 if not result:
                     logging.warning("Request returned no results")
                 result = result[result_key]
@@ -85,8 +91,8 @@ class ApiRequester:
 
             # if return data (result) has no elements, we have finished
             if result: 
-                assert(last_id != result[-1]["id"])
-                last_id = result[-1]["id"]
+                assert(last_index != result[-1][index])
+                last_index = result[-1][index]
             else:
                 exit = True
 
