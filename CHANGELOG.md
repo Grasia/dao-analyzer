@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.6.1 - 2021-11-02
+Continuation of the `cache_scripts` interface update
+- Added method of selecting which networks to update on CLI
+- Added aragon names retrieval (from Aragon Client's code)
+- Added url sharing capabilities (each DAO now has a different URL)
+- FIXED problem with data retrieval (was only retrieving first 5k items)
+
 ## 0.6.0 - 2021-10-15
 The `cache_scripts` update!
 
