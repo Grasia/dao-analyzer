@@ -46,7 +46,7 @@ def _fill_empty_keys() -> Dict:
     for n in NETWORKS:
         meta_fill[n] = {}
         for k in KEYS:
-            meta_fill[n][k] = {'rows': 0}
+            meta_fill[n][k] = {'rows': 0, 'last_id': ""}
 
     return meta_fill
 

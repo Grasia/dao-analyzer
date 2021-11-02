@@ -21,12 +21,12 @@ REP_HOLDER_QUERY: str = '{{reputationHolders(first: {first}, where: {{ id_gt: "{
 META_KEY: str = 'reputationHolders'
 
 
-def _request_rep_holders(current_row: int, endpoint: str) -> List[Dict]:
+def _request_rep_holders(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting reputation holder\'s data ...")
     start: datetime = datetime.now()
 
-    reps: List[Dict] = requester.n_requests(query=REP_HOLDER_QUERY, skip_n=current_row, 
+    reps: List[Dict] = requester.n_requests(query=REP_HOLDER_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Reputation holder\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -45,7 +45,7 @@ def _transform_to_df(reps: List[Dict]) -> pd.DataFrame:
 
 def update_rep_holders(meta_data: Dict, net: str, endpoints: Dict) -> None:
     reps: List[Dict] = _request_rep_holders(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['daostack'])
 
     df: pd.DataFrame = _transform_to_df(reps=reps)
@@ -64,3 +64,4 @@ def update_rep_holders(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(reps)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = reps[-1]['id'] if reps else ""

@@ -8,6 +8,7 @@
 """
 
 import os
+import sys
 import pandas as pd
 from tqdm import tqdm
 from typing import Dict, List
@@ -40,19 +41,19 @@ def _request_moloch_name(moloch_id: str, retries=3) -> str:
             logging.warn(f"Couldn't get request, response {response}")
             sleep(1)
 
-def _request_moloches(current_row: int, endpoint: str) -> List[Dict]:
+def _request_moloches(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting MOLOCH\'s data ...")
     start: datetime = datetime.now()
 
-    moloches: List[Dict] = requester.n_requests(query=MOLOCH_QUERY, skip_n=current_row,
+    moloches: List[Dict] = requester.n_requests(query=MOLOCH_QUERY, last_id=last_id,
         result_key=META_KEY)
 
     remaining_moloches = [m for m in moloches if not m["title"]]
     if not config.skip_daohaus_names and remaining_moloches:
         logging.info("Requesting remaining names from DAOHaus, this could take a while...")
         failed = 0
-        for m in tqdm(remaining_moloches, unit="req"):
+        for m in tqdm(remaining_moloches, unit="req", file=sys.stdout):
             m["title"] = _request_moloch_name(m["id"])
             failed += 1 if not m["title"] else 0
 
@@ -71,7 +72,7 @@ def _transform_to_df(moloches: List[Dict]) -> pd.DataFrame:
 
 def update_moloches(meta_data: Dict, net: str, endpoints: Dict) -> None:
     moloches: List[Dict] = _request_moloches(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['daohaus_stats'])
 
     df: pd.DataFrame = _transform_to_df(moloches=moloches)
@@ -89,3 +90,4 @@ def update_moloches(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(moloches)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = moloches[-1]['id'] if moloches else ""

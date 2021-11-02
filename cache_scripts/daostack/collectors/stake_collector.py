@@ -21,12 +21,12 @@ STAKE_QUERY: str = '{{proposalStakes(first: {first}, where: {{ id_gt: "{last_id}
 META_KEY: str = 'proposalStakes'
 
 
-def _request_stakes(current_row: int, endpoint: str) -> List[Dict]:
+def _request_stakes(last_id: int, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting stakes\'s data ...")
     start: datetime = datetime.now()
 
-    stakes: List[Dict] = requester.n_requests(query=STAKE_QUERY, skip_n=current_row, 
+    stakes: List[Dict] = requester.n_requests(query=STAKE_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Stake\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -50,7 +50,7 @@ def _transform_to_df(stakes: List[Dict]) -> pd.DataFrame:
 
 def update_stakes(meta_data: Dict, net: str, endpoints: Dict) -> None:
     stakes: List[Dict] = _request_stakes(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['daostack'])
 
     df: pd.DataFrame = _transform_to_df(stakes=stakes)
@@ -68,3 +68,4 @@ def update_stakes(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(stakes)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = stakes[-1]['id'] if stakes else ""

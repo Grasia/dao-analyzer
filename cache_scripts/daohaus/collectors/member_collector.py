@@ -21,12 +21,12 @@ MEMBER_QUERY: str = '{{members(first: {first}, where: {{ id_gt: "{last_id}" }}\
 META_KEY: str = 'members'
 
 
-def _request_members(current_row: int, endpoint: str) -> List[Dict]:
+def _request_members(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting members\'s data ...")
     start: datetime = datetime.now()
 
-    members: List[Dict] = requester.n_requests(query=MEMBER_QUERY, skip_n=current_row, 
+    members: List[Dict] = requester.n_requests(query=MEMBER_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'members\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -39,7 +39,7 @@ def _transform_to_df(data: List[Dict]) -> pd.DataFrame:
 
 def update_members(meta_data: Dict, net: str, endpoints: Dict) -> None:
     data: List[Dict] = _request_members(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['daohaus'])
 
     df: pd.DataFrame = _transform_to_df(data=data)
@@ -57,3 +57,4 @@ def update_members(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(data)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = data[-1]['id'] if data else ""

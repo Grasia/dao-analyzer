@@ -8,7 +8,9 @@
 """
 
 import os
+import sys
 import pandas as pd
+from tqdm import tqdm
 from typing import Dict, List
 from datetime import datetime, date
 
@@ -31,12 +33,12 @@ META_KEY: str = 'proposals'
 OUT_FILE: str = os.path.join('datawarehouse', 'daostack', 'proposals.csv')
 
 
-def _request_proposals(current_row: int, endpoint: str) -> List[Dict]:
+def _request_proposals(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting proposal\'s data ...")
     start: datetime = datetime.now()
 
-    proposals: List[Dict] = requester.n_requests(query=PROPOSAL_QUERY, skip_n=current_row, 
+    proposals: List[Dict] = requester.n_requests(query=PROPOSAL_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Proposal\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -51,7 +53,7 @@ def _request_open_proposals(ids: List[str], endpoint: str) -> List[Dict]:
     open_props: List = list()
     result: Dict = list()
     try:
-        for p_id in ids:
+        for p_id in tqdm(ids, unit="req", file=sys.stdout):
             query: str = O_PROPOSAL_QUERY.format(id=p_id)
             result = requester.request(query=query)
             open_props.append(result['proposal'])
@@ -105,7 +107,7 @@ def update_proposals(meta_data: Dict, net: str, endpoints: Dict) -> None:
     df: pd.DataFrame
 
     proposals: List[Dict] = _request_proposals(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['daostack'])
     df3: pd.DataFrame = _transform_to_df(proposals=proposals)
     df3['network'] = net
@@ -134,3 +136,4 @@ def update_proposals(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = size
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = proposals[-1]['id'] if proposals else ""

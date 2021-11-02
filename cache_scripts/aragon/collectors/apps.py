@@ -22,12 +22,12 @@ APP_QUERY: str = '{{apps(first: {first}, where: {{ id_gt: "{last_id}" }} \
 META_KEY: str = 'apps'
 
 
-def _request_apps(current_row: int, endpoint: str) -> List[Dict]:
+def _request_apps(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting App\'s data ...")
     start: datetime = datetime.now()
 
-    apps: List[Dict] = requester.n_requests(query=APP_QUERY, skip_n=current_row, 
+    apps: List[Dict] = requester.n_requests(query=APP_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     logging.info(f'App\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -45,7 +45,7 @@ def _transform_to_df(apps: List[Dict]) -> pd.DataFrame:
 
 def update_apps(meta_data: Dict, net: str, endpoints: Dict) -> None:
     apps: List[Dict] = _request_apps(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['aragon'])
 
     df: pd.DataFrame = _transform_to_df(apps=apps)
@@ -63,3 +63,4 @@ def update_apps(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(apps)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = apps[-1]['id'] if apps else ""

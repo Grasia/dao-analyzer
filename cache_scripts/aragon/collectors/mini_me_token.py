@@ -21,12 +21,12 @@ MINI_ME_TOKEN_QUERY: str = '{{miniMeTokens(first: {first}, where: {{ id_gt: "{la
 META_KEY: str = 'miniMeTokens'
 
 
-def _request_mini_me_tokens(current_row: int, endpoint: str) -> List[Dict]:
+def _request_mini_me_tokens(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Mini me token\'s data ...")
     start: datetime = datetime.now()
 
-    tokens: List[Dict] = requester.n_requests(query=MINI_ME_TOKEN_QUERY, skip_n=current_row, 
+    tokens: List[Dict] = requester.n_requests(query=MINI_ME_TOKEN_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Mini me token\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -39,7 +39,7 @@ def _transform_to_df(tokens: List[Dict]) -> pd.DataFrame:
 
 def update_tokens(meta_data: Dict, net: str, endpoints: Dict) -> None:
     tokens: List[Dict] = _request_mini_me_tokens(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['aragon_tokens'])
 
     df: pd.DataFrame = _transform_to_df(tokens=tokens)
@@ -57,3 +57,4 @@ def update_tokens(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(tokens)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = tokens[-1]['id'] if tokens else ""

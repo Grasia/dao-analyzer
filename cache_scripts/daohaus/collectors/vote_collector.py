@@ -21,12 +21,12 @@ VOTE_QUERY: str = '{{votes(first: {first}, where: {{ id_gt: "{last_id}" }}\
 META_KEY: str = 'votes'
 
 
-def _request_votes(current_row: int, endpoint: str) -> List[Dict]:
+def _request_votes(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting votes\'s data ...")
     start: datetime = datetime.now()
 
-    data: List[Dict] = requester.n_requests(query=VOTE_QUERY, skip_n=current_row, 
+    data: List[Dict] = requester.n_requests(query=VOTE_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'votes\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -47,7 +47,7 @@ def _transform_to_df(data: List[Dict]) -> pd.DataFrame:
 
 def update_votes(meta_data: Dict, net: str, endpoints: Dict) -> None:
     data: List[Dict] = _request_votes(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['daohaus'])
 
     df: pd.DataFrame = _transform_to_df(data=data)
@@ -65,3 +65,4 @@ def update_votes(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(data)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = data[-1]['id'] if data else ""

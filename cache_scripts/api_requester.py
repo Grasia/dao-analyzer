@@ -38,13 +38,14 @@ class ApiRequester:
         """
         Requests data from endpoint.
         """
+        logging.debug(f"Requesting: {query}")
         result = json.loads(self.__client.execute(query))
         if "errors" in result:
             raise ApiQueryException(result["errors"])
 
         return result['data'] if 'data' in result else dict()
 
-    def n_requests(self, query: str, skip_n: int, result_key: str) -> List[Dict]:
+    def n_requests(self, query: str, result_key: str, last_id: str = "") -> List[Dict]:
         """
         Requests all chunks from endpoint.
 
@@ -54,7 +55,6 @@ class ApiRequester:
             * result_key: dict key to access the list
         """
         elements: List[Dict] = list()
-        last_id: str = ""
         result = Dict
         
         # do-while structure
@@ -62,7 +62,6 @@ class ApiRequester:
 
         while not exit:
             query_filled: str = query.format(first=self.ELEMS_PER_CHUNK, last_id=last_id)
-            logging.debug(f"Requesting: {query_filled}")
 
             try:
                 result = self.request(query=query_filled)

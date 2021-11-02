@@ -28,8 +28,7 @@ def _request_votes(endpoint: str) -> List[Dict]:
     print("Requesting Vote data ...")
     start: datetime = datetime.now()
 
-    votes: List[Dict] = requester.n_requests(query=VOTE_QUERY, skip_n=0, 
-        result_key=META_KEY)
+    votes: List[Dict] = requester.n_requests(query=VOTE_QUERY, result_key=META_KEY)
 
     print(f'Vote data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
     return votes
@@ -59,3 +58,4 @@ def update_votes(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = len(votes)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = votes[-1]['id'] if votes else ""

@@ -21,12 +21,12 @@ CAST_QUERY: str = '{{casts(first: {first}, where: {{ id_gt: "{last_id}" }}\
 META_KEY: str = 'casts'
 
 
-def _request_casts(current_row: int, endpoint: str) -> List[Dict]:
+def _request_casts(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Cast data ...")
     start: datetime = datetime.now()
 
-    casts: List[Dict] = requester.n_requests(query=CAST_QUERY, skip_n=current_row, 
+    casts: List[Dict] = requester.n_requests(query=CAST_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Cast data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -53,7 +53,7 @@ def _transform_to_df(casts: List[Dict]) -> pd.DataFrame:
 
 def update_casts(meta_data: Dict, net: str, endpoints: Dict) -> None:
     casts: List[Dict] = _request_casts(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['aragon_voting'])
 
     df: pd.DataFrame = _transform_to_df(casts=casts)
@@ -71,3 +71,4 @@ def update_casts(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(casts)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = casts[-1]['id'] if casts else ""

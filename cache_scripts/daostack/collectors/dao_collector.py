@@ -21,12 +21,12 @@ DAO_QUERY: str = '{{daos(where: {{register: "registered", id_gt: "{last_id}" }},
 META_KEY: str = 'daos'
 
 
-def _request_daos(current_row: int, endpoint: str) -> List[Dict]:
+def _request_daos(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting DAO\'s data ...")
     start: datetime = datetime.now()
 
-    daos: List[Dict] = requester.n_requests(query=DAO_QUERY, skip_n=current_row, 
+    daos: List[Dict] = requester.n_requests(query=DAO_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'DAO\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -50,7 +50,7 @@ def _transform_to_df(daos: List[Dict]) -> pd.DataFrame:
 
 def update_daos(meta_data: Dict, net: str, endpoints: Dict) -> None:
     daos: List[Dict] = _request_daos(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['daostack']
     )
     df: pd.DataFrame = _transform_to_df(daos=daos)
@@ -68,3 +68,4 @@ def update_daos(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(daos)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = daos[-1]['id'] if daos else ""

@@ -25,12 +25,12 @@ TOKEN_QUERY: str = '{{miniMeTokens(first: {first}, where: {{ id_gt: "{last_id}" 
 META_KEY: str = 'tokenHolders'
 
 
-def _request_token_holders(current_row: int, endpoint: str) -> List[Dict]:
+def _request_token_holders(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Token Holders\'s data ...")
     start: datetime = datetime.now()
 
-    holders: List[Dict] = requester.n_requests(query=TOKEN_HOLDER_QUERY, skip_n=current_row, 
+    holders: List[Dict] = requester.n_requests(query=TOKEN_HOLDER_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Token Holders\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -46,7 +46,7 @@ def _transform_to_df(holders: List[Dict], endpoint: str) -> pd.DataFrame:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     tokens: List[Dict] = requester.n_requests(
         query=TOKEN_QUERY, 
-        skip_n=0, 
+        last_id="", 
         result_key=TOKEN_KEY)
 
     # List[Dict[str, str]] -> Dict[str, str]
@@ -61,7 +61,7 @@ def _transform_to_df(holders: List[Dict], endpoint: str) -> pd.DataFrame:
 
 def update_holders(meta_data: Dict, net: str, endpoints: Dict) -> None:
     holders: List[Dict] = _request_token_holders(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['aragon_tokens'])
 
     df: pd.DataFrame = _transform_to_df(
@@ -81,3 +81,4 @@ def update_holders(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(holders)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = holders[-1]['id'] if holders else ""

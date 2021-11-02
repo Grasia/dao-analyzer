@@ -20,12 +20,12 @@ REPO_QUERY: str = '{{repos(first: {first}, where: {{ id_gt: "{last_id}" }})\
 META_KEY: str = 'repos'
 
 
-def _request_repos(current_row: int, endpoint: str) -> List[Dict]:
+def _request_repos(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Repo data ...")
     start: datetime = datetime.now()
 
-    repos: List[Dict] = requester.n_requests(query=REPO_QUERY, skip_n=current_row, 
+    repos: List[Dict] = requester.n_requests(query=REPO_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Repo data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -38,7 +38,7 @@ def _transform_to_df(repos: List[Dict]) -> pd.DataFrame:
 
 def update_repos(meta_data: Dict, net: str, endpoints: Dict) -> None:
     repos: List[Dict] = _request_repos(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['aragon'])
 
     df: pd.DataFrame = _transform_to_df(repos=repos)
@@ -56,3 +56,4 @@ def update_repos(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(repos)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = repos[-1]['id'] if repos else ""

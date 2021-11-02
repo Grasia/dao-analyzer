@@ -21,12 +21,12 @@ TRANSACTION_QUERY: str = '{{transactions(first: {first}, where: {{ id_gt: "{last
 META_KEY: str = 'transactions'
 
 
-def _request_transactions(current_row: int, endpoint: str) -> List[Dict]:
+def _request_transactions(last_id: str, endpoint: str) -> List[Dict]:
     requester: ApiRequester = ApiRequester(endpoint=endpoint)
     print("Requesting Transaction's data ...")
     start: datetime = datetime.now()
 
-    transactions: List[Dict] = requester.n_requests(query=TRANSACTION_QUERY, skip_n=current_row, 
+    transactions: List[Dict] = requester.n_requests(query=TRANSACTION_QUERY, last_id=last_id, 
         result_key=META_KEY)
 
     print(f'Transaction\'s data requested in {round((datetime.now() - start).total_seconds(), 2)}s')
@@ -39,7 +39,7 @@ def _transform_to_df(transactions: List[Dict]) -> pd.DataFrame:
 
 def update_transactions(meta_data: Dict, net: str, endpoints: Dict) -> None:
     transactions: List[Dict] = _request_transactions(
-        current_row=meta_data[net][META_KEY]['rows'],
+        last_id=meta_data[net][META_KEY]['last_id'],
         endpoint=endpoints[net]['aragon_finance'])
 
     df: pd.DataFrame = _transform_to_df(transactions=transactions)
@@ -57,3 +57,4 @@ def update_transactions(meta_data: Dict, net: str, endpoints: Dict) -> None:
     # update meta
     meta_data[net][META_KEY]['rows'] = meta_data[net][META_KEY]['rows'] + len(transactions)
     meta_data[net][META_KEY]['lastUpdate'] = str(date.today())
+    meta_data[net][META_KEY]['last_id'] = transactions[-1]['id'] if transactions else ""
