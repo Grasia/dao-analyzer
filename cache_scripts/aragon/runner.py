@@ -6,27 +6,39 @@
     Copyright 2021 David Davó
         <david@ddavo.me>
 """
+from typing import List
 from gql.dsl import DSLField, DSLSchema
 
-from cache_scripts.common import GraphQLCollector, Runner
+from common import Collector, GraphQLCollector, Runner
 
 class AppsCollector(GraphQLCollector):
     def __init__(self, runner):
-        super().__init__(self, 'apps', runner, endpoint)
+        # TODO: Get endpoint
+        # TODO: Use networks
+        # Two instantiations with different network?
+        # One instantiation with multiple networks?
+        super().__init__('apps', runner, 'https://api.thegraph.com/subgraphs/name/aragon/aragon-mainnet')
 
-    @staticmethod
-    def build_query(ds: DSLSchema, **kwargs) -> DSLField:
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
         return ds.Query.apps(**kwargs).select(
-            ds.app.id,
-            ds.app.isForwarder,
-            ds.app.isUpgradeable,
-            ds.app.repoName,
-            ds.app.repoAddress,
-            ds.app.organization.select(ds.Organization.id)
+            ds.App.id,
+            ds.App.isForwarder,
+            ds.App.isUpgradeable,
+            ds.App.repoName,
+            ds.App.repoAddress,
+            ds.App.organization.select(ds.Organization.id)
         )
 
 class AragonRunner(Runner):
+    name: str = 'aragon'
+
     def __init__(self):
-        super().__init__(self, 'aragon')
-        self.collectors = [
+        super().__init__()
+        self._collectors: List[Collector] = [
+            AppsCollector(self)
         ]
+
+    @property
+    def collectors(self):
+        return self._collectors

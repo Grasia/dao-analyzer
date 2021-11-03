@@ -7,13 +7,15 @@
         <f.r.youssef@hotmail.com>
 """
 
-import json
+from gql import Client
+from gql.dsl import DSLQuery, DSLSchema, DSLType, dsl_gql
+from gql.transport.requests import RequestsHTTPTransport
 
-from gql.dsl import DSLQuery, DSLSchema, dsl_gql
 import config
 import logging
-from graphqlclient import GraphQLClient
-from typing import Callable, Dict, List
+import sys
+from tqdm import tqdm
+from typing import Dict, List
 
 
 class ApiQueryException(Exception):
@@ -33,21 +35,27 @@ class ApiRequester:
     ELEMS_PER_CHUNK: int = 1000
 
     def __init__(self, endpoint: str) -> None:
-        self.__client: GraphQLClient = GraphQLClient(endpoint)
+        self.__transport = RequestsHTTPTransport(endpoint)
+        self.__client: Client = Client(transport=self.__transport, fetch_schema_from_transport=True)
         logging.debug(f"Invoked ApiRequester with endpoint: {endpoint}")
+
+    def get_schema(self) -> DSLSchema:
+        with self.__client as _:
+            assert(self.__client.schema is not None)
+            return DSLSchema(self.__client.schema)
 
     def request(self, query: DSLQuery) -> Dict:
         """
         Requests data from endpoint.
         """
         logging.debug(f"Requesting: {query}")
-        result = json.loads(self.__client.execute(query))
+        result = self.__client.execute(dsl_gql(query))
         if "errors" in result:
             raise ApiQueryException(result["errors"])
 
-        return result['data'] if 'data' in result else dict()
+        return result
 
-    def n_requests(self, build_query, result_key: str, index='id', last_index: str = "") -> List[Dict]:
+    def n_requests(self, query:DSLType, result_key: str, index='id', last_index: str = "") -> List[Dict]:
         """
         Requests all chunks from endpoint.
 
@@ -62,38 +70,41 @@ class ApiRequester:
         # do-while structure
         exit: bool = False
 
-        with self.client as session:
-            assert(self.client.schema is not None)
-            ds: DSLSchema = DSLSchema(self.client.schema)
+        bar_format: str = "{l_bar}{bar}[{elapsed}<{remaining}]"
+        with tqdm(delay=1, total=0xffff, file=sys.stdout, desc="Requesting", bar_format=bar_format) as pbar:
+            while not exit:
+                q: DSLQuery = DSLQuery(query(where={index+"_gt": last_index}))
 
-        while not exit:
-            q: DSLQuery = DSLQuery(build_query(ds, where={index+"_gt": last_index}))
+                try:
+                    result = self.request(q)
+                    if not result:
+                        logging.warning("Request returned no results")
+                    result = result[result_key]
+                except KeyError as k:
+                    if config.ignore_errors:
+                        logging.error("Could not find keys: " + ",".join(k.args))
+                        break
+                    else:
+                        raise k
+                except Exception as e:
+                    if config.ignore_errors:
+                        logging.exception(e)
+                        break
+                    else:
+                        raise e
 
-            try:
-                result = self.request(session, q)
-                if not result:
-                    logging.warning("Request returned no results")
-                result = result[result_key]
-            except KeyError as k:
-                if config.ignore_errors:
-                    logging.error("Could not find keys: " + ",".join(k.args))
-                    break
+                elements.extend(result)
+
+                # if return data (result) has no elements, we have finished
+                if result: 
+                    assert(last_index != result[-1][index])
+                    if not last_index:
+                        last_index = "0x0"
+                    # TODO: What if the index is not 0xwhatever?
+                    last_index = result[-1][index]
+                    pbar.update(int(last_index[:6], 0) - pbar.n)
                 else:
-                    raise k
-            except Exception as e:
-                if config.ignore_errors:
-                    logging.exception(e)
-                    break
-                else:
-                    raise e
-
-            elements.extend(result)
-
-            # if return data (result) has no elements, we have finished
-            if result: 
-                assert(last_index != result[-1][index])
-                last_index = result[-1][index]
-            else:
-                exit = True
+                    pbar.update(pbar.total - pbar.n)
+                    exit = True
 
         return elements

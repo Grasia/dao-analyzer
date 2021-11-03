@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 from parser import CacheScriptsArgParser
+from typing import Dict, List
+from aragon.runner import AragonRunner
+from common import Runner
 import daostack.main as daostack
 import daohaus.main as daohaus
 import aragon.main as aragon
@@ -16,22 +19,14 @@ LOGGING_STR_FORMAT = "%(levelname)s: %(message)s"
 
 logging.basicConfig(format=LOGGING_STR_FORMAT, level=logging.INFO)
 
-AVAILABLE_PLATFORMS = {
-    "aragon": aragon.run,
-    "daostack": daostack.run,
-    "daohaus": daohaus.run
+AVAILABLE_PLATFORMS: Dict[str, Runner] = {
+    AragonRunner.name: AragonRunner()
 }
 
 AVAILABLE_NETWORKS = ["mainnet", "xdai", "polygon", "arbitrum"]
 
 def _call_platform(platform: str, force: bool=False, networks=None):
-    platform_dir = os.path.join("datawarehouse", platform)
-    print("Platform_dir", platform_dir)
-    if force and os.path.isdir(platform_dir):
-        logging.warning(f"Removing path {platform_dir}")
-        shutil.rmtree(platform_dir)
-
-    AVAILABLE_PLATFORMS[platform](networks)
+    AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force)
 
 if __name__ == '__main__':
     parser = CacheScriptsArgParser(
@@ -40,8 +35,11 @@ if __name__ == '__main__':
 
     config.populate_args(parser.parse_args())
 
+    # TODO: Change for -v, -vv, -vvv
     if config.debug:
         logging.getLogger().setLevel(level=logging.DEBUG)
+    else:
+        logging.getLogger().setLevel(level=logging.WARNING)
 
     # The default config is every platform
     if not config.platforms:
