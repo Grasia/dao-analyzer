@@ -41,3 +41,9 @@ class CacheScriptsArgParser(ArgumentParser):
             default=available_networks,
             help="Networks to update. Every network is updated by default"
         )
+        self.add_argument(
+            "-c", "--collectors",
+            nargs="+",
+            required=False,
+            help="Collectors to run. For example: aragon/casts"
+        )

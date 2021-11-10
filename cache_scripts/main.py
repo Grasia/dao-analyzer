@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-from parser import CacheScriptsArgParser
 from typing import Dict, List
 from aragon.runner import AragonRunner
 from common import Runner
+from argparser import CacheScriptsArgParser
 import daostack.main as daostack
 import daohaus.main as daohaus
 import aragon.main as aragon
@@ -25,8 +25,8 @@ AVAILABLE_PLATFORMS: Dict[str, Runner] = {
 
 AVAILABLE_NETWORKS = ["mainnet", "xdai", "polygon", "arbitrum"]
 
-def _call_platform(platform: str, force: bool=False, networks=None):
-    AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force)
+def _call_platform(platform: str, force: bool=False, networks=None, collectors=None):
+    AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force, collectors=collectors)
 
 if __name__ == '__main__':
     parser = CacheScriptsArgParser(
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # Now calling the platform and deleting if needed
     for p in config.platforms:
-        _call_platform(p, config.force, config.networks)
+        _call_platform(p, config.force, config.networks, config.collectors)
 
     # write date
     data_date: str = str(date.today())

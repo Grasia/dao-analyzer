@@ -10,6 +10,7 @@
 from gql import Client
 from gql.dsl import DSLQuery, DSLSchema, DSLType, dsl_gql
 from gql.transport.requests import RequestsHTTPTransport
+from functools import partial
 
 import config
 import logging
@@ -31,12 +32,19 @@ class ApiQueryException(Exception):
 
 
 class ApiRequester:
-
-    ELEMS_PER_CHUNK: int = 1000
-
-    def __init__(self, endpoint: str) -> None:
+    def __init__(self, endpoint: str, pbar_enabled: bool=True) -> None:
         self.__transport = RequestsHTTPTransport(endpoint)
         self.__client: Client = Client(transport=self.__transport, fetch_schema_from_transport=True)
+        self.pbar_enabled = pbar_enabled
+        
+        ## TODO: Maybe a tqdm wrapper would be better...
+        if pbar_enabled:
+            self.pbar = partial(tqdm, delay=1, total=0xffff, file=sys.stdout,
+                desc="Requesting", bar_format="{l_bar}{bar}[{elapsed}<{remaining}]")
+        else:
+            ## TODO: Make some kind of simple spinner
+            self.pbar = partial(tqdm, disable=True)
+
         logging.debug(f"Invoked ApiRequester with endpoint: {endpoint}")
 
     def get_schema(self) -> DSLSchema:
@@ -55,6 +63,13 @@ class ApiRequester:
 
         return result
 
+    def _update_pbar(self, pbar, last_index:str):
+        if self.pbar_enabled and last_index:
+            pbar.update(int(last_index[:6], 0) - pbar.n)
+        elif not self.pbar_enabled:
+            ## TODO: Advance spinner
+            pass
+
     def n_requests(self, query:DSLType, result_key: str, index='id', last_index: str = "") -> List[Dict]:
         """
         Requests all chunks from endpoint.
@@ -63,6 +78,9 @@ class ApiRequester:
             * query: json to request
             * skip_n: number of rows to skip
             * result_key: dict key to access the list
+            * index: dict key to use as index
+            * last_index: used to continue the request
+            * pbar_enabled: wether to enable the progress bar or just display messages
         """
         elements: List[Dict] = list()
         result = Dict
@@ -70,8 +88,7 @@ class ApiRequester:
         # do-while structure
         exit: bool = False
 
-        bar_format: str = "{l_bar}{bar}[{elapsed}<{remaining}]"
-        with tqdm(delay=1, total=0xffff, file=sys.stdout, desc="Requesting", bar_format=bar_format) as pbar:
+        with self.pbar() as pbar:
             while not exit:
                 q: DSLQuery = DSLQuery(query(where={index+"_gt": last_index}))
 
@@ -98,13 +115,12 @@ class ApiRequester:
                 # if return data (result) has no elements, we have finished
                 if result: 
                     assert(last_index != result[-1][index])
-                    if not last_index:
-                        last_index = "0x0"
-                    # TODO: What if the index is not 0xwhatever?
+                    self._update_pbar(pbar, last_index)
                     last_index = result[-1][index]
-                    pbar.update(int(last_index[:6], 0) - pbar.n)
                 else:
-                    pbar.update(pbar.total - pbar.n)
+                    if self.pbar_enabled:
+                        pbar.update(pbar.total - pbar.n)
+                    ## TODO: Else finish the pbar thingie
                     exit = True
 
         return elements
