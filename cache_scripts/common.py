@@ -20,8 +20,6 @@ from api_requester import ApiRequester
 with open(Path('cache_scripts') / 'endpoints.json') as json_file:
     ENDPOINTS: Dict = json.load(json_file)
 
-## TODO: SEPARATE COLLECTOR TO THEGRAPHCOLLECTOR
-## THAT WAY; WE CAN CREATE MORE COLLECTORS THAT DONT USE THEGRAPH AS A BACKEND
 class Collector(ABC):
     def __init__(self, name:str, runner):
         self.name: str = name
@@ -66,7 +64,9 @@ class GraphQLCollector(Collector):
 
     def transform_to_df(self, data: List[Dict]) -> pd.DataFrame:
         # TODO: Consider the schema to put column names even in empty dataframes
-        return pd.DataFrame(data)
+        df = pd.DataFrame(data)
+        df['network'] = self.network
+        return df
 
     def verify(self) -> bool:
         self.query()
@@ -80,16 +80,20 @@ class GraphQLCollector(Collector):
         # which means that the latest received item is an 0xffff...
         # The last_index method only serves for pagination, a new item could
         # appear with an id less than the max one, and we wouldn't detect it
-        last_index: str = ""
-        prev_df: pd.DataFrame = None
+        # we have to use the creation date or something like that
+        last_index: str = "0x0"
+        prev_df: pd.DataFrame = pd.DataFrame()
+        ## TODO: Force with -n mainnet will also erase the xdai data
+        ## Is this what we want?
         if not force and self.data_path.is_file():
             prev_df: pd.DataFrame = pd.read_feather(self.data_path)
-            last_index = prev_df[self.index].max()
-            logging.warning(f"Continuing last request with last_index={last_index}")
+            last_index = prev_df[self.index][prev_df['network'] == self.network].max()
+            if pd.isna(last_index):
+                last_index: str = "0x0"
 
         ## TODO: Catch keyboard interrupt and save whatever we have downloaded
         # We would need to save on the metadata the block number or something so
-        # new items don't appear between the ids
+        # new items don't appear between the ids. Alternative: Dont save anything
         data: List[Dict] = self.requester.n_requests(
             query=self.query,
             index=self.index,
@@ -103,8 +107,7 @@ class GraphQLCollector(Collector):
             logging.warning("Empty dataframe, not updating file")
             return
 
-        if prev_df:
-            df = prev_df.concat(df)
+        df = prev_df.append(df).reset_index(drop=True)
 
         # rewrite df to file
         df.to_feather(self.data_path)
@@ -123,10 +126,23 @@ class Runner(ABC):
 
         print(f'--- Updating {self.name} datawarehouse ---')
 
-        verified = [c for c in self.collectors if c.network in networks and c.verify()]
+        tocheck = [c for c in self.collectors if c.long_name in collectors and
+                                                 c.network in networks]
 
-        if collectors:
-            verified = [c for c in verified if c.long_name in collectors]
+        verified = []
+        for c in tocheck:
+            try:
+                if c.verify():
+                    verified.append(c)
+                else:
+                    print("Verified returned false for {c.long_name} ({c.network})")
+            except Exception as e:
+                print("Won't run {c.long_name} ({c.network})")
+                print(e)
+
+        if not verified:
+            print("Not running any collectors, available collectors are:")
+            print(", ".join([c.long_name for c in self.collectors]))
 
         for c in verified:
             print(f"Running collector {c.long_name} ({c.network})")

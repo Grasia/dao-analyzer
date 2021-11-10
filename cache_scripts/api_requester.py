@@ -10,7 +10,7 @@
 from gql import Client
 from gql.dsl import DSLQuery, DSLSchema, DSLType, dsl_gql
 from gql.transport.requests import RequestsHTTPTransport
-from functools import partial
+import re
 
 import config
 import logging
@@ -30,20 +30,53 @@ class ApiQueryException(Exception):
     def __str__(self):
         return super().__str__() + ":\n" + self.errorsString()
 
+class IndexProgressBar(tqdm):
+    def __init__(self, total=0xffff):
+        super().__init__(delay=1, total=total, file=sys.stdout, desc="Requesting",
+            bar_format="{l_bar}{bar}[{elapsed}<{remaining}]", dynamic_ncols=True)
+
+    def progress(self, last_index: str, new_items: int):
+        if not last_index:
+            last_index = "0x0"
+
+        match = re.search(r"0x[\da-fA-F]+", last_index)
+        if match:
+            self.update(int(match[0][:6], 0) - self.n)
+        else:
+            raise ValueError(f"{last_index} doesn't contain any hex values")
+
+    def complete(self):
+        self.update(self.total - self.n)
+
+class RequestProgressSpinner:
+    def __init__(self):
+        self.prev_lastindex = ""
+        self.total = 0
+
+    def progress(self, last_index: str, new_items: int):
+        filler = " " * max(0, len(self.prev_lastindex) - len(last_index))
+        self.total += new_items
+        print(f"Requesting... Total: {self.total:5d}. Requested until {last_index}"+filler, end='\r', flush=True)
+        self.prev_lastindex = last_index
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # To remove the last \r
+        if self.prev_lastindex:
+            print()
+
+    def complete(self):
+        pass
 
 class ApiRequester:
+    ELEMS_PER_CHUNK: int = 1000
+
     def __init__(self, endpoint: str, pbar_enabled: bool=True) -> None:
         self.__transport = RequestsHTTPTransport(endpoint)
         self.__client: Client = Client(transport=self.__transport, fetch_schema_from_transport=True)
-        self.pbar_enabled = pbar_enabled
-        
-        ## TODO: Maybe a tqdm wrapper would be better...
-        if pbar_enabled:
-            self.pbar = partial(tqdm, delay=1, total=0xffff, file=sys.stdout,
-                desc="Requesting", bar_format="{l_bar}{bar}[{elapsed}<{remaining}]")
-        else:
-            ## TODO: Make some kind of simple spinner
-            self.pbar = partial(tqdm, disable=True)
+        self.pbar = IndexProgressBar if pbar_enabled else RequestProgressSpinner
 
         logging.debug(f"Invoked ApiRequester with endpoint: {endpoint}")
 
@@ -62,13 +95,6 @@ class ApiRequester:
             raise ApiQueryException(result["errors"])
 
         return result
-
-    def _update_pbar(self, pbar, last_index:str):
-        if self.pbar_enabled and last_index:
-            pbar.update(int(last_index[:6], 0) - pbar.n)
-        elif not self.pbar_enabled:
-            ## TODO: Advance spinner
-            pass
 
     def n_requests(self, query:DSLType, result_key: str, index='id', last_index: str = "") -> List[Dict]:
         """
@@ -90,7 +116,7 @@ class ApiRequester:
 
         with self.pbar() as pbar:
             while not exit:
-                q: DSLQuery = DSLQuery(query(where={index+"_gt": last_index}))
+                q: DSLQuery = DSLQuery(query(where={index+"_gt": last_index}, first=self.ELEMS_PER_CHUNK))
 
                 try:
                     result = self.request(q)
@@ -115,12 +141,10 @@ class ApiRequester:
                 # if return data (result) has no elements, we have finished
                 if result: 
                     assert(last_index != result[-1][index])
-                    self._update_pbar(pbar, last_index)
+                    pbar.progress(last_index=last_index, new_items=len(result))
                     last_index = result[-1][index]
                 else:
-                    if self.pbar_enabled:
-                        pbar.update(pbar.total - pbar.n)
-                    ## TODO: Else finish the pbar thingie
+                    pbar.complete()
                     exit = True
 
         return elements

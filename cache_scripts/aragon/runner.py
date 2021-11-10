@@ -6,8 +6,9 @@
     Copyright 2021 David Davó
         <david@ddavo.me>
 """
-from typing import List
+from typing import List, Dict
 from gql.dsl import DSLField
+import pandas as pd
 
 from common import ENDPOINTS, Collector, GraphQLCollector, Runner
 
@@ -45,6 +46,110 @@ class CastsCollector(GraphQLCollector):
             )
         )
 
+class MiniMeTokensCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('miniMeTokens', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network, pbar_enabled=False)
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.miniMeTokens(**kwargs).select(
+            ds.MiniMeToken.id,
+            ds.MiniMeToken.address,
+            ds.MiniMeToken.totalSupply,
+            ds.MiniMeToken.transferable,
+            ds.MiniMeToken.name,
+            ds.MiniMeToken.symbol,
+            ds.MiniMeToken.orgAddress,
+            ds.MiniMeToken.appAddress
+        )
+
+class TokenHoldersCollector(GraphQLCollector):
+    ## TODO: Run the n_requests for EACH tokenAddress, with its respective progress and everything
+    def __init__(self, runner, network: str):
+        super().__init__('tokenHolders', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network)
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.tokenHolders(**kwargs).select(
+            ds.TokenHolder.id,
+            ds.TokenHolder.address,
+            ds.TokenHolder.tokenAddress,
+            ds.TokenHolder.balance
+        )
+
+    def transform_to_df(self, data: List[Dict]) -> pd.DataFrame:
+        ## TODO: see _tranform_to_df in token_holders.py
+        return super().transform_to_df(data)
+
+class OrganizationsCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('organizations', runner, endpoint=ENDPOINTS[network]['aragon'], network=network)
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.organizations(**kwargs).select(
+            ds.Organization.id,
+            ds.Organization.createdAt,
+            ds.Organization.recoveryVault
+        )
+
+class ReposCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('repos', runner, network=network, endpoint=ENDPOINTS[network]['aragon'])
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.repos(**kwargs).select(
+            ds.Repo.id,
+            ds.Repo.address,
+            ds.Repo.name,
+            ds.Repo.node,
+            ds.Repo.appCount
+        )
+
+class TransactionsCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('transactions', runner, network=network, endpoint=ENDPOINTS[network]['aragon_finance'])
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.transactions(**kwargs).select(
+            ds.Transaction.id,
+            ds.Transaction.orgAddress,
+            ds.Transaction.appAddress,
+            ds.Transaction.token,
+            ds.Transaction.entity,
+            ds.Transaction.isIncoming,
+            ds.Transaction.amount,
+            ds.Transaction.date,
+            ds.Transaction.reference
+        )
+
+class VotesCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]['aragon_voting'])
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.votes(**kwargs).select(
+            ds.Vote.id,
+            ds.Vote.orgAddress,
+            ds.Vote.appAddress,
+            ds.Vote.creator,
+            ds.Vote.metadata,
+            ## TODO: Use one of the following fields to implement the database
+            # updating mechanism
+            ds.Vote.executed,
+            ds.Vote.executedAt,
+            ds.Vote.startDate,
+            ds.Vote.supportRequiredPct,
+            ds.Vote.minAcceptQuorum,
+            ds.Vote.yea,
+            ds.Vote.nay,
+            ds.Vote.voteNum,
+            ds.Vote.votingPower
+        )
+
 class AragonRunner(Runner):
     name: str = 'aragon'
 
@@ -55,8 +160,16 @@ class AragonRunner(Runner):
         for n in self.networks: 
             self._collectors.extend([
                 AppsCollector(self, n),
-                CastsCollector(self, n)
+                CastsCollector(self, n),
+                OrganizationsCollector(self, n),
+                ReposCollector(self, n),
+                TransactionsCollector(self, n),
+                VotesCollector(self, n)
             ])
+        
+        ## TODO: Fix aragon-tokens xdai subgraph and redeploy
+        self._collectors.append(MiniMeTokensCollector(self, 'mainnet'))
+        self._collectors.append(TokenHoldersCollector(self, 'mainnet'))
 
     @property
     def collectors(self):
