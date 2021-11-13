@@ -10,7 +10,7 @@
 from pathlib import Path
 from abc import ABC, abstractmethod
 from gql.dsl import DSLField
-from typing import Dict, List
+from typing import Callable, Dict, List
 import json
 import pandas as pd
 import logging
@@ -51,9 +51,14 @@ class GraphQLCollector(Collector):
         self.index = index if index else 'id'
         self.result_key = result_key if result_key else name
         self.network = network
+        self.postprocessors: Callable = []
 
         self.requester: ApiRequester = ApiRequester(endpoint=self.endpoint, pbar_enabled=pbar_enabled)
-    
+
+    def postprocessor(self, f: Callable[[pd.DataFrame], pd.DataFrame]):
+        self.postprocessors.append(f)
+        return f
+
     @property
     def schema(self):
         return self.requester.get_schema()
@@ -64,7 +69,14 @@ class GraphQLCollector(Collector):
 
     def transform_to_df(self, data: List[Dict]) -> pd.DataFrame:
         # TODO: Consider the schema to put column names even in empty dataframes
-        df = pd.DataFrame(data)
+        df = pd.DataFrame.from_dict(pd.json_normalize(data))
+
+        # For compatibility reasons we change from . to snake case
+        def dotsToSnakeCase(str: str) -> str:
+            splitted = str.split('.')
+            return splitted[0] + ''.join(x[0].upper()+x[1:] for x in splitted[1:])
+                        
+        df.rename(columns=dotsToSnakeCase, inplace=True)
         df['network'] = self.network
         return df
 
@@ -102,6 +114,10 @@ class GraphQLCollector(Collector):
 
         # transform to df
         df: pd.DataFrame = self.transform_to_df(data)
+        for post in self.postprocessors:
+            df = post(df)
+            if df is None:
+                raise ValueError(f"The postprocessor {post.__name__} returned None")
 
         if df.empty:
             logging.warning("Empty dataframe, not updating file")
@@ -126,7 +142,7 @@ class Runner(ABC):
 
         print(f'--- Updating {self.name} datawarehouse ---')
 
-        tocheck = [c for c in self.collectors if c.long_name in collectors and
+        tocheck = [c for c in self.collectors if (not collectors or c.long_name in collectors) and
                                                  c.network in networks]
 
         verified = []
@@ -137,7 +153,7 @@ class Runner(ABC):
                 else:
                     print("Verified returned false for {c.long_name} ({c.network})")
             except Exception as e:
-                print("Won't run {c.long_name} ({c.network})")
+                print(f"Won't run {c.long_name} ({c.network})")
                 print(e)
 
         if not verified:

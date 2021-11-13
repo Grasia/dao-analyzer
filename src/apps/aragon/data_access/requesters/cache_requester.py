@@ -14,14 +14,14 @@ from typing import List
 from src.apps.common.data_access.requesters.irequester import IRequester
 
 CACHE_PATH: str = os.path.join('datawarehouse', 'aragon')
-APPS: str = os.path.join(CACHE_PATH, 'apps.csv')
-CASTS: str = os.path.join(CACHE_PATH, 'casts.csv')
-MINI_ME_TOKENS: str = os.path.join(CACHE_PATH, 'miniMeTokens.csv')
-ORGANIZATIONS: str = os.path.join(CACHE_PATH, 'organizations.csv')
-REPOS: str = os.path.join(CACHE_PATH, 'repos.csv')
-TOKEN_HOLDERS: str = os.path.join(CACHE_PATH, 'tokenHolders.csv')
-TRANSACTIONS: str = os.path.join(CACHE_PATH, 'transactions.csv')
-VOTES: str = os.path.join(CACHE_PATH, 'votes.csv')
+APPS: str = os.path.join(CACHE_PATH, 'apps.arr')
+CASTS: str = os.path.join(CACHE_PATH, 'casts.arr')
+MINI_ME_TOKENS: str = os.path.join(CACHE_PATH, 'miniMeTokens.arr')
+ORGANIZATIONS: str = os.path.join(CACHE_PATH, 'organizations.arr')
+REPOS: str = os.path.join(CACHE_PATH, 'repos.arr')
+TOKEN_HOLDERS: str = os.path.join(CACHE_PATH, 'tokenHolders.arr')
+TRANSACTIONS: str = os.path.join(CACHE_PATH, 'transactions.arr')
+VOTES: str = os.path.join(CACHE_PATH, 'votes.arr')
 ALL_FILES: List[str] = [
     APPS,
     CASTS,
@@ -51,7 +51,7 @@ class CacheRequester(IRequester):
         df: pd.DataFrame = pd.DataFrame()
         for src in self.__srcs:
             if os.path.isfile(src):
-                df = pd.concat([df, pd.read_csv(src, header=0)], axis=0, ignore_index=True)
+                df = pd.concat([df, pd.read_feather(src)], axis=0, ignore_index=True)
         
         return df
 

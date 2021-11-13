@@ -31,11 +31,17 @@ class ApiQueryException(Exception):
         return super().__str__() + ":\n" + self.errorsString()
 
 class IndexProgressBar(tqdm):
+    ## TODO: Show total number of requests
     def __init__(self, total=0xffff):
         super().__init__(delay=1, total=total, file=sys.stdout, desc="Requesting",
-            bar_format="{l_bar}{bar}[{elapsed}<{remaining}]", dynamic_ncols=True)
+            bar_format="{l_bar}{bar}[{elapsed}<{remaining}{postfix}]", dynamic_ncols=True,
+            postfix={"requested":0})
+        self.requested = 0
 
     def progress(self, last_index: str, new_items: int):
+        self.requested += new_items
+        self.set_postfix(refresh=False, requested=self.requested)
+
         if not last_index:
             last_index = "0x0"
 
