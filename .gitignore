@@ -1,5 +1,6 @@
 # Project things
 /datawarehouse
+/datawarehouse.old
 .secrets
 /*.ipynb
 .vscode/

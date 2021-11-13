@@ -57,6 +57,37 @@ class CastsCollector(GraphQLCollector):
             )
         )
 
+class OrganizationsCollector(GraphQLCollector):
+    DAO_NAMES_PATH=os.path.join('cache_scripts', 'aragon', 'dao_names.json')
+
+    def __init__(self, runner, network: str):
+        super().__init__('organizations', runner, endpoint=ENDPOINTS[network]['aragon'], network=network)
+
+        @self.postprocessor
+        def apply_names(df: pd.DataFrame) -> pd.DataFrame:
+            with open(self.DAO_NAMES_PATH, 'r') as f:
+                names_dict = json.load(f)
+
+            if self.network not in names_dict.keys() or \
+            not names_dict[self.network] or \
+            df.empty:
+                return df
+
+            names_df = pd.json_normalize(names_dict[self.network])
+            names_df['id'] = names_df['address'].str.lower()
+            names_df = names_df[['id', 'name']]
+            df = df.merge(names_df, on='id', how='left')
+
+            return df
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.organizations(**kwargs).select(
+            ds.Organization.id,
+            ds.Organization.createdAt,
+            ds.Organization.recoveryVault
+        )
+
 class MiniMeTokensCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('miniMeTokens', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network, pbar_enabled=False)
@@ -103,37 +134,6 @@ class TokenHoldersCollector(GraphQLCollector):
     def transform_to_df(self, data: List[Dict]) -> pd.DataFrame:
         ## TODO: see _tranform_to_df in token_holders.py
         return super().transform_to_df(data)
-
-class OrganizationsCollector(GraphQLCollector):
-    DAO_NAMES_PATH=os.path.join('cache_scripts', 'aragon', 'dao_names.json')
-
-    def __init__(self, runner, network: str):
-        super().__init__('organizations', runner, endpoint=ENDPOINTS[network]['aragon'], network=network)
-
-        @self.postprocessor
-        def apply_names(df: pd.DataFrame) -> pd.DataFrame:
-            with open(self.DAO_NAMES_PATH, 'r') as f:
-                names_dict = json.load(f)
-
-            if self.network not in names_dict.keys() or \
-            not names_dict[self.network] or \
-            df.empty:
-                return df
-
-            names_df = pd.json_normalize(names_dict[self.network])
-            names_df['id'] = names_df['address'].str.lower()
-            names_df = names_df[['id', 'name']]
-            df = df.merge(names_df, on='id', how='left')
-
-            return df
-
-    def query(self, **kwargs) -> DSLField:
-        ds = self.schema
-        return ds.Query.organizations(**kwargs).select(
-            ds.Organization.id,
-            ds.Organization.createdAt,
-            ds.Organization.recoveryVault
-        )
 
 class ReposCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
