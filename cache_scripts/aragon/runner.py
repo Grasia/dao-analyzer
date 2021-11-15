@@ -214,5 +214,5 @@ class AragonRunner(Runner):
         self._collectors.append(TokenHoldersCollector(self, 'mainnet'))
 
     @property
-    def collectors(self):
+    def collectors(self) -> List[Collector]:
         return self._collectors

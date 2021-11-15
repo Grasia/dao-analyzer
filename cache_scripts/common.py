@@ -109,7 +109,6 @@ class GraphQLCollector(Collector):
         data: List[Dict] = self.requester.n_requests(
             query=self.query,
             index=self.index,
-            result_key=self.result_key,
             last_index=last_index)
 
         # transform to df

@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 from typing import Dict, List
 from aragon.runner import AragonRunner
+from daostack.runner import DaostackRunner
 from common import Runner
 from argparser import CacheScriptsArgParser
-import daostack.main as daostack
-import daohaus.main as daohaus
-import aragon.main as aragon
 
 import config
 
@@ -20,9 +18,11 @@ LOGGING_STR_FORMAT = "%(levelname)s: %(message)s"
 logging.basicConfig(format=LOGGING_STR_FORMAT, level=logging.INFO)
 
 AVAILABLE_PLATFORMS: Dict[str, Runner] = {
-    AragonRunner.name: AragonRunner()
+    AragonRunner.name: AragonRunner(),
+    DaostackRunner.name: DaostackRunner()
 }
 
+# TODO: Get available networks from Runners
 AVAILABLE_NETWORKS = ["mainnet", "xdai", "polygon", "arbitrum"]
 
 def _call_platform(platform: str, force: bool=False, networks=None, collectors=None):

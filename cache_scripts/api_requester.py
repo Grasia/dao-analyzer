@@ -102,7 +102,7 @@ class ApiRequester:
 
         return result
 
-    def n_requests(self, query:DSLType, result_key: str, index='id', last_index: str = "") -> List[Dict]:
+    def n_requests(self, query:DSLType, index='id', last_index: str = "") -> List[Dict]:
         """
         Requests all chunks from endpoint.
 
@@ -120,6 +120,8 @@ class ApiRequester:
         # do-while structure
         exit: bool = False
 
+        ## TODO: Use the same already stablished block for all requests
+        # instead of making each request on the lastest one (which can change)
         with self.pbar() as pbar:
             while not exit:
                 q: DSLQuery = DSLQuery(query(where={index+"_gt": last_index}, first=self.ELEMS_PER_CHUNK))
@@ -128,13 +130,17 @@ class ApiRequester:
                     result = self.request(q)
                     if not result:
                         logging.warning("Request returned no results")
-                    result = result[result_key]
+                    elif len(result.values()) == 1:
+                        result = next(iter(result.values()))
+                    else:
+                        logging.error("BEWARE! the request returned more than one result!")
                 except KeyError as k:
                     if config.ignore_errors:
                         logging.error("Could not find keys: " + ",".join(k.args))
                         break
                     else:
                         raise k
+                ## TODO: Treat 502 exceptions
                 except Exception as e:
                     if config.ignore_errors:
                         logging.exception(e)
