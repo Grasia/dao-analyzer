@@ -14,11 +14,11 @@ from typing import List
 from src.apps.common.data_access.requesters.irequester import IRequester
 
 CACHE_PATH: str = os.path.join('datawarehouse', 'daohaus')
-MOLOCHES: str = os.path.join(CACHE_PATH, 'moloches.csv')
-PROPOSALS: str = os.path.join(CACHE_PATH, 'proposals.csv')
-MEMBERS: str = os.path.join(CACHE_PATH, 'members.csv')
-RAGE_QUITS: str = os.path.join(CACHE_PATH, 'rage_quits.csv')
-VOTES: str = os.path.join(CACHE_PATH, 'votes.csv')
+MOLOCHES: str = os.path.join(CACHE_PATH, 'moloches.arr')
+PROPOSALS: str = os.path.join(CACHE_PATH, 'proposals.arr')
+MEMBERS: str = os.path.join(CACHE_PATH, 'members.arr')
+RAGE_QUITS: str = os.path.join(CACHE_PATH, 'rageQuits.arr')
+VOTES: str = os.path.join(CACHE_PATH, 'votes.arr')
 ALL_FILES: List[str] = [MOLOCHES, PROPOSALS, MEMBERS, RAGE_QUITS, VOTES]
 
 
@@ -39,7 +39,7 @@ class CacheRequester(IRequester):
         df: pd.DataFrame = pd.DataFrame()
         for src in self.__srcs:
             if os.path.isfile(src):
-                df = pd.concat([df, pd.read_csv(src, header=0)], axis=0, ignore_index=True)
+                df = pd.concat([df, pd.read_feather(src)], axis=0, ignore_index=True)
         
         return df
 
