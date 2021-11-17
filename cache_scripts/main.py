@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from typing import Dict, List
 from aragon.runner import AragonRunner
+from daohaus.runner import DaohausRunner
 from daostack.runner import DaostackRunner
 from common import Runner
 from argparser import CacheScriptsArgParser
@@ -19,6 +20,7 @@ logging.basicConfig(format=LOGGING_STR_FORMAT, level=logging.INFO)
 
 AVAILABLE_PLATFORMS: Dict[str, Runner] = {
     AragonRunner.name: AragonRunner(),
+    DaohausRunner.name: DaohausRunner(),
     DaostackRunner.name: DaostackRunner()
 }
 

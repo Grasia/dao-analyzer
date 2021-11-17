@@ -20,6 +20,14 @@ from api_requester import ApiRequester
 with open(Path('cache_scripts') / 'endpoints.json') as json_file:
     ENDPOINTS: Dict = json.load(json_file)
 
+def add_where(d, **kwargs):
+    if "where" in d:
+        d["where"] |= kwargs
+    else:
+        d["where"] = kwargs
+    
+    return d
+
 class Collector(ABC):
     def __init__(self, name:str, runner):
         self.name: str = name

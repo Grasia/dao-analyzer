@@ -11,7 +11,7 @@ from typing import List
 import pandas as pd
 from gql.dsl import DSLField
 
-from common import ENDPOINTS, Collector, GraphQLCollector, Runner
+from common import ENDPOINTS, Collector, GraphQLCollector, Runner, add_where
 
 def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(columns={
@@ -33,8 +33,7 @@ class DaosCollector(GraphQLCollector):
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
-        kwargs = self._where_append(kwargs, register="registered")
-        return ds.Query.daos(**kwargs).select(
+        return ds.Query.daos(**add_where(kwargs, register="registered")).select(
             ds.DAO.id,
             ds.DAO.name,
             ds.DAO.nativeToken.select(ds.Token.id),
