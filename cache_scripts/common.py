@@ -15,7 +15,9 @@ import json
 import pandas as pd
 import logging
 
+import config
 from api_requester import ApiRequester
+from metadata import RunnerMetadata, Block
 
 with open(Path('cache_scripts') / 'endpoints.json') as json_file:
     ENDPOINTS: Dict = json.load(json_file)
@@ -40,6 +42,10 @@ class Collector(ABC):
     @property
     def long_name(self) -> str:
         return f"{self.runner_name}/{self.name}"
+    
+    @property
+    def df(self) -> pd.DataFrame:
+        return pd.DataFrame()
 
     def verify(self) -> bool:
         """
@@ -49,7 +55,7 @@ class Collector(ABC):
         return True
 
     @abstractmethod
-    def run(self, force=False) -> None:
+    def run(self, force=False, **kwargs) -> None:
         return
 
 class GraphQLCollector(Collector):
@@ -75,6 +81,14 @@ class GraphQLCollector(Collector):
     def query(self, **kwargs) -> DSLField:
         raise NotImplementedError
 
+    @property
+    def df(self) -> pd.DataFrame:
+        df = pd.read_feather(self.data_path)
+        if self.network:
+            df = df[df['network'] == self.network]
+        
+        return df
+
     def transform_to_df(self, data: List[Dict]) -> pd.DataFrame:
         # TODO: Consider the schema to put column names even in empty dataframes
         df = pd.DataFrame.from_dict(pd.json_normalize(data))
@@ -92,7 +106,30 @@ class GraphQLCollector(Collector):
         self.query()
         return True
 
-    def run(self, force=False):
+    def _update_data(self, df: pd.DataFrame, force: bool = False):
+        if df.empty:
+            logging.warning("Empty dataframe, not updating file")
+            return
+
+        if not self.data_path.is_file():
+            df.to_feather(self.data_path)
+            return
+
+        prev_df: pd.DataFrame = pd.read_feather(self.data_path)
+
+        # If force is selected, we delete the ones of the same network only
+        if force:
+            prev_df = prev_df[prev_df["network"] != self.network]
+        
+        prev_df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
+        df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
+
+        # TODO: Add backup thing
+
+        # Updating data
+        df.combine_first(prev_df).reset_index().to_feather(self.data_path)
+
+    def run(self, force=False, block: Block = None):
         # TODO: Check if meta version is not good, force = true
 
         # open last df if exists and get last_index
@@ -101,15 +138,8 @@ class GraphQLCollector(Collector):
         # The last_index method only serves for pagination, a new item could
         # appear with an id less than the max one, and we wouldn't detect it
         # we have to use the creation date or something like that
-        last_index: str = "0x0"
-        prev_df: pd.DataFrame = pd.DataFrame()
-        ## TODO: Force with -n mainnet will also erase the xdai data
-        ## Is this what we want?
-        if not force and self.data_path.is_file():
-            prev_df: pd.DataFrame = pd.read_feather(self.data_path)
-            last_index = prev_df[self.index][prev_df['network'] == self.network].max()
-            if pd.isna(last_index):
-                last_index: str = "0x0"
+        if block is None:
+            block = Block()
 
         ## TODO: Catch keyboard interrupt and save whatever we have downloaded
         # We would need to save on the metadata the block number or something so
@@ -117,7 +147,7 @@ class GraphQLCollector(Collector):
         data: List[Dict] = self.requester.n_requests(
             query=self.query,
             index=self.index,
-            last_index=last_index)
+            block_hash=block.id)
 
         # transform to df
         df: pd.DataFrame = self.transform_to_df(data)
@@ -126,14 +156,7 @@ class GraphQLCollector(Collector):
             if df is None:
                 raise ValueError(f"The postprocessor {post.__name__} returned None")
 
-        if df.empty:
-            logging.warning("Empty dataframe, not updating file")
-            return
-
-        df = prev_df.append(df).reset_index(drop=True)
-
-        # rewrite df to file
-        df.to_feather(self.data_path)
+        self._update_data(df, force)
 
 class Runner(ABC):
     def __init__(self):
@@ -144,10 +167,24 @@ class Runner(ABC):
     def collectors(self) -> List[Collector]:
         return []
 
+    @staticmethod
+    def validated_block(network: str, number_gte: int = 0) -> Block:
+        requester = ApiRequester(ENDPOINTS[network]["_blocks"])
+        ds = requester.get_schema()
+        return Block(requester.request(ds.Query.blocks(
+            first=1,
+            skip=config.SKIP_INVALID_BLOCKS,
+            orderBy="number",
+            orderDirection="desc",
+            where={"number_gte": number_gte}
+        ).select(
+            ds.Block.id,
+            ds.Block.number,
+            ds.Block.timestamp
+        ))["blocks"][0])
+
     def run(self, networks: List[str] = [], force=False, collectors=None):
         self.basedir.mkdir(parents=True, exist_ok=True)
-
-        print(f'--- Updating {self.name} datawarehouse ---')
 
         tocheck = [c for c in self.collectors if (not collectors or c.long_name in collectors) and
                                                  c.network in networks]
@@ -163,12 +200,17 @@ class Runner(ABC):
                 print(f"Won't run {c.long_name} ({c.network})")
                 print(e)
 
-        if not verified:
-            print("Not running any collectors, available collectors are:")
-            print(", ".join([c.long_name for c in self.collectors]))
-
-        for c in verified:
-            print(f"Running collector {c.long_name} ({c.network})")
-            c.run(force)
-
-        print(f'--- {self.name}\'s datawarehouse updated ---')
+        if verified:
+            # TODO: What if someone presses CTRL+C and there are some collectors
+            # still to be run?
+            # TODO: Ignore errors (but save them in the metadata)
+            with RunnerMetadata(self) as metadata:
+                print(f'--- Updating {self.name} datawarehouse ---')            
+                blocks: dict[str, Block] = {}
+                for c in verified:
+                    if c.network not in blocks:
+                        # Getting a block more recent than the one in the metadata
+                        metadata[c.network].block = blocks[c.network] = self.validated_block(c.network, metadata[c.network].block.number)
+                    print(f"Running collector {c.long_name} ({c.network}) on block {blocks[c.network].id[:15]}...")
+                    c.run(force, blocks[c.network])
+                print(f'--- {self.name}\'s datawarehouse updated ---')

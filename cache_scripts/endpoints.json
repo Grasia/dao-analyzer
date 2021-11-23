@@ -1,5 +1,6 @@
 {
     "mainnet": {
+        "_blocks": "https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks",
         "daostack": "https://api.thegraph.com/subgraphs/name/daostack/v41_11",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats",
@@ -9,6 +10,7 @@
         "aragon_finance": "https://api.thegraph.com/subgraphs/name/daviddavo/aragon-finance-mainnet"
     },
     "xdai": {
+        "_blocks": "https://api.thegraph.com/subgraphs/name/1hive/xdai-blocks",
         "daostack": "https://api.thegraph.com/subgraphs/name/daostack/v41_11_xdai",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-xdai",
@@ -19,10 +21,12 @@
         "aragon_finance": "https://api.thegraph.com/subgraphs/name/daviddavo/aragon-finance-xdai"
     },
     "polygon": {
+        "_blocks": "https://api.thegraph.com/subgraphs/name/daviddavo/matic-blocks",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-matic",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-matic"
     },
     "arbitrum": {
+        "_blocks": "https://api.thegraph.com/subgraphs/name/daviddavo/arbitrum-blocks",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-arbitrum",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-arbitrum"
     }

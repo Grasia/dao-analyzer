@@ -8,16 +8,15 @@
 """
 
 from gql import Client
-from gql.dsl import DSLQuery, DSLSchema, DSLType, dsl_gql
+from gql import dsl
+from gql.dsl import DSLField, DSLQuery, DSLSchema, DSLType, dsl_gql
 from gql.transport.requests import RequestsHTTPTransport
 import re
 
-import config
 import logging
 import sys
 from tqdm import tqdm
-from typing import Dict, List
-
+from typing import Dict, List, Union
 
 class ApiQueryException(Exception):
     def __init__(self, errors, msg="Errors in GraphQL Query"):
@@ -91,10 +90,13 @@ class ApiRequester:
             assert(self.__client.schema is not None)
             return DSLSchema(self.__client.schema)
 
-    def request(self, query: DSLQuery) -> Dict:
+    def request(self, query: Union[DSLQuery, DSLField]) -> Dict:
         """
         Requests data from endpoint.
         """
+        if isinstance(query, DSLField):
+            query = DSLQuery(query)
+
         logging.debug(f"Requesting: {query}")
         result = self.__client.execute(dsl_gql(query))
         if "errors" in result:
@@ -102,17 +104,22 @@ class ApiRequester:
 
         return result
 
-    def n_requests(self, query:DSLType, index='id', last_index: str = "") -> List[Dict]:
+    def request_single(self, q: Union[DSLQuery, DSLField]) -> Dict:
+        result = self.request(q)
+        if result and len(result.values()) == 1:
+            return next(iter(result.values()))
+        else:
+            raise 
+
+    def n_requests(self, query:DSLType, index='id', last_index: str = "", block_hash: str = None) -> List[Dict]:
         """
         Requests all chunks from endpoint.
 
         Parameters:
             * query: json to request
-            * skip_n: number of rows to skip
-            * result_key: dict key to access the list
             * index: dict key to use as index
             * last_index: used to continue the request
-            * pbar_enabled: wether to enable the progress bar or just display messages
+            * block_hash: make the request to that block hash
         """
         elements: List[Dict] = list()
         result = Dict
@@ -120,34 +127,18 @@ class ApiRequester:
         # do-while structure
         exit: bool = False
 
-        ## TODO: Use the same already stablished block for all requests
-        # instead of making each request on the lastest one (which can change)
         with self.pbar() as pbar:
             while not exit:
-                q: DSLQuery = DSLQuery(query(where={index+"_gt": last_index}, first=self.ELEMS_PER_CHUNK))
+                query_args = {
+                    "where": {index+"_gt": last_index},
+                    "first": self.ELEMS_PER_CHUNK
+                }
+                if block_hash:
+                    query_args["block"] = {"hash": block_hash}
 
-                try:
-                    result = self.request(q)
-                    if not result:
-                        logging.warning("Request returned no results")
-                    elif len(result.values()) == 1:
-                        result = next(iter(result.values()))
-                    else:
-                        logging.error("BEWARE! the request returned more than one result!")
-                except KeyError as k:
-                    if config.ignore_errors:
-                        logging.error("Could not find keys: " + ",".join(k.args))
-                        break
-                    else:
-                        raise k
-                ## TODO: Treat 502 exceptions
-                except Exception as e:
-                    if config.ignore_errors:
-                        logging.exception(e)
-                        break
-                    else:
-                        raise e
 
+                ## TODO: Treat errors
+                result = self.request_single(query(**query_args))
                 elements.extend(result)
 
                 # if return data (result) has no elements, we have finished

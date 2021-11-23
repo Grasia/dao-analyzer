@@ -24,8 +24,8 @@ AVAILABLE_PLATFORMS: Dict[str, Runner] = {
     DaostackRunner.name: DaostackRunner()
 }
 
-# TODO: Get available networks from Runners
-AVAILABLE_NETWORKS = ["mainnet", "xdai", "polygon", "arbitrum"]
+# Get available networks from Runners
+AVAILABLE_NETWORKS = {n for x in AVAILABLE_PLATFORMS.values() for n in x.networks}
 
 def _call_platform(platform: str, force: bool=False, networks=None, collectors=None):
     AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force, collectors=collectors)

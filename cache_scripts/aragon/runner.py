@@ -117,8 +117,7 @@ class TokenHoldersCollector(GraphQLCollector):
             # resolving.
             ## TODO: Add some way to get the already instantiated collector from 'runner'
             # instead of creating a new one
-            tokens = pd.read_feather(MiniMeTokensCollector(runner, self.network).data_path)
-            tokens = tokens[tokens['network'] == self.network]
+            tokens = MiniMeTokensCollector(runner, network).df
             tokens.rename(columns={'address':'tokenAddress', 'orgAddress':'organizationAddress'}, inplace=True)
             return df.merge(tokens[['tokenAddress', 'organizationAddress']], on='tokenAddress', how='left')
             
