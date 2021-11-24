@@ -30,7 +30,6 @@ class ApiQueryException(Exception):
         return super().__str__() + ":\n" + self.errorsString()
 
 class IndexProgressBar(tqdm):
-    ## TODO: Show total number of requests
     def __init__(self, total=0xffff):
         super().__init__(delay=1, total=total, file=sys.stdout, desc="Requesting",
             bar_format="{l_bar}{bar}[{elapsed}<{remaining}{postfix}]", dynamic_ncols=True,
@@ -136,8 +135,6 @@ class ApiRequester:
                 if block_hash:
                     query_args["block"] = {"hash": block_hash}
 
-
-                ## TODO: Treat errors
                 result = self.request_single(query(**query_args))
                 elements.extend(result)
 

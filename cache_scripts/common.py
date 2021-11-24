@@ -8,9 +8,10 @@
 """
 
 from pathlib import Path
+import traceback
 from abc import ABC, abstractmethod
 from gql.dsl import DSLField
-from typing import Callable, Dict, List
+from typing import Callable, Dict, Iterable, List
 import json
 import pandas as pd
 import logging
@@ -30,6 +31,11 @@ def add_where(d, **kwargs):
     
     return d
 
+def partial_query(q, w) -> DSLField:
+    def wrapper(**kwargs):
+        return q(**add_where(kwargs, **w))
+    return wrapper
+
 class Collector(ABC):
     def __init__(self, name:str, runner):
         self.name: str = name
@@ -37,12 +43,16 @@ class Collector(ABC):
 
     @property
     def data_path(self) -> Path:
-        return Path('datawarehouse') / self.runner_name / (self.name + '.arr')
+        return config.DATAWAREHOUSE / self.runner_name / (self.name + '.arr')
 
     @property
     def long_name(self) -> str:
         return f"{self.runner_name}/{self.name}"
-    
+
+    @property
+    def collectorid(self) -> str:
+        return self.long_name
+
     @property
     def df(self) -> pd.DataFrame:
         return pd.DataFrame()
@@ -74,6 +84,10 @@ class GraphQLCollector(Collector):
         return f
 
     @property
+    def collectorid(self) -> str:
+        return '-'.join([super().collectorid, self.network])
+
+    @property
     def schema(self):
         return self.requester.get_schema()
 
@@ -83,6 +97,9 @@ class GraphQLCollector(Collector):
 
     @property
     def df(self) -> pd.DataFrame:
+        if not self.data_path.is_file():
+            return pd.DataFrame()
+
         df = pd.read_feather(self.data_path)
         if self.network:
             df = df[df['network'] == self.network]
@@ -107,6 +124,8 @@ class GraphQLCollector(Collector):
         return True
 
     def _update_data(self, df: pd.DataFrame, force: bool = False):
+        """ Updates the dataframe in `self.data_path` with the new data.
+        """
         if df.empty:
             logging.warning("Empty dataframe, not updating file")
             return
@@ -130,20 +149,9 @@ class GraphQLCollector(Collector):
         df.combine_first(prev_df).reset_index().to_feather(self.data_path)
 
     def run(self, force=False, block: Block = None):
-        # TODO: Check if meta version is not good, force = true
-
-        # open last df if exists and get last_index
-        # TODO: This won't work. They are sorted by increasing id
-        # which means that the latest received item is an 0xffff...
-        # The last_index method only serves for pagination, a new item could
-        # appear with an id less than the max one, and we wouldn't detect it
-        # we have to use the creation date or something like that
         if block is None:
             block = Block()
 
-        ## TODO: Catch keyboard interrupt and save whatever we have downloaded
-        # We would need to save on the metadata the block number or something so
-        # new items don't appear between the ids. Alternative: Dont save anything
         data: List[Dict] = self.requester.n_requests(
             query=self.query,
             index=self.index,
@@ -158,14 +166,31 @@ class GraphQLCollector(Collector):
 
         self._update_data(df, force)
 
+class GraphQLUpdatableCollector(GraphQLCollector):
+    def run(self, force=False, *args, **kwargs):
+        if not force and not self.df.empty:
+            self.update(*args, **kwargs)
+        else:
+            super().run(force, *args, **kwargs)
+
+    def update(self, block: Block = None):
+        raise NotImplementedError
+
 class Runner(ABC):
     def __init__(self):
-        self.basedir: Path = Path('datawarehouse') / self.name
-        self.networks = {n for n,v in ENDPOINTS.items() if self.name in v}
+        self.basedir: Path = config.DATAWAREHOUSE / self.name
 
     @property
     def collectors(self) -> List[Collector]:
         return []
+
+    def run(self, **kwargs):
+        raise NotImplementedError
+
+class GraphQLRunner(Runner, ABC):
+    def __init__(self):
+        super().__init__()
+        self.networks = {n for n,v in ENDPOINTS.items() if self.name in v}
 
     @staticmethod
     def validated_block(network: str, number_gte: int = 0) -> Block:
@@ -183,12 +208,8 @@ class Runner(ABC):
             ds.Block.timestamp
         ))["blocks"][0])
 
-    def run(self, networks: List[str] = [], force=False, collectors=None):
-        self.basedir.mkdir(parents=True, exist_ok=True)
-
-        tocheck = [c for c in self.collectors if (not collectors or c.long_name in collectors) and
-                                                 c.network in networks]
-
+    @staticmethod
+    def _verifyCollectors(tocheck: Iterable[Collector]):
         verified = []
         for c in tocheck:
             try:
@@ -199,18 +220,32 @@ class Runner(ABC):
             except Exception as e:
                 print(f"Won't run {c.long_name} ({c.network})")
                 print(e)
+        return verified
 
+    def run(self, networks: List[str] = [], force=False, collectors=None):
+        self.basedir.mkdir(parents=True, exist_ok=True)
+
+        tocheck = [c for c in self.collectors if (not collectors or c.long_name in collectors) and
+                                                 c.network in networks]
+
+        verified = self._verifyCollectors(tocheck)
         if verified:
-            # TODO: What if someone presses CTRL+C and there are some collectors
-            # still to be run?
-            # TODO: Ignore errors (but save them in the metadata)
             with RunnerMetadata(self) as metadata:
                 print(f'--- Updating {self.name} datawarehouse ---')            
                 blocks: dict[str, Block] = {}
                 for c in verified:
-                    if c.network not in blocks:
-                        # Getting a block more recent than the one in the metadata
-                        metadata[c.network].block = blocks[c.network] = self.validated_block(c.network, metadata[c.network].block.number)
-                    print(f"Running collector {c.long_name} ({c.network}) on block {blocks[c.network].id[:15]}...")
-                    c.run(force, blocks[c.network])
+                    try:
+                        if c.network not in blocks:
+                            # Getting a block more recent than the one in the metadata
+                            print("Requesting a block number...", end='\r')
+                            blocks[c.network] = self.validated_block(c.network, metadata[c.collectorid].block.number)
+                            print(f"Using block {blocks[c.network].id} for {c.network} (ts: {blocks[c.network].timestamp.isoformat()})")
+                        print(f"Running collector {c.long_name} ({c.network})")
+                        metadata[c.collectorid].block = blocks[c.network]
+                        c.run(force, blocks[c.network])
+                    ## TODO: Handle Keyboardinterrupt
+                    ## TODO: Add a "continue mode" if KeyboardInterrupt happens (using the same block, continuing per id)
+                    except Exception as e:
+                        metadata.errors[c.collectorid] = e.__str__()
+                        traceback.print_exc()
                 print(f'--- {self.name}\'s datawarehouse updated ---')

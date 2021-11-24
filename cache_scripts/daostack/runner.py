@@ -11,7 +11,7 @@ from typing import List
 import pandas as pd
 from gql.dsl import DSLField
 
-from common import ENDPOINTS, Collector, GraphQLCollector, Runner, add_where
+from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLRunner, add_where
 
 def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(columns={
@@ -128,7 +128,7 @@ class VotesCollector(GraphQLCollector):
             ds.ProposalVote.proposal.select(ds.Proposal.id)
         )
 
-class DaostackRunner(Runner):
+class DaostackRunner(GraphQLRunner):
     name: str = 'daostack'
 
     def __init__(self):

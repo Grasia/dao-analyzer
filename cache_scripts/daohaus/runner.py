@@ -14,7 +14,7 @@ from tqdm import tqdm
 from gql.dsl import DSLField
 
 import config
-from common import ENDPOINTS, Collector, GraphQLCollector, Runner, add_where
+from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLRunner, add_where
 
 DATA_ENDPOINT: str = "https://data.daohaus.club/dao/{id}"
 
@@ -61,20 +61,18 @@ class MolochesCollector(GraphQLCollector):
     
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
-        # FIXME: There are lots of fields that have changed
-        # TODO: Implement some way to skip verification
         return ds.Query.moloches(**add_where(kwargs, deleted=False)).select(
             ds.Moloch.id,
-            ds.Moloch.title, # TODO: Research this
+            ds.Moloch.title,
             ds.Moloch.version,
             ds.Moloch.summoner,
             ds.Moloch.summoningTime,
-            ds.Moloch.timestamp, # TODO: Research this
-            ds.Moloch.proposalCount, # TODO: Research this
-            ds.Moloch.memberCount, # TODO: Research this
-            ds.Moloch.voteCount, # TODO: Research this
-            ds.Moloch.rageQuitCount, # TODO: Research this
-            ds.Moloch.totalGas # TODO: Research this
+            ds.Moloch.timestamp,
+            ds.Moloch.proposalCount,
+            ds.Moloch.memberCount,
+            ds.Moloch.voteCount,
+            ds.Moloch.rageQuitCount,
+            ds.Moloch.totalGas
         )
 
 class ProposalsCollector(GraphQLCollector):
@@ -142,7 +140,7 @@ class VoteCollector(GraphQLCollector):
             ds.Vote.uintVote
         )
 
-class DaohausRunner(Runner):
+class DaohausRunner(GraphQLRunner):
     name: str = 'daohaus'
 
     def __init__(self):

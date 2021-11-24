@@ -12,8 +12,11 @@ import os
 from gql.dsl import DSLField
 import pandas as pd
 import json
+import logging
+from datetime import datetime
 
-from common import ENDPOINTS, Collector, GraphQLCollector, Runner
+from metadata import Block
+from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLRunner, GraphQLUpdatableCollector, partial_query
 
 class AppsCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -30,7 +33,7 @@ class AppsCollector(GraphQLCollector):
             ds.App.organization.select(ds.Organization.id)
         )
 
-class CastsCollector(GraphQLCollector):
+class CastsCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('casts', runner, endpoint=ENDPOINTS[network]['aragon_voting'], network=network, pbar_enabled=False)
 
@@ -56,6 +59,26 @@ class CastsCollector(GraphQLCollector):
                 ds.Vote.appAddress
             )
         )
+
+    def update(self, block: Block = None):
+        # TODO: Update
+        # 1. Get the max createdAt
+        maxCreatedAt = int(self.df['createdAt'].max())
+        print("Updating data since " + datetime.fromtimestamp(maxCreatedAt).isoformat())
+
+        # 2. Perform n_requests but with bigger createdAt than the max createdAt
+        data = self.requester.n_requests(
+            query=partial_query(self.query, {"createdAt_gt": maxCreatedAt}),
+            block_hash=block.id)
+
+        # 3. Update the file
+        df = self.transform_to_df(data)
+        print(df)
+        self._update_data(df)
+
+        # 4. Success
+
+        # TODO: Is this always like this for every collector?
 
 class OrganizationsCollector(GraphQLCollector):
     DAO_NAMES_PATH=os.path.join('cache_scripts', 'aragon', 'dao_names.json')
@@ -191,7 +214,7 @@ class VotesCollector(GraphQLCollector):
             ds.Vote.votingPower
         )
 
-class AragonRunner(Runner):
+class AragonRunner(GraphQLRunner):
     name: str = 'aragon'
 
     def __init__(self):

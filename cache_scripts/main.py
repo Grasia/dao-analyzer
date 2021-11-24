@@ -16,7 +16,8 @@ import logging
 
 LOGGING_STR_FORMAT = "%(levelname)s: %(message)s"
 
-logging.basicConfig(format=LOGGING_STR_FORMAT, level=logging.INFO)
+config.DATAWAREHOUSE.mkdir(exist_ok=True)
+logging.basicConfig(format=LOGGING_STR_FORMAT, level=logging.INFO, filename=config.DATAWAREHOUSE / 'cache_scripts.log')
 
 AVAILABLE_PLATFORMS: Dict[str, Runner] = {
     AragonRunner.name: AragonRunner(),
@@ -37,7 +38,6 @@ if __name__ == '__main__':
 
     config.populate_args(parser.parse_args())
 
-    # TODO: Change for -v, -vv, -vvv
     if config.debug:
         logging.getLogger().setLevel(level=logging.DEBUG)
     else:
