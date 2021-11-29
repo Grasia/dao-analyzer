@@ -11,7 +11,8 @@ from typing import List
 import pandas as pd
 from gql.dsl import DSLField
 
-from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLRunner, add_where
+from metadata import Block
+from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
 
 def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(columns={
@@ -40,7 +41,7 @@ class DaosCollector(GraphQLCollector):
             ds.DAO.nativeReputation.select(ds.Rep.id)
         )
 
-class ProposalsCollector(GraphQLCollector):
+class ProposalsCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('proposals', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
 
@@ -59,6 +60,7 @@ class ProposalsCollector(GraphQLCollector):
         return ds.Query.proposals(**kwargs).select(
             ds.Proposal.id,
             ds.Proposal.proposer,
+            # enum ProposalState { None, ExpiredInQueue, Executed, Queued, PreBoosted, Boosted, QuietEndingPeriod}
             ds.Proposal.stage,
             ds.Proposal.createdAt,
             ds.Proposal.preBoostedAt,
@@ -78,7 +80,32 @@ class ProposalsCollector(GraphQLCollector):
             ds.Proposal.dao.select(ds.DAO.id)
         )
 
-class ReputationHoldersCollector(GraphQLCollector):
+    def update(self, block: Block = None):
+        # We don't get the other 'recently...' because they are obtained in the last
+        # request, where we get every non-stalled proposal
+
+        # Getting recently executed proposals
+        self._simple_timestamp('executedAt', block,
+            start_txt='Getting recently executed proposals since {date}',
+            end_txt='{len} proposals recently executed'
+        )
+
+        # Getting recently expired proposals
+        self._simple_timestamp('expiresInQueueAt', block,
+            start_txt='Getting recently expired proposals since {date}',
+            end_txt='{len} proposals recently expired'
+        )
+
+        # Getting still open proposals which outcomes could have been updated
+        # These are new proposals, recently voted and recently (pre)boosted
+        data = self.requester.n_requests(
+            query=partial_query(self.query, {"stage_not_in":["Executed", "Expired_in_queue"]}),
+            block_hash=block.id
+        )
+        df = self.transform_to_df(data)
+        self._update_data(df)
+
+class ReputationHoldersCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('reputationHolders', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
         self.postprocessor(_changeProposalColumnNames)
@@ -94,7 +121,7 @@ class ReputationHoldersCollector(GraphQLCollector):
             ds.ReputationHolder.dao.select(ds.DAO.id)
         )
 
-class StakesCollector(GraphQLCollector):
+class StakesCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('stakes', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
         self.postprocessor(_changeProposalColumnNames)
@@ -111,7 +138,7 @@ class StakesCollector(GraphQLCollector):
             ds.ProposalStake.proposal.select(ds.Proposal.id)
         )
 
-class VotesCollector(GraphQLCollector):
+class VotesCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
         self.postprocessor(_changeProposalColumnNames)

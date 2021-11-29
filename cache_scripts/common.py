@@ -15,6 +15,7 @@ from typing import Callable, Dict, Iterable, List
 import json
 import pandas as pd
 import logging
+from datetime import datetime
 
 import config
 from api_requester import ApiRequester
@@ -106,7 +107,7 @@ class GraphQLCollector(Collector):
         
         return df
 
-    def transform_to_df(self, data: List[Dict]) -> pd.DataFrame:
+    def transform_to_df(self, data: List[Dict], skip_post: bool=False) -> pd.DataFrame:
         # TODO: Consider the schema to put column names even in empty dataframes
         df = pd.DataFrame.from_dict(pd.json_normalize(data))
 
@@ -117,13 +118,20 @@ class GraphQLCollector(Collector):
                         
         df.rename(columns=dotsToSnakeCase, inplace=True)
         df['network'] = self.network
+
+        if not skip_post:
+            for post in self.postprocessors:
+                df = post(df)
+                if df is None:
+                    raise ValueError(f"The postprocessor {post.__name__} returned None")
+
         return df
 
     def verify(self) -> bool:
         self.query()
         return True
 
-    def _update_data(self, df: pd.DataFrame, force: bool = False):
+    def _update_data(self, df: pd.DataFrame, force: bool = False) -> pd.DataFrame:
         """ Updates the dataframe in `self.data_path` with the new data.
         """
         if df.empty:
@@ -146,7 +154,9 @@ class GraphQLCollector(Collector):
         # TODO: Add backup thing
 
         # Updating data
-        df.combine_first(prev_df).reset_index().to_feather(self.data_path)
+        combined = df.combine_first(prev_df).reset_index()
+        combined.to_feather(self.data_path)
+        return combined
 
     def run(self, force=False, block: Block = None):
         if block is None:
@@ -159,22 +169,36 @@ class GraphQLCollector(Collector):
 
         # transform to df
         df: pd.DataFrame = self.transform_to_df(data)
-        for post in self.postprocessors:
-            df = post(df)
-            if df is None:
-                raise ValueError(f"The postprocessor {post.__name__} returned None")
-
         self._update_data(df, force)
 
 class GraphQLUpdatableCollector(GraphQLCollector):
+    DEFAULT_START_TEXT = "Updating data since {date}"
+    DEFAULT_END_TEXT = "There are {len} new items"
+
+    ## FIXME: Run postprocessors on update
     def run(self, force=False, *args, **kwargs):
         if not force and not self.df.empty:
             self.update(*args, **kwargs)
         else:
             super().run(force, *args, **kwargs)
 
+    def _simple_timestamp(self, key: str = 'createdAt', block: Block = None, start_txt=DEFAULT_START_TEXT, end_txt=DEFAULT_END_TEXT):
+        # 1. Get the max createdAt
+        maxCreatedAt = int(self.df[key].dropna().max())
+        print(start_txt.format(date=datetime.fromtimestamp(maxCreatedAt).isoformat()))
+
+        # 2. Perform n_requests but with bigger createdAt than the max createdAt
+        data = self.requester.n_requests(
+            query=partial_query(self.query, {f"{key}_gt": maxCreatedAt}),
+            block_hash=block.id)
+
+        # 3. Update the file
+        df = self.transform_to_df(data)
+        print(end_txt.format(len=len(df)))
+        self._update_data(df)
+
     def update(self, block: Block = None):
-        raise NotImplementedError
+        self._simple_timestamp('createdAt', block)
 
 class Runner(ABC):
     def __init__(self):
@@ -192,6 +216,8 @@ class GraphQLRunner(Runner, ABC):
         super().__init__()
         self.networks = {n for n,v in ENDPOINTS.items() if self.name in v}
 
+    # TODO: Can specify block skip greater than 5000
+    # TODO: Can specify block number from CLI
     @staticmethod
     def validated_block(network: str, number_gte: int = 0) -> Block:
         requester = ApiRequester(ENDPOINTS[network]["_blocks"])
@@ -229,23 +255,26 @@ class GraphQLRunner(Runner, ABC):
                                                  c.network in networks]
 
         verified = self._verifyCollectors(tocheck)
-        if verified:
-            with RunnerMetadata(self) as metadata:
-                print(f'--- Updating {self.name} datawarehouse ---')            
-                blocks: dict[str, Block] = {}
-                for c in verified:
-                    try:
-                        if c.network not in blocks:
-                            # Getting a block more recent than the one in the metadata
-                            print("Requesting a block number...", end='\r')
-                            blocks[c.network] = self.validated_block(c.network, metadata[c.collectorid].block.number)
-                            print(f"Using block {blocks[c.network].id} for {c.network} (ts: {blocks[c.network].timestamp.isoformat()})")
-                        print(f"Running collector {c.long_name} ({c.network})")
-                        metadata[c.collectorid].block = blocks[c.network]
-                        c.run(force, blocks[c.network])
-                    ## TODO: Handle Keyboardinterrupt
-                    ## TODO: Add a "continue mode" if KeyboardInterrupt happens (using the same block, continuing per id)
-                    except Exception as e:
-                        metadata.errors[c.collectorid] = e.__str__()
-                        traceback.print_exc()
-                print(f'--- {self.name}\'s datawarehouse updated ---')
+        if not verified:
+            # Nothing to do
+            return
+
+        with RunnerMetadata(self) as metadata:
+            print(f'--- Updating {self.name} datawarehouse ---')            
+            blocks: dict[str, Block] = {}
+            for c in verified:
+                try:
+                    if c.network not in blocks:
+                        # Getting a block more recent than the one in the metadata
+                        print("Requesting a block number...", end='\r')
+                        blocks[c.network] = self.validated_block(c.network, 0 if force else metadata[c.collectorid].block.number)
+                        print(f"Using block {blocks[c.network].id} for {c.network} (ts: {blocks[c.network].timestamp.isoformat()})")
+                    print(f"Running collector {c.long_name} ({c.network})")
+                    metadata[c.collectorid].block = blocks[c.network]
+                    c.run(force, blocks[c.network])
+                ## TODO: Handle Keyboardinterrupt
+                ## TODO: Add a "continue mode" if KeyboardInterrupt happens (using the same block, continuing per id)
+                except Exception as e:
+                    metadata.errors[c.collectorid] = e.__str__()
+                    traceback.print_exc()
+            print(f'--- {self.name}\'s datawarehouse updated ---')

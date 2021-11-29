@@ -1,8 +1,8 @@
-# https://letsexchange.io/blog/what-is-block-confirmation-on-ethereum-and-how-many-confirmations-are-required/
-# Number of blocks to skip to only consult confirmed blocks
 from pathlib import Path
 
-SKIP_INVALID_BLOCKS = 250
+# https://letsexchange.io/blog/what-is-block-confirmation-on-ethereum-and-how-many-confirmations-are-required/
+# Number of blocks to skip to only consult confirmed blocks
+SKIP_INVALID_BLOCKS = 0
 DATAWAREHOUSE = Path('datawarehouse')
 
 __args = None

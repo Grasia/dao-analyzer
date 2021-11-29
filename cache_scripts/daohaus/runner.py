@@ -7,6 +7,7 @@
         <david@ddavo.me>
 """
 import requests
+import requests_cache
 from typing import List
 
 import pandas as pd
@@ -14,11 +15,12 @@ from tqdm import tqdm
 from gql.dsl import DSLField
 
 import config
-from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLRunner, add_where
+from metadata import Block
+from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
 
 DATA_ENDPOINT: str = "https://data.daohaus.club/dao/{id}"
 
-class MembersCollector(GraphQLCollector):
+class MembersCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('members', runner, network=network, endpoint=ENDPOINTS[network]['daohaus'])
 
@@ -45,13 +47,17 @@ class MolochesCollector(GraphQLCollector):
             # TODO: Paralelizing somehow?
             df = df.rename(columns={"title":"name"})
             if not config.skip_daohaus_names:
+                cached = requests_cache.CachedSession(self.data_path.parent / '.names_cache', use_cache_dir=False)
                 tqdm.pandas(desc="Getting moloch names")
-                df["name"] = df.progress_apply(lambda x:self._request_moloch_name(x['id']), axis=1)
+                df["name"] = df.progress_apply(lambda x:self._request_moloch_name(x['id'], req=cached), axis=1)
             return df
     
     @staticmethod
-    def _request_moloch_name(moloch_id: str):
-        response = requests.get(DATA_ENDPOINT.format(id=moloch_id))
+    def _request_moloch_name(moloch_id: str, req=None):
+        # TODO: Cache names somehow
+        if req is None:
+            req = requests
+        response = req.get(DATA_ENDPOINT.format(id=moloch_id))
 
         o = response.json()
         if isinstance(o, list) and o and "name" in o[0]:
@@ -67,7 +73,7 @@ class MolochesCollector(GraphQLCollector):
             ds.Moloch.version,
             ds.Moloch.summoner,
             ds.Moloch.summoningTime,
-            ds.Moloch.timestamp,
+            ds.Moloch.timestamp, # TODO: What's this?
             ds.Moloch.proposalCount,
             ds.Moloch.memberCount,
             ds.Moloch.voteCount,
@@ -75,11 +81,9 @@ class MolochesCollector(GraphQLCollector):
             ds.Moloch.totalGas
         )
 
-class ProposalsCollector(GraphQLCollector):
+class ProposalsCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('proposals', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
-
-        # TODO: Add a way of updating (see _get_open_proposals)
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
@@ -100,15 +104,39 @@ class ProposalsCollector(GraphQLCollector):
             ds.Proposal.sponsored,
             ds.Proposal.sponsoredAt,
             ds.Proposal.processed,
+            ds.Proposal.processedAt,
             ds.Proposal.didPass,
             ds.Proposal.yesShares,
             ds.Proposal.noShares
         )
+    
+    def update(self, block: Block = None):
+        # Getting recently processed proposals
+        self._simple_timestamp('processedAt', block,
+            start_txt='Getting recently processed proposals since {date}',
+            end_txt='{len} proposals have been processed'
+        )
 
-class RageQuitCollector(GraphQLCollector):
+        # Getting still open proposals which counts could have been updated
+        # If they are not sponsored, they won't change
+        data = self.requester.n_requests(
+            query=partial_query(self.query, {"processed": False, "sponsored": False}),
+            block_hash=block.id
+        )
+        df = self.transform_to_df(data)
+        self._update_data(df)
+
+        # Getting recently created Proposals
+        # Some of them could be unsponsored and remain there, which is why they
+        # would not be requested in the "still open proposals" request above
+        self._simple_timestamp('createdAt', block,
+            start_txt='Getting recently created proposals since {date}',
+            end_txt='{len} proposals have been created'
+        )
+
+class RageQuitCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('rageQuits', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
-        # TODO: See update_rage_quits...
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
@@ -121,7 +149,7 @@ class RageQuitCollector(GraphQLCollector):
             ds.RageQuit.loot
         )
 
-class VoteCollector(GraphQLCollector):
+class VoteCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
 

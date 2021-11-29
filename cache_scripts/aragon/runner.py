@@ -12,11 +12,8 @@ import os
 from gql.dsl import DSLField
 import pandas as pd
 import json
-import logging
-from datetime import datetime
-
-from metadata import Block
 from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLRunner, GraphQLUpdatableCollector, partial_query
+from metadata import Block
 
 class AppsCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -60,27 +57,7 @@ class CastsCollector(GraphQLUpdatableCollector):
             )
         )
 
-    def update(self, block: Block = None):
-        # TODO: Update
-        # 1. Get the max createdAt
-        maxCreatedAt = int(self.df['createdAt'].max())
-        print("Updating data since " + datetime.fromtimestamp(maxCreatedAt).isoformat())
-
-        # 2. Perform n_requests but with bigger createdAt than the max createdAt
-        data = self.requester.n_requests(
-            query=partial_query(self.query, {"createdAt_gt": maxCreatedAt}),
-            block_hash=block.id)
-
-        # 3. Update the file
-        df = self.transform_to_df(data)
-        print(df)
-        self._update_data(df)
-
-        # 4. Success
-
-        # TODO: Is this always like this for every collector?
-
-class OrganizationsCollector(GraphQLCollector):
+class OrganizationsCollector(GraphQLUpdatableCollector):
     DAO_NAMES_PATH=os.path.join('cache_scripts', 'aragon', 'dao_names.json')
 
     def __init__(self, runner, network: str):
@@ -111,6 +88,7 @@ class OrganizationsCollector(GraphQLCollector):
             ds.Organization.recoveryVault
         )
 
+## TODO: Check if updatable
 class MiniMeTokensCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('miniMeTokens', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network, pbar_enabled=False)
@@ -130,6 +108,8 @@ class MiniMeTokensCollector(GraphQLCollector):
 
 class TokenHoldersCollector(GraphQLCollector):
     ## TODO: Run the n_requests for EACH tokenAddress, with its respective progress and everything
+    # TODO: Improve this. It can't be updated. Could we mock this requester using
+    # already provided data?
     def __init__(self, runner, network: str):
         super().__init__('tokenHolders', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network)
 
@@ -171,7 +151,7 @@ class ReposCollector(GraphQLCollector):
             ds.Repo.appCount
         )
 
-class TransactionsCollector(GraphQLCollector):
+class TransactionsCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('transactions', runner, network=network, endpoint=ENDPOINTS[network]['aragon_finance'])
 
@@ -189,7 +169,10 @@ class TransactionsCollector(GraphQLCollector):
             ds.Transaction.reference
         )
 
-class VotesCollector(GraphQLCollector):
+    def update(self, block: Block = None):
+        return self._simple_timestamp('date', block)
+
+class VotesCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]['aragon_voting'])
 
@@ -201,8 +184,6 @@ class VotesCollector(GraphQLCollector):
             ds.Vote.appAddress,
             ds.Vote.creator,
             ds.Vote.metadata,
-            ## TODO: Use one of the following fields to implement the database
-            # updating mechanism
             ds.Vote.executed,
             ds.Vote.executedAt,
             ds.Vote.startDate,
@@ -213,6 +194,25 @@ class VotesCollector(GraphQLCollector):
             ds.Vote.voteNum,
             ds.Vote.votingPower
         )
+
+    def update(self, block: Block = None):
+        # We don't use `_simple_timestamp` with startDate because newly created
+        # votes should be included in the executed: False request if they are still
+        # open, or in the recently executed otherwise.
+
+        # Getting recently executed votes
+        self._simple_timestamp('executedAt', block,
+            start_txt='Getting recently executed votes since {date}',
+            end_txt='{len} votes have been executed'
+        )
+
+        # Update the ones that are still unexecuted, but their counts could have been updated
+        data = self.requester.n_requests(
+            query=partial_query(self.query, {"executed": False}),
+            block_hash=block.id
+        )
+        df = self.transform_to_df(data)
+        self._update_data(df)
 
 class AragonRunner(GraphQLRunner):
     name: str = 'aragon'

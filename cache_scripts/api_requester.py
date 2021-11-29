@@ -55,6 +55,7 @@ class IndexProgressBar(tqdm):
 class RequestProgressSpinner:
     def __init__(self):
         self.prev_lastindex = ""
+        self.toFinish = False
         self.total = 0
 
     def progress(self, last_index: str, new_items: int):
@@ -62,13 +63,14 @@ class RequestProgressSpinner:
         self.total += new_items
         print(f"Requesting... Total: {self.total:5d}. Requested until {last_index}"+filler, end='\r', flush=True)
         self.prev_lastindex = last_index
+        self.toFinish = True
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         # To remove the last \r
-        if self.prev_lastindex:
+        if self.toFinish:
             print()
 
     def complete(self):
