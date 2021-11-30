@@ -9,18 +9,21 @@
 import requests
 import requests_cache
 from typing import List
+from datetime import timedelta
 
 import pandas as pd
 from tqdm import tqdm
 from gql.dsl import DSLField
 
-import config
 from metadata import Block
 from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
 
 DATA_ENDPOINT: str = "https://data.daohaus.club/dao/{id}"
 
-class MembersCollector(GraphQLUpdatableCollector):
+# TODO: Make updatable, currently is not updatable because of loot, didRagequit, 
+# exists, etc. We would need an lastUpdateAt field to check only the ones that
+# have been updated
+class MembersCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('members', runner, network=network, endpoint=ENDPOINTS[network]['daohaus'])
 
@@ -43,20 +46,19 @@ class MolochesCollector(GraphQLCollector):
 
         @self.postprocessor
         def moloch_names(df: pd.DataFrame) -> pd.DataFrame:
-            # TODO: Run only when they don't have already a name
-            # TODO: Paralelizing somehow?
             df = df.rename(columns={"title":"name"})
-            if not config.skip_daohaus_names:
-                cached = requests_cache.CachedSession(self.data_path.parent / '.names_cache', use_cache_dir=False)
-                tqdm.pandas(desc="Getting moloch names")
-                df["name"] = df.progress_apply(lambda x:self._request_moloch_name(x['id'], req=cached), axis=1)
+
+            cached = requests_cache.CachedSession(self.data_path.parent / '.names_cache', 
+                use_cache_dir=False, 
+                expire_after=timedelta(days=30)
+            )
+            tqdm.pandas(desc="Getting moloch names")
+            df["name"] = df.progress_apply(lambda x:self._request_moloch_name(cached, x['id']), axis=1)
+
             return df
     
     @staticmethod
-    def _request_moloch_name(moloch_id: str, req=None):
-        # TODO: Cache names somehow
-        if req is None:
-            req = requests
+    def _request_moloch_name(req: requests.Session, moloch_id: str):
         response = req.get(DATA_ENDPOINT.format(id=moloch_id))
 
         o = response.json()
@@ -73,7 +75,7 @@ class MolochesCollector(GraphQLCollector):
             ds.Moloch.version,
             ds.Moloch.summoner,
             ds.Moloch.summoningTime,
-            ds.Moloch.timestamp, # TODO: What's this?
+            ds.Moloch.timestamp,
             ds.Moloch.proposalCount,
             ds.Moloch.memberCount,
             ds.Moloch.voteCount,
@@ -111,11 +113,21 @@ class ProposalsCollector(GraphQLUpdatableCollector):
         )
     
     def update(self, block: Block = None):
+        prev_df = self.df
+    
         # Getting recently processed proposals
         self._simple_timestamp('processedAt', block,
             start_txt='Getting recently processed proposals since {date}',
-            end_txt='{len} proposals have been processed'
+            end_txt='{len} proposals have been processed',
+            prev_df = prev_df
         )
+
+        # Getting proposals with proposedAt set to None (this is a bug)
+        # data = self.requester.n_requests(
+        #     query=partial_query(self.query, {"processed": True, "processedAt": None}),
+        #     block_hash=block.id
+        # )
+        # self._update_data(self.transform_to_df(data))
 
         # Getting still open proposals which counts could have been updated
         # If they are not sponsored, they won't change
@@ -131,8 +143,19 @@ class ProposalsCollector(GraphQLUpdatableCollector):
         # would not be requested in the "still open proposals" request above
         self._simple_timestamp('createdAt', block,
             start_txt='Getting recently created proposals since {date}',
-            end_txt='{len} proposals have been created'
+            end_txt='{len} proposals have been created',
+            prev_df = prev_df
         )
+
+        # TODO: Get sponsored
+        # Getting recently sponsored
+        self._simple_timestamp('sponsoredAt', block,
+            start_txt='Getting recently sponsored proposals since {date}',
+            end_txt='{len} proposals have been sponsored',
+            prev_df = prev_df
+        )
+
+        # TODO: Add prev_df to everything that needs it
 
 class RageQuitCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):

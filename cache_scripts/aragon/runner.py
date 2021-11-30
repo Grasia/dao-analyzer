@@ -88,7 +88,6 @@ class OrganizationsCollector(GraphQLUpdatableCollector):
             ds.Organization.recoveryVault
         )
 
-## TODO: Check if updatable
 class MiniMeTokensCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('miniMeTokens', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network, pbar_enabled=False)
@@ -107,20 +106,15 @@ class MiniMeTokensCollector(GraphQLCollector):
         )
 
 class TokenHoldersCollector(GraphQLCollector):
-    ## TODO: Run the n_requests for EACH tokenAddress, with its respective progress and everything
-    # TODO: Improve this. It can't be updated. Could we mock this requester using
-    # already provided data?
-    def __init__(self, runner, network: str):
+    # TODO: Improve this. It can't be updated but is a huge subgraph... 
+    # Could we mock this requester using
+    # already provided data? Maybe modifying the subgraph so it has a last_update thing?
+    def __init__(self, runner: GraphQLRunner, network: str):
         super().__init__('tokenHolders', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network)
 
         @self.postprocessor
         def add_minitokens(df: pd.DataFrame) -> pd.DataFrame:
-            ## TODO: Make the runner know that TokenHoldersCollector MUST
-            # be run AFTER MiniMeTokensCollector, with some kind of dependency
-            # resolving.
-            ## TODO: Add some way to get the already instantiated collector from 'runner'
-            # instead of creating a new one
-            tokens = MiniMeTokensCollector(runner, network).df
+            tokens = runner.filterCollector(name='miniMeTokens', network=network).df
             tokens.rename(columns={'address':'tokenAddress', 'orgAddress':'organizationAddress'}, inplace=True)
             return df.merge(tokens[['tokenAddress', 'organizationAddress']], on='tokenAddress', how='left')
             
@@ -132,10 +126,6 @@ class TokenHoldersCollector(GraphQLCollector):
             ds.TokenHolder.tokenAddress,
             ds.TokenHolder.balance
         )
-
-    def transform_to_df(self, data: List[Dict]) -> pd.DataFrame:
-        ## TODO: see _tranform_to_df in token_holders.py
-        return super().transform_to_df(data)
 
 class ReposCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -220,7 +210,6 @@ class AragonRunner(GraphQLRunner):
     def __init__(self):
         super().__init__()
         self._collectors: List[Collector] = []
-        ## TODO: More Pythonic way of doing this
         for n in self.networks: 
             self._collectors.extend([
                 AppsCollector(self, n),

@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.7.0 - 2021-11-30
+The `cache_scripts` backend update
+- Half the lines of code, a lot of new capabilities
+- FIXED an important bug which caused some items to not be requested. Now every request is made to the same block.
+- Fixed some important bugs
+- Improved some requests so they take less time
+- Added update mode so subsequent requests take less time (enabled by default)
+- Changed .csv format of the datawarehouse to .arr (apache's feather)
+- Displaying progress bars usign tqdm, and other progress methods
+- Added caching to DAOHaus DAO Names
+- Modified metadata format, now includes last update and blocks
+- Added CLI option to select which collectors to run
+- Added CLI option to select the date of the block to request
+- Added CLI option to select where to download the data
+- Logging to file inside datawarehouse
+
 ## 0.6.1 - 2021-11-02
 Continuation of the `cache_scripts` interface update
 - Added method of selecting which networks to update on CLI

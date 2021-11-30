@@ -45,9 +45,6 @@ class ProposalsCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('proposals', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
 
-        ## TODO: If we implement the "continue method"
-        # see the _request_open_proposals from proposal_collector.py
-
         @self.postprocessor
         def changeColumnNames(df: pd.DataFrame) -> pd.DataFrame:
             return df.rename(columns={
@@ -105,7 +102,9 @@ class ProposalsCollector(GraphQLUpdatableCollector):
         df = self.transform_to_df(data)
         self._update_data(df)
 
-class ReputationHoldersCollector(GraphQLUpdatableCollector):
+# TODO: Make updatable
+# Currently is not updatable because of the balance
+class ReputationHoldersCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('reputationHolders', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
         self.postprocessor(_changeProposalColumnNames)

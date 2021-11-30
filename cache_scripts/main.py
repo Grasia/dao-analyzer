@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-from typing import Dict, List
+from typing import Dict
+from shutil import rmtree
 from aragon.runner import AragonRunner
 from daohaus.runner import DaohausRunner
 from daostack.runner import DaostackRunner
@@ -14,9 +15,6 @@ import os
 import logging
 
 LOGGING_STR_FORMAT = "%(levelname)s: %(message)s"
-
-config.DATAWAREHOUSE.mkdir(exist_ok=True)
-logging.basicConfig(format=LOGGING_STR_FORMAT, level=logging.INFO, filename=config.DATAWAREHOUSE / 'cache_scripts.log')
 
 AVAILABLE_PLATFORMS: Dict[str, Runner] = {
     AragonRunner.name: AragonRunner(),
@@ -37,10 +35,17 @@ if __name__ == '__main__':
 
     config.populate_args(parser.parse_args())
 
+    if config.delete_force and config.datawarehouse.is_dir():
+        rmtree(config.datawarehouse)
+
+    config.datawarehouse.mkdir(exist_ok=True)
+    logger = logging.getLogger('cache_scripts')
+    logger.addHandler(logging.FileHandler(config.datawarehouse / 'cache_scripts.log'))
+
     if config.debug:
-        logging.getLogger().setLevel(level=logging.DEBUG)
+        logger.setLevel(level=logging.DEBUG)
     else:
-        logging.getLogger().setLevel(level=logging.WARNING)
+        logger.setLevel(level=logging.WARNING)
 
     # The default config is every platform
     if not config.platforms:
@@ -51,7 +56,10 @@ if __name__ == '__main__':
         _call_platform(p, config.force, config.networks, config.collectors)
 
     # write date
-    data_date: str = str(date.today())
+    data_date: str = str(date.today().isoformat())
+
+    if config.block_datetime:
+        data_date = config.block_datetime.date().isoformat()
 
     with open(os.path.join('datawarehouse', 'update_date.txt'), 'w') as f:
         f.write(data_date)

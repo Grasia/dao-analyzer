@@ -44,7 +44,7 @@ class Collector(ABC):
 
     @property
     def data_path(self) -> Path:
-        return config.DATAWAREHOUSE / self.runner_name / (self.name + '.arr')
+        return config.datawarehouse / self.runner_name / (self.name + '.arr')
 
     @property
     def long_name(self) -> str:
@@ -108,7 +108,6 @@ class GraphQLCollector(Collector):
         return df
 
     def transform_to_df(self, data: List[Dict], skip_post: bool=False) -> pd.DataFrame:
-        # TODO: Consider the schema to put column names even in empty dataframes
         df = pd.DataFrame.from_dict(pd.json_normalize(data))
 
         # For compatibility reasons we change from . to snake case
@@ -151,8 +150,6 @@ class GraphQLCollector(Collector):
         prev_df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
         df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
 
-        # TODO: Add backup thing
-
         # Updating data
         combined = df.combine_first(prev_df).reset_index()
         combined.to_feather(self.data_path)
@@ -175,21 +172,26 @@ class GraphQLUpdatableCollector(GraphQLCollector):
     DEFAULT_START_TEXT = "Updating data since {date}"
     DEFAULT_END_TEXT = "There are {len} new items"
 
-    ## FIXME: Run postprocessors on update
     def run(self, force=False, *args, **kwargs):
         if not force and not self.df.empty:
             self.update(*args, **kwargs)
         else:
             super().run(force, *args, **kwargs)
 
-    def _simple_timestamp(self, key: str = 'createdAt', block: Block = None, start_txt=DEFAULT_START_TEXT, end_txt=DEFAULT_END_TEXT):
+    def _simple_timestamp(self, key: str = 'createdAt', block: Block = None, start_txt=DEFAULT_START_TEXT, end_txt=DEFAULT_END_TEXT, prev_df: pd.DataFrame = None):
         # 1. Get the max createdAt
-        maxCreatedAt = int(self.df[key].dropna().max())
+        if prev_df is None:
+            prev_df = self.df
+        
+        if prev_df.empty:
+            return
+
+        maxCreatedAt = int(prev_df[key].fillna(0).astype(int).max())
         print(start_txt.format(date=datetime.fromtimestamp(maxCreatedAt).isoformat()))
 
         # 2. Perform n_requests but with bigger createdAt than the max createdAt
         data = self.requester.n_requests(
-            query=partial_query(self.query, {f"{key}_gt": maxCreatedAt}),
+            query=partial_query(self.query, {f"{key}_gte": maxCreatedAt}),
             block_hash=block.id)
 
         # 3. Update the file
@@ -201,8 +203,9 @@ class GraphQLUpdatableCollector(GraphQLCollector):
         self._simple_timestamp('createdAt', block)
 
 class Runner(ABC):
-    def __init__(self):
-        self.basedir: Path = config.DATAWAREHOUSE / self.name
+    @property
+    def basedir(self):
+        return config.datawarehouse / self.name
 
     @property
     def collectors(self) -> List[Collector]:
@@ -216,19 +219,57 @@ class GraphQLRunner(Runner, ABC):
         super().__init__()
         self.networks = {n for n,v in ENDPOINTS.items() if self.name in v}
 
-    # TODO: Can specify block skip greater than 5000
-    # TODO: Can specify block number from CLI
+    def filterCollectors(self, 
+        networks: Iterable[str] = [],
+        names: Iterable[str] = [],
+        long_names: Iterable[str] = []
+    ) -> Iterable[Collector]:
+        # networks ^ (names v long_names)
+        result = self.collectors
+        if networks:
+            result = (c for c in result if c.network in networks)
+
+        if names or long_names:
+            result = (c for c in result if c.name in names or c.long_name in long_names)
+
+        return result
+
+    def filterCollector(self,
+        collector_id: str = None,
+        network: str = None,
+        name: str = None,
+        long_name: str = None,
+    ) -> Collector:
+        if collector_id:
+            return next((c for c in self.collectors if c.collectorid == collector_id), None)
+
+        return next(self.filterCollectors(
+            networks=[network],
+            names=[name],
+            long_names=[long_name]
+        ), None)
+
     @staticmethod
     def validated_block(network: str, number_gte: int = 0) -> Block:
         requester = ApiRequester(ENDPOINTS[network]["_blocks"])
         ds = requester.get_schema()
-        return Block(requester.request(ds.Query.blocks(
-            first=1,
-            skip=config.SKIP_INVALID_BLOCKS,
-            orderBy="number",
-            orderDirection="desc",
-            where={"number_gte": number_gte}
-        ).select(
+        
+        args = {
+            "first": 1,
+            "skip": config.SKIP_INVALID_BLOCKS,
+            "orderBy": "number",
+            "orderDirection": "desc",
+            "where": {
+                "number_gte": number_gte
+            }
+        }
+
+        if config.block_datetime:
+            args["skip"] = 0
+            args["where"]["number_gte"] = 0
+            args["where"]["timestamp_lte"] = int(config.block_datetime.timestamp())
+
+        return Block(requester.request(ds.Query.blocks(**args).select(
             ds.Block.id,
             ds.Block.number,
             ds.Block.timestamp
@@ -251,10 +292,10 @@ class GraphQLRunner(Runner, ABC):
     def run(self, networks: List[str] = [], force=False, collectors=None):
         self.basedir.mkdir(parents=True, exist_ok=True)
 
-        tocheck = [c for c in self.collectors if (not collectors or c.long_name in collectors) and
-                                                 c.network in networks]
-
-        verified = self._verifyCollectors(tocheck)
+        verified = self._verifyCollectors(self.filterCollectors(
+            networks=networks,
+            long_names=collectors
+        ))
         if not verified:
             # Nothing to do
             return
@@ -269,11 +310,15 @@ class GraphQLRunner(Runner, ABC):
                         print("Requesting a block number...", end='\r')
                         blocks[c.network] = self.validated_block(c.network, 0 if force else metadata[c.collectorid].block.number)
                         print(f"Using block {blocks[c.network].id} for {c.network} (ts: {blocks[c.network].timestamp.isoformat()})")
+
                     print(f"Running collector {c.long_name} ({c.network})")
+                    olderBlock = blocks[c.network] < metadata[c.collectorid].block
+                    if not force and olderBlock:
+                        print("Warning: Forcing because requesting an older block")
+                        logging.warning("Forcing because using an older block")
+
+                    c.run(force or olderBlock, blocks[c.network])
                     metadata[c.collectorid].block = blocks[c.network]
-                    c.run(force, blocks[c.network])
-                ## TODO: Handle Keyboardinterrupt
-                ## TODO: Add a "continue mode" if KeyboardInterrupt happens (using the same block, continuing per id)
                 except Exception as e:
                     metadata.errors[c.collectorid] = e.__str__()
                     traceback.print_exc()

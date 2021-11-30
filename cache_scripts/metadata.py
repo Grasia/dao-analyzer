@@ -9,10 +9,12 @@
 from json.encoder import JSONEncoder
 from typing import Dict
 import json
+from functools import total_ordering
 from datetime import datetime
 
 import config
 
+@total_ordering
 class Block:
     def __init__(self, init=None):
         self.number = 0
@@ -20,7 +22,7 @@ class Block:
         self.timestamp = datetime.min
 
         if isinstance(init, dict):
-            self.number = init["number"] if "number" in init else self.number
+            self.number = int(init["number"]) if "number" in init else self.number
             self.id = init["id"] if "id" in init else self.id
             if "timestamp" in init:
                 if init["timestamp"].isdigit():
@@ -34,6 +36,9 @@ class Block:
             return not self.id and not other.id and self.id == other.id
         else:
             return False
+
+    def __lt__(self, other):
+        return self.number < other.number
 
     def toDict(self):
         return {
@@ -73,7 +78,7 @@ class MetadataEncoder(JSONEncoder):
 
 class RunnerMetadata:
     def __init__(self, runner):
-        self._path = config.DATAWAREHOUSE / runner.name / 'metadata.json'
+        self._path = config.datawarehouse / runner.name / 'metadata.json'
         self.collectorMetaData: Dict[str, CollectorMetaData] = {}
         self.errors: Dict[str, str] = {}
         self._setPrev()
