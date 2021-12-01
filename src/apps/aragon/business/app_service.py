@@ -9,7 +9,7 @@
 """
 
 from typing import Dict, List, Callable
-import dash_html_components as html
+from dash import html
 
 from src.app import app
 from src.apps.common.data_access.update_date import UpdateDate

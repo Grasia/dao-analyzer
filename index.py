@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 import dash_core_components as dcc
-import dash_html_components as html
+from dash import html
 
 from src.app import app, DEBUG
 import src.apps.common.resources.colors as COLOR

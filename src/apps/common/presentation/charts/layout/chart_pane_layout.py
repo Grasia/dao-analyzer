@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-import dash_html_components as html
+from dash import html
 import dash_core_components as dcc
 from typing import List, Dict
 
