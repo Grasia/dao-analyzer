@@ -6,7 +6,7 @@
     Copyright 2021 David Davó
         <david@ddavo.me>
 """
-from typing import List, Dict
+from typing import List
 import os
 
 from gql.dsl import DSLField

@@ -8,7 +8,6 @@
 """
 
 from gql import Client
-from gql import dsl
 from gql.dsl import DSLField, DSLQuery, DSLSchema, DSLType, dsl_gql
 from gql.transport.requests import RequestsHTTPTransport
 import re
