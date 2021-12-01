@@ -1,4 +1,4 @@
-name: Chain community
+name: dao-analyzer CI
 
 on: [push]
 
@@ -30,5 +30,5 @@ jobs:
         flake8 . --count --show-source --statistics
     - name: Test with pytest
       run: |
-        #pip install pytest
+        pip install pytest hypothesis
         python3 -m pytest --hypothesis-show-statistics test/unit/

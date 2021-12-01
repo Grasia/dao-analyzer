@@ -12,6 +12,7 @@ jobs:
     - name: Getting datawarehouse cache
       uses: actions/cache@v2
       with:
+        key: ${{ runner.os }}-dw
         path: |
           ./datawarehouse
     - name: Publish to Docker Hub
