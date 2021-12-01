@@ -1,13 +1,23 @@
 name: Publish Docker images
 on: 
-  push:
+  workflow_dispatch:
+  workflow_run:
+    workflows: 
+      - Check cache_scripts continuation mode
     branches:
       - master
       - develop
+    types:
+      - completed
+      - requested
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
     - uses: actions/checkout@master
     - name: Getting datawarehouse cache
       uses: actions/cache@v2
