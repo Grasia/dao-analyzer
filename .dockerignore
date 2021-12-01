@@ -10,6 +10,8 @@
 !/LICENSE
 !/requirements.txt
 !/init.sh
+# If there is already a datawarehouse, it will be updated
+!/datawarehouse
 
 # Ignore again
 **/__pycache__/

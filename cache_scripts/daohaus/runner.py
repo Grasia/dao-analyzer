@@ -155,8 +155,6 @@ class ProposalsCollector(GraphQLUpdatableCollector):
             prev_df = prev_df
         )
 
-        # TODO: Add prev_df to everything that needs it
-
 class RageQuitCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('rageQuits', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])

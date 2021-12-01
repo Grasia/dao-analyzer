@@ -1,0 +1,23 @@
+name: Check cache_scripts continuation mode
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - develop
+jobs:
+  check_continue:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Getting datawarehouse cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ./datawarehouse*
+    - name: Set up Python
+      uses: actions/setup-python@v1
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+    - name: Run verify-scripts
+      run: ./scripts/checkContinue.sh

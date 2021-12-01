@@ -42,3 +42,8 @@ for d in "${dates[@]:1}"; do
 done
 
 ./scripts/datawarehouseDiff.py "$full" "$lastp"
+
+# If there is no datawarehouse, we copy it so it can be used by the flask app
+if [ ! -d "datawarehouse" ]; then
+    cp -r "$full" "datawarehouse"
+fi

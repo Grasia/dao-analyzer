@@ -80,24 +80,27 @@ class ProposalsCollector(GraphQLUpdatableCollector):
     def update(self, block: Block = None):
         # We don't get the other 'recently...' because they are obtained in the last
         # request, where we get every non-stalled proposal
+        prev_df: pd.DataFrame = self.df
 
         # Getting recently executed proposals
         self._simple_timestamp('executedAt', block,
             start_txt='Getting recently executed proposals since {date}',
-            end_txt='{len} proposals recently executed'
+            end_txt='{len} proposals recently executed',
+            prev_df=prev_df
         )
 
         # Getting recently expired proposals
         self._simple_timestamp('expiresInQueueAt', block,
             start_txt='Getting recently expired proposals since {date}',
-            end_txt='{len} proposals recently expired'
+            end_txt='{len} proposals recently expired',
+            prev_df=prev_df
         )
 
         # Getting still open proposals which outcomes could have been updated
         # These are new proposals, recently voted and recently (pre)boosted
         data = self.requester.n_requests(
             query=partial_query(self.query, {"stage_not_in":["Executed", "Expired_in_queue"]}),
-            block_hash=block.id
+            block_hash=block.id,
         )
         df = self.transform_to_df(data)
         self._update_data(df)

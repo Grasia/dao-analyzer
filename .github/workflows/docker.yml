@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
+    - name: Getting datawarehouse cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ./datawarehouse
     - name: Publish to Docker Hub
       uses: elgohr/Publish-Docker-Github-Action@3.04
       with:

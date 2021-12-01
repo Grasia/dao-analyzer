@@ -5,6 +5,7 @@ ARG POPULATE_CACHE=0
 WORKDIR /dao-analyzer
 
 COPY requirements.txt /
+RUN pip install --upgrade pip
 RUN pip install -r /requirements.txt
 
 COPY . /dao-analyzer/

@@ -30,7 +30,7 @@ def dw_diff(d1: Path, d2: Path) -> bool:
         
         if not c_right.symmetric_difference(c_left).empty:
             errors = True
-            print(f"Error with {f_right}:")
+            print(f" Error with {f_right}:")
             print("> NEW has " + ", ".join(c_right.difference(c_left)))
             print("> OLD has " + ", ".join(c_left.difference(c_right)))
             print("> Common  " + "," .join(c_right.intersection(c_left)))
@@ -43,13 +43,13 @@ def dw_diff(d1: Path, d2: Path) -> bool:
         left_merge = merge[merge['_merge'] == 'left_only']
         if not left_merge.empty:
             errors = True
-            print(f"Errors with {f_left}:")
+            print(f" Errors with {f_left}:")
             print("LEFT ONLY (missing on right)")
             print(left_merge)
 
         right_merge = merge[merge['_merge'] == 'right_only']
         if not right_merge.empty:
-            print(f"Warning with {f_right}:")
+            print(f" Warning with {f_right}:")
             print("RIGHT ONLY (missing on left)")
             print(right_merge)
         
@@ -62,7 +62,7 @@ def dw_diff(d1: Path, d2: Path) -> bool:
             assert_frame_equal(df_left, df_right, check_like=True)
         except AssertionError as e:
             errors = True
-            print(f"Error with {f_right}:")
+            print(f" Error with {f_right}:")
             print(e)
             continue
     

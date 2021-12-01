@@ -10,6 +10,7 @@ from argparser import CacheScriptsArgParser
 import config
 
 from datetime import date
+from pathlib import Path
 import os
 
 import logging
@@ -28,6 +29,14 @@ AVAILABLE_NETWORKS = {n for x in AVAILABLE_PLATFORMS.values() for n in x.network
 def _call_platform(platform: str, force: bool=False, networks=None, collectors=None):
     AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force, collectors=collectors)
 
+def _is_good_version(datawarehouse: Path) -> bool:
+    versionfile = datawarehouse / 'version.txt'
+    if not versionfile.is_file():
+        return False
+
+    with open(versionfile, 'r') as vf:
+        return vf.readline().startswith(config.CACHE_SCRIPTS_VERSION)
+
 if __name__ == '__main__':
     parser = CacheScriptsArgParser(
         available_platforms=list(AVAILABLE_PLATFORMS.keys()),
@@ -35,7 +44,7 @@ if __name__ == '__main__':
 
     config.populate_args(parser.parse_args())
 
-    if config.delete_force and config.datawarehouse.is_dir():
+    if config.datawarehouse.is_dir() and (config.delete_force or not _is_good_version(config.datawarehouse)):
         rmtree(config.datawarehouse)
 
     config.datawarehouse.mkdir(exist_ok=True)
@@ -61,5 +70,8 @@ if __name__ == '__main__':
     if config.block_datetime:
         data_date = config.block_datetime.date().isoformat()
 
-    with open(os.path.join('datawarehouse', 'update_date.txt'), 'w') as f:
+    with open(config.datawarehouse / 'update_date.txt', 'w') as f:
         f.write(data_date)
+
+    with open(config.datawarehouse / 'version.txt', 'w') as f:
+        f.write(config.CACHE_SCRIPTS_VERSION)
