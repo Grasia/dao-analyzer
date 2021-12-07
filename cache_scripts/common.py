@@ -25,6 +25,10 @@ with open(Path('cache_scripts') / 'endpoints.json') as json_file:
     ENDPOINTS: Dict = json.load(json_file)
 
 def add_where(d, **kwargs):
+    """
+    Adds the values specified in kwargs to the where inside d
+        Example: `**add_where(kwargs, deleted=False)`
+    """
     if "where" in d:
         d["where"] |= kwargs
     else:
