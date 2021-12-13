@@ -17,7 +17,8 @@ import src.apps.common.presentation.dashboard_view.dashboard_view as view
 import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
-import src.apps.daohaus.data_access.requesters.cache_requester as cache
+from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+import src.apps.daohaus.data_access.daos.metric.srcs as srcs
 from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.presentation.charts.chart_controller import ChartController
 from src.apps.common.presentation.charts.layout.chart_pane_layout \
@@ -68,8 +69,8 @@ class DaohausService(metaclass=Singleton):
     @property
     def organizations(self) -> OrganizationList:
         if not self.__orgs:
-            orgs: OrganizationList = OrganizationListDao(cache.CacheRequester(
-                srcs=[cache.MOLOCHES])).get_organizations()
+            orgs: OrganizationList = OrganizationListDao(CacheRequester(
+                srcs=[srcs.MOLOCHES])).get_organizations()
             if not orgs.is_empty():
                 self.__orgs = orgs
                 

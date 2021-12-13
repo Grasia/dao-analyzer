@@ -17,7 +17,8 @@ import src.apps.common.presentation.dashboard_view.dashboard_view as view
 import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
-import src.apps.aragon.data_access.requesters.cache_requester as cache
+from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+import src.apps.aragon.data_access.daos.metric.srcs as srcs
 from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.presentation.charts.chart_controller import ChartController
 from src.apps.common.presentation.charts.layout.chart_pane_layout \
@@ -70,8 +71,8 @@ class AragonService(metaclass=Singleton):
     @property
     def organizations(self) -> OrganizationList:
         if not self.__orgs:
-            orgs: OrganizationList = OrganizationListDao(cache.CacheRequester(
-                srcs=[cache.ORGANIZATIONS])).get_organizations()
+            orgs: OrganizationList = OrganizationListDao(CacheRequester(
+                srcs=[srcs.ORGANIZATIONS])).get_organizations()
             if not orgs.is_empty():
                 self.__orgs = orgs
                 

@@ -10,7 +10,8 @@ from typing import List
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
-import src.apps.daohaus.data_access.requesters.cache_requester as cache
+from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+import src.apps.daohaus.data_access.daos.metric.srcs as srcs
 from src.apps.daohaus.data_access.daos.metric.strategy.st_new_additions import StNewAdditions
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_type import StVotesType
 from src.apps.daohaus.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
@@ -42,64 +43,64 @@ VOTERS_PERCENTAGE = 14
 
 
 def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
-    requester: cache.CacheRequester = None
+    requester: CacheRequester = None
     stg = None
     
     if metric == NEW_MEMBERS:
         stg = StNewAdditions(typ=StNewAdditions.MEMBERS)
-        requester = cache.CacheRequester(srcs=[cache.MEMBERS])
+        requester = CacheRequester(srcs=[srcs.MEMBERS])
     elif metric == VOTES_TYPE:
         stg = StVotesType()
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == ACTIVE_VOTERS:
         stg = StActiveVoters()
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == OUTGOING_MEMBERS:
         stg = StNewAdditions(typ=StNewAdditions.OUTGOING_MEMBERS)
-        requester = cache.CacheRequester(srcs=[cache.RAGE_QUITS])
+        requester = CacheRequester(srcs=[srcs.RAGE_QUITS])
     elif metric == NEW_PROPOSALS:
         stg = StNewAdditions(typ=StNewAdditions.PROPOSALS)
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == PROPOSALS_OUTCOME:
         stg = StProposalOutcome()
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == ACTIVE_MEMBERS:
         stg = StActiveMembers()
-        requester = cache.CacheRequester(srcs=[
-            cache.PROPOSALS,
-            cache.RAGE_QUITS,
-            cache.VOTES])
+        requester = CacheRequester(srcs=[
+            srcs.PROPOSALS,
+            srcs.RAGE_QUITS,
+            srcs.VOTES])
     elif metric == PROPOSAL_TYPE:
         stg = StProposalType()
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == ACTIVE_ORGANIZATION:
         stg = StActiveOrganization()
-        requester = cache.CacheRequester(srcs=[
-            cache.PROPOSALS,
-            cache.RAGE_QUITS,
-            cache.VOTES])
+        requester = CacheRequester(srcs=[
+            srcs.PROPOSALS,
+            srcs.RAGE_QUITS,
+            srcs.VOTES])
     elif metric == APPROVAL_PROPOSAL_RATE:
         stg = StApprovalProposalRate()
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == VOTES_VOTERS_RATE:
         stg = StVoteVotersRate()
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == VOTES_FOR_RATE:
         stg = StVotesRate(m_type=StVotesRate.VOTES_FOR)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == VOTES_AGAINST_RATE:
         stg = StVotesRate(m_type=StVotesRate.VOTES_AGAINST)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == TOTAL_MEMBERS:
         stg = StTotalMembers()
-        requester = cache.CacheRequester(srcs=[
-            cache.MEMBERS,
-            cache.RAGE_QUITS])
+        requester = CacheRequester(srcs=[
+            srcs.MEMBERS,
+            srcs.RAGE_QUITS])
     elif metric == VOTERS_PERCENTAGE:
         stg = StVotersPercentage()
-        requester = cache.CacheRequester(srcs=[
-            cache.MEMBERS,
-            cache.RAGE_QUITS,
-            cache.VOTES])
+        requester = CacheRequester(srcs=[
+            srcs.MEMBERS,
+            srcs.RAGE_QUITS,
+            srcs.VOTES])
 
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='molochAddress')
