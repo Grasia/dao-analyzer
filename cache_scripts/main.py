@@ -11,6 +11,9 @@ import config
 
 from datetime import date
 from pathlib import Path
+import portalocker as pl
+import os
+from sys import stderr
 
 import logging
 
@@ -36,24 +39,18 @@ def _is_good_version(datawarehouse: Path) -> bool:
     with open(versionfile, 'r') as vf:
         return vf.readline().startswith(config.CACHE_SCRIPTS_VERSION)
 
-if __name__ == '__main__':
-    parser = CacheScriptsArgParser(
-        available_platforms=list(AVAILABLE_PLATFORMS.keys()),
-        available_networks=AVAILABLE_NETWORKS)
+def main():
+    if config.delete_force or not _is_good_version(config.datawarehouse):
+        # We skip the dotfiles like .lock
+        for p in config.datawarehouse.glob('[!.]*'):
+            if p.is_dir():
+                rmtree(p)
+            else:
+                p.unlink()
 
-    config.populate_args(parser.parse_args())
-
-    if config.datawarehouse.is_dir() and (config.delete_force or not _is_good_version(config.datawarehouse)):
-        rmtree(config.datawarehouse)
-
-    config.datawarehouse.mkdir(exist_ok=True)
     logger = logging.getLogger('cache_scripts')
     logger.addHandler(logging.FileHandler(config.datawarehouse / 'cache_scripts.log'))
-
-    if config.debug:
-        logger.setLevel(level=logging.DEBUG)
-    else:
-        logger.setLevel(level=logging.WARNING)
+    logger.setLevel(level=logging.DEBUG if config.debug else logging.WARNING)
 
     # The default config is every platform
     if not config.platforms:
@@ -74,3 +71,28 @@ if __name__ == '__main__':
 
     with open(config.datawarehouse / 'version.txt', 'w') as f:
         f.write(config.CACHE_SCRIPTS_VERSION)
+
+if __name__ == '__main__':
+    parser = CacheScriptsArgParser(
+        available_platforms=list(AVAILABLE_PLATFORMS.keys()),
+        available_networks=AVAILABLE_NETWORKS)
+
+    config.populate_args(parser.parse_args())
+
+    config.datawarehouse.mkdir(exist_ok=True)
+    
+    p_lock: Path = config.datawarehouse / '.lock'
+    try:
+        with pl.Lock(p_lock, 'w', timeout=1) as lock:
+            # Writing pid to lock
+            print(os.getpid(), file=lock)
+            lock.flush()
+
+            main()
+            p_lock.unlink()
+    except pl.LockException:
+        with open(p_lock, 'r') as f:
+            pid = int(f.readline())
+
+        print(f"The cache_scripts are already being run with pid {pid}", file=stderr)
+        exit(1)
