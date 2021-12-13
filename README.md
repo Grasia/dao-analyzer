@@ -8,14 +8,25 @@ There is available a class diagram of the [DAOstack app](https://github.com/Gras
 If you use Docker, you can just use the images at [grasia/dao-analyzer](https://hub.docker.com/r/grasia/dao-analyzer). The tags with the `-cached` suffix have a pre-populated data warehouse (this means the image uses more space, but takes less time to load). To use it, just run the command:
 
 ```
-docker run -p80:80 grasia/dao-analyzer:latest
+docker run --name dao-analyzer -it -p80:80 grasia/dao-analyzer:latest
 ```
 
 or
 
 ```
-docker run -p80:80 grasia/dao-analyzer:latest-cached
+docker run --name dao-analyzer -it -p80:80 grasia/dao-analyzer:latest-cached
 ```
+
+> `dao-analyzer` is the container name, you can put whatever you want, but remember
+> to change it also on the following command
+
+Now, you can update the datawarehouse using:
+
+```
+docker exec -it dao-analyzer /cache_scripts/main.py
+```
+
+You can even add it to your system as a cron job to update it daily, weekly, etc...
 
 ## Download
 Enter in your terminal (git must be installed) and write down:

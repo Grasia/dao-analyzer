@@ -7,7 +7,7 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
-import dash_core_components as dcc
+from dash import dcc
 from dash import html
 
 from src.app import app, DEBUG

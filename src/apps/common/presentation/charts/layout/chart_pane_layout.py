@@ -8,7 +8,7 @@
 """
 
 from dash import html
-import dash_core_components as dcc
+from dash import dcc
 from typing import List, Dict
 
 from src.apps.common.resources.strings import TEXT
