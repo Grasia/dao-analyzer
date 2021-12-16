@@ -98,13 +98,16 @@ Use the flag `--hypothesis-seed=<int>` to set a fixed seed, it's useful to repro
 In order to fully deploy the app, use the `deploy.sh` script, which installs all the Python dependencies, updates the datawarehouse, and runs the web-app with gunicorn, using the `gunicorn_config.py` file.
 
 ## Publications
-* Faqir-Rhazoui, Youssef, Javier Arroyo, and Samer Hassan. A comparative analysis of the platforms for decentralized autonomous organizations in the Ethereum blockchain." (2021).
+* Youssef Faqir-Rhazoui, Javier Arroyo and Samer Hassan (2021). "A comparative analysis of the platforms for decentralized autonomous organizations in the Ethereum blockchain." Journal of Internet Services and Applications volume 12, Article number: 9.
     * [Freely available here](https://jisajournal.springeropen.com/articles/10.1186/s13174-021-00139-6).
 
-* Faqir-Rhazoui, Youssef, Javier Arroyo, and Samer Hassan. "A Scalable Voting System: Validation of Holographic Consensus in DAOstack." (2020).
-    * [Freely available here](https://eprints.ucm.es/id/eprint/62303/).
+* Youssef Faqir-Rhazoui, Miller Janny Ariza-Garzón, Javier Arroyo and Samer Hassan (2021). "Effect of the Gas Price Surges on User Activity in the DAOs of the Ethereum Blockchain." Extended Abstracts of the 2021 CHI Conference on Human Factors in Computing Systems, Article No.: 407, Pages 1–7.
+    * [Freely available here](https://dl.acm.org/doi/pdf/10.1145/3411763.3451755?casa_token=cU40LWnMO0EAAAAA:608tLS07Ya0KuhrBXihSSCRqMV72jDOu0XfP3jXnH64z4c2glcY43w69feOikee4t2oxoQ4doxAFjg).
 
-* Faqir-Rhazoui, Youssef, Javier Arroyo, and Samer Hassan. (2020). An overview of Decentralized Autonomous Organizations on the blockchain. Proceedings of the 16th International Symposium on Open Collaboration (Opensym 2020) 11:1-11:8. ACM. 
+* Youssef Faqir-Rhazoui, Javier Arroyo, and Samer Hassan (2021). "A Scalable Voting System: Validation of Holographic Consensus in DAOstack." Proceedings of the 54th Hawaii International Conference on System Sciences, 5557-5566.
+    * [Freely available here](https://scholarspace.manoa.hawaii.edu/bitstream/10125/71296/0543.pdf).
+
+* Youssef Faqir-Rhazoui, Javier Arroyo, and Samer Hassan. (2020). An overview of Decentralized Autonomous Organizations on the blockchain. Proceedings of the 16th International Symposium on Open Collaboration (Opensym 2020) 11:1-11:8. ACM. 
     * [Freely available here](https://opensym.org/wp-content/uploads/2020/08/os20-paper-a11-el-faqir.pdf).
 
 ## Acknowledgements
