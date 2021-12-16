@@ -98,10 +98,13 @@ Use the flag `--hypothesis-seed=<int>` to set a fixed seed, it's useful to repro
 In order to fully deploy the app, use the `deploy.sh` script, which installs all the Python dependencies, updates the datawarehouse, and runs the web-app with gunicorn, using the `gunicorn_config.py` file.
 
 ## Publications
-* Faqir-Rhazoui, Youssef, Javier Arroyo Gallardo, and Samer Hassan. "A Scalable Voting System: Validation of Holographic Consensus in DAOstack." (2020).
+* Faqir-Rhazoui, Youssef, Javier Arroyo, and Samer Hassan. A comparative analysis of the platforms for decentralized autonomous organizations in the Ethereum blockchain." (2021).
+    * [Freely available here](https://jisajournal.springeropen.com/articles/10.1186/s13174-021-00139-6).
+
+* Faqir-Rhazoui, Youssef, Javier Arroyo, and Samer Hassan. "A Scalable Voting System: Validation of Holographic Consensus in DAOstack." (2020).
     * [Freely available here](https://eprints.ucm.es/id/eprint/62303/).
 
-* El Faqir, Y., Arroyo, J., Hassan, S. (2020). An overview of Decentralized Autonomous Organizations on the blockchain. Proceedings of the 16th International Symposium on Open Collaboration (Opensym 2020) 11:1-11:8. ACM. 
+* Faqir-Rhazoui, Youssef, Javier Arroyo, and Samer Hassan. (2020). An overview of Decentralized Autonomous Organizations on the blockchain. Proceedings of the 16th International Symposium on Open Collaboration (Opensym 2020) 11:1-11:8. ACM. 
     * [Freely available here](https://opensym.org/wp-content/uploads/2020/08/os20-paper-a11-el-faqir.pdf).
 
 ## Acknowledgements
