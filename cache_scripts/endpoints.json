@@ -5,7 +5,7 @@
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats",
         "aragon": "https://api.thegraph.com/subgraphs/name/aragon/aragon-mainnet",
-        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/aragon/aragon-tokens-mainnet",
+        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/daviddavo/aragon-tokens-mainnet",
         "aragon_voting": "https://api.thegraph.com/subgraphs/name/aragon/aragon-voting-mainnet",
         "aragon_finance": "https://api.thegraph.com/subgraphs/name/daviddavo/aragon-finance-mainnet"
     },
