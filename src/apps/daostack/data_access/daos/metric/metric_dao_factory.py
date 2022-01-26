@@ -63,6 +63,7 @@ def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
     requester: CacheRequester = None
     stg = None
     
+    # TODO: Reutilize CacheRequesters between get_dao calls
     if metric == NEW_USERS:
         stg = st_s.StTimeSerie(st_s.NEW_USERS)
         requester = CacheRequester(srcs=[srcs.REP_HOLDERS])

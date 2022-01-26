@@ -89,7 +89,9 @@ if __name__ == '__main__':
             lock.flush()
 
             main()
-            p_lock.unlink()
+
+            # Removing pid from lock
+            lock.truncate(0)
     except pl.LockException:
         with open(p_lock, 'r') as f:
             pid = int(f.readline())
