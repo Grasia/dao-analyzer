@@ -30,7 +30,7 @@ class CacheRequester(IRequester):
         t = datetime.min
         metadata = json.loads((self.__srcs[0].parent / 'metadata.json').read_bytes())["metadata"]
 
-        print(f"> metadata: {metadata}")
+        # print(f"> metadata: {metadata}")
         for src in self.__srcs:
             collector_name = str(src.stem)
             for k,v in metadata.items():
@@ -47,7 +47,6 @@ class CacheRequester(IRequester):
 
         self.__df = df
 
-    # TODO: Add memoization using the metadata.json file
     # https://stackoverflow.com/questions/70861731/how-to-filelock-an-entire-directory
     def request(self) -> pd.DataFrame:
         """
@@ -59,14 +58,16 @@ class CacheRequester(IRequester):
             exist, it will return an empty dataframe.
         """
 
-        if self.__df.empty and self.__srcs and datetime.now() > self.__next_check:
+        if self.__srcs and (self.__df.empty or datetime.now() > self.__next_check):
             self.__next_check = datetime.now() + timedelta(seconds=self.CHECKING_COOLDOWN)
             print(f"> Checking if we should update. Next check at {self.__next_check}, in {(self.__next_check - datetime.now()).seconds} seconds")
 
             try:
-                with pl.Lock(LOCK_PATH, 'rb', fail_when_locked=True):
+                # TODO: Solve timeout not working with SHARED flag https://github.com/WoLpH/portalocker/issues/74
+                with pl.Lock(LOCK_PATH, 'rb', flags=pl.LockFlags.SHARED, fail_when_locked=True):
                     t = self.metadataTime()
                     if t > self.__last_update:
+                        print(f"> Updating now {self.__srcs}")
                         self.__last_update = t
                         self.tryReload()
                     else:
@@ -75,5 +76,7 @@ class CacheRequester(IRequester):
                 print("> Lock not acquired")
         elif datetime.now() <= self.__next_check:
             print(f"> Not updating yet. Next check at {self.__next_check}, in {(self.__next_check - datetime.now()).seconds} seconds")
+
+        if (self.__df.empty): print(">>> WARNING: RETURNING EMPTY DATAFRAME!!!")
 
         return self.__df

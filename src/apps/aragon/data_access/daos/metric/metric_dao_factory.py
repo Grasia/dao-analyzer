@@ -6,7 +6,8 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
-from typing import List
+from typing import List, Dict, Tuple
+from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
@@ -38,11 +39,11 @@ CASTED_VOTE_FOR_RATE = 10
 CASTED_VOTE_AGAINST_RATE = 11
 
 
-def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
+def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
     address_key: str = ''
     requester: CacheRequester = None
     stg = None
-    
+
     if metric == NEW_VOTES:
         stg = StNewAdditions(typ=StNewAdditions.VOTE)
         requester = CacheRequester(srcs=[srcs.VOTES])
@@ -98,4 +99,13 @@ def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
         requester = CacheRequester(srcs=[srcs.CASTS])
         address_key = 'orgAddress'
 
+    return stg, requester, address_key
+
+metrics_dict: Dict[int, Tuple[IMetricStrategy, CacheRequester, str]] = {}
+
+def get_dao(ids: List[str], metric: int) -> MetricDao:
+    if metric not in metrics_dict:
+        metrics_dict[metric] = _metricsDefault(metric)
+
+    stg, requester, address_key = metrics_dict[metric]
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key=address_key)
