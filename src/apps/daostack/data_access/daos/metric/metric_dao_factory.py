@@ -6,7 +6,6 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
-from collections import defaultdict
 from typing import List, Dict, Tuple
 from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
 
