@@ -54,7 +54,7 @@ class DaostackService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__orgs: OrganizationList = None
+        self.__orgsDAO: OrganizationListDao = OrganizationListDao(CacheRequester(srcs=[srcs.DAOS]))
         self.__controllers: Dict[int, List[ChartController]] = {
             self._REP_H: list(),
             self._VOTE: list(),
@@ -72,20 +72,13 @@ class DaostackService(metaclass=Singleton):
             view_cont.bind_callbacks(
                 app=app,
                 section_id=TEXT['css_id_organization'],
-                organizations=self.organizations
+                organizationsDAO=self.__orgsDAO
             )
             self.__gen_sections()
 
 
-    @property
     def organizations(self) -> OrganizationList:
-        if not self.__orgs:
-            orgs: OrganizationList = OrganizationListDao(CacheRequester(
-                srcs=[srcs.DAOS])).get_organizations()
-            if not orgs.is_empty():
-                self.__orgs = orgs
-                
-        return self.__orgs
+        return self.__orgsDAO.get_organizations()
 
 
     @property
@@ -96,17 +89,16 @@ class DaostackService(metaclass=Singleton):
         return any(self.__controllers.values())
 
 
+    # Called every request
     def get_layout(self, org_value: str = None) -> html.Div:
         """
         Returns the app's layout. 
         """
-        orgs: OrganizationList = self.organizations
-
         if not self.__already_bound:
             self.bind_callbacks()
 
         return view.generate_layout(
-            labels=orgs.get_dict_representation(),
+            labels=self.organizations().get_dict_representation(),
             sections=self.__get_sections(),
             ecosystem='daostack',
             update=UpdateDate().get_date(),

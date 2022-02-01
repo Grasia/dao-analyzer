@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict
+from typing import Dict, Callable
 
 import src.apps.common.resources.colors as Color
 from src.apps.daohaus.resources.strings import TEXT
@@ -22,13 +22,13 @@ class ProposalType(IMetricAdapter):
 
     DATE_FORMAT: str = '%b, %Y'
 
-    def __init__(self, organizations: OrganizationList) -> None:
+    def __init__(self, organizations: Callable[...,OrganizationList]) -> None:
         self.__organizations = organizations
 
 
     @property
     def organizations(self) -> OrganizationList:
-        return self.__organizations
+        return self.__organizations()
 
 
     def get_plot_data(self, o_id: str) -> Dict:

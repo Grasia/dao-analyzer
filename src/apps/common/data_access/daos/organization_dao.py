@@ -28,5 +28,5 @@ class OrganizationListDao:
             network = row['network'] if not pd.isnull(row['network']) else None
 
             orgs.add_organization(Organization(o_id=row['id'], name=name, network=network))
-        
+
         return orgs
