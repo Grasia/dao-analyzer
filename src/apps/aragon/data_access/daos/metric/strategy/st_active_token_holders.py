@@ -59,27 +59,11 @@ class StActiveTokenHolders(IMetricStrategy):
         """
         It combines the different actions in a common action.  
         """
-        # votes casted
-        dff: pd.DataFrame = self.__get_action(
-            df=df,
-            actioner=self.__DF_CASTER,
-            date_col=self.__DF_CAST_DATE)
-
-        # vote creation
-        dff = dff.append(self.__get_action(
-            df=df,
-            actioner=self.__DF_PROPOSER,
-            date_col=self.__DF_VOTE_DATE)
-        , ignore_index=True)
-
-        # transaction
-        dff = dff.append(self.__get_action(
-            df=df,
-            actioner=self.__DF_TRANSACTIONER,
-            date_col=self.__DF_TRANSACTION_DATE)
-        , ignore_index=True)
-
-        return dff
+        return pd.concat([
+            self.__get_action(df, self.__DF_CASTER, self.__DF_CAST_DATE),
+            self.__get_action(df, self.__DF_PROPOSER, self.__DF_VOTE_DATE),
+            self.__get_action(df, self.__DF_TRANSACTIONER, self.__DF_TRANSACTION_DATE)
+        ], ignore_index=True)
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
@@ -107,7 +91,7 @@ class StActiveTokenHolders(IMetricStrategy):
         dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
 
         # joinning all the data in a unique dataframe
-        df = df.append(dff, ignore_index=True)
+        df = pd.concat([df, dff], ignore_index=True)
         df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         df.sort_values(self.__DF_DATE, inplace=True)
 

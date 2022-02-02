@@ -72,7 +72,7 @@ class StDifferentVS(IMetricStrategy):
         dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
 
         # joinning all the data in a unique dataframe
-        df = df.append(dff, ignore_index=True)
+        df = pd.concat([df, dff], ignore_index=True)
         df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         df.sort_values(self.__DF_DATE, inplace=True)
 

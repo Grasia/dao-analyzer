@@ -62,7 +62,7 @@ class StProposalMajority(IMetricStrategy):
         # remove duplicated NA
         pd_utl.drop_duplicate_date_rows(df=dff, dff=df3, date_col=self.__DF_DATE)
 
-        dff = dff.append(df3, ignore_index=True)
+        dff = pd.concat([df3, dff], ignore_index=True)
         dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 
         return dff

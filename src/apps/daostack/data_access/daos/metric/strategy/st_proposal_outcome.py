@@ -103,7 +103,7 @@ class StProposalOutcome(IMetricStrategy):
                 dff = pd_utl.get_df_from_lists([idx, p, b, 0], self.__DF_COLS2)
 
                 dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
-                df = df.append(dff, ignore_index=True)
+                df = pd.concat([df, dff], ignore_index=True)
 
         df.drop_duplicates(subset=self.__DF_COLS1,
         keep="first", inplace=True)
@@ -269,7 +269,7 @@ class StProposalOutcome(IMetricStrategy):
         dff = pd_utl.filter_by_col_value(dff, self.__DF_COUNT, 0, [pd_utl.GT])
         dff = dff.drop(columns=[self.__DF_BOOST, self.__DF_PASS])
 
-        dff = dff.append(d3f, ignore_index=True)
+        dff = pd.concat([dff, d3f], ignore_index=True)
         dff.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 

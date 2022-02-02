@@ -51,10 +51,10 @@ filters: List[int]) -> DataFrame:
     
     return dff
 
-
-def append_rows(df: DataFrame, rows: List) -> DataFrame:
-    serie: pd.Series = pd.Series(rows, index=df.columns)
-    return df.append(serie, ignore_index=True)
+# TODO: Delete this (stop using it)
+def append_rows(df: DataFrame, row: List) -> DataFrame:
+    dff = pd.DataFrame([pd.Series(row, index=df.columns)])
+    return pd.concat([df, dff], join='outer', ignore_index=True)
 
 
 def get_empty_data_frame(columns: List[str] = None) -> DataFrame:

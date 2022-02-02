@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import json
 import logging
 
-from src.apps.common.business.singleton import *
+from src.apps.common.business.singleton import ABCSingleton
 from src.apps.common.data_access.requesters.irequester import IRequester
 
 LOCK_PATH = Path('datawarehouse/.lock')

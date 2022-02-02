@@ -53,10 +53,11 @@ class StActiveUsers(IMetricStrategy):
         Changes the columns proposer, voter and staker into an unique column
         named user.
         """
-        dff: pd.DataFrame = self.__get_user_action(df=df, actioner=self.__DF_PROPOSER)
-        dff = dff.append(self.__get_user_action(df=df, actioner=self.__DF_VOTER), ignore_index=True)
-        dff = dff.append(self.__get_user_action(df=df, actioner=self.__DF_STAKER), ignore_index=True)
-        return dff
+        return pd.concat([
+            self.__get_user_action(df, self.__DF_PROPOSER),
+            self.__get_user_action(df, self.__DF_VOTER),
+            self.__get_user_action(df, self.__DF_STAKER)
+        ], ignore_index=True)
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
@@ -84,7 +85,7 @@ class StActiveUsers(IMetricStrategy):
         dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
 
         # joinning all the data in a unique dataframe
-        df = df.append(dff, ignore_index=True)
+        df = pd.concat([df, dff], ignore_index=True)
         df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         df.sort_values(self.__DF_DATE, inplace=True)
 
