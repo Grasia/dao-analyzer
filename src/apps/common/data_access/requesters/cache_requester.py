@@ -6,11 +6,12 @@ from datetime import datetime, timedelta
 import json
 import logging
 
+from src.apps.common.business.singleton import *
 from src.apps.common.data_access.requesters.irequester import IRequester
 
 LOCK_PATH = Path('datawarehouse/.lock')
 
-class CacheRequester(IRequester):
+class CacheRequester(IRequester, metaclass=ABCSingleton):
     CHECKING_COOLDOWN = 60
 
     def __init__(self, srcs: List[Path]):
@@ -67,7 +68,7 @@ class CacheRequester(IRequester):
                 # Lock the datawarehouse as reader, and then check if the metadata changed
                 with pl.Lock(LOCK_PATH, 'rb', flags=pl.LockFlags.SHARED  | pl.LockFlags.NON_BLOCKING, timeout=0.1):
                     t = self.metadataTime()
-                    if t > self.__last_update:
+                    if t > self.__last_update or self.__df.empty:
                         self.__last_update = t
                         self.tryReload()
             except (pl.LockException, pl.AlreadyLocked):
