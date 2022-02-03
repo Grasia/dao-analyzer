@@ -25,6 +25,8 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
         self.__last_update = datetime.min
         self.logger = logging.getLogger("app.cacherequester")
 
+    def get_last_update(self) -> datetime:
+        return self.__last_update
 
     def metadataTime(self) -> datetime:
         """

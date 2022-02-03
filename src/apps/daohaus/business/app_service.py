@@ -12,7 +12,6 @@ from typing import Dict, List, Callable
 from dash import html
 
 from src.app import app
-from src.apps.common.data_access.update_date import UpdateDate
 import src.apps.common.presentation.dashboard_view.dashboard_view as view
 import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
@@ -45,7 +44,8 @@ class DaohausService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__orgsDAO: OrganizationListDao = OrganizationListDao(CacheRequester(srcs=[srcs.MOLOCHES]))
+        self.__cacheRequester: CacheRequester = CacheRequester(srcs=[srcs.MOLOCHES])
+        self.__orgsDAO: OrganizationListDao = OrganizationListDao(self.__cacheRequester)
         self.__controllers: Dict[int, List[ChartController]] = {
             self._MEMBER: list(),
             self._VOTE: list(),
@@ -88,7 +88,7 @@ class DaohausService(metaclass=Singleton):
             labels=self.organizations().get_dict_representation(),
             sections=self.__get_sections(),
             ecosystem='daohaus',
-            update=UpdateDate().get_date(),
+            update=self.__cacheRequester.get_last_update().date(),
             org_value=org_value
         )
 
