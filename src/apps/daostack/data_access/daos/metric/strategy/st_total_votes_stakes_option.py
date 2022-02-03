@@ -74,7 +74,7 @@ class StTotalVSOption(IMetricStrategy):
             filters=[pd_utl.EQ])
 
         d3f = d3f.drop(columns=[self.__DF_IS_POSITIVE])
-        d3f = d3f.append(dff, ignore_index=True)
+        d3f = pd.concat([d3f, dff], ignore_index=True)
         d3f.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         d3f.sort_values(self.__DF_DATE, inplace=True)
 
