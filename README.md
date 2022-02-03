@@ -97,6 +97,15 @@ Use the flag `--hypothesis-seed=<int>` to set a fixed seed, it's useful to repro
 ## Deploy
 In order to fully deploy the app, use the `deploy.sh` script, which installs all the Python dependencies, updates the datawarehouse, and runs the web-app with gunicorn, using the `gunicorn_config.py` file.
 
+### Matomo integration
+To enable Matomo integration, you just have to pass the following environment variables like this:
+```bash
+DAOA_MATOMO_URL = "https://matomo.example.com"
+DAOA_MATOMO_SITE_ID = 1
+```
+
+You can check if the integration is working visiting the page and then your dashboard. The integration uses Javascript, so if there are any errors, you should be able to see them using "Inspect view" in your browser.
+
 ## Publications
 * Faqir-Rhazoui, Youssef, Javier Arroyo Gallardo, and Samer Hassan. "A Scalable Voting System: Validation of Holographic Consensus in DAOstack." (2020).
     * [Freely available here](https://eprints.ucm.es/id/eprint/62303/).
