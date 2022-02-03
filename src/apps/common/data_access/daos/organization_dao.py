@@ -7,6 +7,7 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
+from typing import List
 import pandas as pd
 
 from src.apps.common.business.transfers.organization import Organization
@@ -21,12 +22,12 @@ class OrganizationListDao:
 
     def get_organizations(self) -> OrganizationList:
         df: pd.DataFrame = self.__requester.request()
-        orgs: OrganizationList = OrganizationList()
+        list: List[Organization] = []
 
         for _, row in df.iterrows():
             name = row['name'] if not pd.isnull(row['name']) else None
             network = row['network'] if not pd.isnull(row['network']) else None
 
-            orgs.add_organization(Organization(o_id=row['id'], name=name, network=network))
+            list.append(Organization(o_id=row['id'], name=name, network=network))
 
-        return orgs
+        return OrganizationList(list)

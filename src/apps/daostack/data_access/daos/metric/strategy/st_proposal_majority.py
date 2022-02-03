@@ -6,7 +6,9 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
+from typing import Tuple
 import pandas as pd
+import numpy as np
 
 from src.apps.common.data_access.daos.metric.imetric_strategy \
     import IMetricStrategy
@@ -64,19 +66,21 @@ class StProposalMajority(IMetricStrategy):
 
         dff = pd.concat([df3, dff], ignore_index=True)
         dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
+        dff.fillna(np.nan, inplace=True)
 
         return dff
 
 
     def __generate_metric(self, df: pd.DataFrame) -> NStackedSerie:
+        print(df)
         abs_passes, rel_passes = self.__get_sserie_outcome(df=df, has_pass=True)
         abs_fails, rel_fails = self.__get_sserie_outcome(df=df, has_pass=False)
-
+        print(abs_passes.get_serie())
         return NStackedSerie(sseries=[abs_passes, rel_passes, rel_fails, abs_fails])
 
 
     def __get_sserie_outcome(self, df: pd.DataFrame, has_pass: bool)\
-    -> (StackedSerie, StackedSerie):
+    -> Tuple[StackedSerie, StackedSerie]:
 
         first_date = df[self.__DF_DATE].min()
         idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE, start=first_date)
@@ -88,7 +92,7 @@ class StProposalMajority(IMetricStrategy):
         # absolute
         d3f: pd.DataFrame = pd_utl.filter_by_col_value(dff, self.__DF_IS_ABSOLUTE, 
             False, [pd_utl.NEQ])
-        d3f = self.__replicate_time_series(df=d3f, idx=idx)
+        d3f = self.__replicate_time_series(df=d3f, idx=idx) ## <- HERE THE NONE
         absolute: StackedSerie = self.__get_sserie_from_df(d3f)
 
         # relative
@@ -105,33 +109,31 @@ class StProposalMajority(IMetricStrategy):
         return StackedSerie(serie=serie, y_stack=[df[
             self.__DF_MAJORITY_PER].tolist()])
 
-    
     def __calculate_outcome(self, df: pd.DataFrame) -> pd.DataFrame:
-        dff: pd.DataFrame = pd_utl.get_empty_data_frame(self.__DF_COLS)
+        df = df.astype({
+            self.__DF_REP: float,
+            self.__DF_VOTES_A: float,
+            self.__DF_VOTES_F: float,
+            self.__DF_DATE: int,
+            self.__DF_QUORUM: int
+        })
 
-        for _, row in df.iterrows():
-            total: int = int(row[self.__DF_REP])
-            if total == 0:
-                continue
+        # Filter out those with zero
+        df = df[df[self.__DF_REP] > 0]
 
-            date: int = int(row[self.__DF_DATE])
-            outcome: bool = True if row[self.__DF_PASS] == 'Pass' else False
+        outcome = df[self.__DF_PASS] == 'Pass'
 
-            # boost == na means there was not boosted
-            boost: bool = False if pd.isna(row[self.__DF_BOOST_AT]) else True
+        # boost == na means there was not boosted
+        boost = ~pd.isna(df[self.__DF_BOOST_AT])
 
-            percentage: int = (int(row[self.__DF_VOTES_F]) / total) if outcome \
-                else (int(row[self.__DF_VOTES_A]) / total)
-            percentage = round(percentage * 100, 1)
+        percentage = df[self.__DF_VOTES_F].where(outcome, df[self.__DF_VOTES_A]) / df[self.__DF_REP]
+        df[self.__DF_MAJORITY_PER] = round(percentage * 100)
 
-            is_absolute: bool  = True if int(row[self.__DF_QUORUM]) <= percentage else False
+        df[self.__DF_IS_ABSOLUTE] = df[self.__DF_QUORUM] <= df[self.__DF_MAJORITY_PER]
 
-            has_passed: bool = False
-            # winning outcome means more 'votes for' than 'votes against'
-            if outcome:
-                # it passed if outcome and it had relative majority or absolute majority 
-                has_passed = boost or is_absolute
+        # winning outcome means more 'votes for' than 'votes against'
+        # it passed if outcome and it had relative majority or absolute majority 
+        df[self.__DF_PASS] = (df[self.__DF_PASS] == 'Pass') & (boost | df[self.__DF_IS_ABSOLUTE])
 
-            dff = pd_utl.append_rows(dff, [date, has_passed, percentage, is_absolute])
-
-        return dff
+        df = df.filter(self.__DF_COLS)
+        return df

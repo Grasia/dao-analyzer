@@ -203,21 +203,15 @@ class StProposalOutcome(IMetricStrategy):
 
     
     def __calculate_outcome(self, df: pd.DataFrame) -> pd.DataFrame:
-        dff: pd.DataFrame = pd_utl.get_empty_data_frame(self.__DF_COLS1)
-
-        for _, row in df.iterrows():
-            date: int = int(row[self.__DF_DATE])
-            is_boost: bool = False if pd.isna(row[self.__DF_BOOST_AT]) else True
-            has_passed: bool = self.__has_passed(data=row, is_boost=is_boost)
-
-            dff = pd_utl.append_rows(dff, [date, has_passed, is_boost])
-
-        return dff
+        df[self.__DF_BOOST] = ~pd.isna(df[self.__DF_BOOST_AT])
+        df[self.__DF_PASS] = df.apply(lambda r: self.__has_passed(r, r[self.__DF_BOOST]), axis='columns')
+        df = df.filter(self.__DF_COLS1).astype(object)
+        return df
 
 
     def __has_passed(self, data, is_boost: bool) -> bool:
         # winning outcome means more votes for than votes against
-        outcome: bool = True if data[self.__DF_OUTCOME] == 'Pass' else False
+        outcome: bool = data[self.__DF_OUTCOME] == 'Pass'
         percentage = int(data[self.__DF_VOTES_F]) / int(data[self.__DF_REP]) * 100 \
             if int(data[self.__DF_REP]) > 0 else 0
         limit: int = int(data[self.__DF_QUORUM])
