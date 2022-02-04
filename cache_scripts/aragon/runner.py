@@ -102,7 +102,8 @@ class MiniMeTokensCollector(GraphQLUpdatableCollector):
             ds.MiniMeToken.name,
             ds.MiniMeToken.symbol,
             ds.MiniMeToken.orgAddress,
-            ds.MiniMeToken.appAddress
+            ds.MiniMeToken.appAddress,
+            ds.MiniMeToken.lastUpdateAt
         )
 
     def update(self, block: Block = None):
@@ -124,6 +125,7 @@ class TokenHoldersCollector(GraphQLUpdatableCollector):
             ds.TokenHolder.id,
             ds.TokenHolder.address,
             ds.TokenHolder.tokenAddress,
+            ds.TokenHolder.lastUpdateAt,
             ds.TokenHolder.balance
         )
 

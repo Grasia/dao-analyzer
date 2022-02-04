@@ -1,16 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.7.1 - 2022-02-03
+## 0.7.1 - 2022-02-07
 - Supporting Python 3.10
 - Removed deprecated things
 - Refactored (vectorized) some Pandas code
 - Added Matomo Analytics support
 - Made some more collectors updatable
 - Fixed some tests
+- Fixed some newly updatable cache_scripts
 - Made data updatable while running
   - Added advisory file locking to datawarehouse
   - CacheRequester respects the datawarehouse file lock, and keeps the data in memory if possible
+  - cache_scripts are run on a temp folder without disturbing the datawarehouse
 
 ## 0.7.0 - 2021-11-30
 The `cache_scripts` backend update
