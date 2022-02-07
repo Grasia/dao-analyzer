@@ -6,11 +6,13 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
-from typing import List
+from typing import List, Dict, Tuple
+from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
-import src.apps.daostack.data_access.requesters.cache_requester as cache
+from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+import src.apps.daostack.data_access.daos.metric.srcs as srcs
 import src.apps.daostack.data_access.daos.metric.strategy.\
     st_time_serie as st_s
 import src.apps.daostack.data_access.daos.metric.strategy.\
@@ -57,78 +59,87 @@ VOTES_AGAINST_RATE = 17
 TOTAL_REP_HOLDERS = 18
 VOTERS_PERCENTAGE = 19
 
-
-def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
-    requester: cache.CacheRequester = None
+# TODO: Do this in the other files or MISS
+def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
+    requester: CacheRequester = None
     stg = None
-    
+
     if metric == NEW_USERS:
         stg = st_s.StTimeSerie(st_s.NEW_USERS)
-        requester = cache.CacheRequester(srcs=[cache.REP_HOLDERS])
+        requester = CacheRequester(srcs=[srcs.REP_HOLDERS])
     elif metric == NEW_PROPOSALS:
         stg = st_s.StTimeSerie(st_s.NEW_PROPOSAL)
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == TOTAL_VOTES:
         stg = st_s.StTimeSerie(st_s.TOTAL_VOTES)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == TOTAL_STAKES:
         stg = st_s.StTimeSerie(st_s.TOTAL_STAKES)
-        requester = cache.CacheRequester(srcs=[cache.STAKES])
+        requester = CacheRequester(srcs=[srcs.STAKES])
     elif metric == PROPOSALS_BOOST_OUTCOME:
         stg = st_po.StProposalOutcome(st_po.BOOST_OUTCOME)
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == DIFFERENT_VOTERS:
         stg = st_vs.StDifferentVS(st_vs.VOTERS)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == DIFFERENT_STAKERS:
         stg = st_vs.StDifferentVS(st_vs.STAKERS)
-        requester = cache.CacheRequester(srcs=[cache.STAKES])
+        requester = CacheRequester(srcs=[srcs.STAKES])
     elif metric == PROPOSAL_MAJORITY:
         stg = StProposalMajority()
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == PROPOSALS_TOTAL_SUCCES_RATIO:
         stg = st_po.StProposalOutcome(st_po.TOTAL_SUCCESS_RATIO)
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == PROPOSALS_BOOST_SUCCES_RATIO:
         stg = st_po.StProposalOutcome(st_po.BOOST_SUCCESS_RATIO)
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == TOTAL_VOTES_OPTION:
         stg = st_tvso.StTotalVSOption(st_tvso.VOTES)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == TOTAL_STAKES_OPTION:
         stg = st_tvso.StTotalVSOption(st_tvso.STAKES)
-        requester = cache.CacheRequester(srcs=[cache.STAKES])
+        requester = CacheRequester(srcs=[srcs.STAKES])
     elif metric == ACTIVE_USERS:
         stg = StActiveUsers()
-        requester = cache.CacheRequester(srcs=[
-            cache.PROPOSALS, 
-            cache.VOTES, 
-            cache.STAKES])
+        requester = CacheRequester(srcs=[
+            srcs.PROPOSALS, 
+            srcs.VOTES, 
+            srcs.STAKES])
     elif metric == ACTIVE_ORGANIZATION:
         stg = StActiveOrganization()
-        requester = cache.CacheRequester(srcs=[
-            cache.PROPOSALS,
-            cache.VOTES,
-            cache.STAKES])
+        requester = CacheRequester(srcs=[
+            srcs.PROPOSALS,
+            srcs.VOTES,
+            srcs.STAKES])
     elif metric == APPROVAL_PROPOSAL_RATE:
         stg = StApprovalProposalRate()
-        requester = cache.CacheRequester(srcs=[cache.PROPOSALS])
+        requester = CacheRequester(srcs=[srcs.PROPOSALS])
     elif metric == VOTE_VOTERS_RATE:
         stg = StVoteVotersRate()
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == VOTES_FOR_RATE:
         stg = StVotesRate(m_type=StVotesRate.VOTES_FOR)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == VOTES_AGAINST_RATE:
         stg = StVotesRate(m_type=StVotesRate.VOTES_AGAINST)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
     elif metric == TOTAL_REP_HOLDERS:
         stg = StTotalRepHolders()
-        requester = cache.CacheRequester(srcs=[cache.REP_HOLDERS])
+        requester = CacheRequester(srcs=[srcs.REP_HOLDERS])
     elif metric == VOTERS_PERCENTAGE:
         stg = StVotersPercentage()
-        requester = cache.CacheRequester(srcs=[
-            cache.REP_HOLDERS,
-            cache.VOTES])
+        requester = CacheRequester(srcs=[
+            srcs.REP_HOLDERS,
+            srcs.VOTES])
+    
+    return stg, requester
 
+metrics_dict: Dict[int, Tuple[IMetricStrategy, CacheRequester]] = {}
+
+def get_dao(ids: List[str], metric: int) -> MetricDao:
+    if metric not in metrics_dict:
+        metrics_dict[metric] = _metricsDefault(metric)
+
+    stg, requester = metrics_dict[metric]
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key='dao')

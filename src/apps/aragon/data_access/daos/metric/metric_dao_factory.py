@@ -6,11 +6,13 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
-from typing import List
+from typing import List, Dict, Tuple
+from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
-import src.apps.aragon.data_access.requesters.cache_requester as cache
+from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+import src.apps.aragon.data_access.daos.metric.srcs as srcs
 from src.apps.aragon.data_access.daos.metric.strategy.st_new_additions import StNewAdditions
 from src.apps.aragon.data_access.daos.metric.strategy.st_installed_apps import StInstalledApps
 from src.apps.aragon.data_access.daos.metric.strategy.st_cast_type import StCastType
@@ -37,64 +39,73 @@ CASTED_VOTE_FOR_RATE = 10
 CASTED_VOTE_AGAINST_RATE = 11
 
 
-def get_dao(ids: List[str], metric: int) -> MetricDao: # noqa: C901
+def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
     address_key: str = ''
-    requester: cache.CacheRequester = None
+    requester: CacheRequester = None
     stg = None
-    
+
     if metric == NEW_VOTES:
         stg = StNewAdditions(typ=StNewAdditions.VOTE)
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
         address_key = 'orgAddress'
     elif metric == NEW_TRANSACTIONS:
         stg = StNewAdditions(typ=StNewAdditions.TRANSACTION)
-        requester = cache.CacheRequester(srcs=[cache.TRANSACTIONS])
+        requester = CacheRequester(srcs=[srcs.TRANSACTIONS])
         address_key = 'orgAddress'
     elif metric == INSTALLED_APPS:
         stg = StInstalledApps()
-        requester = cache.CacheRequester(srcs=[cache.APPS])
+        requester = CacheRequester(srcs=[srcs.APPS])
         address_key = 'organizationId'
     elif metric == CAST_TYPE:
         stg = StCastType()
-        requester = cache.CacheRequester(srcs=[cache.CASTS])
+        requester = CacheRequester(srcs=[srcs.CASTS])
         address_key = 'orgAddress'
     elif metric == VOTE_OUTCOME:
         stg = StVoteOutcome()
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
         address_key = 'orgAddress'
     elif metric == ACTIVE_VOTERS:
         stg = StActiveVoters()
-        requester = cache.CacheRequester(srcs=[cache.CASTS])
+        requester = CacheRequester(srcs=[srcs.CASTS])
         address_key = 'orgAddress'
     elif metric == ACTIVE_TOKEN_HOLDERS:
         stg = StActiveTokenHolders()
-        requester = cache.CacheRequester(srcs=[
-            cache.CASTS,
-            cache.VOTES,
-            cache.TRANSACTIONS])
+        requester = CacheRequester(srcs=[
+            srcs.CASTS,
+            srcs.VOTES,
+            srcs.TRANSACTIONS])
         address_key = 'orgAddress'
     elif metric == ACTIVE_ORGANIZATION:
         stg = StActiveOrganization()
-        requester = cache.CacheRequester(srcs=[
-            cache.CASTS,
-            cache.VOTES,
-            cache.TRANSACTIONS])
+        requester = CacheRequester(srcs=[
+            srcs.CASTS,
+            srcs.VOTES,
+            srcs.TRANSACTIONS])
         address_key = 'orgAddress'
     elif metric == APPROVAL_VOTE_RATE:
         stg = StApprovalVoteRate()
-        requester = cache.CacheRequester(srcs=[cache.VOTES])
+        requester = CacheRequester(srcs=[srcs.VOTES])
         address_key = 'orgAddress'
     elif metric == CASTED_VOTE_VOTER_RATE:
         stg = StVoteVotersRate()
-        requester = cache.CacheRequester(srcs=[cache.CASTS])
+        requester = CacheRequester(srcs=[srcs.CASTS])
         address_key = 'orgAddress'
     elif metric == CASTED_VOTE_FOR_RATE:
         stg = StCastedVotesRate(m_type=StCastedVotesRate.CAST_VOTE_FOR)
-        requester = cache.CacheRequester(srcs=[cache.CASTS])
+        requester = CacheRequester(srcs=[srcs.CASTS])
         address_key = 'orgAddress'
     elif metric == CASTED_VOTE_AGAINST_RATE:
         stg = StCastedVotesRate(m_type=StCastedVotesRate.CAST_VOTE_AGAINST)
-        requester = cache.CacheRequester(srcs=[cache.CASTS])
+        requester = CacheRequester(srcs=[srcs.CASTS])
         address_key = 'orgAddress'
 
+    return stg, requester, address_key
+
+metrics_dict: Dict[int, Tuple[IMetricStrategy, CacheRequester, str]] = {}
+
+def get_dao(ids: List[str], metric: int) -> MetricDao:
+    if metric not in metrics_dict:
+        metrics_dict[metric] = _metricsDefault(metric)
+
+    stg, requester, address_key = metrics_dict[metric]
     return MetricDao(ids=ids, strategy=stg, requester=requester, address_key=address_key)

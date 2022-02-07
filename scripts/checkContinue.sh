@@ -3,7 +3,7 @@
 
 # The goal of this script is to check if running two/three times the script
 # with continuation enabled results in the same data as running it one time
-dates=("2021-03-01" "2021-06-01" "2021-09-01")
+dates=("2021-03-01" "2021-06-01" "2021-09-01" "2021-12-01")
 
 generate_full () {
     local d=$1
@@ -11,7 +11,7 @@ generate_full () {
 
     if [ ! -d "$p" ]; then
         echo "$p" not found, running again
-        ./cache_scripts/main.py -FD "$p" --block-datetime "$d" -n mainnet
+        ./cache_scripts/main.py -FD "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names || exit 1
     else
         echo "$p" found, not running
     fi
@@ -32,7 +32,7 @@ generate_partial() {
 
     [ -d "$p" ] && rm -r "$p" # If it exists, we delete it
     cp -r "$lastp" "$p"
-    ./cache_scripts/main.py -D "$p" --block-datetime "$d" -n mainnet
+    ./cache_scripts/main.py -D "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names || exit 1
 
     lastp=$p
 }

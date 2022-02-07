@@ -18,7 +18,7 @@ from src.apps.common.business.transfers.organization import OrganizationList
 
 OrganizationStrategy = st.builds(
     Organization,
-    o_id=st.text(),
+    o_id=st.text(min_size=2),
     name=st.text())
 
 

@@ -8,7 +8,7 @@
 """
 
 from datetime import date
-from typing import List, Any, Dict, Set
+from typing import List, Any, Dict
 import pandas as pd
 from pandas import DataFrame
 from pandas.tseries.offsets import DateOffset
@@ -51,10 +51,10 @@ filters: List[int]) -> DataFrame:
     
     return dff
 
-
-def append_rows(df: DataFrame, rows: List) -> DataFrame:
-    serie: pd.Series = pd.Series(rows, index=df.columns)
-    return df.append(serie, ignore_index=True)
+# TODO: Delete this (stop using it)
+def append_rows(df: DataFrame, row: List) -> DataFrame:
+    dff = pd.DataFrame([pd.Series(row, index=df.columns)])
+    return pd.concat([df, dff], join='outer', ignore_index=True)
 
 
 def get_empty_data_frame(columns: List[str] = None) -> DataFrame:
@@ -73,7 +73,7 @@ def get_df_from_lists(rows: List[List], columns: List[str]) -> DataFrame:
     for i, c in enumerate(columns):
         di_df[c] = rows[i]
 
-    return DataFrame(di_df)
+    return DataFrame(di_df).infer_objects()
 
 
 def is_an_empty_df(df: DataFrame) -> bool:
@@ -122,12 +122,5 @@ def drop_duplicate_date_rows(df: DataFrame, dff: DataFrame, date_col: str) -> No
     """
     Removes all duplicated date-rows from dff considering the df's ones.
     """
-    idx: List[int] = list()
-    dates: Set[date] = set(df[date_col].tolist())
-
-    # find dataframe indexes of duplicated dates
-    for i, row in dff.iterrows():
-        if row[date_col] in dates:
-            idx.append(i)
-
-    dff.drop(idx, inplace=True)
+    mask = dff[date_col].isin(df[date_col])
+    dff.drop(dff[mask].index, inplace=True)

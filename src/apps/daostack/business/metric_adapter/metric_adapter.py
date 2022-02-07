@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List
+from typing import Dict, List, Callable
 
 import src.apps.common.resources.colors as Color
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
@@ -21,7 +21,7 @@ class MetricAdapter(IMetricAdapter):
 
     DATE_FORMAT: str = '%b, %Y'
 
-    def __init__(self, metric_id: int, organizations: OrganizationList) -> None:
+    def __init__(self, metric_id: int, organizations: Callable[...,OrganizationList]) -> None:
         self.__metric_id: int = metric_id
         self.__organizations = organizations
 
@@ -33,7 +33,7 @@ class MetricAdapter(IMetricAdapter):
 
     @property
     def organizations(self) -> OrganizationList:
-        return self.__organizations
+        return self.__organizations()
 
 
     def get_plot_data(self, o_id: str) -> Dict:
@@ -41,7 +41,7 @@ class MetricAdapter(IMetricAdapter):
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids=self.__organizations.get_ids_from_id(o_id),
+            ids=self.organizations.get_ids_from_id(o_id),
             metric=self.__metric_id
         )
         metric: StackedSerie = dao.get_metric()

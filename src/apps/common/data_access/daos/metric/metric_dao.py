@@ -28,6 +28,7 @@ class MetricDao():
 
     def get_metric(self):
         df: pd.DataFrame = self.__requester.request()
+        assert(not df.empty)
         
         # get only data from daos in ids
         df = df.loc[df[self.__address_key].isin(self.__ids)]

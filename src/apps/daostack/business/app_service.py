@@ -12,14 +12,14 @@ from typing import Dict, List, Callable
 from dash import html
 
 from src.app import app
-from src.apps.common.data_access.update_date import UpdateDate
 import src.apps.common.presentation.dashboard_view.dashboard_view as view
 import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 import src.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
-import src.apps.daostack.data_access.requesters.cache_requester as cache
+from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+import src.apps.daostack.data_access.daos.metric.srcs as srcs
 from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.business.singleton import Singleton
 from src.apps.common.presentation.charts.chart_controller import ChartController
@@ -53,7 +53,8 @@ class DaostackService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__orgs: OrganizationList = None
+        self.__cacheRequester: CacheRequester = CacheRequester(srcs=[srcs.DAOS])
+        self.__orgsDAO: OrganizationListDao = OrganizationListDao(self.__cacheRequester)
         self.__controllers: Dict[int, List[ChartController]] = {
             self._REP_H: list(),
             self._VOTE: list(),
@@ -71,20 +72,13 @@ class DaostackService(metaclass=Singleton):
             view_cont.bind_callbacks(
                 app=app,
                 section_id=TEXT['css_id_organization'],
-                organizations=self.organizations
+                organizationsDAO=self.__orgsDAO
             )
             self.__gen_sections()
 
 
-    @property
     def organizations(self) -> OrganizationList:
-        if not self.__orgs:
-            orgs: OrganizationList = OrganizationListDao(cache.CacheRequester(
-                srcs=[cache.DAOS])).get_organizations()
-            if not orgs.is_empty():
-                self.__orgs = orgs
-                
-        return self.__orgs
+        return self.__orgsDAO.get_organizations()
 
 
     @property
@@ -95,20 +89,19 @@ class DaostackService(metaclass=Singleton):
         return any(self.__controllers.values())
 
 
+    # Called every request
     def get_layout(self, org_value: str = None) -> html.Div:
         """
         Returns the app's layout. 
         """
-        orgs: OrganizationList = self.organizations
-
         if not self.__already_bound:
             self.bind_callbacks()
 
         return view.generate_layout(
-            labels=orgs.get_dict_representation(),
+            labels=self.organizations().get_dict_representation(),
             sections=self.__get_sections(),
             ecosystem='daostack',
-            update=UpdateDate().get_date(),
+            update=self.__cacheRequester.get_last_update().date(),
             org_value=org_value
         )
 

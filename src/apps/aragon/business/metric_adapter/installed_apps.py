@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List
+from typing import Dict, List, Callable
 
 import src.apps.common.resources.colors as Color
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
@@ -18,21 +18,20 @@ import src.apps.aragon.data_access.daos.metric.\
 
 class InstalledApps(IMetricAdapter):
 
-    def __init__(self, organizations: OrganizationList) -> None:
+    def __init__(self, organizations: Callable[...,OrganizationList]) -> None:
         self.__organizations = organizations
 
 
     @property
     def organizations(self) -> OrganizationList:
-        return self.__organizations
-
+        return self.__organizations()
 
     def get_plot_data(self, o_id: str) -> Dict:
         """
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids=self.__organizations.get_ids_from_id(o_id),
+            ids=self.organizations.get_ids_from_id(o_id),
             metric=s_factory.INSTALLED_APPS
         )
         metric: StackedSerie = dao.get_metric()

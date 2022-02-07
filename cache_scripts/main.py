@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from typing import Dict
-from shutil import rmtree
 from aragon.runner import AragonRunner
 from daohaus.runner import DaohausRunner
 from daostack.runner import DaostackRunner
@@ -11,6 +10,11 @@ import config
 
 from datetime import date
 from pathlib import Path
+import portalocker as pl
+import os
+import tempfile
+import shutil
+from sys import stderr
 
 import logging
 
@@ -25,7 +29,8 @@ AVAILABLE_PLATFORMS: Dict[str, Runner] = {
 # Get available networks from Runners
 AVAILABLE_NETWORKS = {n for x in AVAILABLE_PLATFORMS.values() for n in x.networks}
 
-def _call_platform(platform: str, force: bool=False, networks=None, collectors=None):
+def _call_platform(platform: str, datawarehouse: Path, force: bool=False, networks=None, collectors=None):
+    AVAILABLE_PLATFORMS[platform].set_dw(datawarehouse)
     AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force, collectors=collectors)
 
 def _is_good_version(datawarehouse: Path) -> bool:
@@ -36,24 +41,18 @@ def _is_good_version(datawarehouse: Path) -> bool:
     with open(versionfile, 'r') as vf:
         return vf.readline().startswith(config.CACHE_SCRIPTS_VERSION)
 
-if __name__ == '__main__':
-    parser = CacheScriptsArgParser(
-        available_platforms=list(AVAILABLE_PLATFORMS.keys()),
-        available_networks=AVAILABLE_NETWORKS)
+def main(datawarehouse: Path):
+    if config.delete_force or not _is_good_version(datawarehouse):
+        # We skip the dotfiles like .lock
+        for p in datawarehouse.glob('[!.]*'):
+            if p.is_dir():
+                shutil.rmtree(p)
+            else:
+                p.unlink()
 
-    config.populate_args(parser.parse_args())
-
-    if config.datawarehouse.is_dir() and (config.delete_force or not _is_good_version(config.datawarehouse)):
-        rmtree(config.datawarehouse)
-
-    config.datawarehouse.mkdir(exist_ok=True)
     logger = logging.getLogger('cache_scripts')
-    logger.addHandler(logging.FileHandler(config.datawarehouse / 'cache_scripts.log'))
-
-    if config.debug:
-        logger.setLevel(level=logging.DEBUG)
-    else:
-        logger.setLevel(level=logging.WARNING)
+    logger.addHandler(logging.FileHandler(datawarehouse / 'cache_scripts.log'))
+    logger.setLevel(level=logging.DEBUG if config.debug else logging.WARNING)
 
     # The default config is every platform
     if not config.platforms:
@@ -61,7 +60,7 @@ if __name__ == '__main__':
 
     # Now calling the platform and deleting if needed
     for p in config.platforms:
-        _call_platform(p, config.force, config.networks, config.collectors)
+        _call_platform(p, datawarehouse, config.force, config.networks, config.collectors)
 
     # write date
     data_date: str = str(date.today().isoformat())
@@ -69,8 +68,55 @@ if __name__ == '__main__':
     if config.block_datetime:
         data_date = config.block_datetime.date().isoformat()
 
-    with open(config.datawarehouse / 'update_date.txt', 'w') as f:
+    with open(datawarehouse / 'update_date.txt', 'w') as f:
         f.write(data_date)
 
-    with open(config.datawarehouse / 'version.txt', 'w') as f:
+    with open(datawarehouse / 'version.txt', 'w') as f:
         f.write(config.CACHE_SCRIPTS_VERSION)
+
+def main_lock(datawarehouse: Path):
+    datawarehouse.mkdir(exist_ok=True)
+    
+    # Lock for the datawarehouse (also used by the dash)
+    p_lock: Path = datawarehouse / '.lock'
+
+    # Exclusive lock for the chache-scripts (no two cache-scripts running)
+    cs_lock: Path = datawarehouse / '.cs.lock'
+
+    try:
+        with pl.Lock(cs_lock, 'w', timeout=1) as lock, \
+             tempfile.TemporaryDirectory(prefix="datawarehouse_") as tmp_dw:
+
+            # Writing pid and dir name to lock (debugging)
+            tmp_dw = Path(tmp_dw)
+            print(os.getpid(), file=lock)
+            print(tmp_dw, file=lock)
+            lock.flush()
+
+            # We want to copy the dw, so we open it as readers
+            p_lock.touch(exist_ok=True)
+            with pl.Lock(p_lock, 'r', timeout=1, flags=pl.LOCK_SH | pl.LOCK_NB):
+                shutil.copytree(datawarehouse, tmp_dw, dirs_exist_ok=True)
+
+            main(datawarehouse=tmp_dw)
+
+            with pl.Lock(p_lock, 'w', timeout=10):
+                shutil.copytree(tmp_dw, datawarehouse, dirs_exist_ok=True)
+
+            # Removing pid from lock
+            lock.truncate(0)
+    except pl.LockException:
+        with open(cs_lock, 'r') as f:
+            pid = int(f.readline())
+
+        print(f"The cache_scripts are already being run with pid {pid}", file=stderr)
+        exit(1)
+
+if __name__ == '__main__':
+    parser = CacheScriptsArgParser(
+        available_platforms=list(AVAILABLE_PLATFORMS.keys()),
+        available_networks=AVAILABLE_NETWORKS)
+
+    config.populate_args(parser.parse_args())
+
+    main_lock(config.datawarehouse)

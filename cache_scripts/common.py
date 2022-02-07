@@ -25,6 +25,10 @@ with open(Path('cache_scripts') / 'endpoints.json') as json_file:
     ENDPOINTS: Dict = json.load(json_file)
 
 def add_where(d, **kwargs):
+    """
+    Adds the values specified in kwargs to the where inside d
+        Example: `**add_where(kwargs, deleted=False)`
+    """
     if "where" in d:
         d["where"] |= kwargs
     else:
@@ -40,15 +44,15 @@ def partial_query(q, w) -> DSLField:
 class Collector(ABC):
     def __init__(self, name:str, runner):
         self.name: str = name
-        self.runner_name: str = runner.name
+        self.runner = runner
 
     @property
     def data_path(self) -> Path:
-        return config.datawarehouse / self.runner_name / (self.name + '.arr')
+        return self.runner.basedir / (self.name + '.arr')
 
     @property
     def long_name(self) -> str:
-        return f"{self.runner_name}/{self.name}"
+        return f"{self.runner.name}/{self.name}"
 
     @property
     def collectorid(self) -> str:
@@ -203,9 +207,15 @@ class GraphQLUpdatableCollector(GraphQLCollector):
         self._simple_timestamp('createdAt', block)
 
 class Runner(ABC):
+    def __init__(self, dw: Path = Path()):
+        self.__dw: Path = dw
+
+    def set_dw(self, dw) -> Path:
+        self.__dw = dw
+
     @property
-    def basedir(self):
-        return config.datawarehouse / self.name
+    def basedir(self) -> Path:
+        return self.__dw / self.name
 
     @property
     def collectors(self) -> List[Collector]:
@@ -215,8 +225,8 @@ class Runner(ABC):
         raise NotImplementedError
 
 class GraphQLRunner(Runner, ABC):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, dw = None):
+        super().__init__(dw)
         self.networks = {n for n,v in ENDPOINTS.items() if self.name in v}
 
     def filterCollectors(self, 

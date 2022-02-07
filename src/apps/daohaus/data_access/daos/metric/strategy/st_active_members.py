@@ -47,9 +47,10 @@ class StActiveMembers(IMetricStrategy):
         """
         It combines the different actions in a common action.  
         """
-        dff: pd.DataFrame = self.__get_action(df=df, action=self.__DF_MEMEBER)
-        dff = dff.append(self.__get_action(df=df, action=self.__DF_PROPOSER), ignore_index=True)
-        return dff
+        return pd.concat([
+            self.__get_action(df, self.__DF_MEMEBER),
+            self.__get_action(df, self.__DF_PROPOSER)
+        ], ignore_index=True)
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
@@ -77,7 +78,7 @@ class StActiveMembers(IMetricStrategy):
         dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
 
         # joinning all the data in a unique dataframe
-        df = df.append(dff, ignore_index=True)
+        df = pd.concat([df, dff], ignore_index=True)
         df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         df.sort_values(self.__DF_DATE, inplace=True)
 

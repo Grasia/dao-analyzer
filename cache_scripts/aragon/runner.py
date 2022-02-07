@@ -88,7 +88,7 @@ class OrganizationsCollector(GraphQLUpdatableCollector):
             ds.Organization.recoveryVault
         )
 
-class MiniMeTokensCollector(GraphQLCollector):
+class MiniMeTokensCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('miniMeTokens', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network, pbar_enabled=False)
 
@@ -102,13 +102,14 @@ class MiniMeTokensCollector(GraphQLCollector):
             ds.MiniMeToken.name,
             ds.MiniMeToken.symbol,
             ds.MiniMeToken.orgAddress,
-            ds.MiniMeToken.appAddress
+            ds.MiniMeToken.appAddress,
+            ds.MiniMeToken.lastUpdateAt
         )
 
-class TokenHoldersCollector(GraphQLCollector):
-    # TODO: Improve this. It can't be updated but is a huge subgraph... 
-    # Could we mock this requester using
-    # already provided data? Maybe modifying the subgraph so it has a last_update thing?
+    def update(self, block: Block = None):
+        return self._simple_timestamp('lastUpdateAt', block)
+
+class TokenHoldersCollector(GraphQLUpdatableCollector):
     def __init__(self, runner: GraphQLRunner, network: str):
         super().__init__('tokenHolders', runner, endpoint=ENDPOINTS[network]['aragon_tokens'], network=network)
 
@@ -124,8 +125,12 @@ class TokenHoldersCollector(GraphQLCollector):
             ds.TokenHolder.id,
             ds.TokenHolder.address,
             ds.TokenHolder.tokenAddress,
+            ds.TokenHolder.lastUpdateAt,
             ds.TokenHolder.balance
         )
+
+    def update(self, block: Block = None):
+        return self._simple_timestamp('lastUpdateAt', block)
 
 class ReposCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -210,19 +215,20 @@ class AragonRunner(GraphQLRunner):
     def __init__(self):
         super().__init__()
         self._collectors: List[Collector] = []
+        ## TODO: Fix aragon-tokens xdai subgraph and redeploy
+        self.networks = ['mainnet']
+
         for n in self.networks: 
             self._collectors.extend([
                 AppsCollector(self, n),
                 CastsCollector(self, n),
+                MiniMeTokensCollector(self, n),
                 OrganizationsCollector(self, n),
                 ReposCollector(self, n),
                 TransactionsCollector(self, n),
+                TokenHoldersCollector(self, n),
                 VotesCollector(self, n)
             ])
-        
-        ## TODO: Fix aragon-tokens xdai subgraph and redeploy
-        self._collectors.append(MiniMeTokensCollector(self, 'mainnet'))
-        self._collectors.append(TokenHoldersCollector(self, 'mainnet'))
 
     @property
     def collectors(self) -> List[Collector]:

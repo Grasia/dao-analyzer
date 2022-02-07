@@ -103,7 +103,7 @@ class StProposalOutcome(IMetricStrategy):
                 dff = pd_utl.get_df_from_lists([idx, p, b, 0], self.__DF_COLS2)
 
                 dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
-                df = df.append(dff, ignore_index=True)
+                df = pd.concat([df, dff], ignore_index=True)
 
         df.drop_duplicates(subset=self.__DF_COLS1,
         keep="first", inplace=True)
@@ -203,21 +203,15 @@ class StProposalOutcome(IMetricStrategy):
 
     
     def __calculate_outcome(self, df: pd.DataFrame) -> pd.DataFrame:
-        dff: pd.DataFrame = pd_utl.get_empty_data_frame(self.__DF_COLS1)
-
-        for _, row in df.iterrows():
-            date: int = int(row[self.__DF_DATE])
-            is_boost: bool = False if pd.isna(row[self.__DF_BOOST_AT]) else True
-            has_passed: bool = self.__has_passed(data=row, is_boost=is_boost)
-
-            dff = pd_utl.append_rows(dff, [date, has_passed, is_boost])
-
-        return dff
+        df[self.__DF_BOOST] = ~pd.isna(df[self.__DF_BOOST_AT])
+        df[self.__DF_PASS] = df.apply(lambda r: self.__has_passed(r, r[self.__DF_BOOST]), axis='columns')
+        df = df.filter(self.__DF_COLS1).astype(object)
+        return df
 
 
     def __has_passed(self, data, is_boost: bool) -> bool:
         # winning outcome means more votes for than votes against
-        outcome: bool = True if data[self.__DF_OUTCOME] == 'Pass' else False
+        outcome: bool = data[self.__DF_OUTCOME] == 'Pass'
         percentage = int(data[self.__DF_VOTES_F]) / int(data[self.__DF_REP]) * 100 \
             if int(data[self.__DF_REP]) > 0 else 0
         limit: int = int(data[self.__DF_QUORUM])
@@ -269,7 +263,7 @@ class StProposalOutcome(IMetricStrategy):
         dff = pd_utl.filter_by_col_value(dff, self.__DF_COUNT, 0, [pd_utl.GT])
         dff = dff.drop(columns=[self.__DF_BOOST, self.__DF_PASS])
 
-        dff = dff.append(d3f, ignore_index=True)
+        dff = pd.concat([dff, d3f], ignore_index=True)
         dff.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
         dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
 

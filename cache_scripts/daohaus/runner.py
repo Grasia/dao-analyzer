@@ -170,6 +170,31 @@ class RageQuitCollector(GraphQLUpdatableCollector):
             ds.RageQuit.loot
         )
 
+class TokenBalancesCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('tokenBalances', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
+
+        @self.postprocessor
+        def change_col_names(df: pd.DataFrame) -> pd.DataFrame:
+            return df.rename(columns={
+                'tokenTokenAddress': 'tokenAddress'
+            })
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.tokenBalances(**add_where(kwargs, memberBank=True)).select(
+            ds.TokenBalance.id,
+            ds.TokenBalance.moloch.select(
+                ds.Moloch.id
+            ),
+            ds.TokenBalance.token.select(
+                ds.Token.tokenAddress,
+                ds.Token.symbol,
+                ds.Token.decimals
+            ),
+            ds.TokenBalance.tokenBalance
+        )
+
 class VoteCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
@@ -201,6 +226,7 @@ class DaohausRunner(GraphQLRunner):
                 MolochesCollector(self, n),
                 ProposalsCollector(self, n),
                 RageQuitCollector(self, n),
+                TokenBalancesCollector(self, n),
                 VoteCollector(self, n)
             ])
 

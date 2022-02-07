@@ -7,12 +7,13 @@
         <f.r.youssef@hotmail.com>
 """
 from dash.dependencies import Input, Output, State
-from src.apps.common.business.transfers.organization import OrganizationList
+from src.apps.common.data_access.daos.organization_dao import OrganizationListDao
 
 from src.apps.common.resources.strings import TEXT
 
-
-def bind_callbacks(app, section_id: str, organizations: OrganizationList) -> None:
+# We use organizations Data Access Object to be able to update the organization
+# list every callback
+def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) -> None:
 
     @app.callback(
         Output(section_id, 'children'),
@@ -23,6 +24,7 @@ def bind_callbacks(app, section_id: str, organizations: OrganizationList) -> Non
         if not value:
             return TEXT['no_data_selected']
 
+        organizations = organizationsDAO.get_organizations()
         if organizations.is_all_orgs(value):
             return options[0]["label"]
         

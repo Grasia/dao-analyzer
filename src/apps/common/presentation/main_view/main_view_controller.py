@@ -73,7 +73,7 @@ def bind_callbacks(app) -> None: # noqa: C901
             raise PreventUpdate
         elif not bt_daostack and not bt_daohaus and not bt_aragon:
             platform = prev_pathname.split("/")[1]
-            organizations = services[platform].organizations
+            organizations = services[platform].organizations()
 
             # We keep the /
             if organizations.is_all_orgs(dropdown_value):

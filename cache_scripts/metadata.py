@@ -78,7 +78,7 @@ class MetadataEncoder(JSONEncoder):
 
 class RunnerMetadata:
     def __init__(self, runner):
-        self._path = config.datawarehouse / runner.name / 'metadata.json'
+        self._path = runner.basedir / 'metadata.json'
         self.collectorMetaData: Dict[str, CollectorMetaData] = {}
         self.errors: Dict[str, str] = {}
         self._setPrev()
