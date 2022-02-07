@@ -13,12 +13,16 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Cancel Previous Runs
       uses: styfle/cancel-workflow-action@0.9.1
       with:
         access_token: ${{ github.token }}
     - uses: actions/checkout@master
+      # WARNING: workflow_run always runs on default branch. We have to tell the commit manually
+      with:
+        ref: ${{ github.event.workflow_run.head_sha }}
     - name: Getting datawarehouse cache
       uses: actions/cache@v2
       with:
