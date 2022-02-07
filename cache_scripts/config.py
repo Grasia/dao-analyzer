@@ -4,7 +4,7 @@ CACHE_SCRIPTS_VERSION = "1.0.2"
 
 # https://letsexchange.io/blog/what-is-block-confirmation-on-ethereum-and-how-many-confirmations-are-required/
 # Number of blocks to skip to only consult confirmed blocks
-SKIP_INVALID_BLOCKS = 0
+SKIP_INVALID_BLOCKS = 250
 DEFAULT_DATAWAREHOUSE = Path('datawarehouse')
 
 __args = None
