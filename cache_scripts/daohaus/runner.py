@@ -180,9 +180,35 @@ class TokenBalancesCollector(GraphQLCollector):
                 'tokenTokenAddress': 'tokenAddress'
             })
 
+        @self.postprocessor
+        def solve_decimals(df: pd.DataFrame) -> pd.DataFrame:
+            """ Adds the tokenBalanceFloat column to the dataframe
+
+            This column is a precalculated value of tokenBalance / 10 ** tokenDecimals as float
+            """
+            dkey, bkey = 'tokenDecimals', 'tokenBalance'
+            fkey = bkey + 'Float'
+
+            df[dkey] = df[dkey].replace('', '0')
+            df[dkey] = df[dkey].astype(int)
+            df[fkey] = df[bkey].astype(float) / 10 ** df[dkey]
+
+            return df
+
+        @self.postprocessor
+        def coalesce_bank_type(df: pd.DataFrame) -> pd.DataFrame:
+            bank_idx = ['guildBank', 'memberBank', 'ecrowBank']
+
+            df['bank'] = df[bank_idx].idxmax(1)
+            df['bank'] = df['bank'].str.lower()
+            df['bank'] = df['bank'].str.replace('bank', '')
+            df = df.drop(columns=bank_idx)
+        
+            return df
+
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
-        return ds.Query.tokenBalances(**add_where(kwargs, memberBank=True)).select(
+        return ds.Query.tokenBalances(**add_where(kwargs, guildBank=True, tokenBalance_gt=0)).select(
             ds.TokenBalance.id,
             ds.TokenBalance.moloch.select(
                 ds.Moloch.id
@@ -192,6 +218,9 @@ class TokenBalancesCollector(GraphQLCollector):
                 ds.Token.symbol,
                 ds.Token.decimals
             ),
+            ds.TokenBalance.guildBank,
+            ds.TokenBalance.memberBank,
+            ds.TokenBalance.ecrowBank,
             ds.TokenBalance.tokenBalance
         )
 
