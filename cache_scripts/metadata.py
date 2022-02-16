@@ -12,7 +12,7 @@ import json
 from functools import total_ordering
 from datetime import datetime
 
-import config
+from . import config
 
 @total_ordering
 class Block:

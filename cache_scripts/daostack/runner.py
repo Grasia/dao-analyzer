@@ -11,8 +11,11 @@ from typing import List
 import pandas as pd
 from gql.dsl import DSLField
 
-from metadata import Block
-from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
+from cache_scripts.common.blockscout import BlockscoutBallancesCollector
+
+from ..metadata import Block
+from ..common import ENDPOINTS, Collector
+from ..common.graphql import GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
 
 def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(columns={
@@ -20,6 +23,10 @@ def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
         'proposalId': 'proposal'
     }, inplace=True)
     return df
+
+class BalancesCollector(BlockscoutBallancesCollector):
+    def __init__(self, runner, base, network: str):
+        super().__init__(runner, base=base, network=network)
 
 class DaosCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -165,12 +172,15 @@ class DaostackRunner(GraphQLRunner):
         self._collectors: List[Collector] = []
         for n in self.networks:
             self._collectors.extend([
-                DaosCollector(self, n),
                 ProposalsCollector(self, n),
                 ReputationHoldersCollector(self, n),
                 StakesCollector(self, n),
                 VotesCollector(self, n)
             ])
+
+            oc = DaosCollector(self, n)
+            bc = BalancesCollector(self, oc, n)
+            self._collectors += [oc, bc]
 
     @property
     def collectors(self) -> List[Collector]:

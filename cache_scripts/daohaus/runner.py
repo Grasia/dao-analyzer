@@ -15,8 +15,9 @@ import pandas as pd
 from tqdm import tqdm
 from gql.dsl import DSLField
 
-from metadata import Block
-from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
+from ..metadata import Block
+from ..common import ENDPOINTS, Collector
+from ..common.graphql import GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
 
 DATA_ENDPOINT: str = "https://data.daohaus.club/dao/{id}"
 
@@ -189,7 +190,6 @@ class TokenBalancesCollector(GraphQLCollector):
             dkey, bkey = 'tokenDecimals', 'tokenBalance'
             fkey = bkey + 'Float'
 
-            df[dkey] = df[dkey].replace('', '0')
             df[dkey] = df[dkey].astype(int)
             df[fkey] = df[bkey].astype(float) / 10 ** df[dkey]
 

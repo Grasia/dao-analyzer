@@ -37,7 +37,7 @@ If you don't want to share Python dependencies among other projects, you should 
 Before launching the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
 
 ```
-python3 cache_scripts/main.py
+python3 -m cache_scripts
 ```
 
 After a few minutes, you can now run the app with:
@@ -67,7 +67,7 @@ docker run --name dao-analyzer -it -p80:80 grasia/dao-analyzer:latest-cached
 Now, you can update the datawarehouse using:
 
 ```
-docker exec -it dao-analyzer /cache_scripts/main.py
+docker exec -it dao-analyzer python -m cache_scripts
 ```
 
 You can even add it to your system as a cron job to update it daily, weekly, etc...

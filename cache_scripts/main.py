@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
 from typing import Dict
-from aragon.runner import AragonRunner
-from daohaus.runner import DaohausRunner
-from daostack.runner import DaostackRunner
-from common import Runner
-from argparser import CacheScriptsArgParser
-
-import config
 
 from datetime import date
 from pathlib import Path
@@ -17,6 +10,13 @@ import shutil
 from sys import stderr
 
 import logging
+
+from .aragon.runner import AragonRunner
+from .daohaus.runner import DaohausRunner
+from .daostack.runner import DaostackRunner
+from .common import Runner
+from .argparser import CacheScriptsArgParser
+from . import config
 
 LOGGING_STR_FORMAT = "%(levelname)s: %(message)s"
 
@@ -41,7 +41,7 @@ def _is_good_version(datawarehouse: Path) -> bool:
     with open(versionfile, 'r') as vf:
         return vf.readline().startswith(config.CACHE_SCRIPTS_VERSION)
 
-def main(datawarehouse: Path):
+def main_aux(datawarehouse: Path):
     if config.delete_force or not _is_good_version(datawarehouse):
         # We skip the dotfiles like .lock
         for p in datawarehouse.glob('[!.]*'):
@@ -98,7 +98,7 @@ def main_lock(datawarehouse: Path):
             with pl.Lock(p_lock, 'r', timeout=1, flags=pl.LOCK_SH | pl.LOCK_NB):
                 shutil.copytree(datawarehouse, tmp_dw, dirs_exist_ok=True)
 
-            main(datawarehouse=tmp_dw)
+            main_aux(datawarehouse=tmp_dw)
 
             with pl.Lock(p_lock, 'w', timeout=10):
                 shutil.copytree(tmp_dw, datawarehouse, dirs_exist_ok=True)
@@ -112,7 +112,7 @@ def main_lock(datawarehouse: Path):
         print(f"The cache_scripts are already being run with pid {pid}", file=stderr)
         exit(1)
 
-if __name__ == '__main__':
+def main():
     parser = CacheScriptsArgParser(
         available_platforms=list(AVAILABLE_PLATFORMS.keys()),
         available_networks=AVAILABLE_NETWORKS)
@@ -120,3 +120,5 @@ if __name__ == '__main__':
     config.populate_args(parser.parse_args())
 
     main_lock(config.datawarehouse)
+if __name__ == '__main__':
+    main()

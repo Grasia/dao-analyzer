@@ -4,7 +4,7 @@ from typing import List
 from datetime import datetime
 import pathlib
 
-import config
+from . import config
 
 class CacheScriptsArgParser(ArgumentParser):
     def __init__(self, available_platforms: List[str], available_networks: List[str]):

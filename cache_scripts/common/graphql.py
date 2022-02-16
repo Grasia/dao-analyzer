@@ -1,28 +1,17 @@
-"""
-    Descp: Common pieces for data retrieval scripts
-
-    Created on: 02-nov-2021
-
-    Copyright 2021 David Davó
-        <david@ddavo.me>
-"""
-
-from pathlib import Path
-import traceback
-from abc import ABC, abstractmethod
-from gql.dsl import DSLField
-from typing import Callable, Dict, Iterable, List
-import json
-import pandas as pd
-import logging
+from typing import Callable, List, Dict, Iterable
 from datetime import datetime
+import logging
+from abc import ABC, abstractmethod
+import traceback
 
-import config
-from api_requester import ApiRequester
-from metadata import RunnerMetadata, Block
+import pandas as pd
 
-with open(Path('cache_scripts') / 'endpoints.json') as json_file:
-    ENDPOINTS: Dict = json.load(json_file)
+from gql.dsl import DSLField
+
+from .common import Collector, Runner, ENDPOINTS
+from .. import config
+from ..api_requester import ApiRequester
+from ..metadata import RunnerMetadata, Block
 
 def add_where(d, **kwargs):
     """
@@ -41,40 +30,8 @@ def partial_query(q, w) -> DSLField:
         return q(**add_where(kwargs, **w))
     return wrapper
 
-class Collector(ABC):
-    def __init__(self, name:str, runner):
-        self.name: str = name
-        self.runner = runner
-
-    @property
-    def data_path(self) -> Path:
-        return self.runner.basedir / (self.name + '.arr')
-
-    @property
-    def long_name(self) -> str:
-        return f"{self.runner.name}/{self.name}"
-
-    @property
-    def collectorid(self) -> str:
-        return self.long_name
-
-    @property
-    def df(self) -> pd.DataFrame:
-        return pd.DataFrame()
-
-    def verify(self) -> bool:
-        """
-        Checks if the Collector is in a valid state. This check is run for every
-        collector before starting to get data. Can be ignored with --no-verify
-        """
-        return True
-
-    @abstractmethod
-    def run(self, force=False, **kwargs) -> None:
-        return
-
 class GraphQLCollector(Collector):
-    def __init__(self, name: str, runner, endpoint: str, result_key: str = None, index: str = None, network: str='mainnet', pbar_enabled: bool=True):
+    def __init__(self, name: str, runner: Runner, endpoint: str, result_key: str = None, index: str = None, network: str='mainnet', pbar_enabled: bool=True):
         super().__init__(name, runner)
         self.endpoint: str = endpoint
         self.index = index if index else 'id'
@@ -134,31 +91,6 @@ class GraphQLCollector(Collector):
         self.query()
         return True
 
-    def _update_data(self, df: pd.DataFrame, force: bool = False) -> pd.DataFrame:
-        """ Updates the dataframe in `self.data_path` with the new data.
-        """
-        if df.empty:
-            logging.warning("Empty dataframe, not updating file")
-            return
-
-        if not self.data_path.is_file():
-            df.to_feather(self.data_path)
-            return
-
-        prev_df: pd.DataFrame = pd.read_feather(self.data_path)
-
-        # If force is selected, we delete the ones of the same network only
-        if force:
-            prev_df = prev_df[prev_df["network"] != self.network]
-        
-        prev_df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
-        df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
-
-        # Updating data
-        combined = df.combine_first(prev_df).reset_index()
-        combined.to_feather(self.data_path)
-        return combined
-
     def run(self, force=False, block: Block = None):
         if block is None:
             block = Block()
@@ -206,24 +138,6 @@ class GraphQLUpdatableCollector(GraphQLCollector):
     def update(self, block: Block = None):
         self._simple_timestamp('createdAt', block)
 
-class Runner(ABC):
-    def __init__(self, dw: Path = Path()):
-        self.__dw: Path = dw
-
-    def set_dw(self, dw) -> Path:
-        self.__dw = dw
-
-    @property
-    def basedir(self) -> Path:
-        return self.__dw / self.name
-
-    @property
-    def collectors(self) -> List[Collector]:
-        return []
-
-    def run(self, **kwargs):
-        raise NotImplementedError
-
 class GraphQLRunner(Runner, ABC):
     def __init__(self, dw = None):
         super().__init__(dw)
@@ -260,9 +174,11 @@ class GraphQLRunner(Runner, ABC):
         ), None)
 
     @staticmethod
-    def validated_block(network: str, number_gte: int = 0) -> Block:
+    def validated_block(network: str, prev_block: Block = None) -> Block:
         requester = ApiRequester(ENDPOINTS[network]["_blocks"])
         ds = requester.get_schema()
+
+        number_gte = prev_block.number if prev_block else 0
         
         args = {
             "first": 1,
@@ -279,11 +195,17 @@ class GraphQLRunner(Runner, ABC):
             args["where"]["number_gte"] = 0
             args["where"]["timestamp_lte"] = int(config.block_datetime.timestamp())
 
-        return Block(requester.request(ds.Query.blocks(**args).select(
+        response = requester.request(ds.Query.blocks(**args).select(
             ds.Block.id,
             ds.Block.number,
             ds.Block.timestamp
-        ))["blocks"][0])
+        ))["blocks"]
+    
+        if len(response) == 0:
+            logging.warning(f"Blocks query returned no response with args {args}")
+            return prev_block
+
+        return Block(response[0])
 
     @staticmethod
     def _verifyCollectors(tocheck: Iterable[Collector]):
@@ -318,7 +240,7 @@ class GraphQLRunner(Runner, ABC):
                     if c.network not in blocks:
                         # Getting a block more recent than the one in the metadata
                         print("Requesting a block number...", end='\r')
-                        blocks[c.network] = self.validated_block(c.network, 0 if force else metadata[c.collectorid].block.number)
+                        blocks[c.network] = self.validated_block(c.network, None if force else metadata[c.collectorid].block)
                         print(f"Using block {blocks[c.network].id} for {c.network} (ts: {blocks[c.network].timestamp.isoformat()})")
 
                     print(f"Running collector {c.long_name} ({c.network})")
@@ -331,5 +253,5 @@ class GraphQLRunner(Runner, ABC):
                     metadata[c.collectorid].block = blocks[c.network]
                 except Exception as e:
                     metadata.errors[c.collectorid] = e.__str__()
-                    traceback.print_exc()
+                    print(traceback.format_exc())
             print(f'--- {self.name}\'s datawarehouse updated ---')
