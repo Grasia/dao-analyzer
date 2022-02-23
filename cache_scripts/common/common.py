@@ -1,10 +1,16 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Iterable
 import logging
 import json
+from datetime import datetime
+import traceback
 
 import pandas as pd
+
+from .api_requester import GQLRequester
+from ..metadata import RunnerMetadata, Block
+from .. import config
 
 with open(Path('cache_scripts') / 'endpoints.json') as json_file:
     ENDPOINTS: Dict = json.load(json_file)
@@ -45,7 +51,7 @@ class Collector(ABC):
             return
 
         if not self.data_path.is_file():
-            df.reset_index().to_feather(self.data_path)
+            df.reset_index(drop=True).to_feather(self.data_path)
             return
 
         prev_df: pd.DataFrame = pd.read_feather(self.data_path)
@@ -54,8 +60,8 @@ class Collector(ABC):
         if force:
             prev_df = prev_df[prev_df["network"] != self.network]
         
-        prev_df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
-        df.set_index(['id', 'network'], inplace=True, verify_integrity=True)
+        prev_df.set_index(['id', 'network'], inplace=True, verify_integrity=True, drop=True)
+        df.set_index(['id', 'network'], inplace=True, verify_integrity=True, drop=True)
 
         # Updating data
         combined = df.combine_first(prev_df).reset_index()
@@ -65,6 +71,16 @@ class Collector(ABC):
     @abstractmethod
     def run(self, force=False, **kwargs) -> None:
         return
+
+class NetworkCollector(Collector):
+    """ Collector runnable in a specific network and to a block number """
+    def __init__(self, name: str, runner, network: str='mainnet'):
+        super().__init__(name, runner) 
+        self.network = network
+
+    @property
+    def collectorid(self) -> str:
+        return '-'.join([super().collectorid, self.network])
 
 class Runner(ABC):
     def __init__(self, dw: Path = Path()):
@@ -83,3 +99,129 @@ class Runner(ABC):
 
     def run(self, **kwargs):
         raise NotImplementedError
+
+class NetworkRunner(Runner, ABC):
+    def __init__(self, dw = None):
+        super().__init__(dw)
+        self.networks = {n for n,v in ENDPOINTS.items() if self.name in v}
+
+    def filterCollectors(self, 
+        networks: Iterable[str] = [],
+        names: Iterable[str] = [],
+        long_names: Iterable[str] = []
+    ) -> Iterable[Collector]:
+        # networks ^ (names v long_names)
+        result = self.collectors
+        if networks:
+            # GraphQLCollector => c.network in networks
+            # a => b : not(a) or b
+            result = filter(lambda c: not isinstance(c, NetworkCollector) or c.network in networks, result)
+
+        if names or long_names:
+            result = (c for c in result if c.name in names or c.long_name in long_names)
+
+        return result
+
+    def filterCollector(self,
+        collector_id: str = None,
+        network: str = None,
+        name: str = None,
+        long_name: str = None,
+    ) -> Collector:
+        if collector_id:
+            return next((c for c in self.collectors if c.collectorid == collector_id), None)
+
+        return next(self.filterCollectors(
+            networks=[network],
+            names=[name],
+            long_names=[long_name]
+        ), None)
+
+    @staticmethod
+    def validated_block(network: str, prev_block: Block = None) -> Block:
+        requester = GQLRequester(ENDPOINTS[network]["_blocks"])
+        ds = requester.get_schema()
+
+        number_gte = prev_block.number if prev_block else 0
+        
+        args = {
+            "first": 1,
+            "skip": config.SKIP_INVALID_BLOCKS,
+            "orderBy": "number",
+            "orderDirection": "desc",
+            "where": {
+                "number_gte": number_gte
+            }
+        }
+
+        if config.block_datetime:
+            args["skip"] = 0
+            args["where"]["number_gte"] = 0
+            args["where"]["timestamp_lte"] = int(config.block_datetime.timestamp())
+
+        response = requester.request(ds.Query.blocks(**args).select(
+            ds.Block.id,
+            ds.Block.number,
+            ds.Block.timestamp
+        ))["blocks"]
+    
+        if len(response) == 0:
+            logging.warning(f"Blocks query returned no response with args {args}")
+            return prev_block
+
+        return Block(response[0])
+
+    @staticmethod
+    def _verifyCollectors(tocheck: Iterable[Collector]):
+        verified = []
+        for c in tocheck:
+            try:
+                if c.verify():
+                    verified.append(c)
+                else:
+                    print("Verified returned false for {c.long_name} ({c.network})")
+            except Exception as e:
+                print(f"Won't run {c.long_name} ({c.network})")
+                print(e)
+        return verified
+
+    def run(self, networks: List[str] = [], force=False, collectors=None):
+        self.basedir.mkdir(parents=True, exist_ok=True)
+
+        verified = self._verifyCollectors(self.filterCollectors(
+            networks=networks,
+            long_names=collectors
+        ))
+        if not verified:
+            # Nothing to do
+            return
+
+        with RunnerMetadata(self) as metadata:
+            print(f'--- Updating {self.name} datawarehouse ---')            
+            blocks: dict[str, Block] = {}
+            for c in verified:
+                try:
+                    if isinstance(c, NetworkCollector):
+                        if c.network not in blocks:
+                            # Getting a block more recent than the one in the metadata
+                            print("Requesting a block number...", end='\r')
+                            blocks[c.network] = self.validated_block(c.network, None if force else metadata[c.collectorid].block)
+                            print(f"Using block {blocks[c.network].id} for {c.network} (ts: {blocks[c.network].timestamp.isoformat()})")
+
+                        print(f"Running collector {c.long_name} ({c.network})")
+                        olderBlock = blocks[c.network] < metadata[c.collectorid].block
+                        if not force and olderBlock:
+                            print("Warning: Forcing because requesting an older block")
+                            logging.warning("Forcing because using an older block")
+
+                        c.run(force or olderBlock, blocks[c.network])
+                        metadata[c.collectorid].block = blocks[c.network]
+                    else:
+                        print(f"Running collector {c.long_name}")
+                        c.run(force)
+
+                    metadata[c.collectorid].last_update = datetime.now()
+                except Exception as e:
+                    metadata.errors[c.collectorid] = e.__str__()
+                    print(traceback.format_exc())
+            print(f'--- {self.name}\'s datawarehouse updated ---')

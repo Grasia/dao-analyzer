@@ -50,8 +50,9 @@ def main_aux(datawarehouse: Path):
             else:
                 p.unlink()
 
-    logger = logging.getLogger('cache_scripts')
-    logger.addHandler(logging.FileHandler(datawarehouse / 'cache_scripts.log'))
+    logger = logging.getLogger()
+    logger.propagate = True
+    logger.addHandler(logging.FileHandler(config.datawarehouse / 'cache_scripts.log'))
     logger.setLevel(level=logging.DEBUG if config.debug else logging.WARNING)
 
     # The default config is every platform
@@ -120,5 +121,6 @@ def main():
     config.populate_args(parser.parse_args())
 
     main_lock(config.datawarehouse)
+
 if __name__ == '__main__':
     main()

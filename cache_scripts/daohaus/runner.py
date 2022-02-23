@@ -15,6 +15,8 @@ import pandas as pd
 from tqdm import tqdm
 from gql.dsl import DSLField
 
+from cache_scripts.common.cryptocompare import CCPricesCollector
+
 from ..metadata import Block
 from ..common import ENDPOINTS, Collector
 from ..common.graphql import GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
@@ -224,6 +226,9 @@ class TokenBalancesCollector(GraphQLCollector):
             ds.TokenBalance.tokenBalance
         )
 
+class TokenPricesCollector(CCPricesCollector):
+    pass
+
 class VoteCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
@@ -258,6 +263,8 @@ class DaohausRunner(GraphQLRunner):
                 TokenBalancesCollector(self, n),
                 VoteCollector(self, n)
             ])
+
+        self._collectors.append(TokenPricesCollector(self))
 
     @property
     def collectors(self) -> List[Collector]:

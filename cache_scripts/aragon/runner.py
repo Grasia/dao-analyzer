@@ -12,6 +12,8 @@ import os
 from gql.dsl import DSLField
 import pandas as pd
 import json
+
+from cache_scripts.common.cryptocompare import CCPricesCollector
 from ..common import ENDPOINTS, Collector
 from ..common.graphql import GraphQLCollector, GraphQLRunner, GraphQLUpdatableCollector, partial_query
 from ..common.blockscout import BlockscoutBallancesCollector
@@ -138,6 +140,9 @@ class TokenHoldersCollector(GraphQLUpdatableCollector):
     def update(self, block: Block = None):
         return self._simple_timestamp('lastUpdateAt', block)
 
+class TokenPricesCollector(CCPricesCollector):
+    pass
+
 class ReposCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('repos', runner, network=network, endpoint=ENDPOINTS[network]['aragon'])
@@ -237,6 +242,8 @@ class AragonRunner(GraphQLRunner):
             oc = OrganizationsCollector(self, n)
             bc = BalancesCollector(self, oc, n)
             self._collectors += [oc, bc]
+        
+        self._collectors.append(TokenPricesCollector(self))
 
     @property
     def collectors(self) -> List[Collector]:

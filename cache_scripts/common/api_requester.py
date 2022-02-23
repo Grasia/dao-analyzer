@@ -11,13 +11,15 @@ from gql import Client
 from gql.dsl import DSLField, DSLQuery, DSLSchema, DSLType, dsl_gql
 from gql.transport.requests import RequestsHTTPTransport
 import re
+import requests
+from functools import partial
 
 import logging
 import sys
 from tqdm import tqdm
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Iterable
 
-class ApiQueryException(Exception):
+class GQLQueryException(Exception):
     def __init__(self, errors, msg="Errors in GraphQL Query"):
         super().__init__(msg)
         self.__errors = errors
@@ -75,7 +77,7 @@ class RequestProgressSpinner:
     def complete(self):
         pass
 
-class ApiRequester:
+class GQLRequester:
     ELEMS_PER_CHUNK: int = 1000
 
     def __init__(self, endpoint: str, pbar_enabled: bool=True) -> None:
@@ -100,7 +102,7 @@ class ApiRequester:
         logging.debug(f"Requesting: {query}")
         result = self.__client.execute(dsl_gql(query))
         if "errors" in result:
-            raise ApiQueryException(result["errors"])
+            raise GQLQueryException(result["errors"])
 
         return result
 
@@ -149,3 +151,77 @@ class ApiRequester:
                     exit = True
 
         return elements
+
+class CryptoCompareQueryException(Exception):
+    def __init__(self, errors, msg="Errors in CryptoCompare Query"):
+        super().__init__(msg)
+        self.__errors = errors
+
+    def errorsString(self) -> str:
+        return self.__errors
+
+    def __str__(self):
+        return super().__str__() + ":\n" + self.errorsString()
+
+class CryptoCompareRequester:
+    BASEURL = 'https://min-api.cryptocompare.com/data/'
+
+    def __init__(self, api_key: str = None, pbar_enabled: bool = True):
+        self.pbar = partial(tqdm, delay=1, file=sys.stdout, desc="Requesting",
+            dynamic_ncols=True)
+        self.api_key = api_key
+
+    def _build_headers(self) -> Dict[str, str]:
+        # return {
+        #   'Authorization': 'Apikey ' + ccapikey
+        # }
+        return {}
+
+    def _request(self, url: str, params=None):
+        if params is None:
+            params = {}
+
+        params['extraParams'] = 'dao-analyzer'
+
+        r = requests.get(url, params=params, headers=self._build_headers())
+
+        # There are two kinds of requests
+        # - "Complex" ones which have Response, Message, Type, etc fields
+        # - "Simple" ones where the data is the response per se
+        if r.ok:
+            j = r.json()
+            if 'Data' not in j:
+                return j
+            if j["HasWarning"]:
+                logging.warning("Warning in query", r.url, ":", j["Message"])
+            if j["Type"] == 100:
+                return j['Data']
+        
+        raise CryptoCompareQueryException(j["Message"])
+    
+    def get_available_coin_list(self):
+        return self._request(self.BASEURL + 'blockchain/list').values()
+
+    def get_symbols_price(self, fsyms: Union[str, Iterable[str]], tsyms: Iterable[str] = ['USD', 'EUR', 'ETH']):
+        if isinstance(fsyms, str):
+            fsyms = [fsyms]
+        elif not isinstance(fsyms, Iterable):
+            raise TypeError("fsyms must be an Iterable[str] or str")
+
+        mi = 30 # max items
+        npartitions = (len(fsyms) // mi) + (0 if len(fsyms) % mi == 0 else 1)
+        partitions = [fsyms[i::i+npartitions] for i in range(0, npartitions, mi)]
+
+        params = {
+            'tsyms': ','.join(tsyms),
+            'relaxedValidation': 'false',
+            'extraParams': 'dao-analyzer'
+        }
+
+        ret = []
+        for p in self.pbar(partitions):
+            params['fsyms'] = ','.join(p)
+
+            ret.extend(self._get_data(self.BASEURL + 'pricemulti', params=params))
+
+        return ret
