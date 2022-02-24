@@ -12,6 +12,7 @@ COPY . /dao-analyzer/
 
 RUN if [ "$POPULATE_CACHE" -eq 0 ] && [ -e ./datawarehouse ]; then rm -r ./datawarehouse; fi
 RUN if [ "$POPULATE_CACHE" -eq 1 ] ; then ./cache_scripts/main.py --ignore-errors; fi
+VOLUME "/dao-analyzer/datawarehouse"
 
 HEALTHCHECK --interval=5m --timeout=3s --start-period=1m --retries=3 \
   CMD "curl -f localhost" || exit 1

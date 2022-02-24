@@ -4,7 +4,7 @@ cache_scripts () {
     python cache_scripts/main.py --ignore-errors $DAOA_CACHE_ARGUMENTS
 }
 
-if [ ! -d "datawarehouse" ]; then
+if [ ! -f "datawarehouse/update_date.txt" ]; then
     cache_scripts
 fi
 
