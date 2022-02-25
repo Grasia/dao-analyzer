@@ -14,24 +14,26 @@ import logging
 from .aragon.runner import AragonRunner
 from .daohaus.runner import DaohausRunner
 from .daostack.runner import DaostackRunner
-from .common import Runner
+from .common import Runner, ENDPOINTS
 from .argparser import CacheScriptsArgParser
 from . import config
 
-LOGGING_STR_FORMAT = "%(levelname)s: %(message)s"
+LOG_FILE_FORMAT = "[%(levelname)s] - %(asctime)s - %(name)s - : %(message)s in %(pathname)s:%(lineno)d"
+LOG_STREAM_FORMAT = "%(levelname)s: %(message)s"
 
 AVAILABLE_PLATFORMS: Dict[str, Runner] = {
-    AragonRunner.name: AragonRunner(),
-    DaohausRunner.name: DaohausRunner(),
-    DaostackRunner.name: DaostackRunner()
+    AragonRunner.name: AragonRunner,
+    DaohausRunner.name: DaohausRunner,
+    DaostackRunner.name: DaostackRunner
 }
 
 # Get available networks from Runners
-AVAILABLE_NETWORKS = {n for x in AVAILABLE_PLATFORMS.values() for n in x.networks}
+AVAILABLE_NETWORKS = {n for n,v in ENDPOINTS.items()}
 
 def _call_platform(platform: str, datawarehouse: Path, force: bool=False, networks=None, collectors=None):
-    AVAILABLE_PLATFORMS[platform].set_dw(datawarehouse)
-    AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force, collectors=collectors)
+    p = AVAILABLE_PLATFORMS[platform]()
+    p.set_dw(datawarehouse)
+    p.run(networks=networks, force=force, collectors=collectors)
 
 def _is_good_version(datawarehouse: Path) -> bool:
     versionfile = datawarehouse / 'version.txt'
@@ -52,8 +54,16 @@ def main_aux(datawarehouse: Path):
 
     logger = logging.getLogger()
     logger.propagate = True
-    logger.addHandler(logging.FileHandler(config.datawarehouse / 'cache_scripts.log'))
+    filehandler = logging.FileHandler(config.datawarehouse / 'cache_scripts.log')
+    filehandler.setFormatter(logging.Formatter(LOG_FILE_FORMAT))
+    logger.addHandler(filehandler)
     logger.setLevel(level=logging.DEBUG if config.debug else logging.WARNING)
+
+    # Log errors to STDERR
+    streamhandler = logging.StreamHandler(stderr)
+    streamhandler.setLevel(logging.ERROR)
+    streamhandler.setFormatter(logging.Formatter(LOG_STREAM_FORMAT))
+    logger.addHandler(streamhandler)
 
     # The default config is every platform
     if not config.platforms:
@@ -94,6 +104,8 @@ def main_lock(datawarehouse: Path):
             print(tmp_dw, file=lock)
             lock.flush()
 
+            ignore = shutil.ignore_patterns('*.log', '.lock*')
+
             # We want to copy the dw, so we open it as readers
             p_lock.touch(exist_ok=True)
             with pl.Lock(p_lock, 'r', timeout=1, flags=pl.LOCK_SH | pl.LOCK_NB):
@@ -102,7 +114,7 @@ def main_lock(datawarehouse: Path):
             main_aux(datawarehouse=tmp_dw)
 
             with pl.Lock(p_lock, 'w', timeout=10):
-                shutil.copytree(tmp_dw, datawarehouse, dirs_exist_ok=True)
+                shutil.copytree(tmp_dw, datawarehouse, dirs_exist_ok=True, ignore=ignore)
 
             # Removing pid from lock
             lock.truncate(0)
