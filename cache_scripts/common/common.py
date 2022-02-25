@@ -132,9 +132,9 @@ class NetworkRunner(Runner, ABC):
             return next((c for c in self.collectors if c.collectorid == collector_id), None)
 
         return next(self.filterCollectors(
-            networks=[network],
-            names=[name],
-            long_names=[long_name]
+            networks=[network] if network else [],
+            names=[name] if name else [],
+            long_names=[long_name] if long_name else []
         ), None)
 
     @staticmethod
@@ -179,9 +179,9 @@ class NetworkRunner(Runner, ABC):
                 if c.verify():
                     verified.append(c)
                 else:
-                    print("Verified returned false for {c.long_name} ({c.network})")
+                    print(f"Verified returned false for {c.collectorid} (view logs the see why)")
             except Exception as e:
-                print(f"Won't run {c.long_name} ({c.network})")
+                print(f"Won't run {c.collectorid}")
                 print(e)
         return verified
 

@@ -180,7 +180,8 @@ class TokenBalancesCollector(GraphQLCollector):
         @self.postprocessor
         def change_col_names(df: pd.DataFrame) -> pd.DataFrame:
             return df.rename(columns={
-                'tokenTokenAddress': 'tokenAddress'
+                'tokenTokenAddress': 'tokenAddress',
+                'tokenSymbol': 'symbol'
             })
 
         @self.postprocessor

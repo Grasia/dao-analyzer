@@ -12,6 +12,7 @@ import pandas as pd
 from gql.dsl import DSLField
 
 from cache_scripts.common.blockscout import BlockscoutBallancesCollector
+from cache_scripts.common.cryptocompare import CCPricesCollector
 
 from ..metadata import Block
 from ..common import ENDPOINTS, Collector
@@ -147,6 +148,9 @@ class StakesCollector(GraphQLUpdatableCollector):
             ds.ProposalStake.proposal.select(ds.Proposal.id)
         )
 
+class TokenPricesCollector(CCPricesCollector):
+    pass
+
 class VotesCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
@@ -181,6 +185,7 @@ class DaostackRunner(GraphQLRunner):
             oc = DaosCollector(self, n)
             bc = BalancesCollector(self, oc, n)
             self._collectors += [oc, bc]
+        self._collectors.append(TokenPricesCollector(self))
 
     @property
     def collectors(self) -> List[Collector]:

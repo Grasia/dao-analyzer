@@ -17,6 +17,15 @@ After that, move to repository root directory with:
 cd dao-analyzer
 ```
 
+### Environment variables
+To be able to access all the features of dao-analyzer, you can specify the following
+environment variables:
+
+```
+# The CrytptoCompare API key to be used to get token prices
+DAOA_CC_API_KEY = "your_api_key"
+```
+
 ### Installation
 All code has been tested on Linux, but it should work on Windows and macOS, 'cause it just uses the python environment.
 

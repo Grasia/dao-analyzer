@@ -172,10 +172,9 @@ class CryptoCompareRequester:
         self.api_key = api_key
 
     def _build_headers(self) -> Dict[str, str]:
-        # return {
-        #   'Authorization': 'Apikey ' + ccapikey
-        # }
-        return {}
+        return {
+          'Authorization': 'Apikey ' + self.api_key
+        }
 
     def _request(self, url: str, params=None):
         if params is None:
@@ -207,21 +206,21 @@ class CryptoCompareRequester:
             fsyms = [fsyms]
         elif not isinstance(fsyms, Iterable):
             raise TypeError("fsyms must be an Iterable[str] or str")
+        else:
+            fsyms = list(fsyms)
 
         mi = 30 # max items
-        npartitions = (len(fsyms) // mi) + (0 if len(fsyms) % mi == 0 else 1)
-        partitions = [fsyms[i::i+npartitions] for i in range(0, npartitions, mi)]
+        partitions = [fsyms[i:i+mi] for i in range(0, len(fsyms), mi)]
 
         params = {
             'tsyms': ','.join(tsyms),
-            'relaxedValidation': 'false',
-            'extraParams': 'dao-analyzer'
+            'relaxedValidation': 'false'
         }
 
-        ret = []
+        ret = {}
         for p in self.pbar(partitions):
             params['fsyms'] = ','.join(p)
 
-            ret.extend(self._get_data(self.BASEURL + 'pricemulti', params=params))
+            ret.update(self._request(self.BASEURL + 'pricemulti', params=params))
 
         return ret
