@@ -1,0 +1,14 @@
+version: "3.8"
+volumes:
+  datawarehouse:
+services:
+  dao-analyzer:
+    container_name: dao-analyzer
+    image: grasia/dao-analyzer:latest
+    volumes:
+      - datawarehouse:/dao-analyzer/datawarehouse
+    ports:
+      - 80:8081
+    environment:
+      - DAOA_MATOMO_URL="https://matomo.example.com"
+      - DAOA_MATOMO_SITE_ID=42
