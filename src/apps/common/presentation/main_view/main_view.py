@@ -9,6 +9,7 @@
 import os
 from dash import html
 
+from src import __version__
 from src.apps.common.resources.strings import TEXT
 
 REL_PATH: str = os.path.join('..', '..', '..', '..', 'assets')
@@ -34,6 +35,7 @@ def __generate_foot() -> html.Div:
     return html.Div(children=[
         html.Div(children=[
             html.Div(children=[
+                html.Span(TEXT['current_version'].format(version=__version__), className='small-text-aligner'),
                 html.Img(src=os.path.join(REL_PATH, TEXT['github_icon_name']), className='github-logo'),
                 html.Span(TEXT['follow_us'], className='small-text-aligner'),
                 html.A(TEXT['github'], href=TEXT['github_url'],

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.7.2 - 2022-03-01
+- Added version number to footer
+
 ## 0.7.1 - 2022-02-07
 - Supporting Python 3.10
 - Removed deprecated things

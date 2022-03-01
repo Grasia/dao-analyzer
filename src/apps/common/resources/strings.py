@@ -25,6 +25,7 @@ TEXT: dict = {
     'css_color_aragon': 'aragon-color',
     'css_color_daohaus': 'daohaus-color',
     'css_color_daostack': 'daostack-color',
+    'current_version': 'Current version: {version}',
     'dao_analyzer_header_name': 'dao-analyzer_header.svg',
     'dao_analyzer_logo_name': 'dao-analyzer_logo.svg',
     'dao_selector_title': 'Select your DAO:',
