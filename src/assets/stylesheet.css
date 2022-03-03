@@ -183,6 +183,12 @@
     z-index: 2;
 }
 
+@media screen and (max-width: 992px) {
+    .two-column {
+        width: 100%;
+    }
+}
+
 @media screen and (max-width: 1280px) {
     .chart-header {
         margin-bottom: 0;
