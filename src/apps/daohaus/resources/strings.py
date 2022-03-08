@@ -10,6 +10,7 @@
 TEXT: dict = {
     'approved_proposals': 'Approved proposals',
     'css_pane_border': 'daohaus-border',
+    'css_id_activity': 'daohaus-activity',
     'css_id_member': 'daohaus-members',
     'css_id_organization': 'daohaus-organization',
     'css_id_rage_quit': 'daohaus-rage-quit',
@@ -24,6 +25,7 @@ TEXT: dict = {
     'title_active_members': 'Active members',
     'title_active_organization': 'Months which the DAO has registered activity',
     'title_active_voters': 'Active voters',
+    'title_activity': 'Activity',
     'title_approval_proposal_rate': 'Approval proposal rate',
     'title_member': 'Members',
     'title_new_members': 'New Members',

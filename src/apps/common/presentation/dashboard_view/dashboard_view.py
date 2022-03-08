@@ -21,7 +21,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daohaus': ['', '', 'daohaus-selected'],
 }
 
-def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str, update: str, org_value: str) -> List:
+def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -36,6 +36,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str
     return html.Div(children=[
         __generate_header(labels, ecosystem, update, org_value),
         html.Div(className='h-separator'),
+        __generate_subheader(org_id),
         __generate_sections(sections)
     ], className='main-body left-padding-aligner right-padding-aligner')
     
@@ -86,6 +87,12 @@ def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str,
         ], className='flex-row flex-size-1'),
 
     ], className='body-header small-padding flex-row')
+
+def __generate_subheader(org_id: str) -> html.Div:
+    return html.Div(
+        id=org_id,
+        className='flex-column body small-padding dao-info',
+        children=html.Div(TEXT['no_data_selected'], className='dao-info-name'))
 
 
 def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:

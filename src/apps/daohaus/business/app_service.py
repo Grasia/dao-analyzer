@@ -33,7 +33,6 @@ from src.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOu
 from src.apps.daohaus.business.metric_adapter.proposal_type import ProposalType 
 import src.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
 from src.apps.daohaus.resources.strings import TEXT
-from src.apps.common.resources.strings import TEXT as COMMON_TEXT
 
 class DaohausService(metaclass=Singleton):
     _MEMBER: int = 0
@@ -89,6 +88,7 @@ class DaohausService(metaclass=Singleton):
             sections=self.__get_sections(),
             ecosystem='daohaus',
             update=self.__cacheRequester.get_last_update().date(),
+            org_id=TEXT['css_id_organization'],
             org_value=org_value
         )
 
@@ -122,9 +122,9 @@ class DaohausService(metaclass=Singleton):
         l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
 
         return {
-            COMMON_TEXT['no_data_selected']: {
+            TEXT['title_activity']: {
                 'callables': l_organization,
-                'css_id': TEXT['css_id_organization'],
+                'css_id': TEXT['css_id_activity'],
             },
             TEXT['title_member']: {
                 'callables': l_member,
