@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 import pandas as pd
 import requests
 import logging
@@ -12,7 +11,8 @@ import numpy as np
 from ..metadata import Block
 
 from . import ENDPOINTS
-from .common import NetworkCollector
+from .common import NetworkCollector, solve_decimals
+from .cryptocompare import cc_postprocessor
 from .graphql import GraphQLCollector
 
 MSG_NO_TOKENS_FOUND = "No tokens found"
@@ -101,5 +101,7 @@ class BlockscoutBallancesCollector(NetworkCollector):
             unit='req', dynamic_ncols=True)
         toApply = partial(self._get_from_address, block=block)
         df = pd.concat(map(toApply, ptqdm(addresses)), ignore_index=True)
+
+        df = cc_postprocessor(df)
         
         self._update_data(df, force)

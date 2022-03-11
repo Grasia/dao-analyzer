@@ -169,6 +169,11 @@ class CryptoCompareRequester:
     def __init__(self, api_key: str = None, pbar_enabled: bool = True):
         self.pbar = partial(tqdm, delay=1, file=sys.stdout, desc="Requesting",
             dynamic_ncols=True)
+        
+        if not api_key:
+            logging.warning(f'Invalid api key: {api_key}')
+            api_key = ""
+
         self.api_key = api_key
 
     def _build_headers(self) -> Dict[str, str]:

@@ -15,6 +15,18 @@ from .. import config
 with open(Path('cache_scripts') / 'endpoints.json') as json_file:
     ENDPOINTS: Dict = json.load(json_file)
 
+def solve_decimals(df: pd.DataFrame) -> pd.DataFrame:
+    """ Adds the balanceFloat column to the dataframe
+
+    This column is a precalculated value of tokenBalance / 10 ** tokenDecimals as float
+    """
+    dkey, bkey, fkey = 'decimals', 'balance', 'balanceFloat'
+
+    df[dkey] = df[dkey].astype(int)
+    df[fkey] = df[bkey].astype(float) / 10 ** df[dkey]
+
+    return df
+
 class Collector(ABC):
     def __init__(self, name:str, runner):
         self.name: str = name
