@@ -50,6 +50,11 @@ class MolochesCollector(GraphQLCollector):
         super().__init__('moloches', runner, network=network, endpoint=ENDPOINTS[network]['daohaus_stats'])
 
         @self.postprocessor
+        def moloch_id(df: pd.DataFrame) -> pd.DataFrame:
+            df['molochAddress'] = df['id']
+            return df
+
+        @self.postprocessor
         def moloch_names(df: pd.DataFrame) -> pd.DataFrame:
             df = df.rename(columns={"title":"name"})
 

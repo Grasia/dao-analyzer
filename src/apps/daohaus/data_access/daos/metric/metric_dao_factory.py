@@ -25,6 +25,7 @@ from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_voters_rate impo
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_rate import StVotesRate
 from src.apps.daohaus.data_access.daos.metric.strategy.st_total_members import StTotalMembers
 from src.apps.daohaus.data_access.daos.metric.strategy.st_voters_percentage import StVotersPercentage
+from src.apps.daohaus.data_access.daos.metric.strategy.st_assets_values import StAssetsValues
 
 NEW_MEMBERS = 0
 VOTES_TYPE = 1
@@ -41,6 +42,7 @@ VOTES_FOR_RATE = 11
 VOTES_AGAINST_RATE = 12
 TOTAL_MEMBERS = 13
 VOTERS_PERCENTAGE = 14
+ASSETS_VALUES = 15
 
 
 def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
@@ -103,6 +105,12 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
             srcs.MEMBERS,
             srcs.RAGE_QUITS,
             srcs.VOTES])
+    elif metric == ASSETS_VALUES:
+        stg = StAssetsValues()
+        requester = CacheRequester(srcs=[
+            srcs.MOLOCHES,
+            srcs.TOKEN_BALANCES
+        ], join=True)
 
     return stg, requester
 

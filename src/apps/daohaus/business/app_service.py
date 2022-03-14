@@ -17,14 +17,13 @@ import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+from src.apps.daohaus.business.metric_adapter.asset_values import AssetsValues
 import src.apps.daohaus.data_access.daos.metric.srcs as srcs
 from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.presentation.charts.chart_controller import ChartController
 from src.apps.common.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
-from src.apps.common.presentation.charts.layout.figure.figure import Figure
-from src.apps.common.presentation.charts.layout.figure.bar_figure import BarFigure
-from src.apps.common.presentation.charts.layout.figure.multi_bar_figure import MultiBarFigure
+from src.apps.common.presentation.charts.layout.figure import Figure, BarFigure, MultiBarFigure, TreemapFigure
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.common.business.singleton import Singleton
 from src.apps.daohaus.business.metric_adapter.basic_adapter import BasicAdapter
@@ -41,6 +40,7 @@ class DaohausService(metaclass=Singleton):
     _RAGE_QUIT: int = 2
     _PROPOSAL: int = 3
     _ORGANIZATION: int = 4
+    _ASSETS: int = 5
 
     def __init__(self):
         # app state
@@ -52,6 +52,7 @@ class DaohausService(metaclass=Singleton):
             self._RAGE_QUIT: list(),
             self._PROPOSAL: list(),
             self._ORGANIZATION: list(),
+            self._ASSETS: list()
         }
         self.__already_bound: bool = False
 
@@ -99,6 +100,7 @@ class DaohausService(metaclass=Singleton):
         self.__get_rage_quits_charts()
         self.__get_proposal_charts()
         self.__get_organization_charts()
+        self.__get_assets_charts()
 
     def __get_sections(self) -> Dict[str, List[Callable]]:
         """
@@ -110,6 +112,7 @@ class DaohausService(metaclass=Singleton):
         l_rage_q: List[Callable] = list()
         l_proposal: List[Callable] = list()
         l_organization: List[Callable] = list()
+        l_assets: List[Callable] = list()
 
         if not self.are_panes:
             self.__gen_sections()
@@ -120,6 +123,7 @@ class DaohausService(metaclass=Singleton):
         l_rage_q = [c.layout.get_layout for c in self.__controllers[self._RAGE_QUIT]]
         l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
         l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
+        l_assets = [c.layout.get_layout for c in self.__controllers[self._ASSETS]]
 
         return {
             COMMON_TEXT['no_data_selected']: {
@@ -142,6 +146,10 @@ class DaohausService(metaclass=Singleton):
                 'callables': l_proposal,
                 'css_id': TEXT['css_id_proposal'],
             },
+            TEXT['title_assets']: {
+                'callables': l_assets,
+                'css_id': TEXT['css_id_assets']
+            }
         }
 
 
@@ -325,6 +333,20 @@ class DaohausService(metaclass=Singleton):
         
         return charts
 
+    
+    def __get_assets_charts(self):
+        charts: List[Callable] = list()
+        call: Callable = self.organizations
+
+        charts.append(self.__create_chart(
+            title=TEXT['title_assets_value'],
+            adapter=AssetsValues(call),
+            figure=TreemapFigure(),
+            cont_key=self._ASSETS
+        ))
+        self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
+ 
+        return charts
 
     def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
     , cont_key: int) -> Callable:

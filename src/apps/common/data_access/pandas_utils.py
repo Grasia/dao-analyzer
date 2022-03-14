@@ -8,7 +8,7 @@
 """
 
 from datetime import date
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Tuple
 import pandas as pd
 from pandas import DataFrame
 from pandas.tseries.offsets import DateOffset
@@ -124,3 +124,24 @@ def drop_duplicate_date_rows(df: DataFrame, dff: DataFrame, date_col: str) -> No
     """
     mask = dff[date_col].isin(df[date_col])
     dff.drop(dff[mask].index, inplace=True)
+
+def top_rest_daos(df: DataFrame, idx, value_col, top_pct: float=0.50) -> Tuple[DataFrame, DataFrame]:
+    """
+    Calculates the top DAOs of each network
+    """
+    dfsum = df.groupby([idx, 'network']).sum() # Calculating value of every DAO
+    dfsum = dfsum.sort_values(['network', value_col]) # Sorting by network>value because group doesnt have sort_values
+    gbsum = dfsum.groupby('network')
+    cumval = gbsum[value_col].cumsum() / gbsum[value_col].sum() # Calculating the cummulative value
+
+    topmask = cumval > top_pct
+
+    # Getting the top/rest subsets
+    top = dfsum[topmask]
+    rest = dfsum[~topmask]
+
+    # Applying them to the original dfs (keeping all data)
+    top = df.loc[top.index]
+    rest = df.loc[rest.index]
+
+    return top, rest

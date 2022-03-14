@@ -14,8 +14,16 @@ LOCK_PATH = Path('datawarehouse/.lock')
 class CacheRequester(IRequester, metaclass=ABCSingleton):
     CHECKING_COOLDOWN = 60
 
-    def __init__(self, srcs: List[Path]):
+    def __init__(self, srcs: List[Path], join: bool=False):
+        """
+        Initializes the CacheRequester
+
+            Parameters:
+                srcs (List[Path]): A list of paths to read the dataframes from
+                join (bool): Wether to concat or to join the read dataframes
+        """
         self.__srcs = srcs
+        self.__join = join
         self.__df: pd.DataFrame = pd.DataFrame()
 
         # Avoids having to lock the file and open the metadata with every request
@@ -45,11 +53,16 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
         return t
 
     def tryReload(self):
-        df = pd.DataFrame()
-        for src in self.__srcs:
-            df = pd.concat([df, pd.read_feather(src)], axis=0, ignore_index=True)
+        dfs = map(pd.read_feather, self.__srcs)
 
-        self.__df = df
+        if self.__join:
+            joined = next(dfs, pd.DataFrame())
+            for df in dfs:
+                common_cols = list(joined.columns.intersection(df.columns).difference(['id']))
+                joined = joined.merge(df, how='outer', on=common_cols)
+            self.__df = joined
+        else:
+            self.__df = pd.concat(map(pd.read_feather, self.__srcs), axis=0, ignore_index=True)
 
     # https://stackoverflow.com/questions/70861731/how-to-filelock-an-entire-directory
     def request(self) -> pd.DataFrame:
