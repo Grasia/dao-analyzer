@@ -72,10 +72,8 @@ class StProposalMajority(IMetricStrategy):
 
 
     def __generate_metric(self, df: pd.DataFrame) -> NStackedSerie:
-        print(df)
         abs_passes, rel_passes = self.__get_sserie_outcome(df=df, has_pass=True)
         abs_fails, rel_fails = self.__get_sserie_outcome(df=df, has_pass=False)
-        print(abs_passes.get_serie())
         return NStackedSerie(sseries=[abs_passes, rel_passes, rel_fails, abs_fails])
 
 
