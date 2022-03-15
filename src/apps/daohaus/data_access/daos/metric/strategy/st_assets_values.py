@@ -58,12 +58,6 @@ class StAssetsValues(IMetricStrategy):
         print(df)
         df = self.clean_df(df)
         df = df.set_index([self.__idx_col, 'network'])
-        
-        print(df)
-        print(df.describe())
-        print("idx:", df.index)
-        print("dtypes:", df.dtypes)
-
 
         top, rest = pd_utl.top_rest_daos(df, idx=self.__idx_col, value_col=self.__cmp_col, top_pct=self.DEFAULT_TOP_PCT)
 
@@ -84,24 +78,25 @@ class StAssetsValues(IMetricStrategy):
             df_trees.append(df_tree)
 
         # Now to append the 'Rest' value (symbols parents)
-        df_tree = pd.DataFrame(columns=['id', 'label', 'parent', 'value', 'color', 'customData'])
-        dfg = rest.groupby(['network'])[self.__values_cols].sum().reset_index()
-        df_tree['parent'] = self._build_id(dfg, 1)
-        df_tree['id'] = df_tree['parent'] + '/other'
-        df_tree['label'] = '<i>Rest of DAOs</i>'
-        df_tree['value'] = 0
-        df_tree['customData'] = self._customData(dfg)
-        df_trees.append(df_tree)
+        if not rest.empty:
+            df_tree = pd.DataFrame(columns=['id', 'label', 'parent', 'value', 'color', 'customData'])
+            dfg = rest.groupby(['network'])[self.__values_cols].sum().reset_index()
+            df_tree['parent'] = self._build_id(dfg, 1)
+            df_tree['id'] = df_tree['parent'] + '/other'
+            df_tree['label'] = '<i>Rest of DAOs</i>'
+            df_tree['value'] = 0
+            df_tree['customData'] = self._customData(dfg)
+            df_trees.append(df_tree)
 
-        # Now to append the SYMBOLS into the 'Rest'
-        df_tree = pd.DataFrame(columns=['id', 'label', 'parent', 'value', 'color', 'customData'])
-        dfg = rest.groupby(['network', 'symbol'])[self.__values_cols].sum().reset_index()
-        df_tree['parent'] = self._build_id(dfg, 1) + '/other'
-        df_tree['id'] = df_tree['parent'] + '/' + dfg['symbol']
-        df_tree['label'] = dfg['symbol']
-        df_tree['value'] = self._value(dfg, i+1)
-        df_tree['customData'] = self._customData(dfg)
-        df_trees.append(df_tree)
+            # Now to append the SYMBOLS into the 'Rest'
+            df_tree = pd.DataFrame(columns=['id', 'label', 'parent', 'value', 'color', 'customData'])
+            dfg = rest.groupby(['network', 'symbol'])[self.__values_cols].sum().reset_index()
+            df_tree['parent'] = self._build_id(dfg, 1) + '/other'
+            df_tree['id'] = df_tree['parent'] + '/' + dfg['symbol']
+            df_tree['label'] = dfg['symbol']
+            df_tree['value'] = self._value(dfg, i+1)
+            df_tree['customData'] = self._customData(dfg)
+            df_trees.append(df_tree)
 
         df_trees.append(pd.DataFrame({
             'id': ['total'],
