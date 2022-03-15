@@ -65,8 +65,7 @@ class BlockscoutBallancesCollector(NetworkCollector):
                 df = df.dropna()
 
                 # Calculate decimals
-                df['decimals'] = df['decimals'].astype(int)
-                df['balanceFloat'] = df['balance'].astype(float) / (10 ** df['decimals'])
+                solve_decimals(df)
 
                 # Add index
                 df['address'] = addr
