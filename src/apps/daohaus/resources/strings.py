@@ -28,6 +28,7 @@ TEXT: dict = {
     'title_approval_proposal_rate': 'Approval proposal rate',
     'title_assets': 'Assets',
     'title_assets_value': 'Value in USD $',
+    'title_assets_novalue': 'Other tokens holdings',
     'title_member': 'Members',
     'title_new_members': 'New Members',
     'title_new_proposals': 'New proposals',

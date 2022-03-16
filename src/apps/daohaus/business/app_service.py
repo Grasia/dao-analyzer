@@ -10,19 +10,21 @@
 
 from typing import Dict, List, Callable
 from dash import html
+from dash.dash_table import DataTable
 
 from src.app import app
+from src.apps.common.presentation.charts.dt_controller import DataTableController
 import src.apps.common.presentation.dashboard_view.dashboard_view as view
 import src.apps.common.presentation.dashboard_view.controller as view_cont
 from src.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
 from src.apps.common.data_access.requesters.cache_requester import CacheRequester
 from src.apps.daohaus.business.metric_adapter.asset_values import AssetsValues
+from src.apps.daohaus.business.metric_adapter.asset_tokens import AssetsTokens
 import src.apps.daohaus.data_access.daos.metric.srcs as srcs
 from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.presentation.charts.chart_controller import ChartController
-from src.apps.common.presentation.charts.layout.chart_pane_layout \
-    import ChartPaneLayout
+from src.apps.common.presentation.charts.layout import ChartPaneLayout, DataTableLayout
 from src.apps.common.presentation.charts.layout.figure import Figure, BarFigure, MultiBarFigure, TreemapFigure
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 from src.apps.common.business.singleton import Singleton
@@ -338,6 +340,8 @@ class DaohausService(metaclass=Singleton):
         charts: List[Callable] = list()
         call: Callable = self.organizations
 
+        # assets with value
+        # TODO: Show value in $ in the title
         charts.append(self.__create_chart(
             title=TEXT['title_assets_value'],
             adapter=AssetsValues(call),
@@ -345,6 +349,13 @@ class DaohausService(metaclass=Singleton):
             cont_key=self._ASSETS
         ))
         self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
+
+        # assets without value (other tokens)
+        charts.append(self.__create_dataTable(
+            title=TEXT['title_assets_novalue'],
+            adapter=AssetsTokens(call),
+            cont_key=self._ASSETS
+        ))
  
         return charts
 
@@ -366,6 +377,33 @@ class DaohausService(metaclass=Singleton):
             css_id=css_id,
             layout=layout,
             adapter=adapter)
+
+        self.__controllers[cont_key].append(controller)
+        return layout.get_layout
+
+    def __create_dataTable(self, title: str, adapter: IMetricAdapter, cont_key: int) -> Callable:
+        """Creates a datatable to put alongside charts
+
+        Args:
+            title (str): The title of the datatable
+            adapter (IMetricAdapter): The adapter to get the data from
+            cont_key (int): The key of the controller
+
+        Returns:
+            Callable: Layout html builder
+        """
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
+
+        layout: DataTableLayout = DataTableLayout(
+            title=title,
+            css_id=css_id
+        )
+
+        controller: DataTableController = DataTableController(
+            table_id=layout.table_id,
+            layout=layout,
+            adapter=adapter
+        )
 
         self.__controllers[cont_key].append(controller)
         return layout.get_layout

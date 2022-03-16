@@ -11,13 +11,14 @@ from dash import html
 from dash import dcc
 from typing import List, Dict
 
+from src.apps.common.presentation.charts.layout.ilayout import ILayout
 from src.apps.common.resources.strings import TEXT
 from src.apps.common.presentation.charts.layout.figure.figure import Figure
 from src.apps.common.presentation.charts.layout.chart_pane_configuration \
     import ChartPaneConfiguration
 
 
-class ChartPaneLayout():
+class ChartPaneLayout(ILayout):
     PANE_ID: int = 1
     SUFFIX_ID_CHART: str = '-chart'
     SUFFIX_ID_SUBTITLE1: str = '-subtitle1'
@@ -30,14 +31,6 @@ class ChartPaneLayout():
         self.__figure: Figure = figure
         self.__configuration: ChartPaneConfiguration = ChartPaneConfiguration(
             figure.configuration)
-
-
-    @staticmethod
-    def pane_id() -> int:
-        pane_id: int = ChartPaneLayout.PANE_ID
-        ChartPaneLayout.PANE_ID += 1
-        return pane_id
-
 
     def get_layout(self) -> html.Div:
         """

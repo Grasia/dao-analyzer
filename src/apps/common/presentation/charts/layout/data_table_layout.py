@@ -1,0 +1,50 @@
+"""
+   Descp: Common pane which wraps data table and other components.
+
+   Created on: 15-mar-2022
+
+   Copyright 2020-2022 David Davó Laviña
+        <ddavo@ucm.es>
+"""
+from dash import html, dcc
+from dash.dash_table import DataTable
+
+from . import ILayout
+
+class DataTableLayout(ILayout):
+    SUFFIX_ID_TABLE: str = '-dtable'
+    
+    def __init__(self, title: str, css_id: str) -> None:
+        self.__title: str = title
+        self.__css_id: str = css_id
+    
+    @property
+    def table_id(self):
+        return f'{self.__css_id}{self.SUFFIX_ID_TABLE}'
+
+    def get_layout(self) -> html.Div:
+        children = [
+            html.Div(children=[
+                html.Span(
+                    self.__title,
+                    className='graph-pane-title'
+                ),
+            ], className='chart-text-left-padding-aligner flex-column chart-header'),
+            DataTable(
+                id=self.table_id
+            )
+        ]
+
+        return html.Div(
+            children=dcc.Loading(
+                type="circle",
+                # color=self.configuration.color,
+                children=html.Div(
+                    children=children,
+                    id=self.__css_id,
+                    className='flex-column'
+                )
+            ),
+            # className=f'pane {self.configuration.css_border} two-column'
+            className=f'pane two-column'
+        )

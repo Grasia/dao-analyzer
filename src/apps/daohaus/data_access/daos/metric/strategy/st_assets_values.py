@@ -55,7 +55,6 @@ class StAssetsValues(IMetricStrategy):
             return dfg[self.__cmp_col]
 
     def process_data(self, df: pd.DataFrame) -> Any:
-        print(df)
         df = self.clean_df(df)
         df = df.set_index([self.__idx_col, 'network'])
 

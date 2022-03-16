@@ -28,7 +28,6 @@ class AssetsValues(IMetricAdapter):
         )
 
         metric: HierarchicalData = dao.get_metric()
-        print("metric:", metric)
 
         return {
             **metric.to_dict(),
