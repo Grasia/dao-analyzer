@@ -44,13 +44,18 @@ class DataTableLayout(ILayout):
         return html.Div(
             children=dcc.Loading(
                 type="circle",
+                # TODO: Use configuration color!!
                 # color=self.configuration.color,
                 children=html.Div(
                     children=children,
                     id=self.__css_id,
                     className='flex-column'
-                )
+                ),
+                className='dcc-loading',
+                parent_style={'flex': '1 1 auto'},
+                style={'flex': '1 1 auto'}
             ),
             # className=f'pane {self.configuration.css_border} two-column'
-            className=f'pane two-column'
+            className=f'pane two-column',
+            style={'align-self': 'stretch', 'display': 'flex'}
         )
