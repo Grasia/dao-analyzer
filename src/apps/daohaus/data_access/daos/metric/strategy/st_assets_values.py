@@ -61,20 +61,21 @@ class StAssetsValues(IMetricStrategy):
         top, rest = pd_utl.top_rest_daos(df, idx=self.__idx_col, value_col=self.__cmp_col, top_pct=self.DEFAULT_TOP_PCT)
 
         df_trees = []
-        for i, level in enumerate(self.__group_path):
-            df_tree = pd.DataFrame(columns=['id', 'label', 'parent', 'value', 'customData'])
-            dfg = self._valueBy(top, i+1).reset_index()
-            
-            _id = level[0]
-            _label = level[-1]
+        if not top.empty:
+            for i, level in enumerate(self.__group_path):
+                df_tree = pd.DataFrame(columns=['id', 'label', 'parent', 'value', 'customData'])
+                dfg = self._valueBy(top, i+1).reset_index()
+                
+                _id = level[0]
+                _label = level[-1]
 
-            df_tree['label'] = dfg[_label].copy().fillna(dfg[_id])
-            df_tree['parent'] = self._build_id(dfg, i)
-            df_tree['id'] = self._build_id(dfg, i+1)
-            df_tree['customData'] = self._customData(dfg)
-            df_tree['value'] = self._value(dfg, i+1)
+                df_tree['label'] = dfg[_label].copy().fillna(dfg[_id])
+                df_tree['parent'] = self._build_id(dfg, i)
+                df_tree['id'] = self._build_id(dfg, i+1)
+                df_tree['customData'] = self._customData(dfg)
+                df_tree['value'] = self._value(dfg, i+1)
 
-            df_trees.append(df_tree)
+                df_trees.append(df_tree)
 
         # Now to append the 'Rest' value (symbols parents)
         if not rest.empty:
