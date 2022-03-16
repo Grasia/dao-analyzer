@@ -193,11 +193,6 @@
     margin-bottom: 4rem;
 }
 
-.dash-table-container {
-    max-height: 450px;
-    overflow-y: auto;
-}
-
 /*********************/
 /*********************/
 
@@ -274,6 +269,10 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.flex-align-start {
+    align-items: start;
 }
 
 .flex-column {

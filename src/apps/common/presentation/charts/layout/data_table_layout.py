@@ -29,9 +29,15 @@ class DataTableLayout(ILayout):
                     self.__title,
                     className='graph-pane-title'
                 ),
+                html.Span('nothing', className='hide'),
+                html.Span('nothing', className='hide')
             ], className='chart-text-left-padding-aligner flex-column chart-header'),
             DataTable(
-                id=self.table_id
+                id=self.table_id,
+                # style_table={'height': '450px', 'margin-top': '40px', 'overflowY': 'auto'},
+                style_table={'margin-top': '40px'},
+                sort_action='native',
+                page_size=12
             )
         ]
 
