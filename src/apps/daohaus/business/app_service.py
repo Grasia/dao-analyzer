@@ -10,7 +10,6 @@
 
 from typing import Dict, List, Callable
 from dash import html
-from dash.dash_table import DataTable
 
 from src.app import app
 from src.apps.common.presentation.charts.dt_controller import DataTableController
