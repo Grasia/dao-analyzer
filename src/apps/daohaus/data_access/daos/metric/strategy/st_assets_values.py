@@ -4,7 +4,7 @@ import pandas as pd
 from millify import millify
 from src.apps.common.business.transfers.hierarchical_data import HierarchicalData
 
-from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
+from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 import src.apps.common.data_access.pandas_utils as pd_utl
 
 class StAssetsValues(IMetricStrategy):

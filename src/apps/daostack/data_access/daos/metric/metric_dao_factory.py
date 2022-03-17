@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 from typing import List, Dict, Tuple
-from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
+from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao

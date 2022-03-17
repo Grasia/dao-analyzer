@@ -1,9 +1,7 @@
-from typing import Any
-
 import pandas as pd
 
 from src.apps.common.business.transfers.tabular_data import TabularData
-from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
+from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 
 class StAssetsTokens(IMetricStrategy):
     __GB_COLUMNS = ['network', 'symbol']

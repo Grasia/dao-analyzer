@@ -12,8 +12,7 @@
 from typing import List
 import pandas as pd
 
-from src.apps.common.data_access.daos.metric.imetric_strategy \
-    import IMetricStrategy
+from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 from src.apps.common.data_access.requesters.irequester import IRequester
 
 
