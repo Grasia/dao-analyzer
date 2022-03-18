@@ -325,7 +325,6 @@ class AragonService(metaclass=Singleton):
         charts: List[Callable] = list()
         call: Callable = self.organizations
 
-        # TODO: Copy AssetsValues and AssetsTokens from daohaus
         charts.append(self.__create_chart(
             title=TEXT['title_assets_value'],
             adapter=AssetsValues(call),
