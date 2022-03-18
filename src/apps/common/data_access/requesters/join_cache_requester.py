@@ -24,14 +24,10 @@ class JoinCacheRequester(CacheRequester):
     
     def tryReload(self):
         dfs = map(pd.read_feather, self._srcs)
+        dfs = map(lambda df: df.drop(columns='id'), dfs)
 
         joined = next(dfs, pd.DataFrame())
         for df in dfs:
-            if not self._on:
-                on = list(joined.columns.intersection(df.columns).difference(['id']))
-            else:
-                on = self._on
-
-            joined = joined.merge(df, how='outer', on=on)
+            joined = joined.merge(df, how='outer', on=self._on, suffixes=(None, "_y"))
 
         self._df = joined

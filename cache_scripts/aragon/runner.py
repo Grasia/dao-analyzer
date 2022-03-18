@@ -88,6 +88,11 @@ class OrganizationsCollector(GraphQLUpdatableCollector):
 
             return df
 
+        @self.postprocessor
+        def copy_id(df: pd.DataFrame) -> pd.DataFrame:
+            df['orgAddress'] = df['id']
+            return df
+
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
         return ds.Query.organizations(**kwargs).select(
@@ -242,8 +247,6 @@ class AragonRunner(GraphQLRunner):
             oc = OrganizationsCollector(self, n)
             bc = BalancesCollector(self, oc, n)
             self._collectors += [oc, bc]
-        
-        self._collectors.append(TokenPricesCollector(self))
 
     @property
     def collectors(self) -> List[Collector]:

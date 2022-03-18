@@ -18,7 +18,7 @@ from .graphql import GraphQLCollector
 MSG_NO_TOKENS_FOUND = "No tokens found"
 
 class BlockscoutBallancesCollector(NetworkCollector):
-    TMR_SLEEP = 60
+    ERR_SLEEP = 60
 
     def __init__(self, runner, base: GraphQLCollector, name: str='tokenBalances', network: str='mainnet', addr_key: str='id'):
         """ Initializes a ballance collector that uses blockscout
@@ -79,7 +79,11 @@ class BlockscoutBallancesCollector(NetworkCollector):
                 return pd.DataFrame()
         elif r.status_code == 429: # Too many requests
             logging.warning(f"Too many requests, sleep and retry {retry}/{maxretries} time")
-            sleep(self.TMR_SLEEP)
+            sleep(self.ERR_SLEEP)
+            return self._get_from_address(addr, retry=retry+1, maxretries=maxretries)
+        elif r.status_code == 503:
+            logging.warning(f"Service unavailable, sleep and retry {retry}/{maxretries} time")
+            sleep(self.ERR_SLEEP)
             return self._get_from_address(addr, retry=retry+1, maxretries=maxretries)
         elif r.status_code == 504: # Gateway Time-out (Response too large)
             logging.warning(f"Requests returned Gateway Time-out, ignoring response for addr {addr}")
@@ -102,5 +106,9 @@ class BlockscoutBallancesCollector(NetworkCollector):
         df = pd.concat(map(toApply, ptqdm(addresses)), ignore_index=True)
 
         df = cc_postprocessor(df)
+        df = df.rename(columns={
+            'name': 'tokenName',
+            'address': self.addr_key
+        })
         
         self._update_data(df, force)

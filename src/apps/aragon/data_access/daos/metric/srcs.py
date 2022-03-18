@@ -16,6 +16,7 @@ CASTS: Path = CACHE_PATH / 'casts.arr'
 MINI_ME_TOKENS: Path = CACHE_PATH / 'miniMeTokens.arr'
 ORGANIZATIONS: Path = CACHE_PATH / 'organizations.arr'
 REPOS: Path = CACHE_PATH / 'repos.arr'
+TOKEN_BALANCES: Path = CACHE_PATH / 'tokenBalances.arr'
 TOKEN_HOLDERS: Path = CACHE_PATH / 'tokenHolders.arr'
 TRANSACTIONS: Path = CACHE_PATH / 'transactions.arr'
 VOTES: Path = CACHE_PATH / 'votes.arr'
@@ -25,6 +26,7 @@ ALL_FILES: List[str] = [
     MINI_ME_TOKENS,
     ORGANIZATIONS,
     REPOS,
+    TOKEN_BALANCES,
     TOKEN_HOLDERS,
     TRANSACTIONS,
     VOTES

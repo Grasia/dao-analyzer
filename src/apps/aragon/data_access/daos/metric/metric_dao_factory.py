@@ -11,7 +11,7 @@ from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
-from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+from src.apps.common.data_access.requesters import CacheRequester, JoinCacheRequester
 import src.apps.aragon.data_access.daos.metric.srcs as srcs
 from src.apps.aragon.data_access.daos.metric.strategy.st_new_additions import StNewAdditions
 from src.apps.aragon.data_access.daos.metric.strategy.st_installed_apps import StInstalledApps
@@ -23,7 +23,8 @@ from src.apps.aragon.data_access.daos.metric.strategy.st_active_organization imp
 from src.apps.aragon.data_access.daos.metric.strategy.st_approval_vote_rate import StApprovalVoteRate
 from src.apps.aragon.data_access.daos.metric.strategy.st_casted_votes_voters_rate import StVoteVotersRate
 from src.apps.aragon.data_access.daos.metric.strategy.st_casted_votes_rate import StCastedVotesRate
-
+from src.apps.aragon.data_access.daos.metric.strategy.st_assets_tokens import StAssetsTokens
+from src.apps.aragon.data_access.daos.metric.strategy.st_assets_values import StAssetsValues
 
 NEW_VOTES = 0
 NEW_TRANSACTIONS = 1
@@ -37,6 +38,8 @@ APPROVAL_VOTE_RATE = 8
 CASTED_VOTE_VOTER_RATE = 9
 CASTED_VOTE_FOR_RATE = 10
 CASTED_VOTE_AGAINST_RATE = 11
+ASSETS_VALUES = 12
+ASSETS_TOKENS = 13
 
 
 def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
@@ -98,6 +101,22 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
         stg = StCastedVotesRate(m_type=StCastedVotesRate.CAST_VOTE_AGAINST)
         requester = CacheRequester(srcs=[srcs.CASTS])
         address_key = 'orgAddress'
+    elif metric == ASSETS_VALUES:
+        address_key = 'orgAddress'
+        stg = StAssetsValues()
+        requester = JoinCacheRequester(srcs=[
+            srcs.ORGANIZATIONS,
+            srcs.TOKEN_BALANCES
+        ], on=['recoveryVault', 'network'])
+    elif metric == ASSETS_TOKENS:
+        address_key = 'orgAddress'
+        stg = StAssetsTokens()
+        requester = JoinCacheRequester(srcs=[
+            srcs.ORGANIZATIONS,
+            srcs.TOKEN_BALANCES
+        ], on=['recoveryVault', 'network'])
+    else:
+        raise ValueError(f"Incorrect metric: {metric}")
 
     return stg, requester, address_key
 
