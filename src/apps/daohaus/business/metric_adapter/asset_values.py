@@ -1,7 +1,6 @@
 from typing import Callable, Dict
-from src.apps.common.business.transfers.hierarchical_data import HierarchicalData
+from src.apps.common.business.transfers import HierarchicalData, OrganizationList
 
-from src.apps.common.business.transfers.organization import OrganizationList
 from src.apps.common.business.i_metric_adapter import IMetricAdapter
 import src.apps.daohaus.data_access.daos.metric.\
     metric_dao_factory as s_factory

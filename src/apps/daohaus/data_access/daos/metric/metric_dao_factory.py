@@ -11,7 +11,7 @@ from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
-from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+from src.apps.common.data_access.requesters import CacheRequester, JoinCacheRequester
 import src.apps.daohaus.data_access.daos.metric.srcs as srcs
 from src.apps.daohaus.data_access.daos.metric.strategy.st_new_additions import StNewAdditions
 from src.apps.daohaus.data_access.daos.metric.strategy.st_votes_type import StVotesType
@@ -109,10 +109,10 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
             srcs.VOTES])
     elif metric == ASSETS_VALUES:
         stg = StAssetsValues()
-        requester = CacheRequester(srcs=[
+        requester = JoinCacheRequester(srcs=[
             srcs.MOLOCHES,
             srcs.TOKEN_BALANCES
-        ], join=True)
+        ])
     elif metric == ASSETS_TOKENS:
         stg = StAssetsTokens()
         requester = CacheRequester(srcs=[
@@ -120,7 +120,7 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
             srcs.TOKEN_BALANCES
         ])
     else:
-        raise ValueError("Incorrect metric")
+        raise ValueError(f"Incorrect metric {metric}")
 
     return stg, requester
 
