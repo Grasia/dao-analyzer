@@ -15,5 +15,13 @@ DAOS: Path = CACHE_PATH / 'daos.arr'
 PROPOSALS: Path = CACHE_PATH / 'proposals.arr'
 REP_HOLDERS: Path = CACHE_PATH / 'reputationHolders.arr'
 STAKES: Path = CACHE_PATH / 'stakes.arr'
+TOKEN_BALANCES: Path = CACHE_PATH / 'tokenBalances.arr'
 VOTES: Path = CACHE_PATH / 'votes.arr'
-ALL_FILES: List[str] = [DAOS, PROPOSALS, REP_HOLDERS, STAKES, VOTES]
+ALL_FILES: List[str] = [
+    DAOS, 
+    PROPOSALS,
+    REP_HOLDERS,
+    STAKES,
+    TOKEN_BALANCES,
+    VOTES,
+]

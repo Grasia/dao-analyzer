@@ -27,7 +27,7 @@ def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
 
 class BalancesCollector(BlockscoutBallancesCollector):
     def __init__(self, runner, base, network: str):
-        super().__init__(runner, base=base, network=network)
+        super().__init__(runner, base=base, network=network, addr_key='dao')
 
 class DaosCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -38,6 +38,11 @@ class DaosCollector(GraphQLCollector):
             df.rename(columns={
                 'nativeTokenId':'nativeToken',
                 'nativeReputationId':'nativeReputation'},inplace=True)
+            return df
+        
+        @self.postprocessor
+        def clone_id(df: pd.DataFrame) -> pd.DataFrame:
+            df['dao'] = df['id']
             return df
 
     def query(self, **kwargs) -> DSLField:
@@ -185,7 +190,6 @@ class DaostackRunner(GraphQLRunner):
             oc = DaosCollector(self, n)
             bc = BalancesCollector(self, oc, n)
             self._collectors += [oc, bc]
-        self._collectors.append(TokenPricesCollector(self))
 
     @property
     def collectors(self) -> List[Collector]:

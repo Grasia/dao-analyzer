@@ -108,7 +108,8 @@ class BlockscoutBallancesCollector(NetworkCollector):
         df = cc_postprocessor(df)
         df = df.rename(columns={
             'name': 'tokenName',
-            'address': self.addr_key
+            # Replace only if addr_key is not 'id'
+            'address': self.addr_key if self.addr_key != 'id' else 'address'
         })
         
         self._update_data(df, force)
