@@ -72,8 +72,8 @@ class Collector(ABC):
         if force:
             prev_df = prev_df[prev_df["network"] != self.network]
         
-        prev_df.set_index(['id', 'network'], inplace=True, verify_integrity=True, drop=True)
-        df.set_index(['id', 'network'], inplace=True, verify_integrity=True, drop=True)
+        prev_df = prev_df.set_index(['id', 'network'], verify_integrity=True, drop=True)
+        df = df.set_index(['id', 'network'], verify_integrity=True, drop=True)
 
         # Updating data
         combined = df.combine_first(prev_df).reset_index()

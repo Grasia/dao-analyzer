@@ -58,10 +58,10 @@ class StVotersPercentage(IMetricStrategy):
 
         if 'voter' in df.columns:
             # attr of vote df
-            vote_data.loc[: ,:] = vote_data[vote_data.voter.notnull()]
-            vote_data.dropna(inplace=True, how='all', axis=0)
-            holders_data.loc[: ,:] = holders_data[holders_data.voter.isnull()]
-            holders_data.dropna(inplace=True, how='all', axis=0)
+            vote_data.loc[: ,:] = vote_data[vote_data.voter.notna()]
+            vote_data = vote_data.dropna(how='all', axis=0)
+            holders_data.loc[: ,:] = holders_data[holders_data.voter.isna()]
+            holders_data = holders_data.dropna(how='all', axis=0)
 
         return (holders_data, vote_data)
 

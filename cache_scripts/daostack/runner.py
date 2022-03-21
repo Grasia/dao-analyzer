@@ -19,10 +19,10 @@ from ..common import ENDPOINTS, Collector
 from ..common.graphql import GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
 
 def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
-    df.rename(columns={
+    df = df.rename(columns={
         'daoId': 'dao',
         'proposalId': 'proposal'
-    }, inplace=True)
+    })
     return df
 
 class BalancesCollector(BlockscoutBallancesCollector):
@@ -35,9 +35,9 @@ class DaosCollector(GraphQLCollector):
         
         @self.postprocessor
         def changeColumnNames(df: pd.DataFrame) -> pd.DataFrame:
-            df.rename(columns={
+            df = df.rename(columns={
                 'nativeTokenId':'nativeToken',
-                'nativeReputationId':'nativeReputation'},inplace=True)
+                'nativeReputationId':'nativeReputation'})
             return df
         
         @self.postprocessor

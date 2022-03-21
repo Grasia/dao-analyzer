@@ -44,7 +44,7 @@ class StProposalOutcome(IMetricStrategy):
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff.dropna(subset=[self.__DF_DATE], inplace=True)
+        dff = dff.dropna(subset=[self.__DF_DATE])
         dff.loc[:, self.__DF_INI_COLS] = dff[self.__DF_INI_COLS]
         return dff
 
@@ -104,9 +104,8 @@ class StProposalOutcome(IMetricStrategy):
                 dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
                 df = pd.concat([df, dff], ignore_index=True)
 
-        df.drop_duplicates(subset=self.__DF_COLS1,
-        keep="first", inplace=True)
-        df.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
+        df.drop_duplicates(subset=self.__DF_COLS1, keep="first")
+        df = df.sort_values(self.__DF_DATE, ignore_index=True)
 
         return self.generate_metric(df)
 
@@ -263,8 +262,8 @@ class StProposalOutcome(IMetricStrategy):
         dff = dff.drop(columns=[self.__DF_BOOST, self.__DF_PASS])
 
         dff = pd.concat([dff, d3f], ignore_index=True)
-        dff.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
-        dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
+        dff = dff.drop_duplicates(subset=self.__DF_DATE, keep="first")
+        dff = dff.sort_values(self.__DF_DATE, ignore_index=True)
 
         return dff[self.__DF_COUNT].to_list()
     

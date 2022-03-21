@@ -68,7 +68,7 @@ class GraphQLCollector(NetworkCollector):
             splitted = str.split('.')
             return splitted[0] + ''.join(x[0].upper()+x[1:] for x in splitted[1:])
                         
-        df.rename(columns=dotsToSnakeCase, inplace=True)
+        df = df.rename(columns=dotsToSnakeCase)
         df['network'] = self.network
 
         if not skip_post:

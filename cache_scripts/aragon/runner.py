@@ -44,10 +44,10 @@ class CastsCollector(GraphQLUpdatableCollector):
 
         @self.postprocessor
         def changeColumnNames(df: pd.DataFrame) -> pd.DataFrame:
-            df.rename(columns={
+            df = df.rename(columns={
                 'voterId':'voter', 
                 'voteAppAddress':'appAddress',
-                'voteOrgAddress':'orgAddress'}, inplace=True)
+                'voteOrgAddress':'orgAddress'})
             return df
 
     def query(self, **kwargs) -> DSLField:
@@ -129,7 +129,7 @@ class TokenHoldersCollector(GraphQLUpdatableCollector):
         @self.postprocessor
         def add_minitokens(df: pd.DataFrame) -> pd.DataFrame:
             tokens = runner.filterCollector(name='miniMeTokens', network=network).df
-            tokens.rename(columns={'address':'tokenAddress', 'orgAddress':'organizationAddress'}, inplace=True)
+            tokens = tokens.rename(columns={'address':'tokenAddress', 'orgAddress':'organizationAddress'})
             return df.merge(tokens[['tokenAddress', 'organizationAddress']], on='tokenAddress', how='left')
             
     def query(self, **kwargs) -> DSLField:

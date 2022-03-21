@@ -42,9 +42,9 @@ class StNewAdditions(IMetricStrategy):
         dff: pd.DataFrame = df
 
         if self.__typ is self.VOTE:
-            dff.rename(columns={self.__DF_VOTE_DATE: self.__DF_DATE}, inplace=True)
+            dff = dff.rename(columns={self.__DF_VOTE_DATE: self.__DF_DATE})
         elif self.__typ is self.TRANSACTION:
-            dff.rename(columns={self.__DF_TRA_DATE: self.__DF_DATE}, inplace=True)
+            dff = dff.rename(columns={self.__DF_TRA_DATE: self.__DF_DATE})
 
         dff.loc[:, [self.__DF_DATE]] = dff[[self.__DF_DATE]]
         return dff
@@ -70,8 +70,8 @@ class StNewAdditions(IMetricStrategy):
 
         # joinning all the data in a unique dataframe
         df = pd.concat([df, dff], ignore_index=True)
-        df.drop_duplicates(subset=self.__DF_DATE, keep="first", inplace=True)
-        df.sort_values(self.__DF_DATE, inplace=True)
+        df = df.drop_duplicates(subset=self.__DF_DATE, keep="first")
+        df = df.sort_values(self.__DF_DATE)
         
         serie: Serie = Serie(x=df[self.__DF_DATE].tolist())
         metric: StackedSerie = StackedSerie(

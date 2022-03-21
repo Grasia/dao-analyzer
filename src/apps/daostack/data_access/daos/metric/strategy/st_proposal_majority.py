@@ -35,7 +35,7 @@ class StProposalMajority(IMetricStrategy):
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
         dff: pd.DataFrame = df
-        dff.dropna(subset=[self.__DF_DATE], inplace=True)
+        dff = dff.dropna(subset=[self.__DF_DATE])
         dff.loc[:, self.__DF_INI_COLS] = dff[self.__DF_INI_COLS]
         return dff
 
@@ -61,11 +61,11 @@ class StProposalMajority(IMetricStrategy):
         df3 = pd_utl.get_df_from_lists([idx, None, None, None], self.__DF_COLS)
         df3 = pd_utl.datetime_to_date(df3, self.__DF_DATE)
         # remove duplicated NA
-        pd_utl.drop_duplicate_date_rows(df=dff, dff=df3, date_col=self.__DF_DATE)
+        df3 = pd_utl.drop_duplicate_date_rows(df=dff, dff=df3, date_col=self.__DF_DATE)
 
         dff = pd.concat([df3, dff], ignore_index=True)
-        dff.sort_values(self.__DF_DATE, inplace=True, ignore_index=True)
-        dff.fillna(np.nan, inplace=True)
+        dff = dff.sort_values(self.__DF_DATE, ignore_index=True)
+        dff = dff.fillna(np.nan)
 
         return dff
 

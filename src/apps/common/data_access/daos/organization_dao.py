@@ -25,8 +25,8 @@ class OrganizationListDao:
         list: List[Organization] = []
 
         for _, row in df.iterrows():
-            name = row['name'] if not pd.isnull(row['name']) else None
-            network = row['network'] if not pd.isnull(row['network']) else None
+            name = row['name'] if not pd.isna(row['name']) else None
+            network = row['network'] if not pd.isna(row['network']) else None
 
             list.append(Organization(o_id=row['id'], name=name, network=network))
 

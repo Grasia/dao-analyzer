@@ -40,11 +40,11 @@ class StInstalledApps(IMetricStrategy):
         df = pd_utl.count_cols_repetitions(df, self.__DF_COLS, self.__DF_COUNT)
 
         #remove apps which has not name
-        df.dropna(subset=[self.__DF_NAME], inplace=True)
+        df = df.dropna(subset=[self.__DF_NAME])
 
         # count name repetitions (should be repoAddress, however not all of them have an entry)
         df = pd_utl.count_cols_repetitions(df, [self.__DF_NAME], self.__DF_COUNT)
-        df.sort_values(self.__DF_COUNT, inplace=True, ascending=False)
+        df = df.sort_values(self.__DF_COUNT, ascending=False)
 
         df = self.__adjust_values(df=df)
 

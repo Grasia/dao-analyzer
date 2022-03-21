@@ -68,10 +68,10 @@ class StTotalMembers(IMetricStrategy):
 
         if 'exists' in df.columns:
             # unique attr of member df
-            members_data.loc[: ,:] = members_data[members_data.exists.notnull()]
-            members_data.dropna(inplace=True, how='all', axis=0)
-            rage_quits_data.loc[: ,:] = rage_quits_data[rage_quits_data.exists.isnull()]
-            rage_quits_data.dropna(inplace=True, how='all', axis=0)
+            members_data.loc[: ,:] = members_data[members_data.exists.notna()]
+            members_data = members_data.dropna(how='all', axis=0)
+            rage_quits_data.loc[: ,:] = rage_quits_data[rage_quits_data.exists.isna()]
+            rage_quits_data = rage_quits_data.dropna(how='all', axis=0)
 
         return (members_data, rage_quits_data)
 

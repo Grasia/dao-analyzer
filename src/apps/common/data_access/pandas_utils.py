@@ -123,7 +123,9 @@ def drop_duplicate_date_rows(df: DataFrame, dff: DataFrame, date_col: str) -> No
     Removes all duplicated date-rows from dff considering the df's ones.
     """
     mask = dff[date_col].isin(df[date_col])
-    dff.drop(dff[mask].index, inplace=True)
+    dff = dff.drop(dff[mask].index)
+
+    return dff
 
 def top_rest_daos(df: DataFrame, idx, value_col, top_pct: float=0.50) -> Tuple[DataFrame, DataFrame]:
     """
