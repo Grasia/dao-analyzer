@@ -1,4 +1,4 @@
-from argparse import ArgumentParser, BooleanOptionalAction
+from argparse import ArgumentParser, BooleanOptionalAction, SUPPRESS
 from typing import List
 
 from datetime import datetime
@@ -11,6 +11,12 @@ class CacheScriptsArgParser(ArgumentParser):
     def __init__(self, available_platforms: List[str], available_networks: List[str]):
         super().__init__(description="Main script to populate dao-analyzer cache")
 
+        self.add_argument(
+            "-V", "--version",
+            action='store_true',
+            dest='display_version',
+            help="Displays the version and exits"
+        )
         self.add_argument(
             "-p", "--platforms",
             choices=available_platforms,
@@ -77,4 +83,11 @@ class CacheScriptsArgParser(ArgumentParser):
             required=False,
             type=str,
             default=os.getenv('DAOA_CC_API_KEY')
+        )
+        self.add_argument(
+            "--only-updatable",
+            help=SUPPRESS, # "Run only updatable collectors (only for testing)",
+            action='store_true',
+            required=False,
+            default=False
         )

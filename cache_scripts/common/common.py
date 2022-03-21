@@ -122,8 +122,12 @@ class NetworkRunner(Runner, ABC):
         names: Iterable[str] = [],
         long_names: Iterable[str] = []
     ) -> Iterable[Collector]:
-        # networks ^ (names v long_names)
         result = self.collectors
+
+        if config.only_updatable:
+            result = filter(lambda c: hasattr(c, 'update'), result)
+
+        # networks ^ (names v long_names)
         if networks:
             # GraphQLCollector => c.network in networks
             # a => b : not(a) or b

@@ -132,6 +132,10 @@ def main():
 
     config.populate_args(parser.parse_args())
 
+    if config.display_version:
+        print(config.CACHE_SCRIPTS_VERSION)
+        exit(0)
+
     main_lock(config.datawarehouse)
 
 if __name__ == '__main__':

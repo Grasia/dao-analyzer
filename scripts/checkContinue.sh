@@ -5,15 +5,27 @@
 # with continuation enabled results in the same data as running it one time
 dates=("2021-03-01" "2021-06-01" "2021-09-01" "2021-12-01")
 
+cache_scripts () {
+    local d=$1
+    local p="$2"
+    local other_args=$3
+
+    python -m cache_scripts $other_args -D "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names --only-updatable || exit 1
+}
+
 generate_full () {
     local d=$1
     local p="datawarehouse-full-$d" # Building the filename
 
-    if [ ! -d "$p" ]; then
+    if [ ! -f "$p/version.txt" ]; then
         echo "$p" not found, running again
-        ./cache_scripts/main.py -FD "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names || exit 1
+        cache_scripts "$d" "$p" "-F"
     else
-        echo "$p" found, not running
+        if diff -w "$p/version.txt" <(python -m cache_scripts -V); then
+            echo "$p" found and good version, not running
+        else
+            echo "Version of datawarehouse and cache_scripts differ, running again"
+        fi
     fi
 
     lastp="$p"
@@ -32,7 +44,7 @@ generate_partial() {
 
     [ -d "$p" ] && rm -r "$p" # If it exists, we delete it
     cp -r "$lastp" "$p"
-    ./cache_scripts/main.py -D "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names || exit 1
+    cache_scripts "$d" "$p"
 
     lastp=$p
 }
