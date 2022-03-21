@@ -39,7 +39,6 @@ from src.apps.common.presentation.charts.dt_controller import DataTableControlle
 from src.apps.common.presentation.charts.layout import ChartPaneLayout, DataTableLayout
 from src.apps.common.presentation.charts.layout.figure import BarFigure, MultiBarFigure, DoubleScatterFigure, Figure, TreemapFigure
 from src.apps.daostack.resources.strings import TEXT
-from src.apps.common.resources.strings import TEXT as COMMON_TEXT
 
 class DaostackService(metaclass=Singleton):
  
@@ -102,6 +101,7 @@ class DaostackService(metaclass=Singleton):
             sections=self.__get_sections(),
             ecosystem='daostack',
             update=self.__cacheRequester.get_last_update().date(),
+            org_id=TEXT['css_id_organization'],
             org_value=org_value
         )
 
@@ -137,9 +137,9 @@ class DaostackService(metaclass=Singleton):
         l_assets = [c.layout.get_layout for c in self.__controllers[self._ASSETS]]
 
         return {
-            COMMON_TEXT['no_data_selected']: {
+            TEXT['activity_title'] : {
                 'callables': l_organization,
-                'css_id': TEXT['css_id_organization'],
+                'css_id': TEXT['css_id_activity']
             },
             TEXT['rep_holder_title']: {
                 'callables': l_rep_h,

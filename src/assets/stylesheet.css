@@ -153,6 +153,29 @@
 }
 /*********************/
 
+/****** Dao-Info *****/
+.dao-info {
+    color: #235370;
+}
+
+.dao-info-name {
+    font-size: 3em;
+}
+
+.dao-info-network {
+    font-size: 2em;
+}
+
+.dao-info-address {
+    font-size: 1em;
+}
+
+.dao-info-label {
+    font-size: small;
+    color: lightgray;
+}
+/*********************/
+
 /****** Body *********/
 .body {
     background-color: white;
@@ -163,8 +186,8 @@
 }
 
 .section-title {
-    color: #8bbcda;
-    font-size: 3em;
+    color: #4d98c7;
+    font-size: 2.5em;
     margin-bottom: 2rem;
 
     /* Break long names and URLS */
@@ -181,6 +204,12 @@
 .chart-header {
     margin-bottom: -1rem;
     z-index: 2;
+}
+
+@media screen and (max-width: 992px) {
+    .two-column {
+        width: 100%;
+    }
 }
 
 @media screen and (max-width: 1280px) {
@@ -356,5 +385,10 @@
     font-size: x-small;
 }
 
+.address {
+    color: #2F2F2F;
+    margin-top: 0.3em;
+    font-family: 'Courier New', Courier, monospace;
+}
 
 /*********************/

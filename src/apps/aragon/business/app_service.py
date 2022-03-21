@@ -34,7 +34,6 @@ from src.apps.aragon.business.metric_adapter.cast_type import CastType
 from src.apps.aragon.business.metric_adapter.vote_outcome import VoteOutcome
 
 from src.apps.aragon.resources.strings import TEXT
-from src.apps.common.resources.strings import TEXT as COMMON_TEXT
 
 class AragonService(metaclass=Singleton):
     _TOKEN_HOLDER: int = 0
@@ -93,6 +92,7 @@ class AragonService(metaclass=Singleton):
             sections=self.__get_sections(),
             ecosystem='aragon',
             update=self.__cacheRequester.get_last_update().date(),
+            org_id=TEXT['css_id_organization'],
             org_value=org_value
         )
     
@@ -132,9 +132,9 @@ class AragonService(metaclass=Singleton):
         l_assets = [c.layout.get_layout for c in self.__controllers[self._ASSETS]]
 
         return {
-            COMMON_TEXT['no_data_selected']: {
+            TEXT['title_section_activity']: {
                 'callables': l_organization,
-                'css_id': TEXT['css_id_organization'],
+                'css_id': TEXT['css_id_activity']
             },
             TEXT['title_section_token_holders']: {
                 'callables': l_token_holders,
