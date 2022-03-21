@@ -3,8 +3,9 @@ from typing import List
 
 from datetime import datetime
 import pathlib
+import os
 
-import config
+from . import config
 
 class CacheScriptsArgParser(ArgumentParser):
     def __init__(self, available_platforms: List[str], available_networks: List[str]):
@@ -69,4 +70,11 @@ class CacheScriptsArgParser(ArgumentParser):
             required=False,
             type=pathlib.Path,
             default=config.DEFAULT_DATAWAREHOUSE
+        )
+        self.add_argument(
+            "--cc-api-key",
+            help="Set the CryptoCompare API key (overrides environment variable)",
+            required=False,
+            type=str,
+            default=os.getenv('DAOA_CC_API_KEY')
         )

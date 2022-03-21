@@ -10,8 +10,7 @@ from typing import Tuple
 import pandas as pd
 import numpy as np
 
-from src.apps.common.data_access.daos.metric.imetric_strategy \
-    import IMetricStrategy
+from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 from src.apps.common.business.transfers.n_stacked_serie import NStackedSerie
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
 from src.apps.common.business.transfers.serie import Serie
@@ -72,10 +71,8 @@ class StProposalMajority(IMetricStrategy):
 
 
     def __generate_metric(self, df: pd.DataFrame) -> NStackedSerie:
-        print(df)
         abs_passes, rel_passes = self.__get_sserie_outcome(df=df, has_pass=True)
         abs_fails, rel_fails = self.__get_sserie_outcome(df=df, has_pass=False)
-        print(abs_passes.get_serie())
         return NStackedSerie(sseries=[abs_passes, rel_passes, rel_fails, abs_fails])
 
 

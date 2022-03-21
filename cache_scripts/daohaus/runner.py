@@ -15,8 +15,13 @@ import pandas as pd
 from tqdm import tqdm
 from gql.dsl import DSLField
 
-from metadata import Block
-from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
+from .. import config
+from ..common.common import solve_decimals
+from ..common.cryptocompare import cc_postprocessor
+
+from ..metadata import Block
+from ..common import ENDPOINTS, Collector
+from ..common.graphql import GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
 
 DATA_ENDPOINT: str = "https://data.daohaus.club/dao/{id}"
 
@@ -45,8 +50,16 @@ class MolochesCollector(GraphQLCollector):
         super().__init__('moloches', runner, network=network, endpoint=ENDPOINTS[network]['daohaus_stats'])
 
         @self.postprocessor
+        def moloch_id(df: pd.DataFrame) -> pd.DataFrame:
+            df['molochAddress'] = df['id']
+            return df
+
+        @self.postprocessor
         def moloch_names(df: pd.DataFrame) -> pd.DataFrame:
             df = df.rename(columns={"title":"name"})
+
+            if config.skip_daohaus_names:
+                return df
 
             cached = requests_cache.CachedSession(self.data_path.parent / '.names_cache', 
                 use_cache_dir=False, 
@@ -177,12 +190,30 @@ class TokenBalancesCollector(GraphQLCollector):
         @self.postprocessor
         def change_col_names(df: pd.DataFrame) -> pd.DataFrame:
             return df.rename(columns={
-                'tokenTokenAddress': 'tokenAddress'
+                'molochId': 'molochAddress',
+                'tokenTokenAddress': 'tokenAddress',
+                'tokenDecimals': 'decimals',
+                'tokenBalance': 'balance',
+                'tokenSymbol': 'symbol'
             })
+
+        @self.postprocessor
+        def coalesce_bank_type(df: pd.DataFrame) -> pd.DataFrame:
+            bank_idx = ['guildBank', 'memberBank', 'ecrowBank']
+
+            df['bank'] = df[bank_idx].idxmax(1)
+            df['bank'] = df['bank'].str.lower()
+            df['bank'] = df['bank'].str.replace('bank', '')
+            df = df.drop(columns=bank_idx)
+        
+            return df
+        
+        self.postprocessors.append(solve_decimals)
+        self.postprocessors.append(cc_postprocessor)
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
-        return ds.Query.tokenBalances(**add_where(kwargs, memberBank=True)).select(
+        return ds.Query.tokenBalances(**add_where(kwargs, guildBank=True, tokenBalance_gt=0)).select(
             ds.TokenBalance.id,
             ds.TokenBalance.moloch.select(
                 ds.Moloch.id
@@ -192,6 +223,9 @@ class TokenBalancesCollector(GraphQLCollector):
                 ds.Token.symbol,
                 ds.Token.decimals
             ),
+            ds.TokenBalance.guildBank,
+            ds.TokenBalance.memberBank,
+            ds.TokenBalance.ecrowBank,
             ds.TokenBalance.tokenBalance
         )
 

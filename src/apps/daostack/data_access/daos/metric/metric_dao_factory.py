@@ -7,11 +7,11 @@
         <f.r.youssef@hotmail.com>
 """
 from typing import List, Dict, Tuple
-from src.apps.common.data_access.daos.metric.imetric_strategy import IMetricStrategy
+from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 
 from src.apps.common.data_access.daos.metric.metric_dao \
     import MetricDao
-from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+from src.apps.common.data_access.requesters import CacheRequester, JoinCacheRequester
 import src.apps.daostack.data_access.daos.metric.srcs as srcs
 import src.apps.daostack.data_access.daos.metric.strategy.\
     st_time_serie as st_s
@@ -29,6 +29,8 @@ from src.apps.daostack.data_access.daos.metric.strategy.st_active_organization\
     import StActiveOrganization
 from src.apps.daostack.data_access.daos.metric.strategy.st_approval_proposal_rate\
     import StApprovalProposalRate
+from src.apps.daostack.data_access.daos.metric.strategy.st_assets_tokens import StAssetsTokens
+from src.apps.daostack.data_access.daos.metric.strategy.st_assets_values import StAssetsValues
 from src.apps.daostack.data_access.daos.metric.strategy.st_votes_voters_rate\
     import StVoteVotersRate
 from src.apps.daostack.data_access.daos.metric.strategy.st_votes_rate\
@@ -58,6 +60,8 @@ VOTES_FOR_RATE = 16
 VOTES_AGAINST_RATE = 17
 TOTAL_REP_HOLDERS = 18
 VOTERS_PERCENTAGE = 19
+ASSETS_VALUES = 20
+ASSETS_TOKENS = 21
 
 # TODO: Do this in the other files or MISS
 def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
@@ -132,6 +136,20 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
         requester = CacheRequester(srcs=[
             srcs.REP_HOLDERS,
             srcs.VOTES])
+    elif metric == ASSETS_TOKENS:
+        stg = StAssetsTokens()
+        requester = JoinCacheRequester(srcs=[
+            srcs.DAOS,
+            srcs.TOKEN_BALANCES
+        ])
+    elif metric == ASSETS_VALUES:
+        stg = StAssetsValues()
+        requester = JoinCacheRequester(srcs=[
+            srcs.DAOS,
+            srcs.TOKEN_BALANCES
+        ])
+    else:
+        raise ValueError(f"Incorrect metric: {metric}")
     
     return stg, requester
 

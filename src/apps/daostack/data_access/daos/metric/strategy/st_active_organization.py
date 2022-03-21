@@ -12,8 +12,7 @@
 
 import pandas as pd
 
-from src.apps.common.data_access.daos.metric.imetric_strategy \
-    import IMetricStrategy
+from src.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 
 from src.apps.common.business.transfers.stacked_serie import StackedSerie
 from src.apps.common.business.transfers.serie import Serie

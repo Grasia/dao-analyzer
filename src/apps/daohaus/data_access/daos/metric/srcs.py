@@ -16,4 +16,5 @@ PROPOSALS: Path = CACHE_PATH / 'proposals.arr'
 MEMBERS: Path = CACHE_PATH / 'members.arr'
 RAGE_QUITS: Path = CACHE_PATH / 'rageQuits.arr'
 VOTES: Path = CACHE_PATH / 'votes.arr'
-ALL_FILES: List[str] = [MOLOCHES, PROPOSALS, MEMBERS, RAGE_QUITS, VOTES]
+TOKEN_BALANCES: Path = CACHE_PATH / 'tokenBalances.arr'
+ALL_FILES: List[str] = [MOLOCHES, PROPOSALS, MEMBERS, RAGE_QUITS, VOTES, TOKEN_BALANCES]

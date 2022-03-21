@@ -12,7 +12,7 @@ import json
 from functools import total_ordering
 from datetime import datetime
 
-import config
+from . import config
 
 @total_ordering
 class Block:
@@ -38,7 +38,7 @@ class Block:
             return False
 
     def __lt__(self, other):
-        return self.number < other.number
+        return self.number and self.number < other.number
 
     def toDict(self):
         return {
@@ -54,13 +54,16 @@ class CollectorMetaData:
     def __init__(self, c: str, d = None):
         self.block = Block()
         self._collector: str = c
+        self.last_update: datetime = datetime.now()
 
         if d:
-            self.block = Block(d["block"])
+            self.block = Block(d["block"]) if "block" in d else None
+            self.last_update = datetime.fromisoformat(d["last_update"])
 
     def toDict(self):
         return {
-            "block": self.block
+            "block": self.block,
+            "last_update": self.last_update.isoformat()
         }
 
     def __eq__(self, other):

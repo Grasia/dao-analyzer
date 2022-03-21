@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
 from typing import Dict
-from aragon.runner import AragonRunner
-from daohaus.runner import DaohausRunner
-from daostack.runner import DaostackRunner
-from common import Runner
-from argparser import CacheScriptsArgParser
-
-import config
 
 from datetime import date
 from pathlib import Path
@@ -18,20 +11,29 @@ from sys import stderr
 
 import logging
 
-LOGGING_STR_FORMAT = "%(levelname)s: %(message)s"
+from .aragon.runner import AragonRunner
+from .daohaus.runner import DaohausRunner
+from .daostack.runner import DaostackRunner
+from .common import Runner, ENDPOINTS
+from .argparser import CacheScriptsArgParser
+from . import config
+
+LOG_FILE_FORMAT = "[%(levelname)s] - %(asctime)s - %(name)s - : %(message)s in %(pathname)s:%(lineno)d"
+LOG_STREAM_FORMAT = "%(levelname)s: %(message)s"
 
 AVAILABLE_PLATFORMS: Dict[str, Runner] = {
-    AragonRunner.name: AragonRunner(),
-    DaohausRunner.name: DaohausRunner(),
-    DaostackRunner.name: DaostackRunner()
+    AragonRunner.name: AragonRunner,
+    DaohausRunner.name: DaohausRunner,
+    DaostackRunner.name: DaostackRunner
 }
 
 # Get available networks from Runners
-AVAILABLE_NETWORKS = {n for x in AVAILABLE_PLATFORMS.values() for n in x.networks}
+AVAILABLE_NETWORKS = {n for n,v in ENDPOINTS.items()}
 
 def _call_platform(platform: str, datawarehouse: Path, force: bool=False, networks=None, collectors=None):
-    AVAILABLE_PLATFORMS[platform].set_dw(datawarehouse)
-    AVAILABLE_PLATFORMS[platform].run(networks=networks, force=force, collectors=collectors)
+    p = AVAILABLE_PLATFORMS[platform]()
+    p.set_dw(datawarehouse)
+    p.run(networks=networks, force=force, collectors=collectors)
 
 def _is_good_version(datawarehouse: Path) -> bool:
     versionfile = datawarehouse / 'version.txt'
@@ -41,7 +43,7 @@ def _is_good_version(datawarehouse: Path) -> bool:
     with open(versionfile, 'r') as vf:
         return vf.readline().startswith(config.CACHE_SCRIPTS_VERSION)
 
-def main(datawarehouse: Path):
+def main_aux(datawarehouse: Path):
     if config.delete_force or not _is_good_version(datawarehouse):
         # We skip the dotfiles like .lock
         for p in datawarehouse.glob('[!.]*'):
@@ -50,9 +52,18 @@ def main(datawarehouse: Path):
             else:
                 p.unlink()
 
-    logger = logging.getLogger('cache_scripts')
-    logger.addHandler(logging.FileHandler(datawarehouse / 'cache_scripts.log'))
+    logger = logging.getLogger()
+    logger.propagate = True
+    filehandler = logging.FileHandler(config.datawarehouse / 'cache_scripts.log')
+    filehandler.setFormatter(logging.Formatter(LOG_FILE_FORMAT))
+    logger.addHandler(filehandler)
     logger.setLevel(level=logging.DEBUG if config.debug else logging.WARNING)
+
+    # Log errors to STDERR
+    streamhandler = logging.StreamHandler(stderr)
+    streamhandler.setLevel(logging.ERROR)
+    streamhandler.setFormatter(logging.Formatter(LOG_STREAM_FORMAT))
+    logger.addHandler(streamhandler)
 
     # The default config is every platform
     if not config.platforms:
@@ -93,15 +104,17 @@ def main_lock(datawarehouse: Path):
             print(tmp_dw, file=lock)
             lock.flush()
 
+            ignore = shutil.ignore_patterns('*.log', '.lock*')
+
             # We want to copy the dw, so we open it as readers
             p_lock.touch(exist_ok=True)
             with pl.Lock(p_lock, 'r', timeout=1, flags=pl.LOCK_SH | pl.LOCK_NB):
                 shutil.copytree(datawarehouse, tmp_dw, dirs_exist_ok=True)
 
-            main(datawarehouse=tmp_dw)
+            main_aux(datawarehouse=tmp_dw)
 
             with pl.Lock(p_lock, 'w', timeout=10):
-                shutil.copytree(tmp_dw, datawarehouse, dirs_exist_ok=True)
+                shutil.copytree(tmp_dw, datawarehouse, dirs_exist_ok=True, ignore=ignore)
 
             # Removing pid from lock
             lock.truncate(0)
@@ -112,7 +125,7 @@ def main_lock(datawarehouse: Path):
         print(f"The cache_scripts are already being run with pid {pid}", file=stderr)
         exit(1)
 
-if __name__ == '__main__':
+def main():
     parser = CacheScriptsArgParser(
         available_platforms=list(AVAILABLE_PLATFORMS.keys()),
         available_networks=AVAILABLE_NETWORKS)
@@ -120,3 +133,6 @@ if __name__ == '__main__':
     config.populate_args(parser.parse_args())
 
     main_lock(config.datawarehouse)
+
+if __name__ == '__main__':
+    main()

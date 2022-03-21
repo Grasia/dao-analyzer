@@ -100,7 +100,7 @@ def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
             className='flex-column small-padding',
             children=[
                 html.Div(name, id=data['css_id'], className='section-title section-left-padding-aligner'),
-                html.Div(children=charts, className='flex-row flex-wrap')
+                html.Div(children=charts, className='flex-row flex-wrap flex-align-start')
             ],
         )
         children.append(sec)

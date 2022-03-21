@@ -17,6 +17,15 @@ After that, move to repository root directory with:
 cd dao-analyzer
 ```
 
+### Environment variables
+To be able to access all the features of dao-analyzer, you can specify the following
+environment variables:
+
+```
+# The CrytptoCompare API key to be used to get token prices
+DAOA_CC_API_KEY = "your_api_key"
+```
+
 ### Installation
 All code has been tested on Linux, but it should work on Windows and macOS, 'cause it just uses the python environment.
 
@@ -37,7 +46,7 @@ If you don't want to share Python dependencies among other projects, you should 
 Before launching the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
 
 ```
-python3 cache_scripts/main.py
+python3 -m cache_scripts
 ```
 
 After a few minutes, you can now run the app with:
@@ -67,7 +76,7 @@ docker run --name dao-analyzer -it -p80:80 grasia/dao-analyzer:latest-cached
 Now, you can update the datawarehouse using:
 
 ```
-docker exec -it dao-analyzer /cache_scripts/main.py
+docker exec -it dao-analyzer python -m cache_scripts
 ```
 
 You can even add it to your system as a cron job to update it daily, weekly, etc...

@@ -33,7 +33,7 @@ If you don't want to share Python dependencies among other projects, you should 
 If you want all the data used in the app, you can just use:
 
 ```
-python3 cache_scripts/main.py
+python3 -m cache_scripts
 ```
 
 this will create a folder called `datawarehouse` with a lot of files in apache's arrow format.
@@ -77,12 +77,12 @@ options:
 You can select the platform to download data about with the `--platform` selector. Let's download only data for daostack and aragon:
 
 ```
-python3 cache_scripts/main.py --platforms daostack aragon
+python3 -m cache_scripts --platforms daostack aragon
 ```
 
 ### Getting only data from a network
 You can select the chain to get data from with the `--networks` switch. For example, to get data only for xdai network, you can do:
 
 ```
-python3 cache_scripts/main.py --networks xdai
+python3 -m cache_scripts --networks xdai
 ```

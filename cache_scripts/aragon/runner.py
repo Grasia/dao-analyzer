@@ -12,8 +12,12 @@ import os
 from gql.dsl import DSLField
 import pandas as pd
 import json
-from common import ENDPOINTS, Collector, GraphQLCollector, GraphQLRunner, GraphQLUpdatableCollector, partial_query
-from metadata import Block
+
+from cache_scripts.common.cryptocompare import CCPricesCollector
+from ..common import ENDPOINTS, Collector
+from ..common.graphql import GraphQLCollector, GraphQLRunner, GraphQLUpdatableCollector, partial_query
+from ..common.blockscout import BlockscoutBallancesCollector
+from ..metadata import Block
 
 class AppsCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -29,6 +33,10 @@ class AppsCollector(GraphQLCollector):
             ds.App.repoAddress,
             ds.App.organization.select(ds.Organization.id)
         )
+
+class BalancesCollector(BlockscoutBallancesCollector):
+    def __init__(self, runner, base, network: str):
+        super().__init__(runner, addr_key='recoveryVault', base=base, network=network)
 
 class CastsCollector(GraphQLUpdatableCollector):
     def __init__(self, runner, network: str):
@@ -78,6 +86,11 @@ class OrganizationsCollector(GraphQLUpdatableCollector):
             names_df = names_df[['id', 'name']]
             df = df.merge(names_df, on='id', how='left')
 
+            return df
+
+        @self.postprocessor
+        def copy_id(df: pd.DataFrame) -> pd.DataFrame:
+            df['orgAddress'] = df['id']
             return df
 
     def query(self, **kwargs) -> DSLField:
@@ -131,6 +144,9 @@ class TokenHoldersCollector(GraphQLUpdatableCollector):
 
     def update(self, block: Block = None):
         return self._simple_timestamp('lastUpdateAt', block)
+
+class TokenPricesCollector(CCPricesCollector):
+    pass
 
 class ReposCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
@@ -212,8 +228,8 @@ class VotesCollector(GraphQLUpdatableCollector):
 class AragonRunner(GraphQLRunner):
     name: str = 'aragon'
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, dw=None):
+        super().__init__(dw)
         self._collectors: List[Collector] = []
         ## TODO: Fix aragon-tokens xdai subgraph and redeploy
         self.networks = ['mainnet']
@@ -223,12 +239,14 @@ class AragonRunner(GraphQLRunner):
                 AppsCollector(self, n),
                 CastsCollector(self, n),
                 MiniMeTokensCollector(self, n),
-                OrganizationsCollector(self, n),
                 ReposCollector(self, n),
                 TransactionsCollector(self, n),
                 TokenHoldersCollector(self, n),
                 VotesCollector(self, n)
             ])
+            oc = OrganizationsCollector(self, n)
+            bc = BalancesCollector(self, oc, n)
+            self._collectors += [oc, bc]
 
     @property
     def collectors(self) -> List[Collector]:

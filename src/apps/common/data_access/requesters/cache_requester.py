@@ -15,27 +15,33 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
     CHECKING_COOLDOWN = 60
 
     def __init__(self, srcs: List[Path]):
-        self.__srcs = srcs
-        self.__df: pd.DataFrame = pd.DataFrame()
+        """
+        Initializes the CacheRequester
+
+            Parameters:
+                srcs (List[Path]): A list of paths to read the dataframes from
+        """
+        self._srcs = srcs
+        self._df: pd.DataFrame = pd.DataFrame()
 
         # Avoids having to lock the file and open the metadata with every request
-        self.__next_check = datetime.min
+        self._next_check = datetime.min
 
         # Lets us read the data only when necessary
-        self.__last_update = datetime.min
+        self._last_update = datetime.min
         self.logger = logging.getLogger("app.cacherequester")
 
     def get_last_update(self) -> datetime:
-        return self.__last_update
+        return self._last_update
 
     def metadataTime(self) -> datetime:
         """
         Returns the latest time the dataframes have been updated
         """
         t = datetime.min
-        metadata = json.loads((self.__srcs[0].parent / 'metadata.json').read_bytes())["metadata"]
+        metadata = json.loads((self._srcs[0].parent / 'metadata.json').read_bytes())["metadata"]
 
-        for src in self.__srcs:
+        for src in self._srcs:
             collector_name = str(src.stem)
             for k,v in metadata.items():
                 # Format is <platform>/<collector>-<network>
@@ -45,11 +51,7 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
         return t
 
     def tryReload(self):
-        df = pd.DataFrame()
-        for src in self.__srcs:
-            df = pd.concat([df, pd.read_feather(src)], axis=0, ignore_index=True)
-
-        self.__df = df
+        self._df = pd.concat(map(pd.read_feather, self._srcs), axis=0, ignore_index=True)
 
     # https://stackoverflow.com/questions/70861731/how-to-filelock-an-entire-directory
     def request(self) -> pd.DataFrame:
@@ -62,21 +64,21 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
             exist, it will return an empty dataframe.
         """
         # Whether we should check (locking can be costly)
-        if self.__srcs and (self.__df.empty or datetime.now() > self.__next_check):
-            self.__next_check = datetime.now() + timedelta(seconds=self.CHECKING_COOLDOWN)
+        if self._srcs and (self._df.empty or datetime.now() > self._next_check):
+            self._next_check = datetime.now() + timedelta(seconds=self.CHECKING_COOLDOWN)
 
             # Try checking if something has changed
             try:
                 # Lock the datawarehouse as reader, and then check if the metadata changed
                 with pl.Lock(LOCK_PATH, 'rb', flags=pl.LockFlags.SHARED  | pl.LockFlags.NON_BLOCKING, timeout=0.1):
                     t = self.metadataTime()
-                    if t > self.__last_update or self.__df.empty:
-                        self.__last_update = t
+                    if t > self._last_update or self._df.empty:
+                        self._last_update = t
                         self.tryReload()
             except (pl.LockException, pl.AlreadyLocked):
                 self.logger.debug("Couldn't acquire lock")
 
-        if self.__df.empty:
-            self.logger.warning(f"Returning empty dataframe for sources {[str(x) for x in self.__srcs]}")
+        if self._df.empty:
+            self.logger.warning(f"Returning empty dataframe for sources {[str(x) for x in self._srcs]}")
 
-        return self.__df
+        return self._df
