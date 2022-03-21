@@ -12,7 +12,7 @@ RUN pip install -r /requirements.txt
 COPY . /dao-analyzer/
 
 RUN if [ "$POPULATE_CACHE" -eq 0 ] && [ -e ./datawarehouse ]; then rm -r ./datawarehouse; fi
-RUN if [ "$POPULATE_CACHE" -eq 1 ] ; then ./cache_scripts/main.py --ignore-errors; fi
+RUN if [ "$POPULATE_CACHE" -eq 1 ] ; then python -m cache_scripts --ignore-errors; fi
 RUN if [ ! -z "$DAOA_VERSION" ]; then sed -i -e "s/__version__\s*=.*/__version__ = '${DAOA_VERSION}'/i" ./src/__init__.py; fi
 VOLUME "/dao-analyzer/datawarehouse"
 
