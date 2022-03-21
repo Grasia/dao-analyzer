@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.8.0-alpha - 2022-03-21
+- Obtaining holdings of DAOs (ERC-20 tokens)
+- Displaying assets of DAOs
+  - Assets with values using treemap
+  - Assets with unknown value using a table
+
 ## 0.7.2 - 2022-03-01
 - Added version number to footer
 
