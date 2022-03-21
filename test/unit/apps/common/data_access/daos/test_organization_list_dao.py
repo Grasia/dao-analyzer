@@ -43,7 +43,7 @@ class DaoOrganizationListTest(unittest.TestCase):
 
         orgs: OrganizationList = dao.get_organizations()
         df: pd.DataFrame = requester.request()
-        df.set_index('id', inplace=True)
+        df = df.set_index('id')
 
         for org in orgs.get_organizations():
             self.assertIn(org.get_id(), df.index)
