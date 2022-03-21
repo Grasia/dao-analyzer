@@ -104,7 +104,7 @@ class StProposalOutcome(IMetricStrategy):
                 dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
                 df = pd.concat([df, dff], ignore_index=True)
 
-        df.drop_duplicates(subset=self.__DF_COLS1, keep="first")
+        df = df.drop_duplicates(subset=self.__DF_COLS1, keep="first")
         df = df.sort_values(self.__DF_DATE, ignore_index=True)
 
         return self.generate_metric(df)
