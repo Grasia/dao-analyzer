@@ -30,5 +30,5 @@ class TabularData():
         Args:
             newc (Dict[str, str]): A dict of id:'Column Name'
         """
-        self.columns = [{'name': newc[c['id']], 'id': c['id']} for c in self.columns]
+        self.columns = [{'name': newc[c['id']] if c['id'] in newc else c['name'], 'id': c['id']} for c in self.columns]
         return self

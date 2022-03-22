@@ -14,12 +14,20 @@ class StAssetsTokens(IMetricStrategy):
 
     def process_data(self, df: pd.DataFrame) -> TabularData:
         df = self.clean_df(df)
+        df['cnt'] = 1
 
         dfg = df.groupby(self.__GB_COLUMNS)
         columns = {
             'network': 'Network',
             'symbol': 'Symbol',
-            'balanceFloat': 'Balance'
+            'balanceFloat': 'Total Balance',
+            'cnt': '# DAOs holding',
         }
 
-        return TabularData.from_df(dfg.sum()).set_column_names(columns)
+        sum = dfg.sum()
+
+        # Remove the cnt if they are all from the same DAO
+        if (sum['cnt'] == 1).all():
+            sum = sum.drop(columns='cnt')
+        
+        return TabularData.from_df(sum).set_column_names(columns)
