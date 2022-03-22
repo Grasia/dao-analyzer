@@ -1,4 +1,5 @@
 import pandas as pd
+from dash.dash_table.Format import Format, Scheme
 
 from . import IMetricStrategy
 from .....business.transfers import TabularData
@@ -17,11 +18,16 @@ class StAssetsTokens(IMetricStrategy):
         df['cnt'] = 1
 
         dfg = df.groupby(self.__GB_COLUMNS)
-        columns = {
+        names = {
             'network': 'Network',
             'symbol': 'Symbol',
             'balanceFloat': 'Total Balance',
             'cnt': '# DAOs holding',
+        }
+
+        format
+        formats = {
+            'balanceFloat': Format(precision=5, scheme=Scheme.decimal_or_exponent)
         }
 
         sum = dfg.sum()
@@ -30,4 +36,6 @@ class StAssetsTokens(IMetricStrategy):
         if (sum['cnt'] == 1).all():
             sum = sum.drop(columns='cnt')
         
-        return TabularData.from_df(sum).set_column_names(columns)
+        td = TabularData.from_df(sum).set_column_names(names).set_column_formats(formats)
+        print(td._columns)
+        return td
