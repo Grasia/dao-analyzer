@@ -37,5 +37,4 @@ class StAssetsTokens(IMetricStrategy):
             sum = sum.drop(columns='cnt')
         
         td = TabularData.from_df(sum).set_column_names(names).set_column_formats(formats)
-        print(td._columns)
         return td
