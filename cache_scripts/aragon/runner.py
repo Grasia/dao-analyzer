@@ -247,6 +247,8 @@ class AragonRunner(GraphQLRunner):
             oc = OrganizationsCollector(self, n)
             bc = BalancesCollector(self, oc, n)
             self._collectors += [oc, bc]
+        
+        self._collectors.append(CCPricesCollector(self))
 
     @property
     def collectors(self) -> List[Collector]:

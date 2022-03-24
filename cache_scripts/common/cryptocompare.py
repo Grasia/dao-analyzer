@@ -18,22 +18,23 @@ def cc_postprocessor(df: pd.DataFrame) -> pd.DataFrame:
     ccrequester = CryptoCompareRequester(api_key=config.cc_api_key)
 
     tokenSymbols = df['symbol'].drop_duplicates()
-    availableSymbols = {x['partner_symbol'] for x in ccrequester.get_available_coin_list()}
-    tokenSymbols = availableSymbols.intersection(tokenSymbols)
 
-    df_fiat = pd.DataFrame.from_dict(ccrequester.get_symbols_price(tokenSymbols), orient='index')
+    # TODO: Get only the ones with available symbols (relaxedValidation=False)
+    df_fiat = pd.DataFrame.from_dict(ccrequester.get_symbols_price(tokenSymbols, relaxedValidation=True), orient='index')
 
-    cols = ['USD', 'ETH', 'EUR']
+    def _apply_values(row):
+        if row['symbol'] in df_fiat.index:
+            row['usdValue'] = row['balanceFloat'] * df_fiat.loc[row['symbol'], 'USD']
+            row['ethValue'] = row['balanceFloat'] * df_fiat.loc[row['symbol'], 'ETH']
+            row['eurValue'] = row['balanceFloat'] * df_fiat.loc[row['symbol'], 'EUR']
+        else:
+            row['usdValue'] = np.NaN
+            row['ethValue'] = np.NaN
+            row['eurValue'] = np.NaN
+        
+        return row
 
-    df[cols] = np.NaN
-    mask = df['symbol'].isin(df_fiat.index)
-    df.loc[mask,cols] = df_fiat.loc[df[mask]['symbol'], cols].reset_index(drop=True).mul(df[mask]['balanceFloat'].reset_index(drop=True), axis=0).to_numpy()
-
-    df = df.rename(columns={
-        'USD': 'usdValue',
-        'ETH': 'ethValue',
-        'EUR': 'eurValue'
-    })
+    df = df.apply(_apply_values, axis='columns')
 
     return df
 
@@ -55,8 +56,7 @@ class CCPricesCollector(Collector):
 
     def run(self, force=False, block=None):
         tokenSymbols = pd.read_feather(self.base.data_path, columns=['symbol']).drop_duplicates()['symbol']
-        availableSymbols = {x['partner_symbol'] for x in self.requester.get_available_coin_list()}
-        tokenSymbols = availableSymbols.intersection(tokenSymbols)
+        # TODO: Get only coins with available info (relaxedValidation=False)
 
-        df = pd.DataFrame.from_dict(self.requester.get_symbols_price(tokenSymbols), orient='index')
+        df = pd.DataFrame.from_dict(self.requester.get_symbols_price(tokenSymbols, relaxedValidation=True), orient='index')
         df.reset_index().to_feather(self.data_path)

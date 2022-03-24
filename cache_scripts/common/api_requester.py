@@ -196,7 +196,7 @@ class CryptoCompareRequester:
             j = r.json()
             if 'Data' not in j:
                 return j
-            if j["HasWarning"]:
+            if "HasWarning" in j and j["HasWarning"]:
                 logging.warning("Warning in query", r.url, ":", j["Message"])
             if j["Type"] == 100:
                 return j['Data']
@@ -206,7 +206,7 @@ class CryptoCompareRequester:
     def get_available_coin_list(self):
         return self._request(self.BASEURL + 'blockchain/list').values()
 
-    def get_symbols_price(self, fsyms: Union[str, Iterable[str]], tsyms: Iterable[str] = ['USD', 'EUR', 'ETH']):
+    def get_symbols_price(self, fsyms: Union[str, Iterable[str]], tsyms: Iterable[str] = ['USD', 'EUR', 'ETH'], relaxedValidation=False):
         if isinstance(fsyms, str):
             fsyms = [fsyms]
         elif not isinstance(fsyms, Iterable):
@@ -219,7 +219,7 @@ class CryptoCompareRequester:
 
         params = {
             'tsyms': ','.join(tsyms),
-            'relaxedValidation': 'false'
+            'relaxedValidation': str(relaxedValidation).lower()
         }
 
         ret = {}
