@@ -100,7 +100,7 @@ class DaostackService(metaclass=Singleton):
             labels=self.organizations().get_dict_representation(),
             sections=self.__get_sections(),
             ecosystem='daostack',
-            update=self.__cacheRequester.get_last_update().date(),
+            update=self.__cacheRequester.get_last_update(),
             org_id=TEXT['css_id_organization'],
             org_value=org_value
         )
