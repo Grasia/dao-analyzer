@@ -63,7 +63,7 @@ class StTotalMembers(IMetricStrategy):
 
 
     def __split_df(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
-        rage_quits_data: pd.DataFrame = df
+        rage_quits_data: pd.DataFrame = df.copy()
         members_data: pd.DataFrame = df.copy() if 'exists' in df.columns else pd.DataFrame() 
 
         if 'exists' in df.columns:

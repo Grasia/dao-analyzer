@@ -24,10 +24,7 @@ class StVotesType(IMetricStrategy):
 
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        dff: pd.DataFrame = df
-        dff.loc[:, [self.__DF_DATE, self.__DF_UVOTE]] = \
-            dff[[self.__DF_DATE, self.__DF_UVOTE]]
-        return dff
+        return df[[self.__DF_DATE, self.__DF_UVOTE]]
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
@@ -73,7 +70,7 @@ class StVotesType(IMetricStrategy):
 
 
     def __transform_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        dff: pd.DataFrame = df
+        dff: pd.DataFrame = df.copy()
         uint_votes: List[int] = dff[self.__DF_UVOTE].tolist()
         
         # votes for = true; votes againts = false
