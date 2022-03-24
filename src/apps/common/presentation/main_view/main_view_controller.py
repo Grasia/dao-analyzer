@@ -69,17 +69,23 @@ def bind_callbacks(app) -> None: # noqa: C901
     def load_ecosystem(bt_daostack: int, bt_daohaus: int, bt_aragon: int, dropdown_value: str, prev_pathname: str) -> str:
         ctx = dash.callback_context
 
+        # prev_pathname state changed (maybe we did it)
         if not bt_daostack and not bt_daohaus and not bt_aragon and not dropdown_value:
             raise PreventUpdate
+        # dropdown_value changed
         elif not bt_daostack and not bt_daohaus and not bt_aragon:
             platform = prev_pathname.split("/")[1]
             organizations = services[platform].organizations()
 
-            # We keep the /
-            if organizations.is_all_orgs(dropdown_value):
+            new_pathname = f'/{platform}'
+
+            if not organizations.is_all_orgs(dropdown_value):
+                new_pathname += f'/{dropdown_value}'
+
+            if new_pathname == prev_pathname:
                 raise PreventUpdate
 
-            return "/" + platform + "/" + dropdown_value
+            return new_pathname
         
         trigger = ctx.triggered[0]['prop_id'].split('.')[0]
         
