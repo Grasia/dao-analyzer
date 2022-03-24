@@ -1,11 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.8.0-alpha - 2022-03-21
+## 0.8.0 - 2022-03-24
 - Obtaining holdings of DAOs (ERC-20 tokens)
 - Displaying assets of DAOs
   - Assets with values using treemap
   - Assets with unknown value using a table
+- Mobile view optimizations
+- Making DAO address smaller ([#53](https://github.com/Grasia/dao-analyzer/issues/58))
+- Showing last update time
+- Fixed [#58](https://github.com/Grasia/dao-analyzer/issues/58)
+- Fixed [#61](https://github.com/Grasia/dao-analyzer/issues/61)
+- Added JoinCacheRequester
 
 ## 0.7.2 - 2022-03-01
 - Added version number to footer
