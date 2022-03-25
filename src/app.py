@@ -10,7 +10,7 @@
 import os
 import dash
 
-DEBUG = os.environ['DEBUG'] == 'TRUE' if 'DEBUG' in os.environ else False
+DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'].lower() == 'true' or \
+        'FLASK_ENV' in os.environ and os.environ['FLASK_ENV'].lower() == 'development'
 
-app = dash.Dash(__name__)
-app.config.suppress_callback_exceptions = True
+app = dash.Dash(__name__, suppress_callback_exceptions=True)

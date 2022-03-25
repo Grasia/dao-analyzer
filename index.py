@@ -18,6 +18,9 @@ import src.apps.common.resources.colors as COLOR
 from src.apps.common.resources.strings import TEXT
 from src.apps.common.presentation.main_view.main_view_controller import bind_callbacks
 
+import pandas as pd
+pd.options.mode.chained_assignment = 'warn' if DEBUG else None
+
 matomo_url = None
 site_id = None
 if 'DAOA_MATOMO_URL' in os.environ:
