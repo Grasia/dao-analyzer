@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 from pathlib import Path
 import portalocker as pl
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 import logging
 
@@ -28,17 +28,20 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
         self._next_check = datetime.min
 
         # Lets us read the data only when necessary
-        self._last_update = datetime.min
+        self._last_update = datetime.min.replace(tzinfo=timezone.utc)
         self.logger = logging.getLogger("app.cacherequester")
 
     def get_last_update(self) -> datetime:
         return self._last_update
+    
+    def get_last_update_str(self) -> str:
+        return self.get_last_update().strftime('%Y-%m-%d %H:%M %Z')
 
     def metadataTime(self) -> datetime:
         """
         Returns the latest time the dataframes have been updated
         """
-        t = datetime.min
+        t = datetime.min.replace(tzinfo=timezone.utc)
         metadata = json.loads((self._srcs[0].parent / 'metadata.json').read_bytes())["metadata"]
 
         for src in self._srcs:

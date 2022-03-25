@@ -10,7 +10,7 @@ from json.encoder import JSONEncoder
 from typing import Dict
 import json
 from functools import total_ordering
-from datetime import datetime
+from datetime import datetime, timezone
 
 from . import config
 
@@ -24,11 +24,15 @@ class Block:
         if isinstance(init, dict):
             self.number = int(init["number"]) if "number" in init else self.number
             self.id = init["id"] if "id" in init else self.id
+
             if "timestamp" in init:
                 if init["timestamp"].isdigit():
-                    self.timestamp = datetime.fromtimestamp(int(init["timestamp"])) if "timestamp" in init else self.timestamp
+                    self.timestamp = datetime.fromtimestamp(int(init["timestamp"]))
                 else:
                     self.timestamp = datetime.fromisoformat(init["timestamp"])
+            
+        if self.timestamp.tzinfo is None:
+            self.timestamp = self.timestamp.replace(tzinfo=timezone.utc)
 
     def __eq__(self, other):
         if isinstance(other, Block):
