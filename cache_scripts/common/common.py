@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Dict, Iterable
 import logging
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 import traceback
 
 import pandas as pd
@@ -236,7 +236,7 @@ class NetworkRunner(Runner, ABC):
                         print(f"Running collector {c.long_name}")
                         c.run(force)
 
-                    metadata[c.collectorid].last_update = datetime.now()
+                    metadata[c.collectorid].last_update = datetime.now(timezone.utc)
                 except Exception as e:
                     metadata.errors[c.collectorid] = e.__str__()
                     print(traceback.format_exc())

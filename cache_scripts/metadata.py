@@ -58,11 +58,14 @@ class CollectorMetaData:
     def __init__(self, c: str, d = None):
         self.block = Block()
         self._collector: str = c
-        self.last_update: datetime = datetime.now()
+        self.last_update: datetime = datetime.now(timezone.utc)
 
         if d:
             self.block = Block(d["block"]) if "block" in d else None
             self.last_update = datetime.fromisoformat(d["last_update"])
+
+        if self.last_update.tzinfo is None:
+            self.last_update = self.last_update.replace(tzinfo=timezone.utc)
 
     def toDict(self):
         return {

@@ -49,7 +49,7 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
             for k,v in metadata.items():
                 # Format is <platform>/<collector>-<network>
                 if k.split('/')[1].split('-')[0] == collector_name:
-                    t = max(t, datetime.fromisoformat(v["block"]["timestamp"]))
+                    t = max(t, datetime.fromisoformat(v["last_update"]))
 
         return t
 
