@@ -31,5 +31,8 @@ class MetricDao():
         
         # get only data from daos in ids
         df = df.loc[df[self.__address_key].isin(self.__ids)]
+        
+        # So process_data doesn't modify it
+        df = df.copy()
 
         return self.__st.process_data(df)

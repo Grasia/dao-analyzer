@@ -23,7 +23,7 @@ class StAssetsValues(IMetricStrategy):
         return [['network'], [self._idx_col, 'name'], ['symbol']]
 
     def clean_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        df = df[df[self._cmp_col] > 0]
+        df = df[df[self._cmp_col] > 0].copy()
 
         df['name'] = df['name'].fillna(df[self._idx_col].str.slice(0,8) + '...')
         df['name'] = df['name'].astype(str)
