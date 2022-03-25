@@ -35,7 +35,7 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
         return self._last_update
     
     def get_last_update_str(self) -> str:
-        return self.get_last_update().strftime('%Y-%m-%d %H:%M %Z')
+        return self.get_last_update().strftime('%b %-d, %Y at %H:%M')
 
     def metadataTime(self) -> datetime:
         """
