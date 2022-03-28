@@ -96,7 +96,7 @@ def __generate_subheader(org_id: str) -> html.Div:
 
 
 def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
-    children: List = list()
+    tabs: List[dcc.Tab] = []
 
     for name, data in sections.items():
         charts = list()
@@ -110,10 +110,9 @@ def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
                 html.Div(children=charts, className='flex-row flex-wrap flex-align-start')
             ],
         )
-        children.append(sec)
-        children.append(html.Div(className='h-separator'))
 
-    # removes last horizontal separator
-    children.pop()
+        tabs.append(dcc.Tab(label=name, children=[
+            sec
+        ]))
 
-    return html.Div(children=children, className='flex-column body')
+    return html.Div(dcc.Tabs(tabs), className='flex-column body')
