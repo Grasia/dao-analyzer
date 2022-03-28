@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.8.1 - 2022-03-28
+- Showing timezone in last update
+- Solved pandas warnings
+- Fixed init.sh
+- Using last_update instead of block information
+
 ## 0.8.0 - 2022-03-24
 - Obtaining holdings of DAOs (ERC-20 tokens)
 - Displaying assets of DAOs
