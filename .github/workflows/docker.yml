@@ -19,6 +19,7 @@ jobs:
       uses: styfle/cancel-workflow-action@0.9.1
       with:
         access_token: ${{ github.token }}
+        fetch-depth: 0
     - uses: actions/checkout@master
       # WARNING: workflow_run always runs on default branch. We have to tell the commit manually
       with:
