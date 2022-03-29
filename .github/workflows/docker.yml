@@ -1,28 +1,19 @@
 name: Publish Docker images
 on: 
-  workflow_dispatch:
-  workflow_run:
-    workflows: 
-      - Check cache_scripts continuation mode
+  push:
     branches:
       - master
       - develop
-    types:
-      - completed
-      - requested
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
     - name: Cancel Previous Runs
       uses: styfle/cancel-workflow-action@0.9.1
       with:
         access_token: ${{ github.token }}
     - uses: actions/checkout@master
-      # WARNING: workflow_run always runs on default branch. We have to tell the commit manually
       with:
-        ref: ${{ github.event.workflow_run.head_sha }}
         fetch-depth: 0
     - name: Getting datawarehouse cache
       uses: actions/cache@v2
