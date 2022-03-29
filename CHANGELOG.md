@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.8.2 - 2022-03-30
+- Changed last_update
+- Fixed Docker workflow
+- Display sections using tabs
+
 ## 0.8.1 - 2022-03-28
 - Showing timezone in last update
 - Solved pandas warnings
