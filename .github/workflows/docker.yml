@@ -23,6 +23,7 @@ jobs:
       # WARNING: workflow_run always runs on default branch. We have to tell the commit manually
       with:
         ref: ${{ github.event.workflow_run.head_sha }}
+        fetch-depth: 0
     - name: Getting datawarehouse cache
       uses: actions/cache@v2
       with:
@@ -31,15 +32,14 @@ jobs:
           ./datawarehouse
     - name: "Get tag names"
       run: |
-        git fetch --tags
         branch=$(git branch --show-current)
         [[ "$branch" = "master" ]] && branch=latest
         echo "::set-output name=tag::$branch"
-        echo "::set-output name=tag_sv::$(git describe --tags)"
+        echo "::set-output name=tag_sv::$(git describe --tags --always)"
         echo "::set-output name=tag_cached::$branch-cached"
       id: tags
     - name: Get DAOA_VERSION
-      run: export DAOA_VERSION=$(git describe --tags)
+      run: export DAOA_VERSION=$(git describe --tags --always)
     - name: Publish to Docker Hub
       uses: elgohr/Publish-Docker-Github-Action@3.04
       with:
