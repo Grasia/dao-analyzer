@@ -5,6 +5,10 @@
     padding: 0;
 }
 
+:root {
+    --text-accent-color: #500B89;
+}
+
 .root {
     background-color: #F5F5F5;
     font-family: 'Roboto', sans-serif;
@@ -179,6 +183,28 @@
 /****** Body *********/
 .body {
     background-color: white;
+}
+
+.tab {
+    font-weight: normal;
+    text-transform: uppercase;
+    color: var(--text-accent-color);
+    border: 0 !important;
+}
+
+.tab.tab--selected {
+    font-weight: bold;
+    border-top: 2px solid var(--text-accent-color)!important;
+    border-left: 1px solid #E8DFF0!important;
+    border-right: 1px solid #E8DFF0!important;
+}
+
+.tab:first-child {
+    border-left: 0 !important;
+}
+
+.tab:last-child {
+    border-right: 0 !important;
 }
 
 .two-column {

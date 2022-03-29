@@ -30,6 +30,15 @@ jobs:
         key: ${{ runner.os }}-dw
         path: |
           ./datawarehouse
+    - name: "Get tag names"
+      run: |
+        git fetch --tags
+        branch=$(git branch --show-current)
+        [[ "$branch" = "master" ]] && branch=latest
+        echo "::set-output name=tag::$branch"
+        echo "::set-output name=tag_sv::$(git describe --tags)"
+        echo "::set-output name=tag_cached::$branch-cached"
+      id: tags
     - name: Get DAOA_VERSION
       run: export DAOA_VERSION=$(git describe --tags)
     - name: Publish to Docker Hub
@@ -40,12 +49,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         tag_semver: true
         buildargs: DAOA_VERSION
-    - name: "Get cached tag name"
-      run: |
-        branch=${GITHUB_REF#refs/heads/}
-        [[ "$branch" = "master" ]] && branch=latest
-        echo "::set-output name=tag_cached::$branch-cached"
-      id: cached_envs
+        tags: ${{ steps.tags.outputs.tag }},${{ steps.tags.outputs.tag_sv }}
     - name: Publish to Docker Hub with cache
       uses: elgohr/Publish-Docker-Github-Action@3.04
       env:
@@ -55,4 +59,4 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         buildargs: DAOA_VERSION,POPULATE_CACHE
-        tags: ${{ steps.cached_envs.outputs.tag_cached }}
+        tags: ${{ steps.tags.outputs.tag_cached }}
