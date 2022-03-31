@@ -11,6 +11,7 @@ import os
 
 from gql.dsl import DSLField
 import pandas as pd
+import numpy as np
 import json
 
 from cache_scripts.common.cryptocompare import CCPricesCollector
@@ -70,6 +71,11 @@ class OrganizationsCollector(GraphQLUpdatableCollector):
 
     def __init__(self, runner, network: str):
         super().__init__('organizations', runner, endpoint=ENDPOINTS[network]['aragon'], network=network)
+
+        @self.postprocessor
+        def set_dead_recoveryVault(df: pd.DataFrame) -> pd.DataFrame:
+            df['recoveryVault'] = df['recoveryVault'].replace(r'^0x0+$', np.NaN, regex=True)
+            return df
 
         @self.postprocessor
         def apply_names(df: pd.DataFrame) -> pd.DataFrame:
