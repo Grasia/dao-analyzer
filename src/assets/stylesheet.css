@@ -320,6 +320,10 @@
     padding: 2%;
 }
 
+.medium-padding {
+    padding: 5%;
+}
+
 .flex-row {
     display: flex;
     flex-direction: row;
@@ -417,4 +421,42 @@
     font-family: 'Courier New', Courier, monospace;
 }
 
+code {
+    background-color: lightgray;
+    padding: 0.2em 0.4em;
+    font-size: 85%;
+    margin: 0;
+    border-radius: 6px;
+}
+
 /*********************/
+
+/*********************/
+/*    MARKDOWN       */
+/*********************/
+/* Based on multiple sources like GitHub's markdown */
+
+.markdown > *:first-child {
+    margin-top: 0!important;
+}
+
+.markdown h1,h2,h3,h4,h5,h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+.markdown p, pre, ul, ol {
+    margin-bottom: 16px;
+}
+
+.markdown pre code {
+    background-color: lightgray;
+}
+
+.markdown ul {
+    padding-left: 2em;
+}
+
+.markdown li + li {
+    margin-top: 0.25rem;
+}
