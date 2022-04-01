@@ -2,11 +2,13 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Dict, Iterable
 import logging
+import sys
 import json
 from datetime import datetime, timezone
 import traceback
 
 import pandas as pd
+from tqdm import tqdm
 
 from .api_requester import GQLRequester
 from ..metadata import RunnerMetadata, Block
@@ -190,20 +192,21 @@ class NetworkRunner(Runner, ABC):
     @staticmethod
     def _verifyCollectors(tocheck: Iterable[Collector]):
         verified = []
-        for c in tocheck:
+        for c in tqdm(list(tocheck), desc="Verifying"):
             try:
                 if c.verify():
                     verified.append(c)
                 else:
                     print(f"Verified returned false for {c.collectorid} (view logs the see why)")
-            except Exception as e:
-                print(f"Won't run {c.collectorid}")
-                print(e)
+            except Exception:
+                print(f"Won't run {c.collectorid}", file=sys.stderr)
+                traceback.print_exc()
         return verified
 
     def run(self, networks: List[str] = [], force=False, collectors=None):
         self.basedir.mkdir(parents=True, exist_ok=True)
 
+        print("Verifying collectors")
         verified = self._verifyCollectors(self.filterCollectors(
             networks=networks,
             long_names=collectors

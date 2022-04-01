@@ -31,5 +31,8 @@
         "_blocks": "https://api.thegraph.com/subgraphs/name/daviddavo/arbitrum-blocks",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-arbitrum",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-arbitrum"
+    },
+    "_theGraph": {
+        "index-node": "https://api.thegraph.com/index-node/graphql"
     }
 }

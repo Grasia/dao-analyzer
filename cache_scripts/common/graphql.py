@@ -1,3 +1,4 @@
+import logging
 from typing import Callable, List, Dict
 from datetime import datetime
 from abc import ABC, abstractmethod
@@ -6,7 +7,7 @@ import pandas as pd
 
 from gql.dsl import DSLField
 
-from .common import NetworkCollector, NetworkRunner, Runner
+from .common import ENDPOINTS, NetworkCollector, NetworkRunner, Runner
 from .api_requester import GQLRequester
 from ..metadata import Block
 
@@ -26,6 +27,36 @@ def partial_query(q, w) -> DSLField:
     def wrapper(**kwargs):
         return q(**add_where(kwargs, **w))
     return wrapper
+
+def checkSubgraphHealth(endpoint: str, network: str = None):
+    subgraphName = '/'.join(endpoint.split('/')[-2:])
+    
+    requester = GQLRequester(endpoint=ENDPOINTS['_theGraph']['index-node'])
+    ds = requester.get_schema()
+    q = ds.Query.indexingStatusForCurrentVersion(subgraphName=subgraphName).select(
+        ds.SubgraphIndexingStatus.health,
+        ds.SubgraphIndexingStatus.synced,
+        ds.SubgraphIndexingStatus.node,
+        ds.SubgraphIndexingStatus.chains.select(
+            ds.ChainIndexingStatus.network
+        )
+    )
+
+    r = requester.request_single(q)
+
+    if not r['synced']:
+        logging.info(f"Subgraph {endpoint} is not synced")
+
+    if r['health'].lower() != 'healthy':
+        logging.error(f"Subgraph {endpoint} is not healthy")
+        return False
+    
+    subgraph_network = r['chains'][0]['network']
+    if network and subgraph_network != network:
+        logging.error(f"Subgraph {endpoint} expected network {network} but got {subgraph_network}")
+        return False
+
+    return True
 
 class GraphQLCollector(NetworkCollector):
     def __init__(self, name: str, runner: Runner, endpoint: str, result_key: str = None, index: str = None, network: str='mainnet', pbar_enabled: bool=True):
@@ -80,8 +111,11 @@ class GraphQLCollector(NetworkCollector):
         return df
 
     def verify(self) -> bool:
+        # Checking if the queryBuilder doesn't raise any errors
         self.query()
-        return True
+
+        # Checking the health of the subgraph
+        return checkSubgraphHealth(self.endpoint)
 
     def run(self, force=False, block: Block = None):
         if block is None:
