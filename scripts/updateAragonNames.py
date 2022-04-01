@@ -1,6 +1,15 @@
+#!/bin/env python
 import requests
 import json
 import re
+import sys
+from pathlib import Path
+
+if len(sys.argv) != 2:
+    print(f"Usage: {sys.argv[0]} filename", file=sys.stderr)
+    exit(1)
+
+PREV_FILE = Path(sys.argv[1])
 
 # flake8: noqa W605
 KNOWN_ORGS_FILE_URL="https://github.com/aragon/client/raw/develop/src/known-organizations/index.js"
@@ -19,5 +28,10 @@ extracted_list = re.findall("(\{[^\}]+\})," ,REGEX_MAIN_DICT.findall(r.text)[0],
 def _parse_item(item):
     return {k:v.findall(item)[0] for k,v in REGEX_ITEM_DICT.items()}
 
+with open(PREV_FILE, 'r') as pf:
+    prev_json = json.loads(pf.read())
+
 processed_list = [_parse_item(x) for x in extracted_list]
-print(json.dumps({"mainnet":processed_list}, indent=2))
+processed_dict = {"mainnet": processed_list}
+
+print(json.dumps(prev_json | processed_dict, indent=2))

@@ -12,7 +12,7 @@ jobs:
       with:
         ref: develop
     - name: Run Script
-      run: python ./scripts/updateAragonNames.py > ./cache_scripts/aragon/dao_names.json
+      run: python ./scripts/updateAragonNames.py ./cache_scripts/aragon/dao_names.json > ./cache_scripts/aragon/dao_names.json
     - name: Commit files
       run: |
         git config user.email "noreply@github.com"
