@@ -38,7 +38,7 @@ class BlockscoutBallancesCollector(NetworkCollector):
     def endpoint(self) -> str:
         return ENDPOINTS[self.network]['blockscout']
 
-    def _get_from_address(self, addr: str, retry: int = 0, maxretries: int = 3, block: Union[int, Block] = None) -> pd.DataFrame:
+    def _get_from_address(self, addr: str, retry: int = 0, maxretries: int = 3, block: Union[int, Block] = None, ignore_errors=False) -> pd.DataFrame:
         if retry >= maxretries:
             raise ValueError(f"Too many retries {retry}/{maxretries}")
 
@@ -89,8 +89,11 @@ class BlockscoutBallancesCollector(NetworkCollector):
             logging.warning(f"Requests returned Gateway Time-out, ignoring response for addr {addr}")
             return pd.DataFrame() 
         else:
-            logging.error(f"Requests failed with status code {r.status_code}: {r.reason}")
-            raise ValueError(f"Requests failed with status code {r.status_code}: {r.reason}")
+            logging.error(f'Requests failed for address "{addr}" with status code {r.status_code}: {r.reason}')
+            if ignore_errors:
+                return pd.DataFrame()
+            else:
+                raise ValueError(f"Requests failed for address {addr[:12]}... with status code {r.status_code}: {r.reason}")
 
     def run(self, force=False, block: Block = None):
         # For each of the DAOs in the df, get the token balance
@@ -102,7 +105,7 @@ class BlockscoutBallancesCollector(NetworkCollector):
 
         ptqdm = partial(tqdm, delay=1, desc="Requesting token balances", 
             unit='req', dynamic_ncols=True)
-        toApply = partial(self._get_from_address, block=block)
+        toApply = partial(self._get_from_address, block=block, ignore_errors=True)
         df = pd.concat(map(toApply, ptqdm(addresses)), ignore_index=True)
 
         df = cc_postprocessor(df)
