@@ -89,6 +89,142 @@
       "address": "0x7809e69Cf83Fcb768dA9E7A698EDC9f159b7D6f4",
       "domain": "nucypherdao.aragonid.eth",
       "name": "NuCypher DAO"
+    },
+    {
+      "address": "0xc63627255269ddc12de3bee4d7e6526dda59af70",
+      "domain": "6ef0c0b0.aragonid.eth",
+      "name": "AAVE",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x054086d40cf8fd5bf6200eda7f9c6877b0302dd1",
+      "domain": "aavegotchi.aragonid.eth",
+      "name": "Aavegotchi",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x313faebe5a6b9bb6824e89468c1100402b013127",
+      "domain": "dao.robonomics.eth",
+      "name": "Airalab",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0xacf1921f2298d977843fe8b6d56d57e9060799ef",
+      "domain": "aragonchina.aragonid.eth",
+      "name": "Aragon China",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0xf590e576a3353491164f70ccdfcb7e26c55f5cc0",
+      "domain": "barnbridgelaunch.aragonid.eth",
+      "name": "BarnBridge",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x6167696cfa005a09fa08387b8adcfe6f75e68b96",
+      "domain": "blq.aragonid.eth",
+      "name": "Blequity",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x23b5db33e824822e8d98698c4929be2ff1ba70e4",
+      "domain": "cadcad.aragonid.eth",
+      "name": "cadCAD",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x547dc95b3fbf42ae3467827a8a6ca08226e3288f",
+      "domain": "collab19.aragonid.eth",
+      "name": "Collab-19",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x117d1f8cb4bf6e74bc5d667f15af7b810bacccd6",
+      "domain": "cybercongress.aragonid.eth",
+      "name": "Cyber Congress",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0xc45417092c7ba66052c92a4ad871fc60bdbc7009",
+      "domain": "eulerfoundation.aragonid.eth",
+      "name": "Cyber Foundation",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x238c1c129c00920d11520f25647d2b47ddbb3f87",
+      "domain": "dhedge.aragonid.eth",
+      "name": "dHEDGE",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x57ebe61f5f8303ad944136b293c1836b3803b4c0",
+      "name": "DAONUTS",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x37f70a5161cc7cca39e2877457c00647353bee74",
+      "domain": "dappnode.aragonid.eth",
+      "name": "DAppNode",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x15bc735a248eb9790b9d4b85e44cf4c878667209",
+      "domain": "elimuai.aragonid.eth",
+      "name": "Elimu.ai",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0xf7627121e08a1b3ad67c0fdf020dc1e695d20cbf",
+      "domain": "helpdao.aragonid.eth",
+      "name": "HelpDAO",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0xd94aecff012668167c05c8690a42cac303c9cb4b",
+      "domain": "mstable.aragonid.eth",
+      "name": "mStable",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0xe59cd35e68a8c51adda1c9f4681024066e13ff22",
+      "domain": "metagame.aragonid.eth",
+      "name": "MetaGame",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0xbaf2eb7b0649b8c28970e7d9e8f5dee9b6f6d9fe",
+      "domain": "nftx.aragonid.eth",
+      "name": "NFTX",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x60c0d7a799f41be34527d6da6e17d7e885338388",
+      "domain": "openesquire.aragonid.eth",
+      "name": "OpenESQ",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x0e5646fa4d398a81db51afd74547476fc0a0888d",
+      "domain": "pluricentra.aragonid.eth",
+      "name": "Pluricentra",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x0b6f260c19677d6f939e8b8e8fa4ccf67953ebac",
+      "domain": "rdao.aragonid.eth",
+      "name": "rDAI",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x001cd74c9a99b6c68e93fe69595124407b37aa8e",
+      "domain": "shilldao.aragonid.eth",
+      "name": "ShillDAO",
+      "source": "https://poweredby.aragon.org/"
+    },
+    {
+      "address": "0x1c532bc3b37d05e30aae367e4facdcfc98f8a426",
+      "name": "UniDAO",
+      "source": "https://poweredby.aragon.org/"
     }
   ],
   "xdai": [
