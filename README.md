@@ -6,6 +6,14 @@ You can either install it on your local machine, or if you prefer it, you can us
 
 > If you only want to retrieve the data used by our application, you can follow [this guide](./cache_scripts/README.md) instead
 
+The easiest method by far to download and run the application is to use pip to install it
+
+```
+pip install git+https://github.com/Grasia/dao-analyzer.git
+```
+
+Then, you can run the app using the command `daoa-server`
+
 ## Download
 Enter in your terminal (git must be installed) and write down:
 
