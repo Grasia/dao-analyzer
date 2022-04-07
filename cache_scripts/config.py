@@ -1,6 +1,8 @@
 from pathlib import Path
 
-CACHE_SCRIPTS_VERSION = "1.0.3"
+from . import __version__
+
+CACHE_SCRIPTS_VERSION = __version__
 
 # https://letsexchange.io/blog/what-is-block-confirmation-on-ethereum-and-how-many-confirmations-are-required/
 # Number of blocks to skip to only consult confirmed blocks

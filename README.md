@@ -84,7 +84,7 @@ You can even add it to your system as a cron job to update it daily, weekly, etc
 ## Technical details
 
 ### Architecture
-There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/aragon/class_diagram.png).
+There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/apps/aragon/class_diagram.png).
 
 ### Debugging
 

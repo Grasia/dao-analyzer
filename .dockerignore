@@ -2,7 +2,7 @@
 **
 
 # Allow some things
-!/src/**
+!/dao_analyzer/**
 !/test/**
 !/cache_scripts/**
 !/gunicorn_config.py
@@ -10,6 +10,9 @@
 !/LICENSE
 !/requirements.txt
 !/init.sh
+!/setup.py
+!/ABOUT.md
+!/README.md
 # If there is already a datawarehouse, it will be updated
 !/datawarehouse
 

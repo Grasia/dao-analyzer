@@ -5,15 +5,15 @@ ARG DAOA_VERSION=''
 
 WORKDIR /dao-analyzer
 
-COPY requirements.txt /
 RUN pip install --upgrade pip
-RUN pip install -r /requirements.txt
 
 COPY . /dao-analyzer/
 
+RUN pip install -e .
+
 RUN if [ "$POPULATE_CACHE" -eq 0 ] && [ -e ./datawarehouse ]; then rm -r ./datawarehouse; fi
 RUN if [ "$POPULATE_CACHE" -eq 1 ] ; then python -m cache_scripts --ignore-errors; fi
-RUN if [ ! -z "$DAOA_VERSION" ]; then sed -i -e "s/__version__\s*=.*/__version__ = '${DAOA_VERSION}'/i" ./src/__init__.py; fi
+RUN if [ ! -z "$DAOA_VERSION" ]; then sed -i -e "s/__version__\s*=.*/__version__ = '${DAOA_VERSION}'/i" ./dao_analyzer/__init__.py; fi
 VOLUME "/dao-analyzer/datawarehouse"
 
 HEALTHCHECK --interval=5m --timeout=3s --start-period=1m --retries=3 \

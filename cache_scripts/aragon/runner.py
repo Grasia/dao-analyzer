@@ -7,14 +7,15 @@
         <david@ddavo.me>
 """
 from typing import List
-import os
 
 from gql.dsl import DSLField
 import pandas as pd
 import numpy as np
 import json
+from pathlib import Path
 
-from cache_scripts.common.cryptocompare import CCPricesCollector
+from cache_scripts import __file__ as csfile
+from ..common.cryptocompare import CCPricesCollector
 from ..common import ENDPOINTS, Collector
 from ..common.graphql import GraphQLCollector, GraphQLRunner, GraphQLUpdatableCollector, partial_query
 from ..common.blockscout import BlockscoutBallancesCollector
@@ -67,7 +68,7 @@ class CastsCollector(GraphQLUpdatableCollector):
         )
 
 class OrganizationsCollector(GraphQLUpdatableCollector):
-    DAO_NAMES_PATH=os.path.join('cache_scripts', 'aragon', 'dao_names.json')
+    DAO_NAMES_PATH=Path(csfile).parent / 'aragon' / 'dao_names.json'
 
     def __init__(self, runner, network: str):
         super().__init__('organizations', runner, endpoint=ENDPOINTS[network]['aragon'], network=network)
