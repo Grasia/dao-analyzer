@@ -13,8 +13,6 @@ from dash import dcc, html
 
 import pandas as pd
 
-from dao_analyzer.apps.common.presentation.main_view.main_view_controller import bind_callbacks
-
 from .matomo import Matomo
 from .apps.common.resources import colors as COLOR
 from .apps.common.resources.strings import TEXT
