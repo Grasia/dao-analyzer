@@ -9,7 +9,7 @@ You can either install it on your local machine, or if you prefer it, you can us
 The easiest method by far to download and run the application is to use pip to install it
 
 ```
-pip install git+https://github.com/Grasia/dao-analyzer.git
+pip install dao-analyzer
 ```
 
 Then, you can run the app using the command `daoa-server`

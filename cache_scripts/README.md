@@ -5,7 +5,7 @@
 The easiest method by far to download and run the application is to use pip to install it
 
 ```
-pip install git+https://github.com/Grasia/dao-analyzer.git
+pip install dao-analyzer
 ```
 
 Then, you can use this script using the command `daoa-cache-scripts`
