@@ -24,7 +24,7 @@ jobs:
           ./datawarehouse*
     - name: Set up Python
       uses: actions/setup-python@v1
-    - name: Install dependencies
-      run: pip install -r requirements.txt
+    - name: Install package
+      run: pip install -e .
     - name: Run verify-scripts
       run: ./scripts/checkContinue.sh
