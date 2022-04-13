@@ -1,20 +1,30 @@
 # Ignore everything
 **
 
+
 # Allow some things
-!/dao_analyzer/**
-!/test/**
-!/cache_scripts/**
+
+## Building
+!/pyproject.toml
+!/setup.cfg
+!/setup.py
+### Allow git folder for setuptools_scm (delete it after)
+!/.git
+
+## Deploy
+!/requirements_docker.txt
 !/gunicorn_config.py
 !/index.py
-!/LICENSE
-!/requirements.txt
 !/init.sh
-!/setup.py
+### If there is already a datawarehouse, it will be updated
+!/datawarehouse
+
+## Package
+!/dao_analyzer/**
+!/cache_scripts/**
+!/LICENSE
 !/ABOUT.md
 !/README.md
-# If there is already a datawarehouse, it will be updated
-!/datawarehouse
 
 # Ignore again
 **/__pycache__/
