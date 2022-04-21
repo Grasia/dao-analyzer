@@ -90,6 +90,7 @@ class OrganizationsCollector(GraphQLUpdatableCollector):
 
             names_df = pd.json_normalize(names_dict[self.network])
             names_df['id'] = names_df['address'].str.lower()
+            names_df['name'] = names_df['name'].fillna(names_df['domain'])
             names_df = names_df[['id', 'name']]
             df = df.merge(names_df, on='id', how='left')
 
