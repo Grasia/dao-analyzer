@@ -28,8 +28,6 @@ class CalFigure(Figure):
         return self.get_figure(self.get_empty_plot_data())
     
     def get_figure(self, plot_data: Dict) -> Dict:
-        print(plot_data)
-
         fig: go.Figure = month_calplot(
             x=plot_data['x'],
             y=plot_data['y'],

@@ -171,6 +171,17 @@ class DaohausService(metaclass=Singleton):
             figure=CalFigure(),
             cont_key=self._ORGANIZATION
         ))
+        
+        charts.append(self.__create_chart(
+            title=TEXT['title_organization_activity'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.ORGANIZATION_ACTIVITY,
+                organizations=call
+            ),
+            figure=CalFigure(),
+            cont_key=self._ORGANIZATION
+        ))
+        
         return charts
 
 
