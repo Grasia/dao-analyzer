@@ -134,6 +134,7 @@ class DaohausService(metaclass=Singleton):
             TEXT['title_activity']: {
                 'callables': l_organization,
                 'css_id': TEXT['css_id_activity'],
+                'disclaimer': TEXT['disclaimer_activity']
             },
             TEXT['title_member']: {
                 'callables': l_member,

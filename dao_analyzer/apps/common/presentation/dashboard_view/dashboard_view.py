@@ -102,11 +102,20 @@ def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> html.Di
         charts = list()
         for chart_pane in data['callables']:
             charts.append(chart_pane())
-        
+
+        sec_hdr = html.Div(
+            [html.Div(name, className='section-title')],
+            id=f'{data["css_id"]}-hdr', 
+            className='section-left-padding-aligner section-hdr'
+        )
+
+        if 'disclaimer' in data and data['disclaimer']:
+            sec_hdr.children.append(html.Div(data['disclaimer'], className='section-disclaimer'))
+
         sec = html.Div(
             className='flex-column small-padding',
             children=[
-                html.Div(name, id=data['css_id'], className='section-title section-left-padding-aligner'),
+                sec_hdr,
                 html.Div(children=charts, className='flex-row flex-wrap flex-align-start')
             ],
         )
