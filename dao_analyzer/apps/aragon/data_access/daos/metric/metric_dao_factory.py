@@ -7,6 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 from typing import List, Dict, Tuple
+from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.st_organization_activity import StOrganizationActivity
 from dao_analyzer.apps.common.data_access.daos.metric.strategy import IMetricStrategy
 
 from dao_analyzer.apps.common.data_access.daos.metric.metric_dao \
@@ -40,6 +41,7 @@ CASTED_VOTE_FOR_RATE = 10
 CASTED_VOTE_AGAINST_RATE = 11
 ASSETS_VALUES = 12
 ASSETS_TOKENS = 13
+ORGANIZATION_ACTIVITY = 14
 
 
 def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
@@ -115,6 +117,13 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
             srcs.ORGANIZATIONS,
             srcs.TOKEN_BALANCES
         ], on=['recoveryVault', 'network'])
+    elif metric == ORGANIZATION_ACTIVITY:
+        stg = StOrganizationActivity()
+        requester = CacheRequester(srcs=[
+            srcs.CASTS,
+            srcs.VOTES,
+            srcs.TRANSACTIONS])
+        address_key = 'orgAddress'
     else:
         raise ValueError(f"Incorrect metric: {metric}")
 
