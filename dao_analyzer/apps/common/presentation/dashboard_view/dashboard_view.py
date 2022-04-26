@@ -37,7 +37,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str
         __generate_header(labels, ecosystem, update, org_value),
         html.Div(className='h-separator'),
         __generate_subheader(org_id),
-        __generate_sections(sections)
+        __generate_sections(sections, id=f'{org_id}-body')
     ], className='main-body left-padding-aligner right-padding-aligner')
     
 
@@ -95,7 +95,7 @@ def __generate_subheader(org_id: str) -> html.Div:
         children=html.Div(TEXT['no_data_selected'], className='dao-info-name'))
 
 
-def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
+def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> html.Div:
     tabs: List[dcc.Tab] = []
 
     for name, data in sections.items():
@@ -115,4 +115,4 @@ def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
             sec
         ]))
 
-    return html.Div(dcc.Tabs(tabs), className='flex-column body')
+    return html.Div(dcc.Tabs(tabs), id=id, className='flex-column body')

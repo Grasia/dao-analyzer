@@ -169,7 +169,8 @@ class DaohausService(metaclass=Singleton):
                 metric_id=s_factory.ACTIVE_ORGANIZATION, 
                 organizations=call),
             figure=CalFigure(),
-            cont_key=self._ORGANIZATION
+            cont_key=self._ORGANIZATION,
+            css_classes=['only-on-all-orgs']
         ))
         
         charts.append(self.__create_chart(
@@ -374,7 +375,7 @@ class DaohausService(metaclass=Singleton):
         return charts
 
     def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
-    , cont_key: int) -> Callable:
+    , cont_key: int, css_classes: List[str] = [], showOnlyOnAll: bool = False) -> Callable:
         """
         Creates the chart layout and its controller, and returns a callable
         to get the html representation.
@@ -383,14 +384,16 @@ class DaohausService(metaclass=Singleton):
         layout: ChartPaneLayout = ChartPaneLayout(
             title=title,
             css_id=css_id,
-            figure=figure
+            figure=figure,
+            css_classes=css_classes,
         )
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
         controller: ChartController = ChartController(
             css_id=css_id,
             layout=layout,
-            adapter=adapter)
+            adapter=adapter,
+        )
 
         self.__controllers[cont_key].append(controller)
         return layout.get_layout

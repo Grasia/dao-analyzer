@@ -248,6 +248,14 @@
     margin-bottom: 4rem;
 }
 
+.only-on-all-orgs {
+    display: none;
+}
+
+.is-all-orgs .only-on-all-orgs {
+    display: block;
+}
+
 /*********************/
 /*********************/
 

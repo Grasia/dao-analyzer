@@ -9,7 +9,7 @@
 
 from dash import html
 from dash import dcc
-from typing import List, Dict
+from typing import List, Dict, Union
 
 from dao_analyzer.apps.common.presentation.charts.layout.ilayout import ILayout
 from dao_analyzer.apps.common.resources.strings import TEXT
@@ -25,10 +25,14 @@ class ChartPaneLayout(ILayout):
     SUFFIX_ID_SUBTITLE2: str = '-subtitle2'
 
 
-    def __init__(self, title: str, css_id: str, figure: Figure) -> None:
+    def __init__(self, title: str, css_id: str, figure: Figure, css_classes: Union[List[str], str] = []) -> None:
         self.__title: str = title
         self.__css_id: str = css_id
         self.__figure: Figure = figure
+        if isinstance(css_classes, str):
+            self.__css_classes: List[str] = css_classes.split(' ')
+        else:
+            self.__css_classes: List[str] = css_classes
         self.__configuration: ChartPaneConfiguration = ChartPaneConfiguration(
             figure.configuration)
 
@@ -50,7 +54,7 @@ class ChartPaneLayout(ILayout):
                     id=self.__css_id,
                     className='flex-column'
             )),  
-            className=f'pane {self.configuration.css_border} two-column'
+            className=f'pane {self.configuration.css_border} two-column {" ".join(self.__css_classes)}'
         )
 
 
