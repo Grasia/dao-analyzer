@@ -10,9 +10,9 @@ import unittest
 from unittest.mock import MagicMock
 import pandas as pd
 
-from src.apps.common.data_access.daos.organization_dao import OrganizationListDao
-from src.apps.common.business.transfers.organization import OrganizationList
-from src.apps.common.data_access.requesters.cache_requester import CacheRequester
+from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
+from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
+from dao_analyzer.apps.common.data_access.requesters.cache_requester import CacheRequester
 
 class DaoOrganizationListTest(unittest.TestCase):
 

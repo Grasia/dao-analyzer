@@ -10,7 +10,7 @@ cache_scripts () {
     local p="$2"
     local other_args=$3
 
-    python -m cache_scripts $other_args -D "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names --only-updatable || exit 1
+    daoa-cache-scripts $other_args -D "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names --only-updatable || exit 1
 }
 
 generate_full () {
@@ -21,7 +21,7 @@ generate_full () {
         echo "$p" not found, running again
         cache_scripts "$d" "$p" "-F"
     else
-        if diff -w "$p/version.txt" <(python -m cache_scripts -V); then
+        if diff -w "$p/version.txt" <(daoa-cache-scripts cache_scripts -V); then
             echo "$p" found and good version, not running
         else
             echo "Version of datawarehouse and cache_scripts differ, running again"

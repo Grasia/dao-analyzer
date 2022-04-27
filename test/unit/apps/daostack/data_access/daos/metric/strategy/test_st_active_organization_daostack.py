@@ -12,9 +12,9 @@ from typing import List
 import pandas as pd
 
 from test.mocks.unix_date_builder import UnixDateBuilder
-from src.apps.daostack.data_access.daos.metric.strategy.\
+from dao_analyzer.apps.daostack.data_access.daos.metric.strategy.\
     st_active_organization import StActiveOrganization
-from src.apps.common.business.transfers.stacked_serie import StackedSerie
+from dao_analyzer.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
 class StActiveOrganizationTest(unittest.TestCase):

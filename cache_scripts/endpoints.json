@@ -6,7 +6,7 @@
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats",
         "aragon": "https://api.thegraph.com/subgraphs/name/aragon/aragon-mainnet",
-        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/daviddavo/aragon-tokens-mainnet",
+        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/grasia/aragon-tokens-mainnet",
         "aragon_voting": "https://api.thegraph.com/subgraphs/name/grasia/aragon-voting-mainnet",
         "aragon_finance": "https://api.thegraph.com/subgraphs/name/grasia/aragon-finance-mainnet"
     },
@@ -17,17 +17,17 @@
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-xdai",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-xdai",
         "aragon": "https://api.thegraph.com/subgraphs/name/1hive/aragon-xdai",
-        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/daviddavo/aragon-tokens-xdai",
+        "aragon_tokens": "https://api.thegraph.com/subgraphs/name/grasia/aragon-tokens-xdai",
         "aragon_voting": "https://api.thegraph.com/subgraphs/name/grasia/aragon-voting-xdai",
         "aragon_finance": "https://api.thegraph.com/subgraphs/name/grasia/aragon-finance-xdai"
     },
     "polygon": {
-        "_blocks": "https://api.thegraph.com/subgraphs/name/daviddavo/matic-blocks",
+        "_blocks": "https://api.thegraph.com/subgraphs/name/grasia/matic-blocks",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-matic",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-matic"
     },
     "arbitrum": {
-        "_blocks": "https://api.thegraph.com/subgraphs/name/daviddavo/arbitrum-blocks",
+        "_blocks": "https://api.thegraph.com/subgraphs/name/grasia/arbitrum-blocks",
         "daohaus": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-arbitrum",
         "daohaus_stats": "https://api.thegraph.com/subgraphs/name/odyssy-automaton/daohaus-stats-arbitrum"
     },

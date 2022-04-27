@@ -6,6 +6,14 @@ You can either install it on your local machine, or if you prefer it, you can us
 
 > If you only want to retrieve the data used by our application, you can follow [this guide](./cache_scripts/README.md) instead
 
+The easiest method by far to download and run the application is to use pip to install it
+
+```
+pip install dao-analyzer
+```
+
+Then, you can run the app using the command `daoa-server`
+
 ## Download
 Enter in your terminal (git must be installed) and write down:
 
@@ -84,7 +92,7 @@ You can even add it to your system as a cron job to update it daily, weekly, etc
 ## Technical details
 
 ### Architecture
-There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/src/apps/aragon/class_diagram.png).
+There is available a class diagram of the [DAOstack app](https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/apps/daostack/class_diagram.png), the [DAOhaus app](https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/apps/daohaus/class_diagram.png), and the [Aragon app](https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/apps/aragon/class_diagram.png).
 
 ### Debugging
 
