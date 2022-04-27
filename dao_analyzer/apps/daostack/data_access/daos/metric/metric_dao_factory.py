@@ -39,6 +39,7 @@ from dao_analyzer.apps.daostack.data_access.daos.metric.strategy.st_total_reputa
     import StTotalRepHolders
 from dao_analyzer.apps.daostack.data_access.daos.metric.strategy.st_voters_percentage\
     import StVotersPercentage
+from .strategy.st_organization_activity import StOrganizationActivity
 
 NEW_USERS = 0
 NEW_PROPOSALS = 1
@@ -62,6 +63,7 @@ TOTAL_REP_HOLDERS = 18
 VOTERS_PERCENTAGE = 19
 ASSETS_VALUES = 20
 ASSETS_TOKENS = 21
+ORGANIZATION_ACTIVITY = 22
 
 # TODO: Do this in the other files or MISS
 def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
@@ -148,6 +150,12 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
             srcs.DAOS,
             srcs.TOKEN_BALANCES
         ])
+    elif metric == ORGANIZATION_ACTIVITY:
+        stg = StOrganizationActivity()
+        requester = CacheRequester(srcs=[
+            srcs.PROPOSALS,
+            srcs.VOTES,
+            srcs.STAKES])
     else:
         raise ValueError(f"Incorrect metric: {metric}")
     

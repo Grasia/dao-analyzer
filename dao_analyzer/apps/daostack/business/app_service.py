@@ -36,7 +36,7 @@ from dao_analyzer.apps.daostack.business.metric_adapter.asset_tokens import Asse
 from dao_analyzer.apps.daostack.business.metric_adapter.asset_values import AssetsValues
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
 from dao_analyzer.apps.common.presentation.charts.layout import ChartPaneLayout, DataTableLayout
-from dao_analyzer.apps.common.presentation.charts.layout.figure import BarFigure, MultiBarFigure, DoubleScatterFigure, Figure, TreemapFigure
+from dao_analyzer.apps.common.presentation.charts.layout.figure import BarFigure, CalFigure, MultiBarFigure, DoubleScatterFigure, Figure, TreemapFigure
 from dao_analyzer.apps.daostack.resources.strings import TEXT
 
 class DaostackService(metaclass=Singleton):
@@ -143,7 +143,8 @@ class DaostackService(metaclass=Singleton):
         return {
             TEXT['activity_title'] : {
                 'callables': l_organization,
-                'css_id': TEXT['css_id_activity']
+                'css_id': TEXT['css_id_activity'],
+                'disclaimer': TEXT['disclaimer_activity'],
             },
             TEXT['rep_holder_title']: {
                 'callables': l_rep_h,
@@ -176,7 +177,15 @@ class DaostackService(metaclass=Singleton):
         charts.append(self.__create_chart(
             title=TEXT['title_active_organization'],
             adapter=MetricAdapter(s_factory.ACTIVE_ORGANIZATION, call),
-            figure=BarFigure(),
+            figure=CalFigure(),
+            cont_key=self._ORGANIZATION,
+            css_classes=['only-on-all-orgs'],
+        ))
+
+        charts.append(self.__create_chart(
+            title=TEXT['title_organization_activity'],
+            adapter=MetricAdapter(s_factory.ORGANIZATION_ACTIVITY, call),
+            figure=CalFigure(),
             cont_key=self._ORGANIZATION
         ))
 
@@ -388,7 +397,7 @@ class DaostackService(metaclass=Singleton):
         return charts
 
     def __create_chart(self, title: str, adapter: MetricAdapter, figure: Figure
-    , cont_key: int) -> Callable:
+    , cont_key: int, css_classes = []) -> Callable:
         """
         Creates the chart layout and its controller, and returns a callable
         to get the html representation.
@@ -397,7 +406,8 @@ class DaostackService(metaclass=Singleton):
         layout: ChartPaneLayout = ChartPaneLayout(
             title=title,
             css_id=css_id,
-            figure=figure
+            figure=figure,
+            css_classes=css_classes,
         )
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
