@@ -91,7 +91,7 @@ def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str,
 def __generate_subheader(org_id: str) -> html.Div:
     return html.Div(
         id=org_id,
-        className='flex-column body small-padding dao-info',
+        className='body small-padding',
         children=html.Div(TEXT['no_data_selected'], className='dao-info-name'))
 
 

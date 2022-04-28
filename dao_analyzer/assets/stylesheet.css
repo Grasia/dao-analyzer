@@ -15,6 +15,14 @@
     color: #383838;
 }
 
+.flex-container {
+    display: flex;
+}
+
+.grid-container {
+    display: grid;
+}
+
 /*********************/
 /*    HEADER         */
 .main-header {
@@ -158,16 +166,23 @@
 /*********************/
 
 /****** Dao-Info *****/
+.dao-header-container {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
 .dao-info {
     color: #235370;
 }
 
 .dao-info-name {
-    font-size: 3em;
+    font-size: 2.5em;
 }
 
 .dao-info-network {
-    font-size: 2em;
+    font-size: 1em;
 }
 
 .dao-info-address {
@@ -176,9 +191,57 @@
 
 .dao-info-label {
     font-size: small;
-    color: lightgray;
+    color: gray;
+    text-transform: uppercase;
 }
 /*********************/
+
+/***** DAO SUMMARY ******/
+.dao-summary-container {
+    color: white;
+    background-color: #8944c1;
+}
+
+.dao-summary-hdr {
+    border-bottom: 2px solid var(--text-accent-color);
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dao-summary-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 10px;
+}
+
+.dao-summary-datapoint {
+    padding: 5px;
+}
+
+.dao-summary-datapoint-title {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: x-small;
+}
+
+.dao-summary-datapoint-number {
+    font-size: x-large;
+}
+
+.dao-summary-datapoint-lastmonth {
+    font-size: x-small;
+    text-transform: capitalize;
+}
+
+.dp-icon-up {
+    color: #4ddea4;
+}
+
+.dp-icon-down {
+    color: #ea44cd;
+}
+/************************/
 
 /****** Body *********/
 .body {
@@ -415,6 +478,9 @@
     color: #2F2F2F;
     margin-top: 0.3em;
     font-family: 'Courier New', Courier, monospace;
+    max-width: fit-content;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 /*********************/
