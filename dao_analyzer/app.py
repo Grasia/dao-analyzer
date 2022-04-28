@@ -23,7 +23,12 @@ DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'].lower() == 'true' or \
 
 pd.options.mode.chained_assignment = 'warn' if DEBUG else None
 
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app = dash.Dash(__name__, 
+    suppress_callback_exceptions=True, 
+    external_scripts=[
+        "https://kit.fontawesome.com/15714856cb.js", # Font Awesome
+    ],
+)
 
 matomo_url = None
 site_id = None
