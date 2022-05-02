@@ -22,6 +22,7 @@ from dao_analyzer.apps.daohaus.business.metric_adapter.asset_tokens import Asset
 import dao_analyzer.apps.daohaus.data_access.daos.metric.srcs as srcs
 from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.presentation.charts.chart_controller import ChartController
+from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
 from dao_analyzer.apps.common.presentation.charts.layout import ChartPaneLayout, DataTableLayout
 from dao_analyzer.apps.common.presentation.charts.layout.figure import Figure, BarFigure, MultiBarFigure, TreemapFigure
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
@@ -190,13 +191,15 @@ class DaohausService(metaclass=Singleton):
         ))
 
         # total members
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['title_total_members'],
             adapter=BasicAdapter(
                 metric_id=s_factory.TOTAL_MEMBERS, 
                 organizations=call),
             figure=BarFigure(),
-            cont_key=self._MEMBER
+            cont_key=self._MEMBER,
+            # TODO: Dont hardcode it
+            datapoint_id='daohaus-organization-dp-members',
         ))
 
         # active members
@@ -383,6 +386,36 @@ class DaohausService(metaclass=Singleton):
 
         self.__controllers[cont_key].append(controller)
         return layout.get_layout
+
+    def __create_sum_chart(self, 
+        title: str,
+        adapter: IMetricAdapter,
+        figure: Figure,
+        cont_key: int,
+        datapoint_id: str,
+    ):
+        """
+        Creates the chart layout and its summary controller, and returns a callable
+        to get the html representation.
+        """
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=figure
+        )
+        layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
+
+        controller: ChartController = ChartSummaryController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter,
+            datapoint_id=datapoint_id,
+        )
+
+        self.__controllers[cont_key].append(controller)
+        return layout.get_layout
+        
 
     def __create_dataTable(self, title: str, adapter: IMetricAdapter, cont_key: int) -> Callable:
         """Creates a datatable to put alongside charts

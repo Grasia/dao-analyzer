@@ -16,6 +16,9 @@ from dao_analyzer.apps.common.data_access.requesters.irequester import IRequeste
 
 
 class OrganizationListDao:
+    # Daohaus, Aragon
+    __DATE_ROWS = ['summoningTime', 'createdAt']
+    
     def __init__(self, requester: IRequester):
         self.__requester = requester
 
@@ -24,10 +27,19 @@ class OrganizationListDao:
         df: pd.DataFrame = self.__requester.request()
         list: List[Organization] = []
 
+        # Detect the time row
+        date_idx = next((x for x in self.__DATE_ROWS if x in df.columns), None)
+
+        # TODO: Optimize this somehow
         for _, row in df.iterrows():
             name = row['name'] if not pd.isna(row['name']) else None
             network = row['network'] if not pd.isna(row['network']) else None
 
-            list.append(Organization(o_id=row['id'], name=name, network=network))
+            if date_idx and not pd.isna(row[date_idx]):
+                creation_date = pd.to_datetime(row[date_idx], unit='s').date()
+            else:
+                creation_date = None
+
+            list.append(Organization(o_id=row['id'], name=name, network=network, creation_date=creation_date))
 
         return OrganizationList(list)

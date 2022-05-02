@@ -9,71 +9,82 @@
 
 from typing import List, Dict
 
+from datetime import date
+
 from dao_analyzer.apps.common.resources.strings import TEXT
 
 
 class Organization:
-    def __init__(self, o_id: str = TEXT['no_data'], name: str = TEXT['no_data'], network: str = TEXT['no_data']):
-        self.__id: str = o_id
-        self.__name: str = name
-        self.__network: str = network
+    def __init__(self,
+        o_id: str = TEXT['no_data'],
+        name: str = TEXT['no_data'],
+        network: str = TEXT['no_data'],
+        creation_date: date = None
+    ):
+        self._id: str = o_id
+        self._name: str = name
+        self._network: str = network
+        self._creation_date: date = creation_date
 
     # Redefinition of sorting functions
     def __eq__(self, other) -> bool:
-        return self.__id == other.__id and self.__network == other.__network
+        return self._id == other._id and self._network == other._network
 
     """ First we have the items with a name sorted by name. Then the ones without
         name sorted by id
     """
     def __lt__(self, other) -> bool:
         # If self doesn't have a name, we check if other has a name
-        if self.__name is None:
-            if other.__name is None:
-                return self.__id < other.__id
+        if self._name is None:
+            if other._name is None:
+                return self._id < other._id
             else:
                 return False
 
         # If self has a name, but other does not have a name,
         # then self is lower than the other
-        if other.__name is None:
+        if other._name is None:
             return True
         
         # If the name is the same, we sort by network, then by id
-        if self.__name.casefold() == other.__name.casefold():
-            if self.__network.casefold() == other.__network.casefold():
-                return self.__id < other.__id
+        if self._name.casefold() == other._name.casefold():
+            if self._network.casefold() == other._network.casefold():
+                return self._id < other._id
             else:
-                return self.__network.casefold() < other.__network.casefold()
+                return self._network.casefold() < other._network.casefold()
         else:
-            return self.__name.casefold() < other.__name.casefold()
+            return self._name.casefold() < other._name.casefold()
     
     def get_dict_representation(self) -> Dict[str, str]:
         return {
-            'value': self.__id, 
+            'value': self._id, 
             'label': self.get_label()
         }
 
 
     def get_id(self) -> str:
-        return self.__id
+        return self._id
 
     def get_name(self) -> str:
-        return self.__name
+        return self._name
 
     def get_network(self) -> str:
-        return self.__network
+        return self._network
+
+    def get_creation_date(self) -> date:
+        return self._creation_date
 
     def get_label(self) -> str:
-        if not self.__name:
-            return f"{self.__id[:16]}... ({self.__network})"
+        if not self._name:
+            return f"{self._id[:16]}... ({self._network})"
         
-        return f"{self.__name} ({self.__id[:8]}... {self.__network})"
+        return f"{self._name} ({self._id[:8]}... {self._network})"
 
     def get_label_long(self) -> str:
-        if not self.__name:
-            return f"{self.__id} ({self.__network})"
+        if not self._name:
+            return f"{self._id} ({self._network})"
 
-        return f"{self.__name} — {self.__id} ({self.__network})"
+        return f"{self._name} — {self._id} ({self._network})"
 
 class OrganizationList:
     __ALL_ORGS_ID: str = '1'

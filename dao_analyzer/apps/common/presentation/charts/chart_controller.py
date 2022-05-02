@@ -16,25 +16,25 @@ from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
 class ChartController():
 
     def __init__(self, css_id: str, layout: ChartPaneLayout, adapter: IMetricAdapter) -> None:
-        self.__layout: ChartPaneLayout = layout
-        self.__adapter: IMetricAdapter = adapter
-        self.__css_id: str = css_id
+        self._layout: ChartPaneLayout = layout
+        self._adapter: IMetricAdapter = adapter
+        self._css_id: str = css_id
 
 
     @property
     def layout(self) -> ChartPaneLayout:
-        return self.__layout
+        return self._layout
 
 
     def bind_callback(self, app) -> None:
 
         @app.callback(
-             Output(self.__css_id, 'children'),
+             Output(self._css_id, 'children'),
             [Input('org-dropdown', 'value')]
         )
         def update_chart(org_id):
             if not org_id:
-                self.__layout.get_layout()
+                self._layout.get_layout()
 
-            data = self.__adapter.get_plot_data(org_id)
-            return self.__layout.fill_child(plot_data=data)
+            data = self._adapter.get_plot_data(org_id)
+            return self._layout.fill_child(plot_data=data)
