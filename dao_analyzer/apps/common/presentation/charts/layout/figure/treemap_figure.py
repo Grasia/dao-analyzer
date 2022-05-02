@@ -33,6 +33,9 @@ class TreemapFigure(Figure):
         Arguments:
             * plot_data: see https://plotly.com/python/reference/treemap/
         """
+        # TODO: Instead of popping 'total', pass only needed values
+
+        plot_data.pop('total', None)
         treemap: go.Treemap = go.Treemap(**plot_data)
         layout: go.Layout = go.Layout(margin=dict(t=40, l=25, r=25, b=25))
 

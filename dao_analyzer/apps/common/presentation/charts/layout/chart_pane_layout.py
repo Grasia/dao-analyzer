@@ -54,8 +54,11 @@ class ChartPaneLayout(ILayout):
         )
 
 
-    def fill_child(self, plot_data: Dict) -> List:
-        figure = self.__figure.get_figure(plot_data=plot_data)
+    def fill_child(self, plot_data: Dict = None) -> List:
+        if plot_data:
+            figure = self.__figure.get_figure(plot_data=plot_data)
+        else:
+            figure = self.__figure.get_empty_figure()
         subtitle1: str = TEXT['default_amount']
         subtitle2: str = TEXT['no_data_selected']
 

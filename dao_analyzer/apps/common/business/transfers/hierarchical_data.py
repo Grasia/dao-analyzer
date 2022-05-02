@@ -7,6 +7,7 @@
         <ddavo@ucm.es>
 """
 import pandas as pd
+from millify import millify
 
 class HierarchicalData():
     """
@@ -15,6 +16,7 @@ class HierarchicalData():
     * ids
     * values
     * customdata
+    * total
     """
 
     def __init__(self):
@@ -23,6 +25,7 @@ class HierarchicalData():
         self.ids = []
         self.values = []
         self.customdata = []
+        self.total = None
     
     @staticmethod
     def from_df(df: pd.DataFrame):
@@ -33,6 +36,8 @@ class HierarchicalData():
         self.values = df['value'].to_list()
         if 'customData' in df.columns:
             self.customdata = df['customData'].to_list()
+        self.total = df['value'].sum()
+        self.total = millify(df['value'].sum(), precision=2) + '$'
 
         return self
     
@@ -43,4 +48,5 @@ class HierarchicalData():
             'parents': self.parents,
             'values': self.values,
             'customdata': self.customdata,
+            'total': self.total,
         }

@@ -32,7 +32,6 @@ class ChartSummaryController(ChartController):
         return f'{self._dp_id}-evolution'
 
     def bind_callback(self, app) -> None:
-        print("Number id:", self._number_css_id)
 
         @app.callback(
             Output(self._css_id, 'children'),
@@ -42,10 +41,19 @@ class ChartSummaryController(ChartController):
         )
         def update_chart(org_id):
             if not org_id:
-                self._layout.get_layout(), ''
+                return self._layout.fill_child(None), '', ''
             
             data = self._adapter.get_plot_data(org_id)
 
-            diffStr = f'{data["diff"]:.0f}'
-            evolution = [_get_dp_icon(diffStr), " ", diffStr]
-            return self._layout.fill_child(data), data['last_value'], evolution
+            number = None
+            if 'last_value' in data:
+                number = data['last_value']
+            elif 'total' in data:
+                number = data['total']
+
+            evolution = None
+            if 'diff' in data:
+                diffStr = f'{data["diff"]:.0f}'
+                evolution = [_get_dp_icon(diffStr), " ", diffStr]
+
+            return self._layout.fill_child(data), number, evolution

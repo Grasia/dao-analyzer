@@ -348,11 +348,13 @@ class DaohausService(metaclass=Singleton):
 
         # assets with value
         # TODO: Show value in $ in the title
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['title_assets_value'],
             adapter=AssetsValues(call),
             figure=TreemapFigure(),
-            cont_key=self._ASSETS
+            cont_key=self._ASSETS,
+            # TODO: Don't hardcode it
+            datapoint_id='daohaus-organization-dp-treasury',
         ))
         self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
 

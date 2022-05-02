@@ -107,15 +107,24 @@ def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
 def _get_dp_icon(evolution: str):
     if evolution.startswith('-'):
         return html.I(className='fa-solid fa-circle-down fa-xs dp-icon-down')
+    elif evolution == '0' or evolution == '?':
+        return html.I(className='fa-solid fa-circle-minus fa-xs dp-icon-same')
     else:
         return html.I(className='fa-solid fa-circle-up fa-xs dp-icon-up')
 
-def _get_dp_children(title: str = "?", number: str = "?", evolution: str = "?", id: str = ""):
+def _get_dp_children(
+        title: str = "?",
+        number: str = "?",
+        evolution: str = "?",
+        id: str = "",
+        hide_evolution: bool = False
+    ):
+    hes = { 'display': 'none' } if hide_evolution else {}
     return [
         html.Span(title, className='dao-summary-datapoint-title'),
         html.Div(number, className='dao-summary-datapoint-number', id=id+'-number'),
-        html.Div(TEXT['this_month'], className='dao-summary-datapoint-lastmonth'),
-        html.Div([_get_dp_icon(evolution), " ", evolution], className='dao-summary-datapoint-evolution', id=id+'-evolution'),
+        html.Div(TEXT['this_month'], className='dao-summary-datapoint-lastmonth', style=hes),
+        html.Div([_get_dp_icon(evolution), " ", evolution], className='dao-summary-datapoint-evolution', id=id+'-evolution', style=hes),
     ]
 
 def _gen_sum_hdr(creation_date: date = None):
@@ -133,7 +142,7 @@ def _get_dao_summary_layout(org_id, creation_date: date = None):
         ),
         html.Div(),
         html.Div(
-            _get_dp_children(TEXT['dp_title_treasury'], id=org_id+'-dp-treasury'),
+            _get_dp_children(TEXT['dp_title_treasury'], id=org_id+'-dp-treasury', hide_evolution=True),
             className='dao-summary-datapoint',
             id=org_id+'-dp-treasury'
         ),

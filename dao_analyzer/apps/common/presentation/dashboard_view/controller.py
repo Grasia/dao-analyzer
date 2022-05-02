@@ -32,7 +32,7 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
 
         organizations = organizationsDAO.get_organizations()
         if organizations.is_all_orgs(value):
-            return html.Div(options[0]["label"], className='dao-info-name')
+            return html.Div(options[0]["label"], className='dao-info-name'), _gen_sum_hdr()
         
         result = next((x for x in organizations if x.get_id() == value))
         
