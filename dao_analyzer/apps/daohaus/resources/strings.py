@@ -22,7 +22,7 @@ TEXT: dict = {
     'dp_id_treasury': 'daohaus-dp-treasury',
     'dp_id_vote': 'daohaus-dp-vote',
     'dp_title_members': 'Members',
-    'dp_title_proposals': 'Proposals',
+    'dp_title_proposals': 'New Proposals',
     'dp_title_treasury': 'Treasury',
     'dp_title_vote': 'Votes',
     'pane_css_prefix': 'daohaus-pane',
