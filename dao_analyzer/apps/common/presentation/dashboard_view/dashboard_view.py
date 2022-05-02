@@ -8,6 +8,7 @@
 """
 import os
 from typing import Dict, List, Callable
+from datetime import date
 from dash import dcc
 from dash import html
 
@@ -88,12 +89,69 @@ def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str,
 
     ], className='body-header small-padding flex-row')
 
+### SUBHEADER THINGS
+def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
+    grid: List[html.Div] = [
+        html.Div("Name", className='dao-info-label'),
+        html.Div(name, className='dao-info-name'),
+        html.Div("Network", className='dao-info-label'),
+        html.Div(network, className='dao-info-network'),
+        html.Div("Address", className='dao-info-label'),
+        html.Div(html.Span(addr, className='address'), className='dao-info-address'),
+    ]
+    
+    return html.Div(grid, className='dao-info grid-container', style={
+        'grid-template-columns': '100px 1fr',
+    })
+
+def _get_dp_icon(evolution: str):
+    if evolution.startswith('-'):
+        return html.I(className='fa-solid fa-circle-down fa-xs dp-icon-down')
+    else:
+        return html.I(className='fa-solid fa-circle-up fa-xs dp-icon-up')
+
+def _get_dp_children(title: str = "?", number: str = "?", evolution: str = "?", id: str = ""):
+    return [
+        html.Span(title, className='dao-summary-datapoint-title'),
+        html.Div(number, className='dao-summary-datapoint-number', id=id+'-number'),
+        html.Div(TEXT['this_month'], className='dao-summary-datapoint-lastmonth'),
+        html.Div([_get_dp_icon(evolution), " ", evolution], className='dao-summary-datapoint-evolution', id=id+'-evolution'),
+    ]
+
+def _gen_sum_hdr(creation_date: date = None):
+    if creation_date:
+        return html.Span(['Creation date: ', html.B(creation_date.isoformat())])
+    else:
+        return None
+
+def _get_dao_summary_layout(org_id, creation_date: date = None):
+    rest = html.Div([
+        html.Div(
+            _get_dp_children(TEXT['dp_title_members'], id=org_id+'-dp-members'), 
+            className='dao-summary-datapoint', 
+            id=org_id+'-dp-members'
+        ),
+        html.Div(),
+        html.Div(
+            _get_dp_children(TEXT['dp_title_treasury'], id=org_id+'-dp-treasury'),
+            className='dao-summary-datapoint',
+            id=org_id+'-dp-treasury'
+        ),
+    ], className='dao-summary-body', id=org_id+'-dp')
+    return html.Div([
+        html.Div(_gen_sum_hdr(creation_date), className='dao-summary-hdr', id=org_id+'-summary-hdr'),
+        rest,
+    ], className='dao-summary-container', style={'padding': '1em'})
+
 def __generate_subheader(org_id: str) -> html.Div:
     return html.Div(
         id=org_id,
         className='body small-padding',
-        children=html.Div(TEXT['no_data_selected'], className='dao-info-name'))
-
+        children=html.Div([
+           html.Div(html.Div(TEXT['no_data_selected'], className='dao-info-name'), id=org_id+'-info'),
+           _get_dao_summary_layout(org_id)
+        ], className='dao-header-container'),
+    )
 
 def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
     tabs: List[dcc.Tab] = []

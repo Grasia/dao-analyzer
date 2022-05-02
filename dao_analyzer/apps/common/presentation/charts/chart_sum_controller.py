@@ -10,7 +10,7 @@ from dash.dependencies import Input, Output
 
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
 from dao_analyzer.apps.common.presentation.charts.layout.chart_pane_layout import ChartPaneLayout
-from dao_analyzer.apps.common.presentation.dashboard_view.controller import _get_dp_icon
+from dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view import _get_dp_icon
 from .chart_controller import ChartController
 
 class ChartSummaryController(ChartController):
@@ -41,7 +41,6 @@ class ChartSummaryController(ChartController):
             Input('org-dropdown', 'value'),
         )
         def update_chart(org_id):
-            print(f"Inside chart summary controller {self._css_id}. dp: {self._dp_id}")
             if not org_id:
                 self._layout.get_layout(), ''
             

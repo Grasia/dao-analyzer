@@ -34,6 +34,8 @@ TEXT: dict = {
     'daostack': 'DAOstack',
     'daostack_image_name': 'daostack.png',
     'default_amount': 'NAN',
+    'dp_title_members': 'Members',
+    'dp_title_treasury': 'Treasury',
     'ecosystem': 'ecosystem',
     'ecosystem_selector_title': 'Select the platform:',
     'erc_image_name': 'logo-erc.png',
@@ -58,6 +60,7 @@ TEXT: dict = {
     'p2p_models_url': 'https://p2pmodels.eu/',
     'spanish_ministry_image_name': 'logo-ministerio.png',
     'spanish_ministry_url': 'https://www.ciencia.gob.es/',
+    'this_month': 'This month',
     'ucm_url': 'https://www.ucm.es/',
     'unknown_dao_name': '———', # Em dash
     'url_aragon': 'aragon',
