@@ -12,10 +12,12 @@ from typing import Dict, List, Callable
 from dash import html
 
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
+from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
 from dao_analyzer.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
+from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 import dao_analyzer.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 from dao_analyzer.apps.common.data_access.requesters.cache_requester import CacheRequester
@@ -61,6 +63,7 @@ class DaostackService(metaclass=Singleton):
             self._ASSETS: list(),
         }
         self.__already_bound: bool = False
+        self.__data_points: Dict[str, DataPointLayout] = {}
 
 
     def bind_callbacks(self, app) -> None:
@@ -106,7 +109,8 @@ class DaostackService(metaclass=Singleton):
             ecosystem='daostack',
             update=self.__cacheRequester.get_last_update_str(),
             org_id=TEXT['css_id_organization'],
-            org_value=org_value
+            org_value=org_value,
+            datapoints=self.__get_datapoints(),
         )
 
     def __gen_sections(self) -> None:
@@ -167,6 +171,12 @@ class DaostackService(metaclass=Singleton):
             },
         }
 
+    def __get_datapoints(self):
+        if not self.are_panes:
+            self.__gen_sections()
+
+        return self.__data_points
+
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
@@ -200,11 +210,13 @@ class DaostackService(metaclass=Singleton):
         ))
 
         # total reputation holders
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['total_users_title'],
             adapter=MetricAdapter(s_factory.TOTAL_REP_HOLDERS, call),
             figure=BarFigure(),
-            cont_key=self._REP_H
+            cont_key=self._REP_H,
+            dp_id=TEXT['total_users_dp_id'],
+            dp_title=TEXT['total_users_dp_title'],
         ))
 
         # active reputation holders
@@ -313,11 +325,13 @@ class DaostackService(metaclass=Singleton):
         call: Callable = self.organizations
 
         # new proposals
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['new_proposals_title'],
             adapter=MetricAdapter(s_factory.NEW_PROPOSALS, call),
             figure=BarFigure(),
-            cont_key=self._PROPOSAL
+            cont_key=self._PROPOSAL,
+            dp_id=TEXT['new_proposals_dp_id'],
+            dp_title=TEXT['new_proposals_dp_title'],
         ))
 
         # majority type
@@ -371,11 +385,14 @@ class DaostackService(metaclass=Singleton):
         charts: List[Callable] = list()
         call: Callable = self.organizations
 
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['assets_value_title'],
             adapter=AssetsValues(call),
             figure=TreemapFigure(),
-            cont_key=self._ASSETS
+            cont_key=self._ASSETS,
+            dp_id=TEXT['assets_value_dp_id'],
+            dp_title=TEXT['assets_value_dp_title'],
+            dp_hide_evolution=True,
         ))
         self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
 
@@ -405,6 +422,43 @@ class DaostackService(metaclass=Singleton):
             css_id=css_id,
             layout=layout,
             adapter=adapter)
+
+        self.__controllers[cont_key].append(controller)
+        return layout.get_layout
+
+    def __create_sum_chart(self,
+        title: str, 
+        adapter: MetricAdapter, 
+        figure: Figure, 
+        cont_key: int,
+        dp_id: str,
+        dp_title: str,
+        dp_hide_evolution: bool = False,
+    ) -> Callable:
+        """
+        Creates the chart layout and its controller, and returns a callable
+        to get the html representation.
+        """
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=figure
+        )
+        layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
+
+        self.__data_points[dp_id] = DataPointLayout(
+            css_id=dp_id,
+            title=dp_title,
+            hide_evolution=dp_hide_evolution,
+        )
+
+        controller: ChartController = ChartSummaryController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter,
+            datapoint_layout=self.__data_points[dp_id]
+        )
 
         self.__controllers[cont_key].append(controller)
         return layout.get_layout
