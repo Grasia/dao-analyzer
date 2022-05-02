@@ -10,7 +10,7 @@
 
 from typing import Dict, List, Callable
 from dash import html
-from dao_analyzer.apps.common.presentation.charts.data_point_layout import DataPointLayout
+from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view

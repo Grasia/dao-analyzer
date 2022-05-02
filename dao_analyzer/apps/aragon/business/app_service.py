@@ -21,7 +21,9 @@ from dao_analyzer.apps.aragon.business.metric_adapter.asset_tokens import Assets
 import dao_analyzer.apps.aragon.data_access.daos.metric.srcs as srcs
 from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.presentation.charts.chart_controller import ChartController
+from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
+from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 from dao_analyzer.apps.common.presentation.charts.layout import ChartPaneLayout, DataTableLayout
 from dao_analyzer.apps.common.presentation.charts.layout.figure import Figure, BarFigure, MultiBarFigure, TreemapFigure
 import dao_analyzer.apps.aragon.data_access.daos.metric.metric_dao_factory as s_factory
@@ -57,6 +59,7 @@ class AragonService(metaclass=Singleton):
             self._ASSETS: list()
         }
         self.__already_bound: bool = False
+        self.__data_points: Dict[str, DataPointLayout] = {}
     
     def bind_callbacks(self, app) -> None:
         if not self.__already_bound:
@@ -97,7 +100,8 @@ class AragonService(metaclass=Singleton):
             ecosystem='aragon',
             update=self.__cacheRequester.get_last_update_str(),
             org_id=TEXT['css_id_organization'],
-            org_value=org_value
+            org_value=org_value,
+            datapoints=self.__get_datapoints(),
         )
     
 
@@ -166,6 +170,11 @@ class AragonService(metaclass=Singleton):
             },
         }
 
+    def __get_datapoints(self):
+        if not self.are_panes:
+            self.__gen_sections()
+        
+        return self.__data_points
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
@@ -189,13 +198,15 @@ class AragonService(metaclass=Singleton):
         call: Callable = self.organizations
 
         # active token holders
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['title_active_token_holders'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_TOKEN_HOLDERS, 
                 organizations=call),
             figure=BarFigure(),
-            cont_key=self._TOKEN_HOLDER
+            cont_key=self._TOKEN_HOLDER,
+            dp_id=TEXT['dp_id_active_token_holders'],
+            dp_title=TEXT['dp_title_active_token_holders'],
         ))
 
         return charts
@@ -206,13 +217,15 @@ class AragonService(metaclass=Singleton):
         call: Callable = self.organizations
 
         # new votes
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['title_new_votes'],
             adapter=BasicAdapter(
                 metric_id=s_factory.NEW_VOTES, 
                 organizations=call),
             figure=BarFigure(),
-            cont_key=self._VOTE
+            cont_key=self._VOTE,
+            dp_id=TEXT['dp_id_new_votes'],
+            dp_title=TEXT['dp_title_new_votes'],
         ))
 
         # vote's outcome
@@ -329,11 +342,14 @@ class AragonService(metaclass=Singleton):
         charts: List[Callable] = list()
         call: Callable = self.organizations
 
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['title_assets_value'],
             adapter=AssetsValues(call),
             figure=TreemapFigure(),
-            cont_key=self._ASSETS
+            cont_key=self._ASSETS,
+            dp_id=TEXT['dp_id_assets'],
+            dp_title=TEXT['dp_title_assets'],
+            dp_hide_evolution=True,
         ))
         self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
 
@@ -363,6 +379,43 @@ class AragonService(metaclass=Singleton):
             css_id=css_id,
             layout=layout,
             adapter=adapter)
+
+        self.__controllers[cont_key].append(controller)
+        return layout.get_layout
+
+    def __create_sum_chart(self, 
+        title: str,
+        adapter: IMetricAdapter,
+        figure: Figure,
+        cont_key: int,
+        dp_id: str,
+        dp_title: str,
+        dp_hide_evolution: bool = False,
+    ) -> Callable:
+        """
+        Creates the chart layout and its controller, and returns a callable
+        to get the html representation.
+        """
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=figure
+        )
+        layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
+
+        self.__data_points[dp_id] = DataPointLayout(
+            css_id=dp_id,
+            title=dp_title,
+            hide_evolution=dp_hide_evolution,
+        )
+
+        controller: ChartController = ChartSummaryController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter,
+            datapoint_layout=self.__data_points[dp_id],
+        )
 
         self.__controllers[cont_key].append(controller)
         return layout.get_layout

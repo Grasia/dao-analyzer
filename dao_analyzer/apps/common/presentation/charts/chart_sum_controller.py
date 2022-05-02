@@ -9,7 +9,7 @@
 from dash.dependencies import Input, Output
 
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
-from dao_analyzer.apps.common.presentation.charts.data_point_layout import DataPointLayout
+from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 from dao_analyzer.apps.common.presentation.charts.layout.chart_pane_layout import ChartPaneLayout
 from .chart_controller import ChartController
 
