@@ -22,7 +22,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daohaus': ['', '', 'daohaus-selected'],
 }
 
-def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
+def generate_layout(labels: List[Dict[str, str]], sections: Dict, datapoints, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -37,7 +37,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, ecosystem: str
     return html.Div(children=[
         __generate_header(labels, ecosystem, update, org_value),
         html.Div(className='h-separator'),
-        __generate_subheader(org_id),
+        __generate_subheader(org_id, datapoints),
         __generate_sections(sections)
     ], className='main-body left-padding-aligner right-padding-aligner')
     
@@ -104,61 +104,27 @@ def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
         'grid-template-columns': '100px 1fr',
     })
 
-def _get_dp_icon(evolution: str):
-    if evolution.startswith('-'):
-        return html.I(className='fa-solid fa-circle-down fa-xs dp-icon-down')
-    elif evolution == '0' or evolution == '?':
-        return html.I(className='fa-solid fa-circle-minus fa-xs dp-icon-same')
-    else:
-        return html.I(className='fa-solid fa-circle-up fa-xs dp-icon-up')
-
-def _get_dp_children(
-        title: str = "?",
-        number: str = "?",
-        evolution: str = "?",
-        id: str = "",
-        hide_evolution: bool = False
-    ):
-    hes = { 'display': 'none' } if hide_evolution else {}
-    return [
-        html.Span(title, className='dao-summary-datapoint-title'),
-        html.Div(number, className='dao-summary-datapoint-number', id=id+'-number'),
-        html.Div(TEXT['this_month'], className='dao-summary-datapoint-lastmonth', style=hes),
-        html.Div([_get_dp_icon(evolution), " ", evolution], className='dao-summary-datapoint-evolution', id=id+'-evolution', style=hes),
-    ]
-
 def _gen_sum_hdr(creation_date: date = None):
     if creation_date:
         return html.Span(['Creation date: ', html.B(creation_date.isoformat())])
     else:
         return None
 
-def _get_dao_summary_layout(org_id, creation_date: date = None):
-    rest = html.Div([
-        html.Div(
-            _get_dp_children(TEXT['dp_title_members'], id=org_id+'-dp-members'), 
-            className='dao-summary-datapoint', 
-            id=org_id+'-dp-members'
-        ),
-        html.Div(),
-        html.Div(
-            _get_dp_children(TEXT['dp_title_treasury'], id=org_id+'-dp-treasury', hide_evolution=True),
-            className='dao-summary-datapoint',
-            id=org_id+'-dp-treasury'
-        ),
-    ], className='dao-summary-body', id=org_id+'-dp')
+def _get_dao_summary_layout(org_id, datapoints: Dict, creation_date: date = None):
+    dp_divs: List[html.Div] = [ dp.get_layout() for dp in datapoints.values() ]
+
     return html.Div([
         html.Div(_gen_sum_hdr(creation_date), className='dao-summary-hdr', id=org_id+'-summary-hdr'),
-        rest,
+        html.Div(dp_divs, className='dao-summary-body'),
     ], className='dao-summary-container', style={'padding': '1em'})
 
-def __generate_subheader(org_id: str) -> html.Div:
+def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> html.Div:
     return html.Div(
         id=org_id,
         className='body small-padding',
         children=html.Div([
            html.Div(html.Div(TEXT['no_data_selected'], className='dao-info-name'), id=org_id+'-info'),
-           _get_dao_summary_layout(org_id)
+           _get_dao_summary_layout(org_id, datapoints)
         ], className='dao-header-container'),
     )
 

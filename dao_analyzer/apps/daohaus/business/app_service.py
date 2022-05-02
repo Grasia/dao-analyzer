@@ -10,6 +10,7 @@
 
 from typing import Dict, List, Callable
 from dash import html
+from dao_analyzer.apps.common.presentation.charts.data_point_layout import DataPointLayout
 
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
@@ -55,6 +56,7 @@ class DaohausService(metaclass=Singleton):
             self._ASSETS: list()
         }
         self.__already_bound: bool = False
+        self.__data_points = {}
 
 
     def bind_callbacks(self, app) -> None:
@@ -96,7 +98,8 @@ class DaohausService(metaclass=Singleton):
             ecosystem='daohaus',
             update=self.__cacheRequester.get_last_update_str(),
             org_id=TEXT['css_id_organization'],
-            org_value=org_value
+            org_value=org_value,
+            datapoints=self.__get_datapoints(),
         )
 
 
@@ -158,6 +161,11 @@ class DaohausService(metaclass=Singleton):
             }
         }
 
+    def __get_datapoints(self):
+        if not self.are_panes:
+            self.__gen_sections()
+
+        return self.__data_points
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
@@ -198,8 +206,8 @@ class DaohausService(metaclass=Singleton):
                 organizations=call),
             figure=BarFigure(),
             cont_key=self._MEMBER,
-            # TODO: Dont hardcode it
-            datapoint_id='daohaus-organization-dp-members',
+            dp_id=TEXT['dp_id_members'],
+            dp_title=TEXT['dp_title_members'],
         ))
 
         # active members
@@ -302,13 +310,15 @@ class DaohausService(metaclass=Singleton):
         call: Callable = self.organizations
 
         # new proposals
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['title_new_proposals'],
             adapter=BasicAdapter(
                 metric_id=s_factory.NEW_PROPOSALS, 
                 organizations=call),
             figure=BarFigure(),
-            cont_key=self._PROPOSAL
+            cont_key=self._PROPOSAL,
+            dp_id=TEXT['dp_id_proposals'],
+            dp_title=TEXT['dp_title_proposals'],
         ))
 
         # proposal outcomes
@@ -353,8 +363,9 @@ class DaohausService(metaclass=Singleton):
             adapter=AssetsValues(call),
             figure=TreemapFigure(),
             cont_key=self._ASSETS,
-            # TODO: Don't hardcode it
-            datapoint_id='daohaus-organization-dp-treasury',
+            dp_id=TEXT['dp_id_treasury'],
+            dp_title=TEXT['dp_title_treasury'],
+            dp_hide_evolution=True,
         ))
         self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
 
@@ -394,7 +405,9 @@ class DaohausService(metaclass=Singleton):
         adapter: IMetricAdapter,
         figure: Figure,
         cont_key: int,
-        datapoint_id: str,
+        dp_id: str,
+        dp_title: str,
+        dp_hide_evolution: bool = False,
     ):
         """
         Creates the chart layout and its summary controller, and returns a callable
@@ -408,14 +421,21 @@ class DaohausService(metaclass=Singleton):
         )
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
+        self.__data_points[dp_id] = DataPointLayout(
+            css_id=dp_id,
+            title=dp_title,
+            hide_evolution=dp_hide_evolution,
+        )
+
         controller: ChartController = ChartSummaryController(
             css_id=css_id,
             layout=layout,
             adapter=adapter,
-            datapoint_id=datapoint_id,
+            datapoint_layout=self.__data_points[dp_id],
         )
 
         self.__controllers[cont_key].append(controller)
+
         return layout.get_layout
         
 

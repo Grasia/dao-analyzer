@@ -62,7 +62,7 @@ class ChartPaneLayout(ILayout):
         subtitle1: str = TEXT['default_amount']
         subtitle2: str = TEXT['no_data_selected']
 
-        if self.configuration.show_subtitles:
+        if plot_data and self.configuration.show_subtitles:
             subtitle1 = TEXT['graph_amount'].format(
                 plot_data['last_serie_elem'], 
                 plot_data['last_value']
