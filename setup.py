@@ -12,7 +12,8 @@ def main():
     setup(
         # Fix in case we need to build sdist instead
         use_scm_version={
-            'local_scheme': version_dev
+            'local_scheme': version_dev,
+            'write_to': 'dao_analyzer/_version.py',
         },
         setup_requires=['setuptools_scm']
     )

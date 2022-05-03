@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 from dash import html
 
 from dao_analyzer.apps.common.resources.strings import TEXT
