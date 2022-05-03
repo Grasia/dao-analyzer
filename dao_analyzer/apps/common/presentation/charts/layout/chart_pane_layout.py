@@ -86,11 +86,6 @@ class ChartPaneLayout(ILayout):
                     className='graph-pane-title'
                 ),
                 html.Span(
-                    subtitle1,
-                    id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE1}',
-                    className=f'{hide}'
-                ),
-                html.Span(
                     subtitle2, 
                     id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
                     className=f'{hide}'
