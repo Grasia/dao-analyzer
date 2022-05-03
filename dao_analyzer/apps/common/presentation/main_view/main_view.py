@@ -36,11 +36,14 @@ def __generate_foot() -> html.Div:
         html.Div(children=[
             html.Div(children=[
                 html.Span(TEXT['current_version'].format(version=__version__), className='small-text-aligner'),
-                html.Img(src=os.path.join(REL_PATH, TEXT['github_icon_name']), className='github-logo'),
-                html.Span(TEXT['follow_us'], className='small-text-aligner'),
-                html.A(TEXT['github'], href=TEXT['github_url'],
-                    target='_blank', className='url-color')
-            ], className='flex-row'),
+                html.Span([
+                    html.I(className='fa-brands fa-github'),
+                    ' ',
+                    TEXT['follow_us'],
+                    html.A(TEXT['github'], href=TEXT['github_url'], target='_black', className='url-color')
+                ], className='small-text-aligner'),
+                html.A(TEXT['about_us'], href='/about', className='url-color small-text-aligner')
+            ], className='flex-column', style={'line-height': '1.7'}),
 
             html.Div(children=[
 

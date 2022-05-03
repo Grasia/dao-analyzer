@@ -8,6 +8,7 @@
 """
 
 TEXT: dict = {
+    'about_us': 'About DAO-Analyzer',
     'acknowledgements': ' and chain-community projects were funded by the European Research Council and The Spanish Ministry of Science and Innovation',
     'active_users_title': 'Active reputation holders',
     'all_orgs': 'All DAOs',
