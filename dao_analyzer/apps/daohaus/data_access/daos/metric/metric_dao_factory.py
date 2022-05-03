@@ -14,6 +14,7 @@ from dao_analyzer.apps.common.data_access.daos.metric.metric_dao \
 from dao_analyzer.apps.common.data_access.requesters import CacheRequester, JoinCacheRequester
 import dao_analyzer.apps.daohaus.data_access.daos.metric.srcs as srcs
 from dao_analyzer.apps.daohaus.data_access.daos.metric.strategy.st_new_additions import StNewAdditions
+from dao_analyzer.apps.daohaus.data_access.daos.metric.strategy.st_organization_activity import StOrganizationActivity
 from dao_analyzer.apps.daohaus.data_access.daos.metric.strategy.st_votes_type import StVotesType
 from dao_analyzer.apps.daohaus.data_access.daos.metric.strategy.st_active_voters import StActiveVoters
 from dao_analyzer.apps.daohaus.data_access.daos.metric.strategy.st_proposal_outcome import StProposalOutcome
@@ -45,7 +46,7 @@ TOTAL_MEMBERS = 13
 VOTERS_PERCENTAGE = 14
 ASSETS_VALUES = 15
 ASSETS_TOKENS = 16
-
+ORGANIZATION_ACTIVITY = 17
 
 def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
     requester: CacheRequester = None
@@ -118,6 +119,14 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
         requester = CacheRequester(srcs=[
             srcs.MOLOCHES,
             srcs.TOKEN_BALANCES
+        ])
+    elif metric == ORGANIZATION_ACTIVITY:
+        # Same sources as ACTIVE_ORGANIZATIOn
+        stg = StOrganizationActivity()
+        requester = CacheRequester(srcs=[
+            srcs.PROPOSALS,
+            srcs.RAGE_QUITS,
+            srcs.VOTES
         ])
     else:
         raise ValueError(f"Incorrect metric {metric}")

@@ -41,3 +41,24 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
             name = result.get_name()
 
         return _get_dao_info(name, result.get_network(), result.get_id()), _gen_sum_hdr(result.get_creation_date())
+
+    @app.callback(
+        Output(f'{section_id}-body', 'className'),
+        Input(f'{section_id}-body', 'className'),
+        Input('org-dropdown', 'value'),
+        State('org-dropdown', 'options')
+    )
+    def show_hide_plots(cname: str, value: str, options: dict):
+        if not value:
+            return cname
+
+        classes = set(filter(None, cname.split(' ')))
+    
+        orgs = organizationsDAO.get_organizations()
+        if orgs.is_all_orgs(value):
+            # Hide the ones with only-on-dao
+            classes.add('is-all-orgs')
+        else:
+            classes.discard('is-all-orgs')
+        
+        return ' '.join(classes)

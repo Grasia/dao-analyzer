@@ -25,7 +25,7 @@ from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import Ch
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
 from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 from dao_analyzer.apps.common.presentation.charts.layout import ChartPaneLayout, DataTableLayout
-from dao_analyzer.apps.common.presentation.charts.layout.figure import Figure, BarFigure, MultiBarFigure, TreemapFigure
+from dao_analyzer.apps.common.presentation.charts.layout.figure import Figure, BarFigure, CalFigure, MultiBarFigure, TreemapFigure
 import dao_analyzer.apps.aragon.data_access.daos.metric.metric_dao_factory as s_factory
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
 from dao_analyzer.apps.common.business.singleton import Singleton
@@ -142,7 +142,8 @@ class AragonService(metaclass=Singleton):
         return {
             TEXT['title_section_activity']: {
                 'callables': l_organization,
-                'css_id': TEXT['css_id_activity']
+                'css_id': TEXT['css_id_activity'],
+                'disclaimer': TEXT['disclaimer_activity'],
             },
             TEXT['title_section_token_holders']: {
                 'callables': l_token_holders,
@@ -186,8 +187,19 @@ class AragonService(metaclass=Singleton):
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_ORGANIZATION, 
                 organizations=call),
-            figure=BarFigure(),
-            cont_key=self._ORGANIZATION
+            figure=CalFigure(),
+            cont_key=self._ORGANIZATION,
+            css_classes=['only-on-all-orgs'],
+        ))
+
+        charts.append(self.__create_chart(
+            title=TEXT['title_organization_activity'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.ORGANIZATION_ACTIVITY,
+                organizations=call
+            ),
+            figure=CalFigure(),
+            cont_key=self._ORGANIZATION,
         ))
 
         return charts
@@ -362,7 +374,7 @@ class AragonService(metaclass=Singleton):
         return charts
 
     def __create_chart(self, title: str, adapter: IMetricAdapter, figure: Figure
-    , cont_key: int) -> Callable:
+    , cont_key: int, css_classes = []) -> Callable:
         """
         Creates the chart layout and its controller, and returns a callable
         to get the html representation.
@@ -371,7 +383,8 @@ class AragonService(metaclass=Singleton):
         layout: ChartPaneLayout = ChartPaneLayout(
             title=title,
             css_id=css_id,
-            figure=figure
+            figure=figure,
+            css_classes=css_classes,
         )
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 

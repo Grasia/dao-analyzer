@@ -278,15 +278,22 @@
     width: 50%;
 }
 
+.section-hdr {
+    margin-bottom: 2rem;
+}
+
 .section-title {
     color: #4d98c7;
     font-size: 2.5em;
-    margin-bottom: 2rem;
 
     /* Break long names and URLS */
     word-break: break-word;
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+.section-disclaimer {
+    color: gray;
 }
 
 .graph-pane-title {
@@ -313,6 +320,14 @@
 
 .chart {
     margin-bottom: 4rem;
+}
+
+.only-on-all-orgs {
+    display: none;
+}
+
+.is-all-orgs .only-on-all-orgs {
+    display: block;
 }
 
 /*********************/

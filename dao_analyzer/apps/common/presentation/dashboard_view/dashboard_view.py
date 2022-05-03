@@ -38,7 +38,7 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, datapoints, ec
         __generate_header(labels, ecosystem, update, org_value),
         html.Div(className='h-separator'),
         __generate_subheader(org_id, datapoints),
-        __generate_sections(sections)
+        __generate_sections(sections, id=f'{org_id}-body')
     ], className='main-body left-padding-aligner right-padding-aligner')
     
 
@@ -128,18 +128,27 @@ def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> 
         ], className='dao-header-container'),
     )
 
-def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
+def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> html.Div:
     tabs: List[dcc.Tab] = []
 
     for name, data in sections.items():
         charts = list()
         for chart_pane in data['callables']:
             charts.append(chart_pane())
-        
+
+        sec_hdr = html.Div(
+            [html.Div(name, className='section-title')],
+            id=f'{data["css_id"]}-hdr', 
+            className='section-left-padding-aligner section-hdr'
+        )
+
+        if 'disclaimer' in data and data['disclaimer']:
+            sec_hdr.children.append(html.Div(data['disclaimer'], className='section-disclaimer'))
+
         sec = html.Div(
             className='flex-column small-padding',
             children=[
-                html.Div(name, id=data['css_id'], className='section-title section-left-padding-aligner'),
+                sec_hdr,
                 html.Div(children=charts, className='flex-row flex-wrap flex-align-start')
             ],
         )
@@ -148,4 +157,4 @@ def __generate_sections(sections: Dict[str, List[Callable]]) -> html.Div:
             sec
         ]))
 
-    return html.Div(dcc.Tabs(tabs), className='flex-column body')
+    return html.Div(dcc.Tabs(tabs), id=id, className='flex-column body')
