@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cache_scripts () {
-    daoa-cache_scripts --ignore-errors $DAOA_CACHE_ARGUMENTS
+    daoa-cache-scripts --ignore-errors $DAOA_CACHE_ARGUMENTS
 }
 
 if [ ! -f "datawarehouse/update_date.txt" ]; then
