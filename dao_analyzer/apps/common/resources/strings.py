@@ -22,6 +22,7 @@ TEXT: dict = {
     'cc_image_name': 'cc-by.png',
     'cc_license_text': 'This site is licensed under a Creative Commons Attribution 4.0 International License',
     'cc_url': 'https://creativecommons.org/licenses/by/4.0/',
+    'creation_date_format': '%b %-d, %Y',
     'css_color_app': 'app-color',
     'css_color_aragon': 'aragon-color',
     'css_color_daohaus': 'daohaus-color',

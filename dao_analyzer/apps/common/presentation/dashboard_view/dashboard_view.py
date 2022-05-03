@@ -106,7 +106,7 @@ def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
 
 def _gen_sum_hdr(creation_date: date = None):
     if creation_date:
-        return html.Span(['Creation date: ', html.B(creation_date.isoformat())])
+        return html.Span(['Created on ', html.B(creation_date.strftime(TEXT['creation_date_format']))])
     else:
         return None
 

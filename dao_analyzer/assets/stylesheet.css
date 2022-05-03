@@ -168,7 +168,8 @@
 /****** Dao-Info *****/
 .dao-header-container {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    gap: 25px;
     flex-wrap: wrap;
     align-items: stretch;
 }
