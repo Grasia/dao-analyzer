@@ -12,6 +12,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from dao_analyzer.apps.common.presentation.main_view.main_view import generate_layout
+import dao_analyzer.apps.common.presentation.about_view.about_view as about
 import dao_analyzer.apps.daostack.business.app_service as daostack
 import dao_analyzer.apps.daohaus.business.app_service as daohaus
 import dao_analyzer.apps.aragon.business.app_service as aragon
@@ -39,6 +40,9 @@ def bind_callbacks(app) -> None: # noqa: C901
     def display_page(pathname, current_platform):
         if pathname == "/":
             return [dcc.Location(pathname="/daohaus", id="default_redirect"), "redirect", "daohaus"]
+
+        if pathname == '/' + TEXT['url_about']:
+            return generate_layout(body=about.get_layout()), '', 'about'
 
         content = TEXT['not_found']
         state = 'loading'

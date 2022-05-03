@@ -15,6 +15,10 @@
 !/requirements_docker.txt
 !/gunicorn_config.py
 !/index.py
+!/LICENSE
+!/README.md
+!/ABOUT.md
+!/requirements.txt
 !/init.sh
 ### If there is already a datawarehouse, it will be updated
 !/datawarehouse

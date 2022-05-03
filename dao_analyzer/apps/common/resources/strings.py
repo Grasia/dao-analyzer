@@ -63,6 +63,7 @@ TEXT: dict = {
     'this_month': 'This month',
     'ucm_url': 'https://www.ucm.es/',
     'unknown_dao_name': '———', # Em dash
+    'url_about': 'about',
     'url_aragon': 'aragon',
     'url_daostack': 'daostack',
     'url_daohaus': 'daohaus',
