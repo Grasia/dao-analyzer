@@ -168,6 +168,7 @@ class AragonService(metaclass=Singleton):
             TEXT['title_assets']: {
                 'callables': l_assets,
                 'css_id': TEXT['css_id_assets'],
+                'disclaimer': TEXT['disclaimer_assets'],
             },
         }
 
