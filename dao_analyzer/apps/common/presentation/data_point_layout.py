@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 from dash import html
 
 from dao_analyzer.apps.common.resources.strings import TEXT
@@ -13,12 +14,17 @@ class DataPointLayout:
         if not evolution:
             return
 
-        if evolution.startswith("-"):
-            return html.I(className="fa-solid fa-circle-down fa-xs dp-icon-down")
-        elif evolution == "0" or evolution == "?":
-            return html.I(className="fa-solid fa-circle-minus fa-xs dp-icon-same")
-        else:
-            return html.I(className="fa-solid fa-circle-up fa-xs dp-icon-up")
+        try:
+            number = float(evolution.strip('%$'))
+
+            if number < 0:
+                return html.I(className="fa-solid fa-circle-down fa-xs dp-icon-down")
+            elif number > 0:
+                return html.I(className="fa-solid fa-circle-up fa-xs dp-icon-up")
+            else:
+                return html.I(className="fa-solid fa-circle-minus fa-xs dp-icon-same")
+        except ValueError:
+            return
 
     def fill_child(
         self,
