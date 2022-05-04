@@ -100,9 +100,7 @@ def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
         html.Div(html.Span(addr, className='address'), className='dao-info-address'),
     ]
     
-    return html.Div(grid, className='dao-info grid-container', style={
-        'grid-template-columns': '100px 1fr',
-    })
+    return html.Div(grid, className='dao-info-container')
 
 def _gen_sum_hdr(creation_date: date = None):
     if creation_date:
