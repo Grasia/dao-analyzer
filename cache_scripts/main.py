@@ -28,7 +28,7 @@ AVAILABLE_PLATFORMS: Dict[str, Runner] = {
 }
 
 # Get available networks from Runners
-AVAILABLE_NETWORKS = {n for n,v in ENDPOINTS.items()}
+AVAILABLE_NETWORKS = {n for n in ENDPOINTS.keys() if not n.startswith('_')}
 
 def _call_platform(platform: str, datawarehouse: Path, force: bool=False, networks=None, collectors=None):
     p = AVAILABLE_PLATFORMS[platform]()

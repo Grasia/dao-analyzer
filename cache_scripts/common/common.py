@@ -120,7 +120,7 @@ class Runner(ABC):
 class NetworkRunner(Runner, ABC):
     def __init__(self, dw = None):
         super().__init__(dw)
-        self.networks = {n for n,v in ENDPOINTS.items() if self.name in v}
+        self.networks = {n for n,v in ENDPOINTS.items() if self.name in v and not n.startswith('_')}
 
     def filterCollectors(self, 
         networks: Iterable[str] = [],
