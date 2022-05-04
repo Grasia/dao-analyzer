@@ -41,7 +41,7 @@ class DataTableLayout(ILayout):
             DataTable(
                 id=self.table_id,
                 # style_table={'height': '450px', 'margin-top': '40px', 'overflowY': 'auto'},
-                style_table={'margin-top': '40px'},
+                style_table={'margin-top': '20px'},
                 sort_action='native',
                 page_size=12
             )

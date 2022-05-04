@@ -64,7 +64,8 @@ TEXT: dict = {
     'spanish_ministry_url': 'https://www.ciencia.gob.es/',
     'this_month': 'This month',
     'ucm_url': 'https://www.ucm.es/',
-    'unknown_dao_name': '———', # Em dash
+    # 'unknown_dao_name': '———', # Em dash
+    'unknown_dao_name': 'no name given',
     'url_about': 'about',
     'url_aragon': 'aragon',
     'url_daostack': 'daostack',
