@@ -19,15 +19,11 @@ from .. import config
 from ..common.common import solve_decimals
 from ..common.cryptocompare import cc_postprocessor
 
-from ..metadata import Block
 from ..common import ENDPOINTS, Collector
-from ..common.graphql import GraphQLCollector, GraphQLUpdatableCollector, GraphQLRunner, add_where, partial_query
+from ..common.graphql import GraphQLCollector, GraphQLRunner, add_where
 
 DATA_ENDPOINT: str = "https://data.daohaus.club/dao/{id}"
 
-# TODO: Make updatable, currently is not updatable because of loot, didRagequit, 
-# exists, etc. We would need an lastUpdateAt field to check only the ones that
-# have been updated
 class MembersCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('members', runner, network=network, endpoint=ENDPOINTS[network]['daohaus'])
@@ -96,7 +92,7 @@ class MolochesCollector(GraphQLCollector):
             ds.Moloch.totalGas
         )
 
-class ProposalsCollector(GraphQLUpdatableCollector):
+class ProposalsCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('proposals', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
 
@@ -125,50 +121,7 @@ class ProposalsCollector(GraphQLUpdatableCollector):
             ds.Proposal.noShares
         )
     
-    def update(self, block: Block = None):
-        prev_df = self.df
-    
-        # Getting recently processed proposals
-        self._simple_timestamp('processedAt', block,
-            start_txt='Getting recently processed proposals since {date}',
-            end_txt='{len} proposals have been processed',
-            prev_df = prev_df
-        )
-
-        # Getting proposals with proposedAt set to None (this is a bug)
-        # data = self.requester.n_requests(
-        #     query=partial_query(self.query, {"processed": True, "processedAt": None}),
-        #     block_hash=block.id
-        # )
-        # self._update_data(self.transform_to_df(data))
-
-        # Getting still open proposals which counts could have been updated
-        # If they are not sponsored, they won't change
-        data = self.requester.n_requests(
-            query=partial_query(self.query, {"processed": False, "sponsored": False}),
-            block_hash=block.id
-        )
-        df = self.transform_to_df(data)
-        self._update_data(df)
-
-        # Getting recently created Proposals
-        # Some of them could be unsponsored and remain there, which is why they
-        # would not be requested in the "still open proposals" request above
-        self._simple_timestamp('createdAt', block,
-            start_txt='Getting recently created proposals since {date}',
-            end_txt='{len} proposals have been created',
-            prev_df = prev_df
-        )
-
-        # TODO: Get sponsored
-        # Getting recently sponsored
-        self._simple_timestamp('sponsoredAt', block,
-            start_txt='Getting recently sponsored proposals since {date}',
-            end_txt='{len} proposals have been sponsored',
-            prev_df = prev_df
-        )
-
-class RageQuitCollector(GraphQLUpdatableCollector):
+class RageQuitCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('rageQuits', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
 
@@ -229,7 +182,7 @@ class TokenBalancesCollector(GraphQLCollector):
             ds.TokenBalance.tokenBalance
         )
 
-class VoteCollector(GraphQLUpdatableCollector):
+class VoteCollector(GraphQLCollector):
     def __init__(self, runner, network: str):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]["daohaus"])
 

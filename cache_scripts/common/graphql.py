@@ -1,13 +1,12 @@
 import logging
 from typing import Callable, List, Dict
-from datetime import datetime
 from abc import ABC, abstractmethod
 
 import pandas as pd
 
 from gql.dsl import DSLField
 
-from .common import ENDPOINTS, NetworkCollector, NetworkRunner, Runner
+from .common import ENDPOINTS, NetworkCollector, NetworkRunner, Runner, UpdatableCollector
 from .api_requester import GQLRequester
 from ..metadata import Block
 
@@ -58,7 +57,7 @@ def checkSubgraphHealth(endpoint: str, network: str = None):
 
     return True
 
-class GraphQLCollector(NetworkCollector):
+class GraphQLCollector(NetworkCollector, UpdatableCollector):
     def __init__(self, name: str, runner: Runner, endpoint: str, result_key: str = None, index: str = None, network: str='mainnet', pbar_enabled: bool=True):
         super().__init__(name, runner, network)
         self.endpoint: str = endpoint
@@ -118,52 +117,24 @@ class GraphQLCollector(NetworkCollector):
         # Checking the health of the subgraph
         return checkSubgraphHealth(self.endpoint)
 
-    def run(self, force=False, block: Block = None):
+    def query_cb(self, prev_block: Block = None):
+        if prev_block:
+            return partial_query(self.query, {'_change_block': {'number_gte': prev_block.number}})
+        else:
+            return self.query
+
+    def run(self, force=False, block: Block = None, prev_block: Block = None):
+        logging.info(f"Running GraphQLCollector with block: {block}, prev_block: {prev_block}")
         if block is None:
             block = Block()
+        if prev_block is None or force:
+            prev_block = Block()
 
-        data: List[Dict] = self.requester.n_requests(
-            query=self.query,
-            index=self.index,
-            block_hash=block.id)
+        data = self.requester.n_requests(query=self.query_cb(prev_block), block_hash=block.id)
 
         # transform to df
         df: pd.DataFrame = self.transform_to_df(data)
         self._update_data(df, force)
-
-class GraphQLUpdatableCollector(GraphQLCollector):
-    DEFAULT_START_TEXT = "Updating data since {date}"
-    DEFAULT_END_TEXT = "There are {len} new items"
-
-    def run(self, force=False, *args, **kwargs):
-        if not force and not self.df.empty:
-            self.update(*args, **kwargs)
-        else:
-            super().run(force, *args, **kwargs)
-
-    def _simple_timestamp(self, key: str = 'createdAt', block: Block = None, start_txt=DEFAULT_START_TEXT, end_txt=DEFAULT_END_TEXT, prev_df: pd.DataFrame = None):
-        # 1. Get the max createdAt
-        if prev_df is None:
-            prev_df = self.df
-        
-        if prev_df.empty:
-            return
-
-        maxCreatedAt = int(prev_df[key].fillna(0).astype(int).max())
-        print(start_txt.format(date=datetime.fromtimestamp(maxCreatedAt).isoformat()))
-
-        # 2. Perform n_requests but with bigger createdAt than the max createdAt
-        data = self.requester.n_requests(
-            query=partial_query(self.query, {f"{key}_gte": maxCreatedAt}),
-            block_hash=block.id)
-
-        # 3. Update the file
-        df = self.transform_to_df(data)
-        print(end_txt.format(len=len(df)))
-        self._update_data(df)
-
-    def update(self, block: Block = None):
-        self._simple_timestamp('createdAt', block)
 
 class GraphQLRunner(NetworkRunner, ABC):
     pass

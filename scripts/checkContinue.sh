@@ -5,12 +5,14 @@
 # with continuation enabled results in the same data as running it one time
 dates=("2021-03-01" "2021-06-01" "2021-09-01" "2021-12-01")
 
+other_args_cc="$@"
+
 cache_scripts () {
     local d=$1
     local p="$2"
     local other_args=$3
 
-    daoa-cache-scripts $other_args -D "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names --only-updatable || exit 1
+    daoa-cache-scripts -D "$p" --block-datetime "$d" -n mainnet --skip-daohaus-names --no-ignore-errors --only-updatable $other_args_cc || exit 1
 }
 
 generate_full () {
@@ -18,13 +20,13 @@ generate_full () {
     local p="datawarehouse-full-$d" # Building the filename
 
     if [ ! -f "$p/version.txt" ]; then
-        echo "$p" not found, running again
-        cache_scripts "$d" "$p" "-F"
+        echo '>>>' "$p" not found, running again
+        cache_scripts "$d" "$p"
     else
-        if diff -w "$p/version.txt" <(daoa-cache-scripts cache_scripts -V); then
-            echo "$p" found and good version, not running
+        if diff -w "$p/version.txt" <(daoa-cache-scripts -V); then
+            echo '>>>' "$p" found and good version, not running
         else
-            echo "Version of datawarehouse and cache_scripts differ, running again"
+            echo '>>>' "Version of datawarehouse and cache_scripts differ, running again"
         fi
     fi
 
@@ -44,6 +46,8 @@ generate_partial() {
 
     [ -d "$p" ] && rm -r "$p" # If it exists, we delete it
     cp -r "$lastp" "$p"
+
+    echo '>>> Running partial over' "$lastp" 'onto' "$p"
     cache_scripts "$d" "$p"
 
     lastp=$p

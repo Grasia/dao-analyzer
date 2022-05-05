@@ -7,8 +7,10 @@ import json
 from datetime import datetime, timezone
 import traceback
 
+from tenacity import retry, retry_if_exception_type, wait_exponential, stop_after_attempt
 import pandas as pd
 from tqdm import tqdm
+from gql.transport.exceptions import TransportQueryError
 
 from .api_requester import GQLRequester
 from ..metadata import RunnerMetadata, Block
@@ -33,6 +35,8 @@ def solve_decimals(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 class Collector(ABC):
+    INDEX = ['network', 'id']
+    
     def __init__(self, name:str, runner):
         self.name: str = name
         self.runner = runner
@@ -77,8 +81,8 @@ class Collector(ABC):
         if force:
             prev_df = prev_df[prev_df["network"] != self.network]
         
-        prev_df = prev_df.set_index(['id', 'network'], verify_integrity=True, drop=True)
-        df = df.set_index(['id', 'network'], verify_integrity=True, drop=True)
+        prev_df = prev_df.set_index(self.INDEX, verify_integrity=True, drop=True)
+        df = df.set_index(self.INDEX, verify_integrity=True, drop=True)
 
         # Updating data
         combined = df.combine_first(prev_df).reset_index()
@@ -98,6 +102,9 @@ class NetworkCollector(Collector):
     @property
     def collectorid(self) -> str:
         return '-'.join([super().collectorid, self.network])
+
+class UpdatableCollector(Collector): # Flag class
+    pass
 
 class Runner(ABC):
     def __init__(self, dw: Path = Path()):
@@ -130,7 +137,7 @@ class NetworkRunner(Runner, ABC):
         result = self.collectors
 
         if config.only_updatable:
-            result = filter(lambda c: hasattr(c, 'update'), result)
+            result = filter(lambda c: isinstance(c, UpdatableCollector), result)
 
         # networks ^ (names v long_names)
         if networks:
@@ -159,6 +166,7 @@ class NetworkRunner(Runner, ABC):
         ), None)
 
     @staticmethod
+    @retry(retry=retry_if_exception_type(TransportQueryError), wait=wait_exponential(max=10), stop=stop_after_attempt(3))
     def validated_block(network: str, prev_block: Block = None) -> Block:
         requester = GQLRequester(ENDPOINTS[network]["_blocks"])
         ds = requester.get_schema()
@@ -176,8 +184,8 @@ class NetworkRunner(Runner, ABC):
         }
 
         if config.block_datetime:
-            args["skip"] = 0
-            args["where"]["number_gte"] = 0
+            del args["skip"]
+            del args["where"]["number_gte"]
             args["where"]["timestamp_lte"] = int(config.block_datetime.timestamp())
 
         response = requester.request(ds.Query.blocks(**args).select(
@@ -225,7 +233,7 @@ class NetworkRunner(Runner, ABC):
                 try:
                     if isinstance(c, NetworkCollector):
                         if c.network not in blocks:
-                            # Getting a block more recent than the one in the metadata
+                            # Getting a block more recent than the one in the metadata (just to narrow down the search)
                             print("Requesting a block number...", end='\r')
                             blocks[c.network] = self.validated_block(c.network, None if force else metadata[c.collectorid].block)
                             print(f"Using block {blocks[c.network].id} for {c.network} (ts: {blocks[c.network].timestamp.isoformat()})")
@@ -236,14 +244,26 @@ class NetworkRunner(Runner, ABC):
                             print("Warning: Forcing because requesting an older block")
                             logging.warning("Forcing because using an older block")
 
-                        c.run(force or olderBlock, blocks[c.network])
+                        # Running the collector
+                        c.run(
+                            force=force or olderBlock, 
+                            block=blocks[c.network],
+                            prev_block=metadata[c.collectorid].block,
+                        )
+
+                        # Updating the block in the metadata
                         metadata[c.collectorid].block = blocks[c.network]
                     else:
                         print(f"Running collector {c.long_name}")
-                        c.run(force)
+                        c.run(
+                            force=force,
+                        )
 
                     metadata[c.collectorid].last_update = datetime.now(timezone.utc)
                 except Exception as e:
                     metadata.errors[c.collectorid] = e.__str__()
-                    print(traceback.format_exc())
+                    if config.ignore_errors:
+                        print(traceback.format_exc())
+                    else:
+                        raise e
             print(f'--- {self.name}\'s datawarehouse updated ---')

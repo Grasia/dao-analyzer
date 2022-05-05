@@ -51,6 +51,11 @@ class CacheScriptsArgParser(ArgumentParser):
             help="Skips the step of getting Daohaus Moloch's names, which takes some time"
         )
         self.add_argument(
+            "--skip-token-balances",
+            action="store_true", default=False,
+            help="Skips the step of getting every DAO token balances, which takes some time"
+        )
+        self.add_argument(
             "-n", "--networks",
             nargs="+",
             required=False,
