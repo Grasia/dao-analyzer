@@ -167,6 +167,7 @@ class CryptoCompareRequester:
     BASEURL = 'https://min-api.cryptocompare.com/data/'
 
     def __init__(self, api_key: str = None, pbar_enabled: bool = True):
+        self.logger = logging.getLogger('ccrequester')
         self.pbar = partial(tqdm, delay=1, file=sys.stdout, desc="Requesting",
             dynamic_ncols=True)
         
@@ -188,6 +189,7 @@ class CryptoCompareRequester:
         params['extraParams'] = 'dao-analyzer'
 
         r = requests.get(url, params=params, headers=self._build_headers())
+        self.logger.debug(f'Response status: {r.status_code}, ok: {r.ok}, content: {r.content}')
 
         # There are two kinds of requests
         # - "Complex" ones which have Response, Message, Type, etc fields
@@ -214,8 +216,10 @@ class CryptoCompareRequester:
         else:
             fsyms = list(fsyms)
 
-        mi = 30 # max items
-        partitions = [fsyms[i:i+mi] for i in range(0, len(fsyms), mi)]
+        mi = 25 # max items
+        # Every partition needs to have at least a known value. Else it could fail.
+        # That's why we always include BTC
+        partitions = [fsyms[i:i+mi]+['BTC'] for i in range(0, len(fsyms), mi)]
 
         params = {
             'tsyms': ','.join(tsyms),
