@@ -9,6 +9,7 @@ from typing import Union
 import numpy as np
 
 from ..metadata import Block
+from .. import config
 
 from . import ENDPOINTS
 from .common import NetworkCollector, solve_decimals
@@ -33,6 +34,13 @@ class BlockscoutBallancesCollector(NetworkCollector):
         super().__init__(name, runner, network)
         self.base = base
         self.addr_key = addr_key
+
+    def verify(self) -> bool:
+        if config.skip_token_balances:
+            logging.warning('Skipping token balances because --skip-token-balances flag was set')
+            return False
+        else:
+            return super().verify()
 
     @property
     def endpoint(self) -> str:
@@ -95,7 +103,7 @@ class BlockscoutBallancesCollector(NetworkCollector):
             else:
                 raise ValueError(f"Requests failed for address {addr[:12]}... with status code {r.status_code}: {r.reason}")
 
-    def run(self, force=False, block: Block = None):
+    def run(self, force=False, block: Block = None, prev_block: Block = None, **kwargs):
         # For each of the DAOs in the df, get the token balance
         addresses = self.base.df[self.addr_key].drop_duplicates()
 

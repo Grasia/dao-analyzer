@@ -28,7 +28,7 @@ AVAILABLE_PLATFORMS: Dict[str, Runner] = {
 }
 
 # Get available networks from Runners
-AVAILABLE_NETWORKS = {n for n,v in ENDPOINTS.items()}
+AVAILABLE_NETWORKS = {n for n in ENDPOINTS.keys() if not n.startswith('_')}
 
 def _call_platform(platform: str, datawarehouse: Path, force: bool=False, networks=None, collectors=None):
     p = AVAILABLE_PLATFORMS[platform]()
@@ -57,11 +57,11 @@ def main_aux(datawarehouse: Path):
     filehandler = logging.FileHandler(config.datawarehouse / 'cache_scripts.log')
     filehandler.setFormatter(logging.Formatter(LOG_FILE_FORMAT))
     logger.addHandler(filehandler)
-    logger.setLevel(level=logging.DEBUG if config.debug else logging.WARNING)
+    logger.setLevel(level=logging.DEBUG if config.debug else logging.INFO)
 
     # Log errors to STDERR
     streamhandler = logging.StreamHandler(stderr)
-    streamhandler.setLevel(logging.ERROR)
+    streamhandler.setLevel(logging.WARNING if config.debug else logging.ERROR)
     streamhandler.setFormatter(logging.Formatter(LOG_STREAM_FORMAT))
     logger.addHandler(streamhandler)
 
@@ -109,7 +109,7 @@ def main_lock(datawarehouse: Path):
             # We want to copy the dw, so we open it as readers
             p_lock.touch(exist_ok=True)
             with pl.Lock(p_lock, 'r', timeout=1, flags=pl.LOCK_SH | pl.LOCK_NB):
-                shutil.copytree(datawarehouse, tmp_dw, dirs_exist_ok=True)
+                shutil.copytree(datawarehouse, tmp_dw, dirs_exist_ok=True, ignore=ignore)
 
             main_aux(datawarehouse=tmp_dw)
 
