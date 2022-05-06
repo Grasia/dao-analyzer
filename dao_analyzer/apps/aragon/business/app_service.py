@@ -95,7 +95,7 @@ class AragonService(metaclass=Singleton):
             self.bind_callbacks()
         
         return view.generate_layout(
-            labels=self.organizations().get_dict_representation(),
+            organizations=self.organizations(),
             sections=self.__get_sections(),
             ecosystem='aragon',
             update=self.__cacheRequester.get_last_update_str(),

@@ -11,6 +11,7 @@ from typing import Dict, List, Callable
 from datetime import date
 from dash import dcc
 from dash import html
+from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 from dao_analyzer.apps.common.presentation.main_view.main_view import REL_PATH
@@ -22,7 +23,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daohaus': ['', '', 'daohaus-selected'],
 }
 
-def generate_layout(labels: List[Dict[str, str]], sections: Dict, datapoints, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
+def generate_layout(organizations: OrganizationList, sections: Dict, datapoints, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -32,17 +33,17 @@ def generate_layout(labels: List[Dict[str, str]], sections: Dict, datapoints, ec
         A html.Div filled with the app view 
     """
     if not org_value:
-        org_value = labels[0]["value"]
+        org_value = organizations.get_all_orgs_dict()["value"]
 
     return html.Div(children=[
-        __generate_header(labels, ecosystem, update, org_value),
+        __generate_header(organizations, ecosystem, update, org_value),
         html.Div(className='h-separator'),
         __generate_subheader(org_id, datapoints),
         __generate_sections(sections, id=f'{org_id}-body')
     ], className='main-body left-padding-aligner right-padding-aligner')
     
 
-def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str, org_value: str) -> html.Div:
+def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> html.Div:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
@@ -81,10 +82,15 @@ def __generate_header(labels: List[Dict[str, str]], ecosystem: str, update: str,
             html.Span(TEXT['dao_selector_title'], className=''),
             dcc.Dropdown(
                 id='org-dropdown',
-                options=labels,
+                options=organizations.get_dict_representation(),
                 value=org_value,
                 className='flex-size-3',
-            )
+            ),
+            dcc.Store(
+                id='org-store',
+                data=organizations,
+                storage_type='memory',
+            ),
         ], className='flex-row flex-size-1'),
 
     ], className='body-header small-padding flex-row')

@@ -61,6 +61,14 @@ class Organization:
             'label': self.get_label()
         }
 
+    def to_plotly_json(self) -> Dict[str, str]:
+        """ Allows to store the object inside a Dcc.Store """
+        return {
+            'address': self.get_id(),
+            'name': self.get_name(),
+            'network': self.get_network(),
+            'creation_date': self.get_creation_date(),
+        }
 
     def get_id(self) -> str:
         return self._id
@@ -86,12 +94,12 @@ class Organization:
 
         return f"{self._name} — {self._id} ({self._network})"
 
-class OrganizationList:
+class OrganizationList(list):
     __ALL_ORGS_ID: str = '1'
 
 
     def __init__(self, orgs: List[Organization] = None) -> None:
-        self.__orgs: List[Organization] = orgs if orgs else list()
+        super().__init__(orgs)
 
 
     def add_organization(self, org: Organization) -> None:
@@ -100,20 +108,19 @@ class OrganizationList:
 
     
     def get_organizations(self) -> List[Organization]:
-        return self.__orgs
+        return list(self)
 
+    def get_all_orgs_dict(self) -> Dict[str, str]:
+        return {'value': self.__ALL_ORGS_ID, 'label': TEXT['all_orgs']}
 
     def get_dict_representation(self) -> List[Dict[str, str]]:
-        if not self.__orgs:
+        if not self:
             return list()
         
-        result: List[Dict[str, str]] = [x.get_dict_representation() for x in sorted(self.__orgs)]
+        result: List[Dict[str, str]] = [x.get_dict_representation() for x in sorted(self)]
 
-        # Add All Orgs selector
-        all_orgs = {'value': self.__ALL_ORGS_ID, 'label': TEXT['all_orgs']}
-
-        # Append it as the first one
-        result = [all_orgs] + result
+        # Append all_orgs as the first one
+        result = [self.get_all_orgs_dict()] + result
         return result
 
     @classmethod
@@ -122,11 +129,11 @@ class OrganizationList:
 
 
     def is_empty(self) -> bool:
-        return len(self.__orgs) == 0
+        return len(self) == 0
 
 
     def get_size(self) -> int:
-        return len(self.__orgs)
+        return len(self)
 
 
     def get_ids_from_id(self, o_id: str) -> List[str]:
@@ -141,8 +148,4 @@ class OrganizationList:
         if not self.is_all_orgs(o_id):
             return [o_id]
 
-        return [x.get_id() for x in self.__orgs]
-
-    # Iterable functions
-    def __iter__(self):
-        return self.__orgs.__iter__()
+        return [x.get_id() for x in self]
