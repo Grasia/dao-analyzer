@@ -10,6 +10,7 @@
 import os
 import dash
 from dash import dcc, html
+import dash_bootstrap_components as dbc
 
 import pandas as pd
 
@@ -27,6 +28,9 @@ app = dash.Dash(__name__,
     suppress_callback_exceptions=True, 
     external_scripts=[
         "https://kit.fontawesome.com/15714856cb.js", # Font Awesome
+    ],
+    external_stylesheets=[
+        dbc.themes.BOOTSTRAP
     ],
 )
 

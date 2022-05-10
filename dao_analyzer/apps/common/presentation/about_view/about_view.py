@@ -8,16 +8,14 @@
 """
 from pathlib import Path
 
-from dash import html
-from dash import dcc
+from dash import html, dcc
+import dash_bootstrap_components as dbc
 
 ABOUT_MD = Path('./ABOUT.md')
 
 def get_layout() -> html.Div:
-    return html.Div(children=[
-        html.Div(__get_body(), className='flex-column body')
-    ], className='main-body left-padding-aligner right-padding-aligner')
+    return dbc.Container(__get_body(), className='body p-5')
 
 def __get_body() -> html.P:
     with open(ABOUT_MD, 'r') as mdf:
-        return dcc.Markdown(mdf.read(), className='flex-column medium-padding markdown')
+        return dcc.Markdown(mdf.read(), className='markdown')

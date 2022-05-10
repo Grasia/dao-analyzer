@@ -259,6 +259,7 @@
 /****** Body *********/
 .body {
     background-color: white;
+    margin-top: -3vh;
 }
 
 .tab {
