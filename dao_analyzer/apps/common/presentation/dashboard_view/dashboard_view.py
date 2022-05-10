@@ -78,20 +78,22 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
         ], className='flex-row flex-size-1 flex-space-around'),
 
         html.Div(children=[
-            html.Div(className='v-separator flex-size-1'),
-            html.Span(TEXT['dao_selector_title'], className=''),
-            dcc.Dropdown(
-                id='org-dropdown',
-                options=organizations.get_dict_representation(),
-                value=org_value,
-                className='flex-size-3',
-            ),
+            html.Div(className='v-separator'),
+            html.Div([
+                html.Span(TEXT['dao_selector_title']),
+                dcc.Dropdown(
+                    id='org-dropdown',
+                    options=organizations.get_dict_representation(),
+                    value=org_value,
+                    clearable=False,
+                ),
+            ], className='flex-column w-100'),
             dcc.Store(
                 id='org-store',
                 data=organizations,
                 storage_type='memory',
             ),
-        ], className='flex-row flex-size-1'),
+        ], className='flex-row body-header-right'),
 
     ], className='body-header small-padding flex-row')
 
