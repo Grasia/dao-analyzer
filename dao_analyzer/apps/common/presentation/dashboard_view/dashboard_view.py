@@ -9,8 +9,8 @@
 import os
 from typing import Dict, List, Callable
 from datetime import date
-from dash import dcc
-from dash import html
+from dash import dcc, html
+import dash_bootstrap_components as dbc
 from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 
 from dao_analyzer.apps.common.resources.strings import TEXT
@@ -35,12 +35,13 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
     if not org_value:
         org_value = organizations.get_all_orgs_dict()["value"]
 
-    return html.Div(children=[
+    # TODO: Instead of using an <hr>, make two different containers, and put a gap between them
+    return dbc.Container([
         __generate_header(organizations, ecosystem, update, org_value),
-        html.Div(className='h-separator'),
+        html.Hr(),
         __generate_subheader(org_id, datapoints),
-        __generate_sections(sections, id=f'{org_id}-body')
-    ], className='main-body left-padding-aligner right-padding-aligner')
+        __generate_sections(sections, id=f'{org_id}-body'),
+    ], className='body')
     
 
 def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> html.Div:
@@ -124,17 +125,17 @@ def _get_dao_summary_layout(org_id, datapoints: Dict, creation_date: date = None
         html.Div(dp_divs, className='dao-summary-body'),
     ], className='dao-summary-container', style={'padding': '1em'})
 
-def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> html.Div:
-    return html.Div(
+def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
+    return dbc.Row(
         id=org_id,
-        className='body small-padding',
+        className='my-3',
         children=html.Div([
            html.Div(html.Div(TEXT['no_data_selected'], className='dao-info-name'), id=org_id+'-info'),
            _get_dao_summary_layout(org_id, datapoints)
         ], className='dao-header-container'),
     )
 
-def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> html.Div:
+def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> dbc.Row:
     tabs: List[dcc.Tab] = []
 
     for name, data in sections.items():
@@ -142,7 +143,7 @@ def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> html.Di
         for chart_pane in data['callables']:
             charts.append(chart_pane())
 
-        sec_hdr = html.Div(
+        sec_hdr = dbc.Row(
             [html.Div(name, className='section-title')],
             id=f'{data["css_id"]}-hdr', 
             className='section-left-padding-aligner section-hdr'
@@ -151,11 +152,11 @@ def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> html.Di
         if 'disclaimer' in data and data['disclaimer']:
             sec_hdr.children.append(html.Div(data['disclaimer'], className='section-disclaimer'))
 
-        sec = html.Div(
+        sec = dbc.Container(
             className='flex-column small-padding',
             children=[
                 sec_hdr,
-                html.Div(children=charts, className='flex-row flex-wrap flex-align-start')
+                dbc.Row(children=charts, className='row-cols-1 row-cols-xl-2'),
             ],
         )
 
@@ -163,4 +164,4 @@ def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> html.Di
             sec
         ]))
 
-    return html.Div(dcc.Tabs(tabs), id=id, className='flex-column body')
+    return dbc.Row(dcc.Tabs(tabs, parent_className='g-0'), id=id)

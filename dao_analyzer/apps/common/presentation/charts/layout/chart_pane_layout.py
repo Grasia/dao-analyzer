@@ -54,7 +54,7 @@ class ChartPaneLayout(ILayout):
                     id=self.__css_id,
                     className='flex-column'
             )),  
-            className=f'pane {self.configuration.css_border} two-column {" ".join(self.__css_classes)}'
+            className=f'pane {self.configuration.css_border} col {" ".join(self.__css_classes)}'
         )
 
 

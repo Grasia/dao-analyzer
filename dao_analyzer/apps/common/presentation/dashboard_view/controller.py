@@ -52,6 +52,9 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
         if not value:
             return cname
 
+        if not cname:
+            cname = ''
+
         classes = set(filter(None, cname.split(' ')))
     
         orgs = organizationsDAO.get_organizations()

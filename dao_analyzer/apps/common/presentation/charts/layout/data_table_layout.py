@@ -60,6 +60,6 @@ class DataTableLayout(ILayout):
                 parent_style={'flex': '1 1 auto'},
                 style={'flex': '1 1 auto'}
             ),
-            className=f'pane {self.configuration.css_border} two-column',
+            className=f'pane {self.configuration.css_border} col',
             style={'align-self': 'stretch', 'display': 'flex'}
         )
