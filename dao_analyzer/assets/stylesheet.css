@@ -58,8 +58,6 @@
 /****** Body-Header ***/
 .body-header {
     justify-content: space-around;
-    background-color: white;
-    margin-top: -2rem;
     z-index: 2;
     position: relative;
 }

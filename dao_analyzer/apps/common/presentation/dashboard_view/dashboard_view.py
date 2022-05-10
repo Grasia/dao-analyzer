@@ -41,7 +41,7 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
         html.Hr(),
         __generate_subheader(org_id, datapoints),
         __generate_sections(sections, id=f'{org_id}-body'),
-    ], className='body')
+    ], className='top-body')
     
 
 def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> html.Div:
