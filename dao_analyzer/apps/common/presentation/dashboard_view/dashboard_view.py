@@ -36,13 +36,15 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
         org_value = organizations.get_all_orgs_dict()["value"]
 
     # TODO: Instead of using an <hr>, make two different containers, and put a gap between them
-    return dbc.Container([
-        __generate_header(organizations, ecosystem, update, org_value),
-        html.Hr(),
-        __generate_subheader(org_id, datapoints),
-        __generate_sections(sections, id=f'{org_id}-body'),
-    ], className='top-body')
-    
+    return html.Div([
+        dbc.Container(
+            __generate_header(organizations, ecosystem, update, org_value),
+        className='top-body'),
+        dbc.Container([
+            __generate_subheader(org_id, datapoints),
+            __generate_sections(sections, id=f'{org_id}-body'),
+        ], className='body'),
+    ])
 
 def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> html.Div:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
@@ -132,7 +134,7 @@ def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> 
         children=html.Div([
            html.Div(html.Div(TEXT['no_data_selected'], className='dao-info-name'), id=org_id+'-info'),
            _get_dao_summary_layout(org_id, datapoints)
-        ], className='dao-header-container'),
+        ], className='dao-header-container pt-4'),
     )
 
 def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> dbc.Row:
