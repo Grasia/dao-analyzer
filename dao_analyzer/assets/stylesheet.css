@@ -340,23 +340,11 @@
 /*********************/
 /*      FOOT         */
 
-.main-foot {
-    display: flex;
-    padding-top: 2em;
-    padding-bottom: 2em;
-    flex-direction: row;
+footer {
     min-height: 10rem;
     background-color: #2F2F2F;
     color: #CCCCCC;
     font-size: x-small;
-    gap: 2em;
-}
-
-@media screen and (max-width: 1280px) {
-    .main-foot {
-        flex-direction: column;
-        gap: 1em;
-    }
 }
 
 .foot-left {
@@ -392,34 +380,6 @@
 
 /*************************/
 /*      Aligners         */
-.left-padding-aligner {
-    padding-left: 5%;
-}
-
-.section-left-padding-aligner {
-    padding-left: 3%;
-}
-
-.chart-text-left-padding-aligner {
-    padding-left: 6.5%;
-}
-
-.right-padding-aligner {
-    padding-right: 5%;
-}
-
-.small-text-aligner {
-    margin: 0 0.2rem 0 0.2rem;
-}
-
-.small-padding {
-    padding: 2%;
-}
-
-.medium-padding {
-    padding: 5%;
-}
-
 .flex-row {
     display: flex;
     flex-direction: row;

@@ -98,7 +98,7 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
             ),
         ], className='flex-row body-header-right'),
 
-    ], className='body-header small-padding flex-row')
+    ], className='body-header p-4 flex-row')
 
 ### SUBHEADER THINGS
 def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
@@ -148,22 +148,20 @@ def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> dbc.Row
         sec_hdr = dbc.Row(
             [html.Div(name, className='section-title')],
             id=f'{data["css_id"]}-hdr', 
-            className='section-left-padding-aligner section-hdr'
+            className='section-hdr'
         )
 
         if 'disclaimer' in data and data['disclaimer']:
             sec_hdr.children.append(html.Div(data['disclaimer'], className='section-disclaimer'))
 
-        sec = dbc.Container(
-            className='flex-column small-padding',
+        container = dbc.Container(
+            class_name='g-4',
             children=[
                 sec_hdr,
                 dbc.Row(children=charts, className='row-cols-1 row-cols-xl-2'),
             ],
         )
 
-        tabs.append(dcc.Tab(label=name, children=[
-            sec
-        ]))
+        tabs.append(dcc.Tab(label=name, children=container))
 
     return dbc.Row(dcc.Tabs(tabs, parent_className='g-0'), id=id)

@@ -37,7 +37,7 @@ class DataTableLayout(ILayout):
                 ),
                 html.Span('nothing', className='hide'),
                 html.Span('nothing', className='hide')
-            ], className='chart-text-left-padding-aligner flex-column chart-header'),
+            ], className='flex-column chart-header'),
             DataTable(
                 id=self.table_id,
                 # style_table={'height': '450px', 'margin-top': '40px', 'overflowY': 'auto'},

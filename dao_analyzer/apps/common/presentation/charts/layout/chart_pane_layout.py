@@ -90,7 +90,7 @@ class ChartPaneLayout(ILayout):
                     id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
                     className=f'{hide}'
                 ),
-            ], className='chart-text-left-padding-aligner flex-column chart-header'),
+            ], className='flex-column chart-header'),
             dcc.Graph(
                 id=f'{self.__css_id}{self.SUFFIX_ID_CHART}',
                 figure=figure,
