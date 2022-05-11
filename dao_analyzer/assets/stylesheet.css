@@ -70,6 +70,7 @@
     height: 80px;
     width: 150px;
     border: 4px solid transparent;
+    box-sizing: content-box;
 }
 
 .ecosystem-overlay {
