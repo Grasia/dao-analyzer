@@ -7,12 +7,16 @@
 
 :root {
     --text-accent-color: #500B89;
+    --content-padding-x: 2rem;
+    --back-color: var(--bs-gray-200);
+    --front-color: var(--bs-white);
+    --bs-body-color: #383838;
+    --footer-background: #2F2F2F;
 }
 
 .root {
-    background-color: #F5F5F5;
+    background-color: var(--back-color);
     font-family: 'Roboto', sans-serif;
-    color: #383838;
 }
 
 .flex-container {
@@ -21,10 +25,6 @@
 
 .grid-container {
     display: grid;
-}
-
-.w-100 {
-    width: 100%;
 }
 
 /*********************/
@@ -64,6 +64,11 @@
 
 .body-header-right {
     flex-basis: 30em;
+}
+
+.tab-container {
+    margin-left: calc(-1* var(--content-padding-x));
+    margin-right: calc(-1* var(--content-padding-x));
 }
 
 .ecosystem {
@@ -172,7 +177,7 @@
 /****** Dao-Info *****/
 .dao-header-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 25px;
     flex-wrap: wrap;
     align-items: stretch;
@@ -257,13 +262,14 @@
 /************************/
 
 /****** Body *********/
-.top-body {
-    background-color: white;
+.top {
     margin-top: -3vh;
 }
 
 .body {
-    background-color: white;
+    background-color: var(--front-color);
+    padding-right: var(--content-padding-x);
+    padding-left: var(--content-padding-x);
 }
 
 .tab {
@@ -342,13 +348,27 @@
 
 footer {
     min-height: 10rem;
-    background-color: #2F2F2F;
+    background-color: var(--footer-background);
     color: #CCCCCC;
     font-size: x-small;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+footer .container {
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
 }
 
 .foot-left {
     justify-content: space-evenly;
+}
+
+.footer-logos-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .foot-ack-logos {

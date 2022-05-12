@@ -35,11 +35,10 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
     if not org_value:
         org_value = organizations.get_all_orgs_dict()["value"]
 
-    # TODO: Instead of using an <hr>, make two different containers, and put a gap between them
     return html.Div([
         dbc.Container(
             __generate_header(organizations, ecosystem, update, org_value),
-        className='top-body'),
+        className='top body mb-3 py-4'),
         dbc.Container([
             __generate_subheader(org_id, datapoints),
             __generate_sections(sections, id=f'{org_id}-body'),
@@ -98,7 +97,7 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
             ),
         ], className='flex-row body-header-right'),
 
-    ], className='body-header p-4 flex-row')
+    ], className='body-header flex-row')
 
 ### SUBHEADER THINGS
 def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
@@ -164,4 +163,4 @@ def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> dbc.Row
 
         tabs.append(dcc.Tab(label=name, children=container))
 
-    return dbc.Row(dcc.Tabs(tabs, parent_className='g-0'), id=id)
+    return dcc.Tabs(tabs, parent_className='g-0', id=id)

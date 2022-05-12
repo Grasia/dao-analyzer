@@ -14,7 +14,7 @@ import dash_bootstrap_components as dbc
 ABOUT_MD = Path('./ABOUT.md')
 
 def get_layout() -> html.Div:
-    return dbc.Container(__get_body(), className='top-body p-5')
+    return dbc.Container(__get_body(), className='top body py-5')
 
 def __get_body() -> html.P:
     with open(ABOUT_MD, 'r') as mdf:

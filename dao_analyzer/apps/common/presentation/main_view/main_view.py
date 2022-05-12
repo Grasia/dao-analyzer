@@ -87,6 +87,6 @@ def __generate_foot() -> html.Div:
                     html.Img(src=os.path.join(REL_PATH, TEXT['erc_image_name']),
                         className='sponsor-img'),
                 ], href=TEXT['erc_url'], target='_blank'),
-            ], className='flex-row')
-        ]), className='p-3'
+            ], className='footer-logos-container')
+        ]), className='mt-3'
     )
