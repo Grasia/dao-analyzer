@@ -67,11 +67,9 @@ index_string += '''
         </head>
         <body>
             {%app_entry%}
-            <footer>
-                {%config%}
-                {%scripts%}
-                {%renderer%}
-            </footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
         </body>
     </html>
     '''
