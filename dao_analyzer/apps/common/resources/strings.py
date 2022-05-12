@@ -30,7 +30,7 @@ TEXT: dict = {
     'current_version': 'Current version: {version}',
     'dao_analyzer_header_name': 'dao-analyzer_header.svg',
     'dao_analyzer_header_text': 'Explore the DAO world',
-    'dao_analyzer_logo_name': 'dao-analyzer_logo.svg',
+    'dao_analyzer_logo_name': 'logo_dao_analyzer.png',
     'dao_selector_title': 'Select your DAO:',
     'daohaus': 'DAOhaus',
     'daohaus_image_name': 'daohaus.png',
