@@ -200,18 +200,22 @@
 
 .dao-info-container {
     display: grid;
-    color: #235370;
+    color: #3B393B;
+    line-height: 1.2;
     grid-template-columns: auto 1fr;
-    column-gap: 10px;
+    column-gap: 40px;
     align-items: baseline;
 }
 
 .dao-info-name {
     font-size: 2.5em;
+    font-weight: 100;
 }
 
 .dao-info-network {
     font-size: 1em;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
 }
 
 .dao-info-address {
