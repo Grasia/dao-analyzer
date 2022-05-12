@@ -263,7 +263,8 @@
 }
 
 .dao-summary-datapoint-number {
-    font-size: x-large;
+    font-size: xx-large;
+    font-weight: 100;
 }
 
 .dao-summary-datapoint-lastmonth {

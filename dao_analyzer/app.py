@@ -31,7 +31,7 @@ app = dash.Dash(__name__,
     ],
     external_stylesheets=[
         dbc.themes.BOOTSTRAP,
-        'https://fonts.googleapis.com/css?family=Roboto:wght@300;400&display=swap',
+        'https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap',
     ],
     meta_tags=[
         { 'name': 'viewport', 'content': 'width=device-width, initial-scale=1' },
