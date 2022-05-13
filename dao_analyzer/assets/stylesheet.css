@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap');
 
 * {
     margin: 0;
@@ -7,12 +7,16 @@
 
 :root {
     --text-accent-color: #500B89;
+    --content-padding-x: 2rem;
+    --back-color: var(--bs-gray-200);
+    --front-color: var(--bs-white);
+    --bs-body-color: #383838;
+    --footer-background: #2F2F2F;
 }
 
 .root {
-    background-color: #F5F5F5;
+    background-color: var(--back-color);
     font-family: 'Roboto', sans-serif;
-    color: #383838;
 }
 
 .flex-container {
@@ -23,33 +27,44 @@
     display: grid;
 }
 
-.w-100 {
-    width: 100%;
-}
-
 /*********************/
 /*    HEADER         */
 .main-header {
     min-height: 10rem;
+    padding-top: 1rem;
     width: 100%;
-    background-image: url("/assets/dao-analyzer_header.svg");
+    background-image: url("/assets/img_header.jpg");
+    background-position: center;
+    background-color: #240457;
     background-size: cover;
     background-repeat: no-repeat;
-    margin-left: -0.1rem;
+}
+
+.header-things-container {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    color: #74CAE8;
+    width: fit-content;
+}
+
+.header-text {
+    display: block;
+    font-weight: 300;
+    width: fit-content;
+    margin-top: -0.5rem;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .header-logo {
+    display: block;
     height: auto;
-    width: 14rem;
-    margin: 1% 0 0 2%;
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-@media screen and (max-width: 1280px) {
-    .header-logo {
-        width: 10rem;
-        margin: 4% 0 0 4%;
-    }
-}
 /*********************/
 
 /*********************/
@@ -64,6 +79,11 @@
 
 .body-header-right {
     flex-basis: 30em;
+}
+
+.tab-container {
+    margin-left: calc(-1* var(--content-padding-x));
+    margin-right: calc(-1* var(--content-padding-x));
 }
 
 .ecosystem {
@@ -172,7 +192,7 @@
 /****** Dao-Info *****/
 .dao-header-container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 25px;
     flex-wrap: wrap;
     align-items: stretch;
@@ -180,18 +200,22 @@
 
 .dao-info-container {
     display: grid;
-    color: #235370;
+    color: #3B393B;
+    line-height: 1.2;
     grid-template-columns: auto 1fr;
-    column-gap: 10px;
+    column-gap: 40px;
     align-items: baseline;
 }
 
 .dao-info-name {
     font-size: 2.5em;
+    font-weight: 100;
 }
 
 .dao-info-network {
     font-size: 1em;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
 }
 
 .dao-info-address {
@@ -207,12 +231,14 @@
 
 /***** DAO SUMMARY ******/
 .dao-summary-container {
-    color: white;
-    background-color: #8944c1;
+    color: #676467;
+    background-color: #F8F7F8;
+    border: 1px solid #E8DFF0;
 }
 
 .dao-summary-hdr {
-    border-bottom: 2px solid var(--text-accent-color);
+    border-bottom: 1px solid var(--text-accent-color);
+    font-size: small;
     padding-bottom: 5px;
     display: flex;
     justify-content: space-between;
@@ -234,17 +260,23 @@
 
 .dao-summary-datapoint-title {
     text-transform: uppercase;
-    font-weight: bold;
-    font-size: x-small;
+    font-size: small;
 }
 
 .dao-summary-datapoint-number {
-    font-size: x-large;
+    font-size: xx-large;
+    font-weight: 100;
+    color: var(--text-accent-color);
 }
 
 .dao-summary-datapoint-lastmonth {
-    font-size: x-small;
+    font-size: small;
     text-transform: capitalize;
+}
+
+.dao-summary-datapoint-evolution {
+    color: var(--text-accent-color);
+    font-size: small;
 }
 
 .dp-icon-up {
@@ -257,24 +289,25 @@
 /************************/
 
 /****** Body *********/
-.top-body {
-    background-color: white;
+.top {
     margin-top: -3vh;
 }
 
 .body {
-    background-color: white;
+    background-color: var(--front-color);
+    padding-right: var(--content-padding-x);
+    padding-left: var(--content-padding-x);
 }
 
 .tab {
-    font-weight: normal;
+    font-weight: 300;
     text-transform: uppercase;
     color: var(--text-accent-color);
     border: 0 !important;
 }
 
 .tab.tab--selected {
-    font-weight: bold;
+    font-weight: normal;
     border-top: 2px solid var(--text-accent-color)!important;
     border-left: 1px solid #E8DFF0!important;
     border-right: 1px solid #E8DFF0!important;
@@ -293,8 +326,9 @@
 }
 
 .section-title {
-    color: #4d98c7;
-    font-size: 2.5em;
+    color: #676467;
+    font-size: 2em;
+    font-weight: 100;
 
     /* Break long names and URLS */
     word-break: break-word;
@@ -342,13 +376,27 @@
 
 footer {
     min-height: 10rem;
-    background-color: #2F2F2F;
+    background-color: var(--footer-background);
     color: #CCCCCC;
     font-size: x-small;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+footer .container {
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
 }
 
 .foot-left {
     justify-content: space-evenly;
+}
+
+.footer-logos-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .foot-ack-logos {

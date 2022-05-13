@@ -30,7 +30,7 @@ app = dash.Dash(__name__,
         "https://kit.fontawesome.com/15714856cb.js", # Font Awesome
     ],
     external_stylesheets=[
-        dbc.themes.BOOTSTRAP
+        dbc.themes.BOOTSTRAP,
     ],
     meta_tags=[
         { 'name': 'viewport', 'content': 'width=device-width, initial-scale=1' },
