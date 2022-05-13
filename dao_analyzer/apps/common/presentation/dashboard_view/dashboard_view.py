@@ -79,6 +79,7 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
             data=organizations,
             storage_type='memory',
         ),
+        html.Div(f'Last update: {update}', className='last-update'),
     ], className='body-header row-divider')
 
 ### SUBHEADER THINGS

@@ -63,7 +63,8 @@ a {
 .header-logo {
     display: block;
     height: auto;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -100,6 +101,15 @@ a {
     justify-content: space-around;
     z-index: 2;
     position: relative;
+}
+
+.body-header .last-update {
+    position: absolute;
+    color: white;
+    font-size: small;
+    width: fit-content;
+    top: -3rem;
+    right: 2rem;
 }
 
 .tab-container {
