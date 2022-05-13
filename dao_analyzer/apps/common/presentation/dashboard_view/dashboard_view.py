@@ -41,8 +41,8 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
         className='top body mb-3 py-4'),
         dbc.Container([
             __generate_subheader(org_id, datapoints),
-            __generate_sections(sections, id=f'{org_id}-body'),
-        ], className='body'),
+            __generate_sections(sections),
+        ], className='body', id=f'{org_id}-body'),
     ])
 
 def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> html.Div:
@@ -136,7 +136,7 @@ def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> 
         ], className='dao-header-container pt-4'),
     )
 
-def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> dbc.Row:
+def __generate_sections(sections: Dict[str, List[Callable]]) -> dbc.Row:
     tabs: List[dcc.Tab] = []
 
     for name, data in sections.items():
@@ -163,4 +163,4 @@ def __generate_sections(sections: Dict[str, List[Callable]], id=None) -> dbc.Row
 
         tabs.append(dcc.Tab(label=name, children=container))
 
-    return dcc.Tabs(tabs, parent_className='g-0', id=id)
+    return dcc.Tabs(tabs)

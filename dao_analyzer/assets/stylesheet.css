@@ -326,8 +326,9 @@
 }
 
 .section-title {
-    color: #4d98c7;
-    font-size: 2.5em;
+    color: #676467;
+    font-size: 2em;
+    font-weight: 100;
 
     /* Break long names and URLS */
     word-break: break-word;
