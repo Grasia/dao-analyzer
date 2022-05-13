@@ -456,6 +456,24 @@ code {
 /*********************/
 
 /*********************/
+/*    ABOUT          */
+/*********************/
+.about-back {
+    color: #F547D6;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.about-back::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    content: "\f060";
+    margin-right: 0.3em;
+}
+
+/*********************/
+
+/*********************/
 /*    MARKDOWN       */
 /*********************/
 /* Based on multiple sources like GitHub's markdown */
