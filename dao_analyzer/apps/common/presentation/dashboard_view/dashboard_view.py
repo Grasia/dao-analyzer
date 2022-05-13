@@ -45,59 +45,41 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
         ], className='body', id=f'{org_id}-body'),
     ])
 
-def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> html.Div:
+def __gen_ecosystem(id: str, selected: str) -> html.Div:
+    return html.Div(children=[
+        html.Div(className=f'ecosystem-overlay {id}-color',
+            id=f'{id}-bt'),
+        html.Img(src=os.path.join(REL_PATH, TEXT[f'{id}_image_name']),
+            className='ecosystem-img'),
+    ], className=f'ecosystem {id}-ecosystem {selected}')
+
+def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> dbc.Row:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
 
-    return html.Div(children=[
+    ecosystems: List[html.Div] = [ __gen_ecosystem(eid, selected[i]) for i,eid in enumerate(['daostack', 'aragon', 'daohaus']) ]
+
+    return dbc.Row(children=[
         html.Div(children=[
-            html.Div(children=[
-                html.Span(TEXT['ecosystem_selector_title']),
-                html.Span(f"({TEXT['last_update']} {update})", className='xsmall-font'),
-            ], className='flex-column'),
-            html.Div(children=[
-                html.Div(children=[
-                    html.Div(className='ecosystem-overlay daostack-color',
-                        id='daostack-bt'),
-                    html.Img(src=os.path.join(REL_PATH, TEXT['daostack_image_name']),
-                        className='ecosystem-img flex-size-1'),
-                ], className=f'ecosystem daostack-ecosystem {selected[0]}'),
-                html.Div(children=[
-                    html.Div(className='ecosystem-overlay aragon-color', 
-                        id='aragon-bt'),
-                    html.Img(src=os.path.join(REL_PATH, TEXT['aragon_image_name']),
-                        className='ecosystem-img flex-size-1'),
-                ], className=f'ecosystem aragon-ecosystem {selected[1]}'),
-                html.Div(children=[
-                    html.Div(className='ecosystem-overlay daohaus-color',
-                        id='daohaus-bt'),
-                    html.Img(src=os.path.join(REL_PATH, TEXT['daohaus_image_name']),
-                        className='ecosystem-img flex-size-1'),
-                ], className=f'ecosystem daohaus-ecosystem {selected[2]}'),
-            ], className='flex-row flex-space-evenly flex-size-3')
-
-        ], className='flex-row flex-size-1 flex-space-around'),
-
+            html.Div(TEXT['ecosystem_selector_title']),
+            html.Div(children=ecosystems, className='ecosystems-wrapper'),
+        ], className='col d-flex flex-row justify-content-between gap-3'),
         html.Div(children=[
-            html.Div(className='v-separator'),
-            html.Div([
-                html.Span(TEXT['dao_selector_title']),
-                dcc.Dropdown(
-                    id='org-dropdown',
-                    options=organizations.get_dict_representation(),
-                    value=org_value,
-                    clearable=False,
-                ),
-            ], className='flex-column w-100'),
-            dcc.Store(
-                id='org-store',
-                data=organizations,
-                storage_type='memory',
-            ),
-        ], className='flex-row body-header-right'),
-
-    ], className='body-header flex-row')
+            html.Div(html.Span(TEXT['dao_selector_title'])),
+            html.Div(dcc.Dropdown(
+                id='org-dropdown',
+                options=organizations.get_dict_representation(),
+                value=org_value,
+                clearable=False,
+            ), className='flex-grow-1'),
+        ], className='col d-flex flex-row justify-content-between gap-3'),
+        dcc.Store(
+            id='org-store',
+            data=organizations,
+            storage_type='memory',
+        ),
+    ], className='body-header row-divider')
 
 ### SUBHEADER THINGS
 def _get_dao_info(name: str, network: str, addr: str) -> html.Div:

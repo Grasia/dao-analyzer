@@ -82,7 +82,7 @@ app.layout = html.Div([
         type="circle",
         color=COLOR.DARK_BLUE,
         fullscreen=True,
-        children=html.Div(id='header-loading-state', className='display-none')),
+        children=html.Div(id='header-loading-state', className='d-none')),
     html.Div(id='current-platform', hidden=True)
 ])
 
