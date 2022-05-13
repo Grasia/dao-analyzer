@@ -18,8 +18,8 @@ def get_layout() -> html.Div:
 
 def __get_body() -> html.Div:
     with open(ABOUT_MD, 'r') as mdf:
-        md = dcc.Markdown(mdf.read(), className='markdown')
+        md = dcc.Markdown(mdf.read(), className='markdown mt-3')
 
     back = html.A('Back', href='/', className='about-back')
 
-    return html.Div([back, md], className='col-6 mx-auto')
+    return html.Div([back, md], className='col-md-6 mx-auto')

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap');
 
 * {
     margin: 0;
@@ -12,6 +12,10 @@
     --front-color: var(--bs-white);
     --bs-body-color: #383838;
     --footer-background: #2F2F2F;
+}
+
+a {
+    color: #74CAE8;
 }
 
 .root {
@@ -462,6 +466,7 @@ code {
     color: #F547D6;
     text-decoration: none;
     text-transform: uppercase;
+    font-weight: 500;
 }
 
 .about-back::before {
@@ -485,10 +490,12 @@ code {
 .markdown h1,h2,h3,h4,h5,h6 {
     margin-top: 24px;
     margin-bottom: 16px;
+    font-weight: 100;
 }
 
 .markdown p, pre, ul, ol {
     margin-bottom: 16px;
+    line-height: 1.9;
 }
 
 .markdown pre code {
