@@ -33,9 +33,9 @@ def bind_callbacks(app) -> None: # noqa: C901
     @app.callback(
         Output('page-content', 'children'),
         Output('header-loading-state', 'children'),
-        Output('current-platform', 'data-current-platform'),
+        Output('page-content', 'data-current-platform'),
         Input('url', 'pathname'),
-        State('current-platform', 'data-current-platform')
+        State('page-content', 'data-current-platform')
     )
     def display_page(pathname, current_platform):
         if pathname == "/":

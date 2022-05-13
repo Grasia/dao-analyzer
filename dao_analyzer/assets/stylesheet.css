@@ -35,7 +35,6 @@ a {
 /*    HEADER         */
 .main-header {
     min-height: 10rem;
-    padding-top: 1rem;
     width: 100%;
     background-image: url("/assets/img_header.jpg");
     background-position: center;
@@ -67,6 +66,28 @@ a {
     width: 400px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.header-about {
+    position: absolute;
+    top: .5rem;
+    right: 25vw;
+    padding: 5px;
+
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+@media (max-width: 992px) {
+    .header-about {
+        right: 1rem;
+    }
+}
+
+.header-about:hover, [data-current-platform="about"] .header-about {
+    color: white;
+    border-bottom: 3px solid #F547D6;
 }
 
 /*********************/

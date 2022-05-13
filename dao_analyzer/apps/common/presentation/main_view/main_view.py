@@ -32,6 +32,7 @@ def __generate_header() -> html.Div:
             html.Img(src=os.path.join(REL_PATH, TEXT['dao_analyzer_logo_name']), className='header-logo'),
             html.Span(TEXT['dao_analyzer_header_text'], className='header-text'),
         ], className='header-things-container'),
+        html.A('About', href="/about", className="header-about"),
     ], className='main-header')
 
 
