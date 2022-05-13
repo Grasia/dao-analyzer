@@ -16,6 +16,6 @@ ABOUT_MD = Path('./ABOUT.md')
 def get_layout() -> html.Div:
     return dbc.Container(__get_body(), className='top body py-5')
 
-def __get_body() -> html.P:
+def __get_body() -> html.Div:
     with open(ABOUT_MD, 'r') as mdf:
-        return dcc.Markdown(mdf.read(), className='markdown')
+        return dcc.Markdown(mdf.read(), className='markdown col-6 mx-auto')
