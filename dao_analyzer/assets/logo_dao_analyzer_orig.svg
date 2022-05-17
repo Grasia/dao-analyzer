@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="417px" height="96px" viewBox="0 0 417 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>logo_dao_analyzer</title>
+    <defs>
+        <polygon id="path-1" points="160.759766 16.3085938 137.451172 78.3339844 1.78479193e-14 78.3339844 0 0 160.759766 0"></polygon>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="DAO-ANALYZER_v2_2" transform="translate(-512.000000, -1.000000)">
+            <g id="logo_dao_analyzer" transform="translate(512.000000, 1.000000)">
+                <g id="DAO">
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <use id="Mask" fill-opacity="0" fill="#9F6060" xlink:href="#path-1"></use>
+                    <text mask="url(#mask-2)" font-family="Poppins-Black, Poppins" font-size="50" font-weight="700" fill="#FFFFFF">
+                        <tspan x="41.7199219" y="64">DAO</tspan>
+                    </text>
+                </g>
+                <text id="ANALYZER" font-family="Poppins-Black, Poppins" font-size="50" font-weight="700" fill="#FFFFFF">
+                    <tspan x="146.069922" y="78">ANALYZER</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>
