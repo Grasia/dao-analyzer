@@ -27,7 +27,6 @@ pd.options.mode.chained_assignment = 'warn' if DEBUG else None
 app = dash.Dash(__name__, 
     suppress_callback_exceptions=True, 
     external_scripts=[
-        "https://kit.fontawesome.com/15714856cb.js", # Font Awesome
     ],
     external_stylesheets=[
         dbc.themes.BOOTSTRAP,

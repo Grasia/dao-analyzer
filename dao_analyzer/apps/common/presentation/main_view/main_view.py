@@ -42,7 +42,7 @@ def __generate_foot() -> html.Div:
         dbc.Container(children=[
             dbc.Row([
                 html.Div([
-                    html.I(className='fa-brands fa-github'),
+                    html.I(className='bi bi-github'),
                     ' ',
                     TEXT['follow_us'],
                     html.A(TEXT['github'], href=TEXT['github_url'], target='_black', className='url-color')
