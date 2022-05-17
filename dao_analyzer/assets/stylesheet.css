@@ -44,11 +44,14 @@ a {
 }
 
 .header-things-container {
+    position: absolute;
+    top: 0;
+    width: 100%;
+
     display: block;
     margin-left: auto;
     margin-right: auto;
     color: #74CAE8;
-    width: fit-content;
 }
 
 .header-text {
@@ -64,29 +67,27 @@ a {
     display: block;
     height: auto;
     width: 100%;
-    max-width: 400px;
+    max-width: 417px;
     margin-left: auto;
     margin-right: auto;
 }
 
-.header-about {
-    position: absolute;
-    top: .5rem;
-    right: 25vw;
-    padding: 5px;
+.header-links-container {
+    display: flex;
+    justify-content: end;
 
+    padding-top: .5rem;
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+}
+
+.header-link {
     color: white;
     text-decoration: none;
     text-transform: uppercase;
 }
 
-@media (max-width: 992px) {
-    .header-about {
-        right: 1rem;
-    }
-}
-
-.header-about:hover, [data-current-platform="about"] .header-about {
+.header-link:hover, [data-current-platform="about"] .header-link {
     color: white;
     border-bottom: 3px solid #F547D6;
 }

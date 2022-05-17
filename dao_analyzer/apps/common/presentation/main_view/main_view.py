@@ -27,12 +27,13 @@ def generate_layout(body: html.Div) -> html.Div:
 
 def __generate_header() -> html.Div:
     return html.Div(children=[
-        #html.Img(src=os.path.join(REL_PATH, TEXT['dao_analyzer_header_name']), className='header-back-img'),
         html.Div([
             html.Img(src=os.path.join(REL_PATH, TEXT['dao_analyzer_logo_name']), className='header-logo'),
             html.Span(TEXT['dao_analyzer_header_text'], className='header-text'),
         ], className='header-things-container'),
-        html.A('About', href="/about", className="header-about"),
+        dbc.Container([
+            html.A('About', href="/about", className="header-link"),
+        ], className='header-links-container'),
     ], className='main-header')
 
 
