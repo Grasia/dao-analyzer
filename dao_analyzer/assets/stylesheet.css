@@ -383,56 +383,25 @@ footer .container {
     padding-right: var(--content-padding-x);
 }
 
-.foot-left {
-    justify-content: space-evenly;
-}
-
 .footer-logos-container {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: end;
     flex-wrap: wrap;
 }
 
 .foot-ack-logos {
-    margin-right: 1.5rem;
-    justify-content: space-around;
+    display: flex;
+    flex-direction: column;
+    margin-right: 1rem;
+    justify-content: flex-start;
 }
 
 .sponsor-img {
-    max-height: 70px;
+    max-height: 50px;
 }
 
-@media screen and (max-width: 1280px) {
-    .main-foot {
-        font-size: xx-small;
-    }
-
-    .sponsor-img {
-        max-height: 50px;
-    }
-}
-
-@media screen and (min-width: 1920px) {
-    .main-foot {
-        font-size: small;
-    }
-}
-
-/*********************/
-
-/*************************/
-/*      Aligners         */
-.flex-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.flex-column {
-    display: flex;
-    flex-direction: column;
-}
 /*********************/
 
 /*********************/

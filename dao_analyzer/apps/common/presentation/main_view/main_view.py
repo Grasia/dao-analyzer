@@ -39,20 +39,17 @@ def __generate_header() -> html.Div:
 def __generate_foot() -> html.Div:
     return html.Footer(
         dbc.Container(children=[
-            html.Div(children=[
-                html.Div(children=[
-                    html.A(TEXT['about_us'], href='/about', className='url-color'),
-                    html.Span(TEXT['current_version'].format(version=__version__)),
-                    html.Span([
-                        html.I(className='fa-brands fa-github'),
-                        ' ',
-                        TEXT['follow_us'],
-                        html.A(TEXT['github'], href=TEXT['github_url'], target='_black', className='url-color')
-                    ]),
-                ], className='flex-column', style={'line-height': '1.7'}),
-
-                html.Div(children=[
-
+            dbc.Row([
+                html.Div([
+                    html.I(className='fa-brands fa-github'),
+                    ' ',
+                    TEXT['follow_us'],
+                    html.A(TEXT['github'], href=TEXT['github_url'], target='_black', className='url-color')
+                ], className='col'),
+                html.Div(TEXT['current_version'].format(version=__version__), className='col-12 col-sm text-sm-end'),
+            ], className='mb-3'),
+            dbc.Row([
+                html.Div([
                     html.Div(children=[
                         html.A(children=[
                             html.Img(src=os.path.join(REL_PATH, TEXT['cc_image_name']), className='license-img'),
@@ -60,37 +57,33 @@ def __generate_foot() -> html.Div:
                         html.A(children=[
                             html.Img(src=os.path.join(REL_PATH, TEXT['gpl_image_name']), className='license-img'),
                         ], href=TEXT['gpl_url'], target='_blank'),
-                    ], className='foot-ack-logos flex-column'),
-
+                    ], className='foot-ack-logos'),
                     html.Div(children=[
-                        html.P(children=[
-                                f"{TEXT['cc_license_text']}. {TEXT['gpl_license_text']}. ",
-                                html.A(TEXT['p2p_models'], href=TEXT['p2p_models_url'], target='_blank', className='url-color'),
-                                f"{TEXT['acknowledgements']}."
-                            ],
-                            className=''),
-                    ], className=''),
-                ], className='flex-row')
-
-            ], className='foot-left flex-column'),
-
-            html.Div(children=[
-                html.A(children=[
-                    html.Img(src=os.path.join(REL_PATH, TEXT['spanish_ministry_image_name']),
-                        className='sponsor-img'),
-                ], href=TEXT['spanish_ministry_url'], target='_blank'),
-                html.A(children=[
-                    html.Img(src=os.path.join(REL_PATH, TEXT['logo_ucm_name']),
-                        className='sponsor-img'),
-                ], href=TEXT['ucm_url'], target='_blank'),
-                html.A(children=[
-                    html.Img(src=os.path.join(REL_PATH, TEXT['logo_grasia_name']),
-                        className='sponsor-img'),
-                ], href=TEXT['grasia_url'], target='_blank'),
-                html.A(children=[
-                    html.Img(src=os.path.join(REL_PATH, TEXT['erc_image_name']),
-                        className='sponsor-img'),
-                ], href=TEXT['erc_url'], target='_blank'),
-            ], className='footer-logos-container')
+                        html.P([
+                            f"{TEXT['cc_license_text']}. {TEXT['gpl_license_text']}. ",
+                            html.A(TEXT['p2p_models'], href=TEXT['p2p_models_url'], target='_blank', className='url-color'),
+                            f"{TEXT['acknowledgements']}."
+                        ]),
+                    ]),
+                ], className='col d-flex flex-row'),
+                html.Div([
+                    html.A(children=[
+                        html.Img(src=os.path.join(REL_PATH, TEXT['spanish_ministry_image_name']),
+                            className='sponsor-img'),
+                    ], href=TEXT['spanish_ministry_url'], target='_blank'),
+                    html.A(children=[
+                        html.Img(src=os.path.join(REL_PATH, TEXT['logo_ucm_name']),
+                            className='sponsor-img'),
+                    ], href=TEXT['ucm_url'], target='_blank'),
+                    html.A(children=[
+                        html.Img(src=os.path.join(REL_PATH, TEXT['logo_grasia_name']),
+                            className='sponsor-img'),
+                    ], href=TEXT['grasia_url'], target='_blank'),
+                    html.A(children=[
+                        html.Img(src=os.path.join(REL_PATH, TEXT['erc_image_name']),
+                            className='sponsor-img'),
+                    ], href=TEXT['erc_url'], target='_blank'),
+                ], className='col footer-logos-container'),
+            ], className='row-cols-1 row-cols-lg-2 gy-3'),
         ]), className='mt-3'
     )
