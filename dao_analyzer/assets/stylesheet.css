@@ -109,7 +109,13 @@ a {
     font-size: small;
     width: fit-content;
     top: -3rem;
-    right: 2rem;
+    right: 0rem;
+}
+
+.number-of-daos {
+    color: var(--text-accent-color);
+    font-weight: 500;
+    font-size: 0.9em;
 }
 
 .tab-container {

@@ -64,16 +64,19 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
         html.Div(children=[
             html.Div(TEXT['ecosystem_selector_title']),
             html.Div(children=ecosystems, className='ecosystems-wrapper'),
-        ], className='col d-flex flex-row justify-content-between gap-3'),
+        ], className='col d-flex flex-row align-items-center justify-content-between gap-3'),
         html.Div(children=[
             html.Div(html.Span(TEXT['dao_selector_title'])),
-            html.Div(dcc.Dropdown(
-                id='org-dropdown',
-                options=organizations.get_dict_representation(),
-                value=org_value,
-                clearable=False,
-            ), className='flex-grow-1'),
-        ], className='col d-flex flex-row justify-content-between gap-3'),
+            html.Div([
+                html.Div(f"There are {len(organizations):,} DAOs", id='org-number', className='number-of-daos'),
+                html.Div(dcc.Dropdown(
+                    id='org-dropdown',
+                    options=organizations.get_dict_representation(),
+                    value=org_value,
+                    clearable=False,
+                )),
+            ], className='flex-grow-1')
+        ], className='col d-flex flex-row justify-content-between align-items-center gap-3'),
         dcc.Store(
             id='org-store',
             data=organizations,
