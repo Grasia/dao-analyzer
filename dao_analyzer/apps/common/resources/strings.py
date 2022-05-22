@@ -61,6 +61,8 @@ TEXT: dict = {
     'logo_ucm_name': 'logo-ucm.png',
     'p2p_models': 'P2P Models',
     'p2p_models_url': 'https://p2pmodels.eu/',
+    'share_button': 'Share',
+    'share_button_tooltip': 'Copy to clipboard',
     'spanish_ministry_image_name': 'logo-ministerio.png',
     'spanish_ministry_url': 'https://www.ciencia.gob.es/',
     'this_month': 'This month',

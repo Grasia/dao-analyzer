@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 from dash import html
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output, State, ClientsideFunction
 from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
 
 from dao_analyzer.apps.common.resources.strings import TEXT
@@ -19,6 +19,18 @@ from dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view import 
 def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) -> None:
     dao_info_id = section_id + '-info'
     dao_sum_hdr = section_id + '-summary-hdr'
+    dao_btn_share = section_id + '-btn-share'
+    dao_share_popover = section_id + '-share-popover'
+
+    app.clientside_callback(
+        ClientsideFunction(
+            namespace='callbacks',
+            function_name='share_click',
+        ),
+        Output(dao_share_popover, 'is_open'),
+        Input(dao_btn_share, 'n_clicks'),
+        State('url', 'href'),
+    )
 
     @app.callback(
         Output(dao_info_id, 'children'),
@@ -40,7 +52,7 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
         if result.get_name():
             name = result.get_name()
 
-        return _get_dao_info(name, result.get_network(), result.get_id()), _gen_sum_hdr(result.get_creation_date())
+        return _get_dao_info(name, result.get_network(), result.get_id(), result.get_creation_date()), _gen_sum_hdr()
 
     @app.callback(
         Output(f'{section_id}-body', 'className'),

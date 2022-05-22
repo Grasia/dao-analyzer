@@ -40,10 +40,28 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
             __generate_header(organizations, ecosystem, update, org_value),
         className='top body mb-3 py-4'),
         dbc.Container([
+            __generate_share(org_id),
             __generate_subheader(org_id, datapoints),
             __generate_sections(sections),
         ], className='body', id=f'{org_id}-body'),
     ])
+
+def __generate_share(org_id) -> html.Div:
+    btn_id = org_id + '-btn-share'
+    popover_id = org_id + '-share-popover'
+    return dbc.Row([
+        html.Div([
+            dbc.Button([
+                html.I(className='bi bi-share-fill'),
+                ' ',
+                TEXT['share_button'],
+            ], className='btn-light text-secondary w-auto', id=btn_id),
+            dbc.Tooltip(TEXT['share_button_tooltip'], target=btn_id, placement='top'),
+            dbc.Popover([
+                dbc.PopoverBody('This is the popover thing'),
+            ], id=popover_id, target=btn_id, placement='top', autohide=True)
+        ], className='d-flex justify-content-end'),
+    ], className='pt-3')
 
 def __gen_ecosystem(id: str, selected: str) -> html.Div:
     return html.Div(children=[
@@ -86,7 +104,7 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
     ], className='body-header row-divider')
 
 ### SUBHEADER THINGS
-def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
+def _get_dao_info(name: str, network: str, addr: str, creation_date: date) -> html.Div:
     grid: List[html.Div] = [
         html.Div("Name", className='dao-info-label'),
         html.Div(name, className='dao-info-name'),
@@ -95,6 +113,10 @@ def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
         html.Div("Address", className='dao-info-label'),
         html.Div(html.Span(addr, className='address'), className='dao-info-address'),
     ]
+
+    if creation_date:
+        grid.append(html.Div("Creation", className='dao-info-label'))
+        grid.append(html.Div(creation_date.strftime(TEXT['creation_date_format']), className='dao-info-address'))
     
     return html.Div(grid, className='dao-info-container')
 
@@ -115,7 +137,7 @@ def _get_dao_summary_layout(org_id, datapoints: Dict, creation_date: date = None
 def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
     return dbc.Row(
         id=org_id,
-        className='my-3',
+        className='mb-3',
         children=html.Div([
            html.Div(html.Div(TEXT['no_data_selected'], className='dao-info-name'), id=org_id+'-info'),
            _get_dao_summary_layout(org_id, datapoints)
