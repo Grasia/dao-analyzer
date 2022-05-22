@@ -10,6 +10,7 @@
 
 from typing import Dict, List, Callable
 from dash import html
+from dao_analyzer.apps.common.presentation.charts.chart_hdr_controller import ChartHeaderController
 from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
@@ -183,7 +184,7 @@ class DaohausService(metaclass=Singleton):
             css_classes=['only-on-all-orgs']
         ))
         
-        charts.append(self.__create_chart(
+        charts.append(self.__create_activity_chart(
             title=TEXT['title_organization_activity'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ORGANIZATION_ACTIVITY,
@@ -412,6 +413,30 @@ class DaohausService(metaclass=Singleton):
             css_id=css_id,
             layout=layout,
             adapter=adapter,
+        )
+
+        self.__controllers[cont_key].append(controller)
+        return layout.get_layout
+    
+    def __create_activity_chart(self,
+        title: str,
+        adapter: IMetricAdapter,
+        figure: Figure,
+        cont_key: int,
+    ):
+        css_id: str = f"{TEXT['pane_css_prefix']}{ChartPaneLayout.pane_id()}"
+        layout: ChartPaneLayout = ChartPaneLayout(
+            title=title,
+            css_id=css_id,
+            figure=figure,
+        )
+        layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
+
+        controller: ChartController = ChartHeaderController(
+            css_id=css_id,
+            layout=layout,
+            adapter=adapter,
+            hdr_id=f"{TEXT['css_id_organization']}-summary-hdr",
         )
 
         self.__controllers[cont_key].append(controller)

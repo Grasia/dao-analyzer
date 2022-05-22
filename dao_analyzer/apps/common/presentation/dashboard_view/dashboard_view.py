@@ -104,7 +104,9 @@ def _get_dao_info(name: str, network: str, addr: str, creation_date: date = None
 
 def _gen_sum_hdr(last_activity: date = None):
     if last_activity:
-        return html.Span(['Created on ', html.B(last_activity.strftime(TEXT['last_activity_format']))])
+        if last_activity == date.min:
+            return html.Span(['Has ', html.B('never'), ' been active'])
+        return html.Span(['Last active on ', html.B(last_activity.strftime(TEXT['last_activity_format']))])
     else:
         return None
 

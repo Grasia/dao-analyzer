@@ -56,6 +56,7 @@ TEXT: dict = {
     'no_data': 'No data',
     'no_data_selected': 'There\'s no DAO selected',
     'not_found': 'Error 404: Page not found',
+    'last_activity_format': '%b %Y',
     'last_update': 'Last update:',
     'logo_grasia_name': 'logo-grasia.png',
     'logo_ucm_name': 'logo-ucm.png',
