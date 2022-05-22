@@ -17,11 +17,11 @@ class DataPointLayout:
             number = float(evolution.strip('%$'))
 
             if number < 0:
-                return html.I(className="bi bi-dash-circle-fill dp-icon-down")
+                return html.I(className="bi bi-arrow-down-circle-fill dp-icon-down")
             elif number > 0:
                 return html.I(className="bi bi-arrow-up-circle-fill dp-icon-up")
             else:
-                return html.I(className="bi bi-arrow-down-circle-fill dp-icon-same")
+                return html.I(className="bi bi-dash-circle dp-icon-same")
         except ValueError:
             return
 
