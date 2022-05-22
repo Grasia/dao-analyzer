@@ -86,7 +86,7 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
     ], className='body-header row-divider')
 
 ### SUBHEADER THINGS
-def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
+def _get_dao_info(name: str, network: str, addr: str, creation_date: date = None) -> html.Div:
     grid: List[html.Div] = [
         html.Div("Name", className='dao-info-label'),
         html.Div(name, className='dao-info-name'),
@@ -95,12 +95,16 @@ def _get_dao_info(name: str, network: str, addr: str) -> html.Div:
         html.Div("Address", className='dao-info-label'),
         html.Div(html.Span(addr, className='address'), className='dao-info-address'),
     ]
+
+    if creation_date:
+        grid.append(html.Div("Creation Date", className='dao-info-label'))
+        grid.append(html.Div(creation_date.strftime(TEXT['creation_date_format']), className='dao-info-date'))
     
     return html.Div(grid, className='dao-info-container')
 
-def _gen_sum_hdr(creation_date: date = None):
-    if creation_date:
-        return html.Span(['Created on ', html.B(creation_date.strftime(TEXT['creation_date_format']))])
+def _gen_sum_hdr(last_activity: date = None):
+    if last_activity:
+        return html.Span(['Created on ', html.B(last_activity.strftime(TEXT['last_activity_format']))])
     else:
         return None
 

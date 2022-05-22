@@ -8,6 +8,7 @@
 """
 from dash import html
 from dash.dependencies import Input, Output, State
+from dao_analyzer.apps.common.business.transfers import Organization
 from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
 
 from dao_analyzer.apps.common.resources.strings import TEXT
@@ -34,13 +35,13 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
         if organizations.is_all_orgs(value):
             return html.Div(options[0]["label"], className='dao-info-name'), _gen_sum_hdr()
         
-        result = next((x for x in organizations if x.get_id() == value))
+        result: Organization = next((x for x in organizations if x.get_id() == value))
         
         name = html.I(TEXT['unknown_dao_name'])
         if result.get_name():
             name = result.get_name()
 
-        return _get_dao_info(name, result.get_network(), result.get_id()), _gen_sum_hdr(result.get_creation_date())
+        return _get_dao_info(name, result.get_network(), result.get_id(), result.get_creation_date()), _gen_sum_hdr()
 
     @app.callback(
         Output(f'{section_id}-body', 'className'),

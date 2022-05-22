@@ -213,6 +213,7 @@ a {
     line-height: 1.2;
     grid-template-columns: auto 1fr;
     column-gap: 40px;
+    row-gap: 5px;
     align-items: baseline;
 }
 
@@ -229,6 +230,11 @@ a {
 
 .dao-info-address {
     font-size: 1em;
+}
+
+.dao-info-date {
+    font-size: 1em;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .dao-info-label {
