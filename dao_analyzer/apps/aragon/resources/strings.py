@@ -23,7 +23,7 @@ TEXT: dict = {
     'dp_id_active_token_holders': 'aragon-dp-token',
     'dp_id_assets': 'aragon-dp-assets',
     'dp_id_new_votes': 'aragon-dp-votes',
-    'dp_title_assets': 'Assets',
+    'dp_title_assets': 'Treasury',
     'dp_title_active_token_holders': 'Active Holders',
     'dp_title_new_votes': 'New Proposals',
     'pane_css_prefix': 'aragon-pane',

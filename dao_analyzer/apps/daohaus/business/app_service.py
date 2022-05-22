@@ -224,13 +224,15 @@ class DaohausService(metaclass=Singleton):
         ))
 
         # active members
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['title_active_members'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_MEMBERS, 
                 organizations=call),
             figure=BarFigure(),
-            cont_key=self._MEMBER
+            cont_key=self._MEMBER,
+            dp_id=TEXT['dp_id_active_members'],
+            dp_title=TEXT['dp_title_active_members'],
         ))
         return charts
 
