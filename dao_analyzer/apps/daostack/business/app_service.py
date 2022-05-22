@@ -229,11 +229,13 @@ class DaostackService(metaclass=Singleton):
         ))
 
         # active reputation holders
-        charts.append(self.__create_chart(
+        charts.append(self.__create_sum_chart(
             title=TEXT['active_users_title'],
             adapter=MetricAdapter(s_factory.ACTIVE_USERS, call),
             figure=BarFigure(),
-            cont_key=self._REP_H
+            cont_key=self._REP_H,
+            dp_id=TEXT['active_users_dp_id'],
+            dp_title=TEXT['active_users_dp_title'],
         ))
         return charts
 
