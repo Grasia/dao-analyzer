@@ -52,7 +52,7 @@ class ChartPaneLayout(ILayout):
                 children=html.Div(
                     children=children,
                     id=self.__css_id,
-                    className='flex-column'
+                    className='d-flex flex-column'
             )),  
             className=f'pane {self.configuration.css_border} col {" ".join(self.__css_classes)}'
         )
@@ -90,7 +90,7 @@ class ChartPaneLayout(ILayout):
                     id=f'{self.__css_id}{self.SUFFIX_ID_SUBTITLE2}',
                     className=f'{hide}'
                 ),
-            ], className='flex-column chart-header'),
+            ], className='d-flex flex-column chart-header'),
             dcc.Graph(
                 id=f'{self.__css_id}{self.SUFFIX_ID_CHART}',
                 figure=figure,

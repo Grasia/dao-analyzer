@@ -37,7 +37,7 @@ class DataTableLayout(ILayout):
                 ),
                 html.Span('nothing', className='hide'),
                 html.Span('nothing', className='hide')
-            ], className='flex-column chart-header'),
+            ], className='d-flex flex-column chart-header'),
             DataTable(
                 id=self.table_id,
                 # style_table={'height': '450px', 'margin-top': '40px', 'overflowY': 'auto'},
@@ -54,7 +54,7 @@ class DataTableLayout(ILayout):
                 children=html.Div(
                     children=children,
                     id=self.__css_id,
-                    className='flex-column'
+                    className='d-flex flex-column'
                 ),
                 className='dcc-loading',
                 parent_style={'flex': '1 1 auto'},
