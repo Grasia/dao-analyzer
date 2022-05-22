@@ -37,6 +37,8 @@ class TreemapFigure(Figure):
 
         plot_data.pop('total', None)
         treemap: go.Treemap = go.Treemap(**plot_data)
-        layout: go.Layout = go.Layout(margin=dict(t=40, l=25, r=25, b=25))
+        layout: go.Layout = go.Layout(
+            margin=self.configuration.get_margin(),
+        )
 
         return {'data': [treemap], 'layout': layout}

@@ -25,6 +25,7 @@ DARK_ORANGE = '#FF9800'
 BLACK = 'black'
 WHITE = 'white'
 GRID_COLOR = '#B0BEC5'
+TICKFONT_COLOR = '#B0BEC5'
 
 
 def hex_to_rgba(color: str, alpha: float = 1.0) -> Tuple:

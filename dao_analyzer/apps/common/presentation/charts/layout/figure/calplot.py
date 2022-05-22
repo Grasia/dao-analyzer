@@ -36,4 +36,8 @@ class CalFigure(Figure):
             year_height=50,
         )
 
+        fig.update_layout(
+            margin=self.configuration.get_margin(),
+        )
+
         return fig

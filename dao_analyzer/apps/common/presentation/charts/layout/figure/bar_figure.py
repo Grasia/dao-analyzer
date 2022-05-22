@@ -59,7 +59,8 @@ class BarFigure(Figure):
             params={
                 'tickvals': plot_data['x'],
                 'type': plot_data['type'],
-                'tickformat': plot_data['x_format']
+                'tickformat': plot_data['x_format'],
+                'tickfont_size': 10,
             })
 
         super().configuration.disable_legend()
@@ -69,6 +70,7 @@ class BarFigure(Figure):
             yaxis=super().configuration.get_y_axis_layout(),
             legend=super().configuration.get_legend(),
             shapes=super().configuration.get_shapes(),
+            margin=self.configuration.get_margin(),
         )
 
         return {'data': [bar], 'layout': layout}

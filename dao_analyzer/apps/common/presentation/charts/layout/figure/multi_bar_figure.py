@@ -96,6 +96,7 @@ class MultiBarFigure(Figure):
             yaxis=super().configuration.get_y_axis_layout(),
             legend=super().configuration.get_legend(),
             shapes=super().configuration.get_shapes(),
+            margin=self.configuration.get_margin(),
         )
 
         return {'data': bars, 'layout': layout}

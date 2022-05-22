@@ -91,6 +91,8 @@ class FigureConfiguration():
             'showgrid': args['grid'] if 'grid' in args else False,
             'gridwidth': 0.5,
             'gridcolor': Color.GRID_COLOR,
+            'tickfont_color': Color.TICKFONT_COLOR,
+            'automargin': True,
         }
 
         if 'removemarkers' in args:
@@ -108,9 +110,22 @@ class FigureConfiguration():
             axis_l['tickangle'] = 45
         if 'matches' in args:
             axis_l['matches'] = args['matches']
+        if 'tickfont_size' in args:
+            axis_l['tickfont_size'] = args['tickfont_size']
 
         return axis_l
 
+    def get_height(self) -> int:
+        return 350
+
+    def get_margin(self) -> dict[str, int]:
+        # Margin is calculated automatically
+        return {
+            'l': 0,
+            'r': 0,
+            't': 0,
+            'b': 0,
+        }
 
     def add_axis(self, x_axis: int, y_axis: int) -> None:
         self.__x_layout_params = [{} for _ in range(x_axis)]

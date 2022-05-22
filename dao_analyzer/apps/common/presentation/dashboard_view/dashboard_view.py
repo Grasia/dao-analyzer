@@ -144,10 +144,10 @@ def __generate_sections(sections: Dict[str, List[Callable]]) -> dbc.Row:
             sec_hdr.children.append(html.Div(data['disclaimer'], className='section-disclaimer'))
 
         container = dbc.Container(
-            class_name='g-4',
+            class_name='g-4 mt-4',
             children=[
                 sec_hdr,
-                dbc.Row(children=charts, className='row-cols-1 row-cols-xl-2'),
+                dbc.Row(children=charts, className='row-cols-1 row-cols-xl-2 gx-5'),
             ],
         )
 

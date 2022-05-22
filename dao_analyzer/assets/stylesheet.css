@@ -361,14 +361,7 @@ a {
 }
 
 .chart-header {
-    margin-bottom: -1rem;
-    z-index: 2;
-}
-
-@media screen and (max-width: 1280px) {
-    .chart-header {
-        margin-bottom: 0;
-    }
+    margin-bottom: 1rem;
 }
 
 .chart {
