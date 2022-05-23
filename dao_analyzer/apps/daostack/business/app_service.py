@@ -15,8 +15,8 @@ from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
 from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
-from dao_analyzer.apps.common.data_access.daos.organization_dao\
-    import OrganizationListDao
+from dao_analyzer.apps.daostack.data_access.daos.organization_dao import DaostackDAO
+from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
 from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 import dao_analyzer.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
@@ -52,8 +52,7 @@ class DaostackService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__cacheRequester: CacheRequester = CacheRequester(srcs=[srcs.DAOS])
-        self.__orgsDAO: OrganizationListDao = OrganizationListDao(self.__cacheRequester)
+        self.__orgsDAO: OrganizationListDao = DaostackDAO()
         self.__controllers: Dict[int, List[ChartController]] = {
             self._REP_H: list(),
             self._VOTE: list(),
@@ -107,7 +106,7 @@ class DaostackService(metaclass=Singleton):
             organizations=self.organizations(),
             sections=self.__get_sections(),
             ecosystem='daostack',
-            update=self.__cacheRequester.get_last_update_str(),
+            update=self.__orgsDAO.get_last_update_str(),
             org_id=TEXT['css_id_organization'],
             org_value=org_value,
             datapoints=self.__get_datapoints(),
