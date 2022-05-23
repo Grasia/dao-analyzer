@@ -6,11 +6,10 @@
         <david@ddavo.me>
 """
 import pandas as pd
-import numpy as np
 
 from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
 from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
-from dao_analyzer.apps.common.data_access.requesters import CacheRequester, JoinCacheRequester
+from dao_analyzer.apps.common.data_access.requesters import CacheRequester
 
 from .metric import srcs
 

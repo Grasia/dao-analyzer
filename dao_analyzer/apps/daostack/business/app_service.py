@@ -20,8 +20,6 @@ from dao_analyzer.apps.common.data_access.daos.organization_dao import Organizat
 from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 import dao_analyzer.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
-from dao_analyzer.apps.common.data_access.requesters.cache_requester import CacheRequester
-import dao_analyzer.apps.daostack.data_access.daos.metric.srcs as srcs
 from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.business.singleton import Singleton
 from dao_analyzer.apps.common.presentation.charts.chart_controller import ChartController
