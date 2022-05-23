@@ -17,10 +17,8 @@ import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as vi
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
 from dao_analyzer.apps.common.data_access.daos.organization_dao\
     import OrganizationListDao
-from dao_analyzer.apps.common.data_access.requesters.cache_requester import CacheRequester
 from dao_analyzer.apps.daohaus.business.metric_adapter.asset_values import AssetsValues
 from dao_analyzer.apps.daohaus.business.metric_adapter.asset_tokens import AssetsTokens
-import dao_analyzer.apps.daohaus.data_access.daos.metric.srcs as srcs
 from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.presentation.charts.chart_controller import ChartController
 from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
@@ -33,6 +31,7 @@ from dao_analyzer.apps.daohaus.business.metric_adapter.votes_type import VotesTy
 from dao_analyzer.apps.daohaus.business.metric_adapter.proposal_outcome import ProposalOutcome
 from dao_analyzer.apps.daohaus.business.metric_adapter.proposal_type import ProposalType 
 import dao_analyzer.apps.daohaus.data_access.daos.metric.metric_dao_factory as s_factory
+from dao_analyzer.apps.daohaus.data_access.daos.organization_dao import DaohausDao
 from dao_analyzer.apps.daohaus.resources.strings import TEXT
 
 class DaohausService(metaclass=Singleton):
@@ -45,8 +44,7 @@ class DaohausService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__cacheRequester: CacheRequester = CacheRequester(srcs=[srcs.MOLOCHES])
-        self.__orgsDAO: OrganizationListDao = OrganizationListDao(self.__cacheRequester)
+        self.__orgsDAO: OrganizationListDao = DaohausDao()
         self.__controllers: Dict[int, List[ChartController]] = {
             self._MEMBER: list(),
             self._VOTE: list(),
@@ -96,7 +94,7 @@ class DaohausService(metaclass=Singleton):
             organizations=self.organizations(),
             sections=self.__get_sections(),
             ecosystem='daohaus',
-            update=self.__cacheRequester.get_last_update_str(),
+            update=self.__orgsDAO.get_last_update_str(),
             org_id=TEXT['css_id_organization'],
             org_value=org_value,
             datapoints=self.__get_datapoints(),

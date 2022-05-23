@@ -37,11 +37,7 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
         
         result: Organization = next((x for x in organizations if x.get_id() == value))
         
-        name = html.I(TEXT['unknown_dao_name'])
-        if result.get_name():
-            name = result.get_name()
-
-        return _get_dao_info(name, result.get_network(), result.get_id(), result.get_creation_date()), _gen_sum_hdr()
+        return _get_dao_info(result), _gen_sum_hdr(result)
 
     @app.callback(
         Output(f'{section_id}-body', 'className'),

@@ -19,12 +19,16 @@ class Organization:
         o_id: str = TEXT['no_data'],
         name: str = TEXT['no_data'],
         network: str = TEXT['no_data'],
-        creation_date: date = None
+        creation_date: date = None,
+        first_activity: date = None,
+        last_activity: date = None,
     ):
         self._id: str = o_id
         self._name: str = name
         self._network: str = network
         self._creation_date: date = creation_date
+        self._first_activity: date = first_activity
+        self._last_activity: date = last_activity
 
     # Redefinition of sorting functions
     def __eq__(self, other) -> bool:
@@ -82,6 +86,12 @@ class Organization:
     def get_creation_date(self) -> date:
         return self._creation_date
 
+    def get_first_activity(self) -> date:
+        return self._first_activity
+
+    def get_last_activity(self) -> date:
+        return self._last_activity
+
     def get_label(self) -> str:
         if not self._name:
             return f"{self._id[:16]}... ({self._network})"
@@ -98,7 +108,7 @@ class OrganizationList(list):
     __ALL_ORGS_ID: str = '1'
 
 
-    def __init__(self, orgs: List[Organization] = None) -> None:
+    def __init__(self, orgs: List[Organization] = []) -> None:
         super().__init__(orgs)
 
 

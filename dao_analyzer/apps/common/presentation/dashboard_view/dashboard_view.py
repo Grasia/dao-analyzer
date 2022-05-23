@@ -8,10 +8,9 @@
 """
 import os
 from typing import Dict, List, Callable
-from datetime import date
 from dash import dcc, html
 import dash_bootstrap_components as dbc
-from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
+from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 from dao_analyzer.apps.common.presentation.main_view.main_view import REL_PATH
@@ -86,33 +85,40 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
     ], className='body-header row-divider')
 
 ### SUBHEADER THINGS
-def _get_dao_info(name: str, network: str, addr: str, creation_date: date = None) -> html.Div:
+def _get_dao_info(org: Organization) -> html.Div:
+    name = html.I(TEXT['unknown_dao_name'])
+    if org.get_name():
+        name = org.get_name()
+
     grid: List[html.Div] = [
         html.Div("Name", className='dao-info-label'),
         html.Div(name, className='dao-info-name'),
         html.Div("Network", className='dao-info-label'),
-        html.Div(network, className='dao-info-network'),
+        html.Div(org.get_network(), className='dao-info-network'),
         html.Div("Address", className='dao-info-label'),
-        html.Div(html.Span(addr, className='address'), className='dao-info-address'),
+        html.Div(html.Span(org.get_id(), className='address'), className='dao-info-address'),
     ]
 
-    if creation_date:
+    if org.get_creation_date():
         grid.append(html.Div("Creation Date", className='dao-info-label'))
-        grid.append(html.Div(creation_date.strftime(TEXT['creation_date_format']), className='dao-info-date'))
+        grid.append(html.Div(org.get_creation_date().strftime(TEXT['creation_date_format']), className='dao-info-date'))
+    elif org.get_first_activity():
+        grid.append(html.Div("First Activity", className='dao-info-label'))
+        grid.append(html.Div(org.get_first_activity().strftime(TEXT['creation_date_format']), className='dao-info-date'))
     
     return html.Div(grid, className='dao-info-container')
 
-def _gen_sum_hdr(last_activity: date = None):
-    if last_activity:
-        return html.Span(['Created on ', html.B(last_activity.strftime(TEXT['last_activity_format']))])
+def _gen_sum_hdr(org: Organization = None):
+    if org and org.get_last_activity():
+        return html.Span(['Last active on ', html.B(org.get_last_activity().strftime(TEXT['last_activity_format']))])
     else:
         return None
 
-def _get_dao_summary_layout(org_id, datapoints: Dict, creation_date: date = None):
+def _get_dao_summary_layout(org_id, datapoints: Dict ):
     dp_divs: List[html.Div] = [ dp.get_layout() for dp in datapoints.values() ]
 
     return html.Div([
-        html.Div(_gen_sum_hdr(creation_date), className='dao-summary-hdr', id=org_id+'-summary-hdr'),
+        html.Div(_gen_sum_hdr(), className='dao-summary-hdr', id=org_id+'-summary-hdr'),
         html.Div(dp_divs, className='dao-summary-body'),
     ], className='dao-summary-container', style={'padding': '1em'})
 
