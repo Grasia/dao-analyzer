@@ -13,12 +13,10 @@ from dash import html
 
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
-from dao_analyzer.apps.common.data_access.daos.organization_dao\
-    import OrganizationListDao
-from dao_analyzer.apps.common.data_access.requesters.cache_requester import CacheRequester
+from dao_analyzer.apps.aragon.data_access.daos.organization_dao import AragonDAO
+from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
 from dao_analyzer.apps.aragon.business.metric_adapter.asset_values import AssetsValues
 from dao_analyzer.apps.aragon.business.metric_adapter.asset_tokens import AssetsTokens
-import dao_analyzer.apps.aragon.data_access.daos.metric.srcs as srcs
 from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.presentation.charts.chart_controller import ChartController
 from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
@@ -47,8 +45,7 @@ class AragonService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__cacheRequester: CacheRequester = CacheRequester(srcs=[srcs.ORGANIZATIONS])
-        self.__orgsDAO: OrganizationListDao = OrganizationListDao(self.__cacheRequester)
+        self.__orgsDAO: OrganizationListDao = AragonDAO()
         self.__controllers: Dict[int, List[ChartController]] = {
             self._TOKEN_HOLDER: list(),
             self._VOTE: list(),
@@ -98,7 +95,7 @@ class AragonService(metaclass=Singleton):
             organizations=self.organizations(),
             sections=self.__get_sections(),
             ecosystem='aragon',
-            update=self.__cacheRequester.get_last_update_str(),
+            update=self.__orgsDAO.get_last_update_str(),
             org_id=TEXT['css_id_organization'],
             org_value=org_value,
             datapoints=self.__get_datapoints(),

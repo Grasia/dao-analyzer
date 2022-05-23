@@ -26,7 +26,7 @@ class DaohausDao(OrganizationListDao):
             srcs.PROPOSALS,
             srcs.RAGE_QUITS,
             srcs.VOTES,
-        ], how='left'))
+        ], how='left', on=self.__DF_IDX))
     
     def get_organizations(self) -> OrganizationList:
         df: pd.DataFrame = self._requester.request()

@@ -109,10 +109,13 @@ def _get_dao_info(org: Organization) -> html.Div:
     return html.Div(grid, className='dao-info-container')
 
 def _gen_sum_hdr(org: Organization = None):
-    if org and org.get_last_activity():
+    if not org:
+        return None
+    
+    if org.get_last_activity():
         return html.Span(['Last active on ', html.B(org.get_last_activity().strftime(TEXT['last_activity_format']))])
     else:
-        return None
+        return html.Span(['This organization has ', html.B('never'), ' been active'])
 
 def _get_dao_summary_layout(org_id, datapoints: Dict ):
     dp_divs: List[html.Div] = [ dp.get_layout() for dp in datapoints.values() ]

@@ -11,7 +11,7 @@ class JoinCacheRequester(CacheRequester):
     A Cache Requester that joins instead of concatenating the dataframes
     """
     
-    def __init__(self, srcs: List[Path], on=None, how='outer', dropna=False):
+    def __init__(self, srcs: List[Path], on=None, how='outer', dropna=False, columns=None):
         """Initializes the CacheRequester
 
         Args:
@@ -23,10 +23,15 @@ class JoinCacheRequester(CacheRequester):
         self._on = on
         self._how = how
         self._dropna = dropna
+        self._cols = columns
     
     def tryReload(self):
         dfs = map(pd.read_feather, self._srcs)
         dfs = map(lambda df: df.drop(columns='id'), dfs)
+
+        if self._cols:
+            dfs = map(lambda df: df[df.columns.intersection(self._cols)], dfs)
+
         if self._dropna:
             dfs = map(lambda df: df.dropna(), dfs)
 
