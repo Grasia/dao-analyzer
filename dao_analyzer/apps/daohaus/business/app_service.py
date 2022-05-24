@@ -63,7 +63,6 @@ class DaohausService(metaclass=Singleton):
             view_cont.bind_callbacks(
                 app=app,
                 section_id=TEXT['css_id_organization'],
-                organizationsDAO=self.__orgsDAO
                 )
             self.__gen_sections()
 
