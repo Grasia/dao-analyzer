@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List, Dict
+from typing import Dict
 
 from datetime import datetime
 
@@ -126,60 +126,3 @@ class Organization:
             return f"{self._id} ({self._network})"
 
         return f"{self._name} — {self._id} ({self._network})"
-
-class OrganizationList(list):
-    __ALL_ORGS_ID: str = '1'
-
-
-    def __init__(self, orgs: List[Organization] = []) -> None:
-        # Convert every item to Organization Type
-        super().__init__(map(Organization.from_json, orgs))
-
-
-    def add_organization(self, org: Organization) -> None:
-        if org:
-            self.__orgs.append(org)
-
-    
-    def get_organizations(self) -> List[Organization]:
-        return list(self)
-
-    def get_all_orgs_dict(self) -> Dict[str, str]:
-        return {'value': self.__ALL_ORGS_ID, 'label': TEXT['all_orgs']}
-
-    def get_dict_representation(self) -> List[Dict[str, str]]:
-        if not self:
-            return list()
-        
-        result: List[Dict[str, str]] = [x.get_dict_representation() for x in sorted(self)]
-
-        # Append all_orgs as the first one
-        result = [self.get_all_orgs_dict()] + result
-        return result
-
-    @classmethod
-    def is_all_orgs(cls, o_id: str):
-        return o_id == cls.__ALL_ORGS_ID
-
-
-    def is_empty(self) -> bool:
-        return len(self) == 0
-
-
-    def get_size(self) -> int:
-        return len(self)
-
-
-    def get_ids_from_id(self, o_id: str) -> List[str]:
-        """
-        Gets a list of ids from a o_id attr.
-        If o_id is equals to 'all orgs' id then returns a list with all the orgs id.
-        If not returns a list with o_id as unique element of the list.
-        """
-        if self.is_empty():
-            return list()
-
-        if not self.is_all_orgs(o_id):
-            return [o_id]
-
-        return [x.get_id() for x in self]

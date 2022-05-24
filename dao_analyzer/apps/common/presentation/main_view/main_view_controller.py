@@ -10,6 +10,7 @@ import dash
 from dash import dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 
 from dao_analyzer.apps.common.presentation.main_view.main_view import generate_layout
 import dao_analyzer.apps.common.presentation.about_view.about_view as about
@@ -102,3 +103,29 @@ def bind_callbacks(app) -> None: # noqa: C901
             pathname = TEXT['url_aragon']
 
         return "/" + pathname
+
+    @app.callback(
+        Output('org-dropdown', 'options'),
+        Output('org-dropdown', 'value'),
+        Output('org-number', 'children'),
+        Input('org-filter', 'value'),
+        State('org-dropdown', 'value'),
+        State('org-store', 'data'),
+    )
+    def org_filters(filter_values: list[str], org_value: str, org_store: list):
+        filtered = OrganizationList(org_store)
+
+        for f in OrganizationList.get_filters(filter_values, only_enabled=True):
+            filtered = filter(f.pred, filtered)
+
+        organizations = OrganizationList(filtered)
+        options = organizations.get_dict_representation()
+        org_number = f"There are {len(organizations):,} DAOs"
+
+        # If the selected DAO was filtered out, fall back to All DAOs
+        if org_value in [ x['value'] for x in options ]:
+            value = org_value
+        else:
+            value = organizations.get_all_orgs_dict()['value']
+
+        return options, value, org_number

@@ -10,7 +10,7 @@ import os
 from typing import Dict, List, Callable
 from dash import dcc, html
 import dash_bootstrap_components as dbc
-from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList
+from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList, OrganizationFilter
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 from dao_analyzer.apps.common.presentation.main_view.main_view import REL_PATH
@@ -59,6 +59,8 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
 
     ecosystems: List[html.Div] = [ __gen_ecosystem(eid, selected[i]) for i,eid in enumerate(['daostack', 'aragon', 'daohaus']) ]
 
+    filters: OrganizationFilter = organizations.get_filters()
+
     return dbc.Row(children=[
         html.Div(children=[
             html.Div(TEXT['ecosystem_selector_title']),
@@ -67,14 +69,19 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
         html.Div(children=[
             html.Div(html.Span(TEXT['dao_selector_title'])),
             html.Div([
-                html.Div(f"There are {len(organizations):,} DAOs", id='org-number', className='number-of-daos'),
+                html.Div("", id='org-number', className='number-of-daos'),
                 html.Div(dcc.Dropdown(
                     id='org-dropdown',
                     options=organizations.get_dict_representation(),
                     value=org_value,
                     clearable=False,
                 )),
-            ], className='flex-grow-1')
+                dcc.Checklist(
+                    options = {x.id:x.title for x in filters},
+                    value = [x.id for x in filters if x.enabled],
+                    id='org-filter',
+                ),
+            ], className='flex-grow-1'),
         ], className='col d-flex flex-row justify-content-between align-items-center gap-3'),
         dcc.Store(
             id='org-store',

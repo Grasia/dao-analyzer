@@ -43,6 +43,7 @@ TEXT: dict = {
     'ecosystem_selector_title': 'Select a platform',
     'erc_image_name': 'logo-erc.png',
     'erc_url': 'https://erc.europa.eu/',
+    'filter_active_last_year_title': 'Active last year',
     'follow_us': 'Follow us on ',
     'github': 'GitHub',
     'github_icon_name': 'ico-github.svg',
