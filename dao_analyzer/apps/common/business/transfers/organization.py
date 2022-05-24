@@ -9,7 +9,7 @@
 
 from typing import List, Dict
 
-from datetime import date
+from datetime import datetime
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 
@@ -19,16 +19,16 @@ class Organization:
         o_id: str = TEXT['no_data'],
         name: str = TEXT['no_data'],
         network: str = TEXT['no_data'],
-        creation_date: date = None,
-        first_activity: date = None,
-        last_activity: date = None,
+        creation_date: datetime = None,
+        first_activity: datetime = None,
+        last_activity: datetime = None,
     ):
         self._id: str = o_id
         self._name: str = name
         self._network: str = network
-        self._creation_date: date = creation_date
-        self._first_activity: date = first_activity
-        self._last_activity: date = last_activity
+        self._creation_date: datetime = creation_date
+        self._first_activity: datetime = first_activity
+        self._last_activity: datetime = last_activity
 
     # Redefinition of sorting functions
     def __eq__(self, other) -> bool:
@@ -72,7 +72,30 @@ class Organization:
             'name': self.get_name(),
             'network': self.get_network(),
             'creation_date': self.get_creation_date(),
+            'first_activity': self.get_first_activity(),
+            'last_activity': self.get_last_activity(),
         }
+
+    @classmethod
+    def from_json(cls, dict: dict[str, str]) -> 'Organization':
+        def _getdt(key):
+            d = dict.get(key, None)
+
+            if not d:
+                return None
+            elif isinstance(d, str):
+                return datetime.fromisoformat(d)
+            else:
+                raise TypeError
+
+        return Organization(
+            o_id = dict['address'],
+            network = dict['network'],
+            name = dict.get('name', None),
+            creation_date = _getdt('creation_date'),
+            first_activity = _getdt('first_activity'),
+            last_activity = _getdt('last_activity'),
+        )
 
     def get_id(self) -> str:
         return self._id
@@ -83,13 +106,13 @@ class Organization:
     def get_network(self) -> str:
         return self._network
 
-    def get_creation_date(self) -> date:
+    def get_creation_date(self) -> datetime:
         return self._creation_date
 
-    def get_first_activity(self) -> date:
+    def get_first_activity(self) -> datetime:
         return self._first_activity
 
-    def get_last_activity(self) -> date:
+    def get_last_activity(self) -> datetime:
         return self._last_activity
 
     def get_label(self) -> str:
@@ -109,7 +132,8 @@ class OrganizationList(list):
 
 
     def __init__(self, orgs: List[Organization] = []) -> None:
-        super().__init__(orgs)
+        # Convert every item to Organization Type
+        super().__init__(map(Organization.from_json, orgs))
 
 
     def add_organization(self, org: Organization) -> None:

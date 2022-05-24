@@ -8,8 +8,7 @@
 """
 from dash import html
 from dash.dependencies import Input, Output, State
-from dao_analyzer.apps.common.business.transfers import Organization
-from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
+from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 from dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view import _get_dao_info, _gen_sum_hdr
@@ -17,21 +16,22 @@ from dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view import 
 
 # We use organizations Data Access Object to be able to update the organization
 # list every callback
-def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) -> None:
+def bind_callbacks(app, section_id: str) -> None:
     dao_info_id = section_id + '-info'
     dao_sum_hdr = section_id + '-summary-hdr'
 
     @app.callback(
         Output(dao_info_id, 'children'),
         Output(dao_sum_hdr, 'children'),
-        [Input('org-dropdown', 'value')],
-        [State('org-dropdown', 'options')]
+        Input('org-dropdown', 'value'),
+        State('org-dropdown', 'options'),
+        State('org-store', 'data'),
     )
-    def organization_section_name(value: str, options: dict) -> html.Div:
+    def organization_section_name(value: str, options: dict, org_store: list) -> html.Div:
         if not value:
             return html.Div(TEXT['no_data_selected'], className='dao-info-name'), _gen_sum_hdr()
 
-        organizations = organizationsDAO.get_organizations()
+        organizations = OrganizationList(org_store)
         if organizations.is_all_orgs(value):
             return html.Div(options[0]["label"], className='dao-info-name'), _gen_sum_hdr()
         
@@ -43,9 +43,9 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
         Output(f'{section_id}-body', 'className'),
         Input(f'{section_id}-body', 'className'),
         Input('org-dropdown', 'value'),
-        State('org-dropdown', 'options')
+        State('org-store', 'data'),
     )
-    def show_hide_plots(cname: str, value: str, options: dict):
+    def show_hide_plots(cname: str, value: str, org_store: list):
         if not value:
             return cname
 
@@ -54,7 +54,7 @@ def bind_callbacks(app, section_id: str, organizationsDAO: OrganizationListDao) 
 
         classes = set(filter(None, cname.split(' ')))
     
-        orgs = organizationsDAO.get_organizations()
+        orgs = OrganizationList(org_store)
         if orgs.is_all_orgs(value):
             # Hide the ones with only-on-dao
             classes.add('is-all-orgs')
