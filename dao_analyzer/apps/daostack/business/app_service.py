@@ -177,12 +177,11 @@ class DaostackService(metaclass=Singleton):
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # active organizations
         charts.append(self.__create_chart(
             title=TEXT['title_active_organization'],
-            adapter=MetricAdapter(s_factory.ACTIVE_ORGANIZATION, call),
+            adapter=MetricAdapter(s_factory.ACTIVE_ORGANIZATION),
             figure=CalFigure(),
             cont_key=self._ORGANIZATION,
             css_classes=['only-on-all-orgs'],
@@ -190,7 +189,7 @@ class DaostackService(metaclass=Singleton):
 
         charts.append(self.__create_chart(
             title=TEXT['title_organization_activity'],
-            adapter=MetricAdapter(s_factory.ORGANIZATION_ACTIVITY, call),
+            adapter=MetricAdapter(s_factory.ORGANIZATION_ACTIVITY),
             figure=CalFigure(),
             cont_key=self._ORGANIZATION
         ))
@@ -204,12 +203,11 @@ class DaostackService(metaclass=Singleton):
          its layout and its controller.
         """
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # new reputation holders
         charts.append(self.__create_chart(
             title=TEXT['new_users_title'],
-            adapter=MetricAdapter(s_factory.NEW_USERS, call),
+            adapter=MetricAdapter(s_factory.NEW_USERS),
             figure=BarFigure(),
             cont_key=self._REP_H
         ))
@@ -217,7 +215,7 @@ class DaostackService(metaclass=Singleton):
         # total reputation holders
         charts.append(self.__create_sum_chart(
             title=TEXT['total_users_title'],
-            adapter=MetricAdapter(s_factory.TOTAL_REP_HOLDERS, call),
+            adapter=MetricAdapter(s_factory.TOTAL_REP_HOLDERS),
             figure=BarFigure(),
             cont_key=self._REP_H,
             dp_id=TEXT['total_users_dp_id'],
@@ -227,7 +225,7 @@ class DaostackService(metaclass=Singleton):
         # active reputation holders
         charts.append(self.__create_sum_chart(
             title=TEXT['active_users_title'],
-            adapter=MetricAdapter(s_factory.ACTIVE_USERS, call),
+            adapter=MetricAdapter(s_factory.ACTIVE_USERS),
             figure=BarFigure(),
             cont_key=self._REP_H,
             dp_id=TEXT['active_users_dp_id'],
@@ -241,12 +239,11 @@ class DaostackService(metaclass=Singleton):
         Creates charts of vote section.
         """
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # total votes by type
         charts.append(self.__create_chart(
             title=TEXT['total_votes_option_title'],
-            adapter=VoteType(s_factory.TOTAL_VOTES_OPTION, call, VoteType.VOTE),
+            adapter=VoteType(s_factory.TOTAL_VOTES_OPTION, VoteType.VOTE),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._VOTE
         ))
@@ -254,7 +251,7 @@ class DaostackService(metaclass=Singleton):
         # votes for rate
         charts.append(self.__create_chart(
             title=TEXT['vote_for_rate_title'],
-            adapter=MetricAdapter(s_factory.VOTES_FOR_RATE, call),
+            adapter=MetricAdapter(s_factory.VOTES_FOR_RATE),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -263,7 +260,7 @@ class DaostackService(metaclass=Singleton):
         # votes against rate
         charts.append(self.__create_chart(
             title=TEXT['vote_against_rate_title'],
-            adapter=MetricAdapter(s_factory.VOTES_AGAINST_RATE, call),
+            adapter=MetricAdapter(s_factory.VOTES_AGAINST_RATE),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -272,7 +269,7 @@ class DaostackService(metaclass=Singleton):
         # different voters
         charts.append(self.__create_chart(
             title=TEXT['different_voters_title'],
-            adapter=MetricAdapter(s_factory.DIFFERENT_VOTERS, call),
+            adapter=MetricAdapter(s_factory.DIFFERENT_VOTERS),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -280,7 +277,7 @@ class DaostackService(metaclass=Singleton):
         # percentage of reputation holders which vote
         charts.append(self.__create_chart(
             title=TEXT['voters_percentage_title'],
-            adapter=MetricAdapter(s_factory.VOTERS_PERCENTAGE, call),
+            adapter=MetricAdapter(s_factory.VOTERS_PERCENTAGE),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -292,7 +289,7 @@ class DaostackService(metaclass=Singleton):
         # vote-voters rate
         charts.append(self.__create_chart(
             title=TEXT['vote_voters_title'],
-            adapter=MetricAdapter(s_factory.VOTE_VOTERS_RATE, call),
+            adapter=MetricAdapter(s_factory.VOTE_VOTERS_RATE),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -305,19 +302,18 @@ class DaostackService(metaclass=Singleton):
         Creates charts of stake section.
         """
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # total stakes
         charts.append(self.__create_chart(
             title=TEXT['total_stakes_title'],
-            adapter=MetricAdapter(s_factory.TOTAL_STAKES, call),
+            adapter=MetricAdapter(s_factory.TOTAL_STAKES),
             figure=BarFigure(),
             cont_key=self._STAKE
         ))
         # different stakers
         charts.append(self.__create_chart(
             title=TEXT['different_stakers_title'],
-            adapter=MetricAdapter(s_factory.DIFFERENT_STAKERS, call),
+            adapter=MetricAdapter(s_factory.DIFFERENT_STAKERS),
             figure=BarFigure(),
             cont_key=self._STAKE
         ))
@@ -329,12 +325,11 @@ class DaostackService(metaclass=Singleton):
         Creates charts of proposal section.
         """
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # new proposals
         charts.append(self.__create_sum_chart(
             title=TEXT['new_proposals_title'],
-            adapter=MetricAdapter(s_factory.NEW_PROPOSALS, call),
+            adapter=MetricAdapter(s_factory.NEW_PROPOSALS),
             figure=BarFigure(),
             cont_key=self._PROPOSAL,
             dp_id=TEXT['new_proposals_dp_id'],
@@ -344,7 +339,7 @@ class DaostackService(metaclass=Singleton):
         # majority type
         charts.append(self.__create_chart(
             title=TEXT['proposal_outcome_majority_title'],
-            adapter=MajorityType(s_factory.PROPOSAL_MAJORITY, call),
+            adapter=MajorityType(s_factory.PROPOSAL_MAJORITY),
             figure=DoubleScatterFigure(),
             cont_key=self._PROPOSAL
         ))
@@ -353,7 +348,7 @@ class DaostackService(metaclass=Singleton):
         # proposal boost_outcome
         charts.append(self.__create_chart(
             title=TEXT['proposal_boost_outcome_title'],
-            adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME, call),
+            adapter=ProposalBoostOutcome(s_factory.PROPOSALS_BOOST_OUTCOME),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._PROPOSAL
         ))
@@ -362,7 +357,7 @@ class DaostackService(metaclass=Singleton):
         # proposal approve rate
         charts.append(self.__create_chart(
             title=TEXT['approval_proposal_rate_title'],
-            adapter=MetricAdapter(s_factory.APPROVAL_PROPOSAL_RATE, call),
+            adapter=MetricAdapter(s_factory.APPROVAL_PROPOSAL_RATE),
             figure=BarFigure(),
             cont_key=self._PROPOSAL
         ))
@@ -371,7 +366,7 @@ class DaostackService(metaclass=Singleton):
         # total succes rate of the stakes
         charts.append(self.__create_chart(
             title=TEXT['proposal_total_succ_rate_title'],
-            adapter=MetricAdapter(s_factory.PROPOSALS_TOTAL_SUCCES_RATIO, call),
+            adapter=MetricAdapter(s_factory.PROPOSALS_TOTAL_SUCCES_RATIO),
             figure=BarFigure(),
             cont_key=self._PROPOSAL
         ))
@@ -380,7 +375,7 @@ class DaostackService(metaclass=Singleton):
         # success rate by type
         charts.append(self.__create_chart(
             title=TEXT['proposal_boost_succ_rate_title'],
-            adapter=SuccessRatioType(s_factory.PROPOSALS_BOOST_SUCCES_RATIO, call),
+            adapter=SuccessRatioType(s_factory.PROPOSALS_BOOST_SUCCES_RATIO),
             figure=MultiBarFigure(bar_type=MultiBarFigure.GROUP),
             cont_key=self._PROPOSAL
         ))
@@ -390,11 +385,10 @@ class DaostackService(metaclass=Singleton):
 
     def __get_assets_charts(self):
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         charts.append(self.__create_sum_chart(
             title=TEXT['assets_value_title'],
-            adapter=AssetsValues(call),
+            adapter=AssetsValues(),
             figure=TreemapFigure(),
             cont_key=self._ASSETS,
             dp_id=TEXT['assets_value_dp_id'],
@@ -405,7 +399,7 @@ class DaostackService(metaclass=Singleton):
 
         charts.append(self.__create_dataTable(
             title=TEXT['assets_novalue_title'],
-            adapter=AssetsTokens(call),
+            adapter=AssetsTokens(),
             cont_key=self._ASSETS
         ))
 

@@ -177,14 +177,13 @@ class AragonService(metaclass=Singleton):
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # active organization
         charts.append(self.__create_chart(
             title=TEXT['title_active_organization'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_ORGANIZATION, 
-                organizations=call),
+            ),
             figure=CalFigure(),
             cont_key=self._ORGANIZATION,
             css_classes=['only-on-all-orgs'],
@@ -194,7 +193,6 @@ class AragonService(metaclass=Singleton):
             title=TEXT['title_organization_activity'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ORGANIZATION_ACTIVITY,
-                organizations=call
             ),
             figure=CalFigure(),
             cont_key=self._ORGANIZATION,
@@ -205,14 +203,13 @@ class AragonService(metaclass=Singleton):
 
     def __get_token_holder_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # active token holders
         charts.append(self.__create_sum_chart(
             title=TEXT['title_active_token_holders'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_TOKEN_HOLDERS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._TOKEN_HOLDER,
             dp_id=TEXT['dp_id_active_token_holders'],
@@ -224,14 +221,13 @@ class AragonService(metaclass=Singleton):
 
     def __get_vote_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # new votes
         charts.append(self.__create_sum_chart(
             title=TEXT['title_new_votes'],
             adapter=BasicAdapter(
                 metric_id=s_factory.NEW_VOTES, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._VOTE,
             dp_id=TEXT['dp_id_new_votes'],
@@ -241,7 +237,7 @@ class AragonService(metaclass=Singleton):
         # vote's outcome
         charts.append(self.__create_chart(
             title=TEXT['title_vote_outcome'],
-            adapter=VoteOutcome(organizations=call),
+            adapter=VoteOutcome(),
             figure=MultiBarFigure(MultiBarFigure.STACK),
             cont_key=self._VOTE
         ))
@@ -251,7 +247,7 @@ class AragonService(metaclass=Singleton):
             title=TEXT['title_rate_vote_rate'],
             adapter=BasicAdapter(
                 metric_id=s_factory.APPROVAL_VOTE_RATE, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -262,12 +258,11 @@ class AragonService(metaclass=Singleton):
 
     def __get_cast_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # cast type
         charts.append(self.__create_chart(
             title=TEXT['title_cast_type'],
-            adapter=CastType(organizations=call),
+            adapter=CastType(),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._CAST
         ))
@@ -277,7 +272,7 @@ class AragonService(metaclass=Singleton):
             title=TEXT['title_casted_votes_for_rate'],
             adapter=BasicAdapter(
                 metric_id=s_factory.CASTED_VOTE_FOR_RATE,
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._CAST
         ))
@@ -288,7 +283,7 @@ class AragonService(metaclass=Singleton):
             title=TEXT['title_casted_votes_against_rate'],
             adapter=BasicAdapter(
                 metric_id=s_factory.CASTED_VOTE_AGAINST_RATE,
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._CAST
         ))
@@ -299,7 +294,7 @@ class AragonService(metaclass=Singleton):
             title=TEXT['title_active_voters'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_VOTERS,
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._CAST
         ))
@@ -309,7 +304,7 @@ class AragonService(metaclass=Singleton):
             title=TEXT['title_votes_voters'],
             adapter=BasicAdapter(
                 metric_id=s_factory.CASTED_VOTE_VOTER_RATE,
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._CAST
         ))
@@ -319,14 +314,13 @@ class AragonService(metaclass=Singleton):
 
     def __get_transaction_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # new transactions
         charts.append(self.__create_chart(
             title=TEXT['title_new_transactions'],
             adapter=BasicAdapter(
                 metric_id=s_factory.NEW_TRANSACTIONS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._TRANSACTION
         ))
@@ -335,12 +329,11 @@ class AragonService(metaclass=Singleton):
 
     def __get_app_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # installed apps
         charts.append(self.__create_chart(
             title=TEXT['title_installed_apps'],
-            adapter=InstalledApps(organizations=call),
+            adapter=InstalledApps(),
             figure=BarFigure(),
             cont_key=self._APP
         ))
@@ -350,11 +343,10 @@ class AragonService(metaclass=Singleton):
     
     def __get_assets_charts(self):
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         charts.append(self.__create_sum_chart(
             title=TEXT['title_assets_value'],
-            adapter=AssetsValues(call),
+            adapter=AssetsValues(),
             figure=TreemapFigure(),
             cont_key=self._ASSETS,
             dp_id=TEXT['dp_id_assets'],
@@ -365,7 +357,7 @@ class AragonService(metaclass=Singleton):
 
         charts.append(self.__create_dataTable(
             title=TEXT['title_assets_novalue'],
-            adapter=AssetsTokens(call),
+            adapter=AssetsTokens(),
             cont_key=self._ASSETS
         ))
 

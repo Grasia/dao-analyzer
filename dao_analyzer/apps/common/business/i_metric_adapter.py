@@ -19,7 +19,7 @@ class IMetricAdapter(metaclass=abc.ABCMeta):
 
 
     @abc.abstractmethod
-    def get_plot_data(self, dao_id: str) -> Dict:
+    def get_plot_data(self, dao_id: str, organizations) -> Dict:
         """
         This method it is used to transform business metrics to a dict for 
         its visual representation.

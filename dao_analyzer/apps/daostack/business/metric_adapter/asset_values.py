@@ -9,20 +9,12 @@ class AssetsValues(IMetricAdapter):
     HOVER_TEMPLATE = """%{label}<br>%{customdata[0]} $ <br>%{customdata[1]} €<br> %{customdata[2]} ETH<extra></extra>"""
     TEXT_TEMPLATE = """%{customdata[3]} %{label} <br> ~%{customdata[0]} $"""
 
-    def __init__(self, organizations: Callable[...,OrganizationList]) -> None:
-        self.__organizations = organizations
-
-    @property
-    def organizations(self) -> OrganizationList:
-        return self.__organizations()
-
-
-    def get_plot_data(self, o_id: str) -> Dict:
+    def get_plot_data(self, o_id: str, organizations: OrganizationList) -> Dict:
         """
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids=self.organizations.get_ids_from_id(o_id),
+            ids=organizations.get_ids_from_id(o_id),
             metric=s_factory.ASSETS_VALUES
         )
 

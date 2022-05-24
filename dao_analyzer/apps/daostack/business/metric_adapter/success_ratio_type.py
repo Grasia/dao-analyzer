@@ -9,6 +9,7 @@
 """
 
 from typing import Dict
+from dao_analyzer.apps.common.business.transfers.organization.organization_list import OrganizationList
 
 import dao_analyzer.apps.common.resources.colors as Color
 from dao_analyzer.apps.daostack.resources.strings import TEXT
@@ -19,16 +20,16 @@ import dao_analyzer.apps.daostack.data_access.daos.metric.\
 
 class SuccessRatioType(MetricAdapter):
 
-    def __init__(self, metric_id: int, organizations) -> None:
-        super().__init__(metric_id, organizations)
+    def __init__(self, metric_id: int) -> None:
+        super().__init__(metric_id)
 
     
-    def get_plot_data(self, o_id: str) -> Dict:
+    def get_plot_data(self, o_id: str, organizations: OrganizationList) -> Dict:
         """
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids=super().organizations.get_ids_from_id(o_id),
+            ids=organizations.get_ids_from_id(o_id),
             metric=super().metric_id
         )
         metric: NStackedSerie = dao.get_metric()

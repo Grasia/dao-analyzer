@@ -7,7 +7,8 @@
         <ddavo@ucm.es>
 """
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dao_analyzer.apps.common.business.transfers.organization.organization_list import OrganizationList
 
 from dao_analyzer.apps.common.business.transfers.tabular_data import TabularData
 
@@ -27,11 +28,12 @@ class DataTableController():
     def bind_callback(self, app) -> None:
         @app.callback(
             [Output(self.__css_id, 'data'), Output(self.__css_id, 'columns')],
-            [Input('org-dropdown', 'value')]
+            [Input('org-dropdown', 'value')],
+            State('org-dropdown', 'options'),
         )
-        def update_table(org_id):
+        def update_table(org_id, org_options):
             if not org_id:
                 self.__layout.get_layout()
 
-            td: TabularData = self.__adapter.get_plot_data(org_id)
+            td: TabularData = self.__adapter.get_plot_data(org_id, OrganizationList.from_dict_representation(org_options))
             return td.data, td.columns

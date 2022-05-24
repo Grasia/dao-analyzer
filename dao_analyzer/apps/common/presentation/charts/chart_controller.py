@@ -7,7 +7,8 @@
         <f.r.youssef@hotmail.com>
 """
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dao_analyzer.apps.common.business.transfers.organization.organization_list import OrganizationList
 
 from dao_analyzer.apps.common.presentation.charts.layout.chart_pane_layout \
     import ChartPaneLayout
@@ -30,11 +31,12 @@ class ChartController():
 
         @app.callback(
              Output(self._css_id, 'children'),
-            [Input('org-dropdown', 'value')]
+            [Input('org-dropdown', 'value')],
+            State('org-dropdown', 'options'),
         )
-        def update_chart(org_id):
+        def update_chart(org_id, org_options):
             if not org_id:
                 self._layout.get_layout()
 
-            data = self._adapter.get_plot_data(org_id)
+            data = self._adapter.get_plot_data(org_id, OrganizationList.from_dict_representation(org_options))
             return self._layout.fill_child(plot_data=data)

@@ -6,9 +6,10 @@
    Copyright 2022 David Davó Laviña
         <ddavo@ucm.es>
 """
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
+from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 from dao_analyzer.apps.common.presentation.charts.layout.chart_pane_layout import ChartPaneLayout
 from .chart_controller import ChartController
@@ -41,12 +42,13 @@ class ChartSummaryController(ChartController):
             Output(self._css_id, 'children'),
             Output(self._dp_id, 'children'),
             Input('org-dropdown', 'value'),
+            State('org-dropdown', 'options'),
         )
-        def update_chart(org_id):
+        def update_chart(org_id, org_options):
             if not org_id:
                 return self._layout.fill_child(), self._dp_layout.fill_child()
             
-            data = self._adapter.get_plot_data(org_id)
+            data = self._adapter.get_plot_data(org_id, OrganizationList.from_dict_representation(org_options))
 
             number = None
             if 'last_value' in data:

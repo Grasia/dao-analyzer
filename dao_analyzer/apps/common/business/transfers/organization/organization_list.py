@@ -44,6 +44,10 @@ class OrganizationList(list):
         return result
 
     @classmethod
+    def from_dict_representation(cls, dict_repr: List[Dict[str,str]]) -> 'OrganizationList':
+        return OrganizationList([Organization(o['value']) for o in dict_repr])
+
+    @classmethod
     def is_all_orgs(cls, o_id: str):
         return o_id == cls.__ALL_ORGS_ID
 

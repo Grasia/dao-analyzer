@@ -22,21 +22,12 @@ class VotesType(IMetricAdapter):
 
     DATE_FORMAT: str = '%b, %Y'
 
-    def __init__(self, organizations: Callable[...,OrganizationList]) -> None:
-        self.__organizations = organizations
-
-
-    @property
-    def organizations(self) -> OrganizationList:
-        return self.__organizations()
-
-
-    def get_plot_data(self, o_id: str) -> Dict:
+    def get_plot_data(self, o_id: str, organizations: OrganizationList) -> Dict:
         """
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids=self.organizations.get_ids_from_id(o_id),
+            ids=organizations.get_ids_from_id(o_id),
             metric=s_factory.VOTES_TYPE
         )
         metric: StackedSerie = dao.get_metric()

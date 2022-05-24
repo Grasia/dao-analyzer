@@ -21,27 +21,19 @@ class MetricAdapter(IMetricAdapter):
 
     DATE_FORMAT: str = '%b, %Y'
 
-    def __init__(self, metric_id: int, organizations: Callable[...,OrganizationList]) -> None:
+    def __init__(self, metric_id: int) -> None:
         self.__metric_id: int = metric_id
-        self.__organizations = organizations
-
 
     @property
     def metric_id(self) -> int:
         return self.__metric_id
 
-
-    @property
-    def organizations(self) -> OrganizationList:
-        return self.__organizations()
-
-
-    def get_plot_data(self, o_id: str) -> Dict:
+    def get_plot_data(self, o_id: str, organizations: OrganizationList) -> Dict:
         """
         Returns the metric data in a Dict using o_id param.
         """
         dao = s_factory.get_dao(
-            ids=self.organizations.get_ids_from_id(o_id),
+            ids=organizations.get_ids_from_id(o_id),
             metric=self.__metric_id
         )
         metric: StackedSerie = dao.get_metric()

@@ -167,14 +167,13 @@ class DaohausService(metaclass=Singleton):
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # active organizations
         charts.append(self.__create_chart(
             title=TEXT['title_active_organization'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_ORGANIZATION, 
-                organizations=call),
+            ),
             figure=CalFigure(),
             cont_key=self._ORGANIZATION,
             css_classes=['only-on-all-orgs']
@@ -184,7 +183,6 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_organization_activity'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ORGANIZATION_ACTIVITY,
-                organizations=call
             ),
             figure=CalFigure(),
             cont_key=self._ORGANIZATION
@@ -196,14 +194,13 @@ class DaohausService(metaclass=Singleton):
 
     def __get_member_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # new members
         charts.append(self.__create_chart(
             title=TEXT['title_new_members'],
             adapter=BasicAdapter(
                 metric_id=s_factory.NEW_MEMBERS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._MEMBER
         ))
@@ -213,7 +210,7 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_total_members'],
             adapter=BasicAdapter(
                 metric_id=s_factory.TOTAL_MEMBERS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._MEMBER,
             dp_id=TEXT['dp_id_members'],
@@ -225,7 +222,7 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_active_members'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_MEMBERS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._MEMBER,
             dp_id=TEXT['dp_id_active_members'],
@@ -236,12 +233,11 @@ class DaohausService(metaclass=Singleton):
 
     def __get_vote_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # votes by type
         charts.append(self.__create_chart(
             title=TEXT['title_vote_type'],
-            adapter=VotesType(call),
+            adapter=VotesType(),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._VOTE
         ))
@@ -251,7 +247,7 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_vote_for_rate'],
             adapter=BasicAdapter(
                 metric_id=s_factory.VOTES_FOR_RATE, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -262,7 +258,7 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_vote_against_rate'],
             adapter=BasicAdapter(
                 metric_id=s_factory.VOTES_AGAINST_RATE, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -273,7 +269,7 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_active_voters'],
             adapter=BasicAdapter(
                 metric_id=s_factory.ACTIVE_VOTERS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -281,7 +277,7 @@ class DaohausService(metaclass=Singleton):
         # percentage of reputation holders which vote
         charts.append(self.__create_chart(
             title=TEXT['title_voters_percentage'],
-            adapter=BasicAdapter(s_factory.VOTERS_PERCENTAGE, call),
+            adapter=BasicAdapter(s_factory.VOTERS_PERCENTAGE),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -294,7 +290,7 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_votes_voters'],
             adapter=BasicAdapter(
                 metric_id=s_factory.VOTES_VOTERS_RATE, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._VOTE
         ))
@@ -303,14 +299,13 @@ class DaohausService(metaclass=Singleton):
 
     def __get_rage_quits_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # rage quits
         charts.append(self.__create_chart(
             title=TEXT['title_out_members'],
             adapter=BasicAdapter(
                 metric_id=s_factory.OUTGOING_MEMBERS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._RAGE_QUIT
         ))
@@ -319,14 +314,13 @@ class DaohausService(metaclass=Singleton):
 
     def __get_proposal_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # new proposals
         charts.append(self.__create_sum_chart(
             title=TEXT['title_new_proposals'],
             adapter=BasicAdapter(
                 metric_id=s_factory.NEW_PROPOSALS, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._PROPOSAL,
             dp_id=TEXT['dp_id_proposals'],
@@ -336,7 +330,7 @@ class DaohausService(metaclass=Singleton):
         # proposal outcomes
         charts.append(self.__create_chart(
             title=TEXT['title_proposal_outcomes'],
-            adapter=ProposalOutcome(call),
+            adapter=ProposalOutcome(),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._PROPOSAL
         ))
@@ -346,7 +340,7 @@ class DaohausService(metaclass=Singleton):
             title=TEXT['title_approval_proposal_rate'],
             adapter=BasicAdapter(
                 metric_id=s_factory.APPROVAL_PROPOSAL_RATE, 
-                organizations=call),
+            ),
             figure=BarFigure(),
             cont_key=self._PROPOSAL
         ))
@@ -355,7 +349,7 @@ class DaohausService(metaclass=Singleton):
         # proposal types
         charts.append(self.__create_chart(
             title=TEXT['title_proposal_type'],
-            adapter=ProposalType(call),
+            adapter=ProposalType(),
             figure=MultiBarFigure(bar_type=MultiBarFigure.STACK),
             cont_key=self._PROPOSAL
         ))
@@ -366,13 +360,12 @@ class DaohausService(metaclass=Singleton):
     
     def __get_assets_charts(self):
         charts: List[Callable] = list()
-        call: Callable = self.organizations
 
         # assets with value
         # TODO: Show value in $ in the title
         charts.append(self.__create_sum_chart(
             title=TEXT['title_assets_value'],
-            adapter=AssetsValues(call),
+            adapter=AssetsValues(),
             figure=TreemapFigure(),
             cont_key=self._ASSETS,
             dp_id=TEXT['dp_id_treasury'],
@@ -384,7 +377,7 @@ class DaohausService(metaclass=Singleton):
         # assets without value (other tokens)
         charts.append(self.__create_dataTable(
             title=TEXT['title_assets_novalue'],
-            adapter=AssetsTokens(call),
+            adapter=AssetsTokens(),
             cont_key=self._ASSETS
         ))
  
