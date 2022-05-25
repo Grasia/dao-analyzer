@@ -119,10 +119,13 @@ def _gen_sum_hdr(org: Organization = None):
     if not org:
         return None
     
+    left = html.Span()
     if org.get_last_activity():
-        return html.Span(['Last active on ', html.B(org.get_last_activity().strftime(TEXT['last_activity_format']))])
+        right = html.Span(['Last active on ', html.B(org.get_last_activity().strftime(TEXT['last_activity_format']))])
     else:
-        return html.Span(['This organization has ', html.B('never'), ' been active'])
+        right = html.Span(['This organization has ', html.B('never'), ' been active'])
+    
+    return [left, right]
 
 def _get_dao_summary_layout(org_id, datapoints: Dict ):
     dp_divs: List[html.Div] = [ dp.get_layout() for dp in datapoints.values() ]
