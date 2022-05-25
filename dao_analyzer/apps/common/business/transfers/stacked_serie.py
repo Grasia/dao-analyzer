@@ -80,6 +80,12 @@ class StackedSerie():
     
     def get_diff_last_values(self, **kwargs) -> float:
         this, prev = self.get_last_values(**kwargs)
+
+        if this is None:
+            this = 0.0
+
+        if prev is None:
+            prev = 0.0
         
         return this - prev
 
@@ -96,6 +102,12 @@ class StackedSerie():
             A float. 
         """
         this, prev = self.get_last_values(**kwargs)
+
+        if this is None:
+            this = 0.0
+
+        if prev is None:
+            prev = 0.0
 
         val: float = 0.0
         denominator = (this + prev)

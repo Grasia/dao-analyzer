@@ -29,15 +29,15 @@ class DataPointLayout:
         evolution_rel: float = None,
     ):
         evolution_children = []
-        if evolution or evolution_rel:
+        if evolution is not None or evolution_rel is not None:
             evolution_children.append(self._get_dp_icon(evolution or evolution_rel))
             evolution_children.append(' ')
 
-        if evolution and evolution_rel:
+        if evolution is not None and evolution_rel is not None:
             evolution_children.append(f'{evolution:.0f} ({abs(evolution_rel):.2f}%)')
-        elif evolution:
+        elif evolution is not None:
             evolution_children.append(f'{evolution:.0f}')
-        elif evolution_rel:
+        elif evolution_rel is not None:
             evolution_children.append(f'{evolution_rel:.2f}')
 
         return [

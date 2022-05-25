@@ -45,7 +45,6 @@ class VoteType(MetricAdapter):
         metric: StackedSerie = dao.get_metric()
 
         last_value: int = metric.get_last_value(0) + metric.get_last_value(1)
-        diff: float = metric.get_diff_last_values(add_stacks=True)
 
         return {
             'type1': {
@@ -68,5 +67,6 @@ class VoteType(MetricAdapter):
             },
             'last_serie_elem': metric.get_last_serie_elem(),
             'last_value': last_value,
-            'diff': diff, 
+            'diff': metric.get_diff_last_values(add_stacks=True),
+            'diff_rel': metric.get_rel_last_values(add_stacks=True),
         }
