@@ -57,7 +57,7 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
 
-    ecosystems: List[html.Div] = [ __gen_ecosystem(eid, selected[i]) for i,eid in enumerate(['daostack', 'aragon', 'daohaus']) ]
+    ecosystems: List[html.Div] = [ __gen_ecosystem(eid, selected[i]) for i,eid in enumerate(['daohaus', 'aragon', 'daostack']) ]
 
     filters: OrganizationFilter = organizations.get_filters()
 
