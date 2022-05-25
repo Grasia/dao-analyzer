@@ -56,9 +56,7 @@ class ChartSummaryController(ChartController):
             elif 'total' in data:
                 number = data['total']
 
-            evolution = None
-            # TODO: Add difference in absolute (modify basic_adapter.py)
-            if 'diff' in data:
-                evolution = f'{data["diff"]:.2f}%'
+            evolution = data.get('diff', None)
+            evolution_rel = data.get('diff_rel', None)
 
-            return self._layout.fill_child(data), self._dp_layout.fill_child(number, evolution)
+            return self._layout.fill_child(data), self._dp_layout.fill_child(number, evolution, evolution_rel)

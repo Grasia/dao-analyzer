@@ -8,7 +8,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, Callable
+from typing import Dict
 
 import dao_analyzer.apps.common.resources.colors as Color
 from dao_analyzer.apps.daohaus.resources.strings import TEXT

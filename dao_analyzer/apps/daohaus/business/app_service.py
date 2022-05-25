@@ -370,7 +370,6 @@ class DaohausService(metaclass=Singleton):
             cont_key=self._ASSETS,
             dp_id=TEXT['dp_id_treasury'],
             dp_title=TEXT['dp_title_treasury'],
-            dp_hide_evolution=True,
         ))
         self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
 
@@ -414,7 +413,6 @@ class DaohausService(metaclass=Singleton):
         cont_key: int,
         dp_id: str,
         dp_title: str,
-        dp_hide_evolution: bool = False,
     ):
         """
         Creates the chart layout and its summary controller, and returns a callable
@@ -431,7 +429,6 @@ class DaohausService(metaclass=Singleton):
         self.__data_points[dp_id] = DataPointLayout(
             css_id=dp_id,
             title=dp_title,
-            hide_evolution=dp_hide_evolution,
         )
 
         controller: ChartController = ChartSummaryController(

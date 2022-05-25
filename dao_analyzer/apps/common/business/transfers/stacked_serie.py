@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import List
+from typing import List, Tuple
 
 from dao_analyzer.logs import LOGS
 from dao_analyzer.apps.common.business.transfers.serie import Serie
@@ -49,9 +49,41 @@ class StackedSerie():
         if i_stack >= len(self.y_stack):
             return list() 
         return self.y_stack[i_stack]
-    
 
-    def get_diff_last_values(self, i_stack: int = 0, add_stacks: bool = False)\
+    def get_last_values(self, i_stack: int = 0, add_stacks: bool = False) -> Tuple[float, float]:
+        """
+        Returns the last two values (this month and prev)
+        to be able to calculate the difference between them
+
+        * Returns this, prev
+        """
+        if add_stacks:
+            i_stack = 0
+
+        if i_stack >= len(self.y_stack):
+            return 0.0
+
+        y: List = self.y_stack[i_stack]
+
+        i_1 = -1
+        i_2 = -(2 % (len(y) + 1))
+        op1 = y[i_1]
+        op2 = y[i_2]
+
+        if op1 and op2 and add_stacks:
+            for j in range(i_stack+1, len(self.y_stack)):
+                y = self.y_stack[j]
+                op1 += y[i_1]
+                op2 += y[i_2]
+        
+        return op1, op2
+    
+    def get_diff_last_values(self, **kwargs) -> float:
+        this, prev = self.get_last_values(**kwargs)
+        
+        return this - prev
+
+    def get_rel_last_values(self, **kwargs)\
     -> float:
         """
         A percentage of the diference among the last two values.
@@ -63,32 +95,11 @@ class StackedSerie():
         Return:
             A float. 
         """
-        if add_stacks:
-            i_stack = 0
-        
-        if i_stack >= len(self.y_stack):
-            return 0.0
+        this, prev = self.get_last_values(**kwargs)
 
-        y: List = self.y_stack[i_stack]
         val: float = 0.0
-
-        # indexes to access n-1 and n-2 positions in y[n]
-        i_1 = -1
-        i_2 = -(2 % (len(y) + 1))
-        op1 = y[i_1]
-        op2 = y[i_2]
-
-        if not op1 or not op2:
-            return 0
-
-        if add_stacks:
-            for j in range(i_stack+1, len(self.y_stack)):
-                y = self.y_stack[j]
-                op1 += y[i_1]
-                op2 += y[i_2]
-
-        denominator = (op1 + op2)
-        numerator = (op1 - op2)
+        denominator = (this + prev)
+        numerator = (this - prev)
 
         if denominator > 0:
             val = numerator / denominator * 100

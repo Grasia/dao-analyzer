@@ -1,4 +1,4 @@
-from typing import Callable, Dict
+from typing import Dict
 from dao_analyzer.apps.common.business.transfers import HierarchicalData, OrganizationList
 
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter

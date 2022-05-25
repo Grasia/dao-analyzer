@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict, List, Callable
+from typing import Dict, List
 
 import dao_analyzer.apps.common.resources.colors as Color
 from dao_analyzer.apps.common.business.transfers.stacked_serie import StackedSerie

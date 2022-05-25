@@ -393,7 +393,6 @@ class DaostackService(metaclass=Singleton):
             cont_key=self._ASSETS,
             dp_id=TEXT['assets_value_dp_id'],
             dp_title=TEXT['assets_value_dp_title'],
-            dp_hide_evolution=True,
         ))
         self.__controllers[self._ASSETS][-1].layout.configuration.disable_subtitles()
 
@@ -435,7 +434,6 @@ class DaostackService(metaclass=Singleton):
         cont_key: int,
         dp_id: str,
         dp_title: str,
-        dp_hide_evolution: bool = False,
     ) -> Callable:
         """
         Creates the chart layout and its controller, and returns a callable
@@ -452,7 +450,6 @@ class DaostackService(metaclass=Singleton):
         self.__data_points[dp_id] = DataPointLayout(
             css_id=dp_id,
             title=dp_title,
-            hide_evolution=dp_hide_evolution,
         )
 
         controller: ChartController = ChartSummaryController(

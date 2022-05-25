@@ -71,7 +71,7 @@ class ChartPaneLayout(ILayout):
                 plot_data['last_serie_elem'], 
                 plot_data['last_value']
             )
-            subtitle2 = TEXT['graph_subtitle'].format(plot_data['diff'])
+            subtitle2 = TEXT['graph_subtitle'].format(plot_data['diff_rel'])
 
         return self._get_children(subtitle1, subtitle2, figure)
 

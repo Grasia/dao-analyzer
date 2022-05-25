@@ -3,22 +3,19 @@ from dash import html
 from dao_analyzer.apps.common.resources.strings import TEXT
 
 class DataPointLayout:
-    def __init__(self, css_id, title, hide_evolution=False):
+    def __init__(self, css_id, title):
         self._id = css_id
         self._title = title
-        self._hide_evolution = hide_evolution
 
     @staticmethod
-    def _get_dp_icon(evolution: str):
-        if not evolution:
+    def _get_dp_icon(evolution: float):
+        if evolution is None:
             return
 
         try:
-            number = float(evolution.strip('%$'))
-
-            if number < 0:
+            if evolution < 0:
                 return html.I(className="bi bi-arrow-down-circle-fill dp-icon-down")
-            elif number > 0:
+            elif evolution > 0:
                 return html.I(className="bi bi-arrow-up-circle-fill dp-icon-up")
             else:
                 return html.I(className="bi bi-dash-circle dp-icon-same")
@@ -28,9 +25,21 @@ class DataPointLayout:
     def fill_child(
         self,
         number: str = "?",
-        evolution: str = "?",
+        evolution: float = None,
+        evolution_rel: float = None,
     ):
-        hes = {"display": "none"} if self._hide_evolution else {}
+        evolution_children = []
+        if evolution or evolution_rel:
+            evolution_children.append(self._get_dp_icon(evolution or evolution_rel))
+            evolution_children.append(' ')
+
+        if evolution and evolution_rel:
+            evolution_children.append(f'{evolution:.0f} ({abs(evolution_rel):.2f}%)')
+        elif evolution:
+            evolution_children.append(f'{evolution:.0f}')
+        elif evolution_rel:
+            evolution_children.append(f'{evolution_rel:.2f}')
+
         return [
             html.Span(self._title, className="dao-summary-datapoint-title"),
             html.Div(
@@ -39,14 +48,12 @@ class DataPointLayout:
             html.Div(
                 TEXT["this_month"],
                 className="dao-summary-datapoint-lastmonth",
-                style=hes,
-            ),
+            ) if evolution_children else None,
             html.Div(
-                [self._get_dp_icon(evolution), " ", evolution],
+                evolution_children,
                 className="dao-summary-datapoint-evolution",
                 id=self._id + "-evolution",
-                style=hes,
-            ),
+            ) if evolution_children else None,
         ]
 
     def get_layout(self) -> html.Div:
