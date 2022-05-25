@@ -17,9 +17,9 @@ from dao_analyzer.apps.common.presentation.main_view.main_view import REL_PATH
 
 __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'default': ['', '', ''],
-    'daostack': ['daostack-selected', '', ''],
+    'daohaus': ['daohaus-selected', '', ''],
     'aragon': ['', 'aragon-selected', ''],
-    'daohaus': ['', '', 'daohaus-selected'],
+    'daostack': ['', '', 'daostack-selected'],
 }
 
 def generate_layout(organizations: OrganizationList, sections: Dict, datapoints, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
@@ -72,18 +72,18 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
             html.Div(children=[
                 html.Div(html.Span(TEXT['dao_selector_title'])),
                 html.Div([
-                    html.Div("", id='org-number', className='number-of-daos'),
+                    dcc.Checklist(
+                        options = {x.id:x.title for x in filters},
+                        value = [x.id for x in filters if x.enabled],
+                        id='org-filter',
+                    ),
                     html.Div(dcc.Dropdown(
                         id='org-dropdown',
                         options=organizations.get_dict_representation(),
                         value=org_value,
                         clearable=False,
                     )),
-                    dcc.Checklist(
-                        options = {x.id:x.title for x in filters},
-                        value = [x.id for x in filters if x.enabled],
-                        id='org-filter',
-                    ),
+                    html.Div("", id='org-number', className='number-of-daos'),
                 ], className='flex-grow-1'),
             ], className='select-dao-wrapper'),
         className='col d-flex justify-content-center'),
