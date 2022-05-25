@@ -131,6 +131,25 @@ a {
     margin-right: calc(-1* var(--content-padding-x));
 }
 
+.select-dao-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 0;
+    gap: 1.5rem;
+    flex-grow: 1;
+    max-width: 450px;
+}
+
+.select-platform-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
 .ecosystems-wrapper {
     display: flex;
     flex-direction: row;

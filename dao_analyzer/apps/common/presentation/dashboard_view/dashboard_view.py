@@ -62,27 +62,31 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
     filters: OrganizationFilter = organizations.get_filters()
 
     return dbc.Row(children=[
-        html.Div(children=[
-            html.Div(TEXT['ecosystem_selector_title']),
-            html.Div(children=ecosystems, className='ecosystems-wrapper'),
-        ], className='col d-flex flex-row align-items-center justify-content-between gap-3'),
-        html.Div(children=[
-            html.Div(html.Span(TEXT['dao_selector_title'])),
+        html.Div(
             html.Div([
-                html.Div("", id='org-number', className='number-of-daos'),
-                html.Div(dcc.Dropdown(
-                    id='org-dropdown',
-                    options=organizations.get_dict_representation(),
-                    value=org_value,
-                    clearable=False,
-                )),
-                dcc.Checklist(
-                    options = {x.id:x.title for x in filters},
-                    value = [x.id for x in filters if x.enabled],
-                    id='org-filter',
-                ),
-            ], className='flex-grow-1'),
-        ], className='col d-flex flex-row justify-content-between align-items-center gap-3'),
+                html.Div(TEXT['ecosystem_selector_title']),
+                html.Div(children=ecosystems, className='ecosystems-wrapper'),
+            ], className='select-platform-wrapper'),
+        className='col d-flex justify-content-center'),
+        html.Div(
+            html.Div(children=[
+                html.Div(html.Span(TEXT['dao_selector_title'])),
+                html.Div([
+                    html.Div("", id='org-number', className='number-of-daos'),
+                    html.Div(dcc.Dropdown(
+                        id='org-dropdown',
+                        options=organizations.get_dict_representation(),
+                        value=org_value,
+                        clearable=False,
+                    )),
+                    dcc.Checklist(
+                        options = {x.id:x.title for x in filters},
+                        value = [x.id for x in filters if x.enabled],
+                        id='org-filter',
+                    ),
+                ], className='flex-grow-1'),
+            ], className='select-dao-wrapper'),
+        className='col d-flex justify-content-center'),
         dcc.Store(
             id='org-store',
             data=organizations,
