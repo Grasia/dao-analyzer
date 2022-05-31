@@ -1,4 +1,4 @@
-# About DAO Analyzer
+# About DAO-Analyzer
 
 DAO-Analyzer is a web dashboard that shows the state and evolution of
 DAOs. In particular, you can see, among other things, the number of DAO
