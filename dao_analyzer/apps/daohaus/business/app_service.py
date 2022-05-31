@@ -37,7 +37,6 @@ from dao_analyzer.apps.daohaus.resources.strings import TEXT
 class DaohausService(metaclass=Singleton):
     _MEMBER: int = 0
     _VOTE: int = 1
-    _RAGE_QUIT: int = 2
     _PROPOSAL: int = 3
     _ORGANIZATION: int = 4
     _ASSETS: int = 5
@@ -48,7 +47,6 @@ class DaohausService(metaclass=Singleton):
         self.__controllers: Dict[int, List[ChartController]] = {
             self._MEMBER: list(),
             self._VOTE: list(),
-            self._RAGE_QUIT: list(),
             self._PROPOSAL: list(),
             self._ORGANIZATION: list(),
             self._ASSETS: list()
@@ -103,7 +101,6 @@ class DaohausService(metaclass=Singleton):
     def __gen_sections(self) -> None:
         self.__get_member_charts()
         self.__get_vote_charts()
-        self.__get_rage_quits_charts()
         self.__get_proposal_charts()
         self.__get_organization_charts()
         self.__get_assets_charts()
@@ -115,7 +112,6 @@ class DaohausService(metaclass=Singleton):
         """
         l_member: List[Callable] = list()
         l_vote: List[Callable] = list()
-        l_rage_q: List[Callable] = list()
         l_proposal: List[Callable] = list()
         l_organization: List[Callable] = list()
         l_assets: List[Callable] = list()
@@ -126,7 +122,6 @@ class DaohausService(metaclass=Singleton):
         # Panes are already created.
         l_member = [c.layout.get_layout for c in self.__controllers[self._MEMBER]]
         l_vote = [c.layout.get_layout for c in self.__controllers[self._VOTE]]
-        l_rage_q = [c.layout.get_layout for c in self.__controllers[self._RAGE_QUIT]]
         l_proposal = [c.layout.get_layout for c in self.__controllers[self._PROPOSAL]]
         l_organization = [c.layout.get_layout for c in self.__controllers[self._ORGANIZATION]]
         l_assets = [c.layout.get_layout for c in self.__controllers[self._ASSETS]]
@@ -140,10 +135,6 @@ class DaohausService(metaclass=Singleton):
             TEXT['title_member']: {
                 'callables': l_member,
                 'css_id': TEXT['css_id_member'],
-            },
-            TEXT['title_rage_quits']: {
-                'callables': l_rage_q,
-                'css_id': TEXT['css_id_rage_quit'],
             },
             TEXT['title_vote']: {
                 'callables': l_vote,
@@ -205,6 +196,16 @@ class DaohausService(metaclass=Singleton):
             cont_key=self._MEMBER
         ))
 
+        # rage quits
+        charts.append(self.__create_chart(
+            title=TEXT['title_out_members'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.OUTGOING_MEMBERS, 
+            ),
+            figure=BarFigure(),
+            cont_key=self._MEMBER
+        ))
+
         # total members
         charts.append(self.__create_sum_chart(
             title=TEXT['title_total_members'],
@@ -228,6 +229,7 @@ class DaohausService(metaclass=Singleton):
             dp_id=TEXT['dp_id_active_members'],
             dp_title=TEXT['dp_title_active_members'],
         ))
+
         return charts
 
 
@@ -293,21 +295,6 @@ class DaohausService(metaclass=Singleton):
             ),
             figure=BarFigure(),
             cont_key=self._VOTE
-        ))
-        return charts
-
-
-    def __get_rage_quits_charts(self) -> List[Callable[[], html.Div]]:
-        charts: List[Callable] = list()
-
-        # rage quits
-        charts.append(self.__create_chart(
-            title=TEXT['title_out_members'],
-            adapter=BasicAdapter(
-                metric_id=s_factory.OUTGOING_MEMBERS, 
-            ),
-            figure=BarFigure(),
-            cont_key=self._RAGE_QUIT
         ))
         return charts
 
