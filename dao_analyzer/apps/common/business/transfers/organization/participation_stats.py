@@ -10,6 +10,8 @@ from typing import Dict, List, Any
 
 import abc
 
+from dao_analyzer.apps.common.resources.strings import TEXT
+
 class ParticipationStat(metaclass=abc.ABCMeta):
     def __init__(self, value):
         self._value = value
@@ -46,15 +48,13 @@ class MembersCreatedProposalsStat(ParticipationStat):
 
     @property
     def text(self) -> str:
-        # TODO: Use the dict string
-        return ' of members have created the proposals'
+        return TEXT['stat_members_created_proposals']
 
 class MembersEverVotedStat(ParticipationStat):
 
     @property
     def text(self):
-        # TODO: Use the dict string
-        return ' of members have ever voted'
+        return TEXT['stat_members_ever_voted']
 
 STATS_LIST: List = [
     MembersCreatedProposalsStat,
