@@ -65,5 +65,4 @@ STATS_LIST: List = [
 Given an stat class, returns its index in STATS_LIST
 """
 def _get_stat_idx(stat):
-    print(f"Getting stat idx for stat {stat}")
     return next((i for i,x in enumerate(STATS_LIST) if x == stat), None)
