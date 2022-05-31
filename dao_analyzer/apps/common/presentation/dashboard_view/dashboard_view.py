@@ -121,7 +121,11 @@ def _get_dao_info(org: Organization) -> html.Div:
         grid.append(html.Div(["Participation", html.Br(), "stats"], className='dao-info-label'))
         children = []
         for s in org.get_participation_stats():
-            children.append(html.Div([html.B(s.value_str), s.text]))
+            if s.value is None:
+                children.append(html.Div(s.text))
+            else:
+                children.append(html.Div([html.B(s.value_str), s.text]))
+
         grid.append(html.Div(children, className='dao-info-stats'))
     
     return html.Div(grid, className='dao-info-container')

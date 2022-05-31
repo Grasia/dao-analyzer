@@ -48,12 +48,16 @@ class MembersCreatedProposalsStat(ParticipationStat):
 
     @property
     def text(self) -> str:
+        if self.value is None:
+            return TEXT['stat_members_created_proposals_novalue']
         return TEXT['stat_members_created_proposals']
 
 class MembersEverVotedStat(ParticipationStat):
 
     @property
     def text(self):
+        if self.value is None:
+            return TEXT['stat_members_ever_voted_novalue']
         return TEXT['stat_members_ever_voted']
 
 STATS_LIST: List = [
