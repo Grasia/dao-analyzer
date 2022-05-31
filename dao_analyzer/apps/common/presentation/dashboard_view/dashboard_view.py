@@ -116,6 +116,13 @@ def _get_dao_info(org: Organization) -> html.Div:
     elif org.get_first_activity():
         grid.append(html.Div("First Activity", className='dao-info-label'))
         grid.append(html.Div(org.get_first_activity().strftime(TEXT['creation_date_format']), className='dao-info-date'))
+
+    if org.get_participation_stats():
+        grid.append(html.Div(["Participation", html.Br(), "stats"], className='dao-info-label'))
+        children = []
+        for s in org.get_participation_stats():
+            children.append(html.Div([html.B(s.value_str), s.text]))
+        grid.append(html.Div(children, className='dao-info-stats'))
     
     return html.Div(grid, className='dao-info-container')
 
