@@ -7,9 +7,10 @@
         <f.r.youssef@hotmail.com>
 """
 
-from typing import Dict
+from typing import Dict, List, Any
 
 from datetime import datetime
+from dao_analyzer.apps.common.business.transfers.organization.participation_stats import ParticipationStat
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 
@@ -22,6 +23,7 @@ class Organization:
         creation_date: datetime = None,
         first_activity: datetime = None,
         last_activity: datetime = None,
+        participation_stats: List[ParticipationStat] = [],
     ):
         self._id: str = o_id
         self._name: str = name
@@ -29,6 +31,7 @@ class Organization:
         self._creation_date: datetime = creation_date
         self._first_activity: datetime = first_activity
         self._last_activity: datetime = last_activity
+        self._participation_stats: List[ParticipationStat] = participation_stats
 
     # Redefinition of sorting functions
     def __eq__(self, other) -> bool:
@@ -65,7 +68,7 @@ class Organization:
             'label': self.get_label()
         }
 
-    def to_plotly_json(self) -> Dict[str, str]:
+    def to_plotly_json(self) -> Dict[str, Any]:
         """ Allows to store the object inside a Dcc.Store """
         return {
             'address': self.get_id(),
@@ -74,6 +77,7 @@ class Organization:
             'creation_date': self.get_creation_date(),
             'first_activity': self.get_first_activity(),
             'last_activity': self.get_last_activity(),
+            'participation_stats': self.get_participation_stats(),
         }
 
     @classmethod
@@ -88,6 +92,8 @@ class Organization:
             else:
                 raise TypeError
 
+        participation = [ParticipationStat.from_json(x) for x in dict.get('participation_stats', [])]
+
         return Organization(
             o_id = dict['address'],
             network = dict['network'],
@@ -95,6 +101,7 @@ class Organization:
             creation_date = _getdt('creation_date'),
             first_activity = _getdt('first_activity'),
             last_activity = _getdt('last_activity'),
+            participation_stats = participation,
         )
 
     def get_id(self) -> str:
@@ -111,6 +118,9 @@ class Organization:
 
     def get_first_activity(self) -> datetime:
         return self._first_activity
+
+    def get_participation_stats(self) -> List[ParticipationStat]:
+        return self._participation_stats
 
     def get_last_activity(self) -> datetime:
         return self._last_activity

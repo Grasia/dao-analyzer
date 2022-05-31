@@ -65,6 +65,8 @@ TEXT: dict = {
     'p2p_models_url': 'https://p2pmodels.eu/',
     'spanish_ministry_image_name': 'logo-ministerio.png',
     'spanish_ministry_url': 'https://www.ciencia.gob.es/',
+    'stat_members_created_proposals': ' of members have created a proposal',
+    'stat_members_ever_voted': ' of members have ever voted',
     'this_month': 'This month',
     'ucm_url': 'https://www.ucm.es/',
     # 'unknown_dao_name': '———', # Em dash
