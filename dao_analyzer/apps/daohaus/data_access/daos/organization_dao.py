@@ -10,7 +10,7 @@
 import pandas as pd
 
 from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
-from dao_analyzer.apps.common.business.transfers.organization.participation_stats import MembersCreatedProposalsStat
+from dao_analyzer.apps.common.business.transfers.organization.participation_stats import MembersCreatedProposalsStat, MembersEverVotedStat
 from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
 from dao_analyzer.apps.common.data_access.requesters import CacheRequester
 
@@ -21,8 +21,8 @@ class DaohausDao(OrganizationListDao):
     __DF_DATE = 'createdAt'
     __DF_PROPOSER = 'memberAddress'
     __DF_MEMBER = 'memberAddress'
+    __DF_VOTER = 'memberAddress'
     __DF_ACT_COLS = __DF_IDX + [__DF_DATE]
-    __DF_PROP_COLS = __DF_IDX + [__DF_PROPOSER, __DF_MEMBER]
 
     __EMPTY_ADDR = '0x0000000000000000000000000000000000000000'
 
@@ -42,6 +42,10 @@ class DaohausDao(OrganizationListDao):
             srcs.MEMBERS,
         ])
 
+        self._votesRequester = CacheRequester([
+            srcs.VOTES,
+        ])
+
         self._propRequester = CacheRequester([
             srcs.PROPOSALS,
         ])
@@ -51,8 +55,7 @@ class DaohausDao(OrganizationListDao):
         activity = self._activityRequester.request()
         members = self._membersRequester.request()
         participation = self._propRequester.request()
-
-        participation.to_feather('/tmp/aux10.arr')
+        votes = self._votesRequester.request()
 
         # Clean dfs
         activity = activity[self.__DF_ACT_COLS]
@@ -69,9 +72,9 @@ class DaohausDao(OrganizationListDao):
         # Getting the participation
         gbp = participation.groupby(self.__DF_IDX)
         gbm = members.groupby(self.__DF_IDX)
+        gvt = votes.groupby(self.__DF_IDX)
         df['mcp_pct'] = gbp[self.__DF_PROPOSER].nunique() / gbm[self.__DF_MEMBER].nunique()
-
-        df.reset_index(drop=True).to_feather('/tmp/aux20.arr')
+        df['mvt_pct'] = gvt[self.__DF_VOTER].nunique() / gbm[self.__DF_MEMBER].nunique()
 
         l: OrganizationList = OrganizationList()
 
@@ -85,6 +88,7 @@ class DaohausDao(OrganizationListDao):
                 last_activity = self._NaTtoNone(org['last_activity']),
                 participation_stats = [
                     MembersCreatedProposalsStat(org['mcp_pct']),
+                    MembersEverVotedStat(org['mvt_pct']),
                 ],
             ))
 
