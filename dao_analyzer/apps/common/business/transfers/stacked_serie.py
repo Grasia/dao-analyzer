@@ -61,7 +61,7 @@ class StackedSerie():
             i_stack = 0
 
         if i_stack >= len(self.y_stack):
-            return 0.0
+            return 0.0, 0.0
 
         y: List = self.y_stack[i_stack]
 
