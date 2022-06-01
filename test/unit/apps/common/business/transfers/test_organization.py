@@ -21,6 +21,7 @@ OrganizationStrategy = st.builds(
     o_id=st.text(min_size=2),
     name=st.text())
 
+ALL_ORGS_ID = OrganizationList.ALL_ORGS_ID
 
 class OrganizationTest(unittest.TestCase):
 
@@ -31,7 +32,7 @@ class OrganizationTest(unittest.TestCase):
         result: List[Dict[str, str]] = orgs.get_dict_representation()
 
         sol: List[Dict[str, str]] = [
-            {'value': '1', 'label': 'All DAOs'},
+            {'value': ALL_ORGS_ID, 'label': 'All DAOs'},
             {'value': '111', 'label': 'test1 (111... n)'},
             {'value': '222', 'label': 'test2 (222... n)'},
         ]
@@ -69,7 +70,7 @@ class OrganizationTest(unittest.TestCase):
     @settings(max_examples=30)
     def test_get_ids_from_id_2(self, orgs: List[Organization]):
         l_org: OrganizationList = OrganizationList(orgs=orgs)
-        ids: List[str] = l_org.get_ids_from_id('1')
+        ids: List[str] = l_org.get_ids_from_id(ALL_ORGS_ID)
 
         self.assertEqual(len(orgs), len(ids))
 
