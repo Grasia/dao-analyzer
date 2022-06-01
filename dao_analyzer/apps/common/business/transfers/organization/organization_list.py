@@ -37,6 +37,9 @@ class OrganizationList(list):
         return {'value': self.__ALL_ORGS_ID, 'label': TEXT['all_orgs']}
 
     def get_dict_representation(self) -> List[Dict[str, str]]:
+        if len(self) == 0:
+            return []
+
         result: List[Dict[str, str]] = [x.get_dict_representation() for x in sorted(self)]
 
         # Append all_orgs as the first one
