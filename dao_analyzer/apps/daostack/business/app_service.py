@@ -150,6 +150,10 @@ class DaostackService(metaclass=Singleton):
                 'callables': l_rep_h,
                 'css_id': TEXT['css_id_reputation_holders'],
             },
+            TEXT['proposal_title']: {
+                'callables': l_proposal,
+                'css_id': TEXT['css_id_proposal'],
+            },
             TEXT['vote_title']: {
                 'callables': l_vote,
                 'css_id': TEXT['css_id_votes'],
@@ -157,10 +161,6 @@ class DaostackService(metaclass=Singleton):
             TEXT['stake_title']: {
                 'callables': l_stake,
                 'css_id': TEXT['css_id_stake'],
-            },
-            TEXT['proposal_title']: {
-                'callables': l_proposal,
-                'css_id': TEXT['css_id_proposal'],
             },
             TEXT['assets_title']: {
                 'callables': l_assets,

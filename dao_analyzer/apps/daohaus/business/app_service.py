@@ -136,13 +136,13 @@ class DaohausService(metaclass=Singleton):
                 'callables': l_member,
                 'css_id': TEXT['css_id_member'],
             },
-            TEXT['title_vote']: {
-                'callables': l_vote,
-                'css_id': TEXT['css_id_vote'],
-            },
             TEXT['title_proposal']: {
                 'callables': l_proposal,
                 'css_id': TEXT['css_id_proposal'],
+            },
+            TEXT['title_vote']: {
+                'callables': l_vote,
+                'css_id': TEXT['css_id_vote'],
             },
             TEXT['title_assets']: {
                 'callables': l_assets,
