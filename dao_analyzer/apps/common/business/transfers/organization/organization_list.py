@@ -8,14 +8,13 @@
 """
 from typing import List, Dict, Union
 
-from . import Organization
+from .organization import Organization
 from .organization_filter import OrganizationFilter, ALL_FILTERS
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 
 class OrganizationList(list):
-    __ALL_ORGS_ID: str = '1'
-
+    ALL_ORGS_ID = '-1'
 
     def __init__(self, orgs: Union[List[Organization], List[dict]] = []) -> None:
         # Convert every item to Organization Type
@@ -34,7 +33,7 @@ class OrganizationList(list):
         return list(self)
 
     def get_all_orgs_dict(self) -> Dict[str, str]:
-        return {'value': self.__ALL_ORGS_ID, 'label': TEXT['all_orgs']}
+        return {'value': self.ALL_ORGS_ID, 'label': TEXT['all_orgs']}
 
     def get_dict_representation(self) -> List[Dict[str, str]]:
         if len(self) == 0:
@@ -52,7 +51,7 @@ class OrganizationList(list):
 
     @classmethod
     def is_all_orgs(cls, o_id: str):
-        return o_id == cls.__ALL_ORGS_ID
+        return o_id == cls.ALL_ORGS_ID
 
 
     def is_empty(self) -> bool:

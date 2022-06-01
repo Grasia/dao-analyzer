@@ -9,12 +9,13 @@ import pandas as pd
 import numpy as np
 
 from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
-from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
+from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
+from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO
 from dao_analyzer.apps.common.data_access.requesters import CacheRequester
 
 from .metric import srcs
 
-class AragonDAO(OrganizationListDao):
+class AragonDAO(PlatformDAO):
     __DF_IDX = ['network', 'orgAddress']
 
     __DF_CAST_DATE = 'createdAt'
@@ -63,3 +64,9 @@ class AragonDAO(OrganizationListDao):
             ))
 
         return l
+
+    def get_platform(self) -> Platform:
+        return Platform(
+            name = 'Aragon',
+            organization_list = self.get_organizations(),
+        )

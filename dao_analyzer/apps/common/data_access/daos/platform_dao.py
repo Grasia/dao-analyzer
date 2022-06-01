@@ -1,22 +1,21 @@
 """
-   Descp: This is a dao (data access object) of the organization.
+   Descp: This is a dao (data access object) of the platform.
     It's used to drive the data trasformation from datawarehouse to transfer obj.
 
-   Created on: 17-jul-2020
+   Created on: 01-jun-2022
 
-   Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
-        <f.r.youssef@hotmail.com>
+   Copyright 2022 David Davó Laviña
+        <ddavo@ucm.es>
 """
 import abc
 import pandas as pd
 
 from datetime import datetime
 
-from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
+from dao_analyzer.apps.common.business.transfers import Platform
 from dao_analyzer.apps.common.data_access.requesters.irequester import IRequester
 
-
-class OrganizationListDao(metaclass=abc.ABCMeta):
+class PlatformDAO(metaclass=abc.ABCMeta):
     def __init__(self, requester: IRequester):
         self._requester = requester
 
@@ -28,5 +27,5 @@ class OrganizationListDao(metaclass=abc.ABCMeta):
         return None if pd.isna(d) else d
 
     @abc.abstractmethod
-    def get_organizations(self) -> OrganizationList:
+    def get_platform(self) -> Platform:
         raise NotImplementedError

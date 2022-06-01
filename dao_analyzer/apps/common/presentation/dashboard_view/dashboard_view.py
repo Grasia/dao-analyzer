@@ -10,7 +10,8 @@ import os
 from typing import Dict, List, Callable
 from dash import dcc, html
 import dash_bootstrap_components as dbc
-from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList, OrganizationFilter
+from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationFilter
+from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 from dao_analyzer.apps.common.presentation.main_view.main_view import REL_PATH
@@ -22,7 +23,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daostack': ['', '', 'daostack-selected'],
 }
 
-def generate_layout(organizations: OrganizationList, sections: Dict, datapoints, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
+def generate_layout(platform: Platform, sections: Dict, datapoints, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -32,14 +33,14 @@ def generate_layout(organizations: OrganizationList, sections: Dict, datapoints,
         A html.Div filled with the app view 
     """
     if not org_value:
-        org_value = organizations.get_all_orgs_dict()["value"]
+        org_value = platform.get_default_org_value()
 
     return html.Div([
         dbc.Container(
-            __generate_header(organizations, ecosystem, update, org_value),
+            __generate_header(platform, ecosystem, update, org_value),
         className='top body mb-3 py-4'),
         dbc.Container([
-            __generate_subheader(org_id, datapoints),
+            __generate_subheader(org_id, platform, datapoints),
             __generate_sections(sections),
         ], className='body', id=f'{org_id}-body'),
     ])
@@ -52,14 +53,14 @@ def __gen_ecosystem(id: str, selected: str) -> html.Div:
             className='ecosystem-img'),
     ], className=f'ecosystem {id}-ecosystem {selected}')
 
-def __generate_header(organizations: OrganizationList, ecosystem: str, update: str, org_value: str) -> dbc.Row:
+def __generate_header(platform: Platform, ecosystem: str, update: str, org_value: str) -> dbc.Row:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
 
     ecosystems: List[html.Div] = [ __gen_ecosystem(eid, selected[i]) for i,eid in enumerate(['daohaus', 'aragon', 'daostack']) ]
 
-    filters: OrganizationFilter = organizations.get_filters()
+    filters: OrganizationFilter = platform.get_filters()
 
     return dbc.Row(children=[
         html.Div(
@@ -79,7 +80,7 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
                     ),
                     html.Div(dcc.Dropdown(
                         id='org-dropdown',
-                        options=organizations.get_dict_representation(),
+                        options=platform.get_dropdown_representation(),
                         value=org_value,
                         clearable=False,
                     )),
@@ -88,21 +89,31 @@ def __generate_header(organizations: OrganizationList, ecosystem: str, update: s
             ], className='select-dao-wrapper'),
         className='col d-flex justify-content-center'),
         dcc.Store(
-            id='org-store',
-            data=organizations,
+            id='platform-store',
+            data=platform,
             storage_type='memory',
         ),
         html.Div(f'Last update: {update}', className='last-update'),
     ], className='body-header row-divider')
 
 ### SUBHEADER THINGS
+def _get_platform_info(p: Platform) -> html.Div:
+    grid: List[html.Div] = [
+        html.Div('Platform', className='dao-info-label'),
+        html.Div(p.name, className='dao-info-name'),
+        html.Div('Networks', className='dao-info-label'),
+        html.Div(', '.join(p.networks), className='dao-info-network'),
+    ]
+    
+    return html.Div(grid, className='dao-info-container')
+
 def _get_dao_info(org: Organization) -> html.Div:
     name = html.I(TEXT['unknown_dao_name'])
     if org.get_name():
         name = org.get_name()
 
     grid: List[html.Div] = [
-        html.Div("Name", className='dao-info-label'),
+        html.Div("DAO", className='dao-info-label'),
         html.Div(name, className='dao-info-name'),
         html.Div("Network", className='dao-info-label'),
         html.Div(org.get_network(), className='dao-info-network'),
@@ -118,7 +129,7 @@ def _get_dao_info(org: Organization) -> html.Div:
         grid.append(html.Div(org.get_first_activity().strftime(TEXT['creation_date_format']), className='dao-info-date'))
 
     if org.get_participation_stats():
-        grid.append(html.Div(["Participation", html.Br(), "stats"], className='dao-info-label'))
+        grid.append(html.Div("Participation", className='dao-info-label'))
         children = []
         for s in org.get_participation_stats():
             if s.value is None:
@@ -150,12 +161,12 @@ def _get_dao_summary_layout(org_id, datapoints: Dict ):
         html.Div(dp_divs, className='dao-summary-body'),
     ], className='dao-summary-container', style={'padding': '1em'})
 
-def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
+def __generate_subheader(org_id: str, platform: Platform, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
     return dbc.Row(
         id=org_id,
         className='my-3',
         children=html.Div([
-           html.Div(html.Div(TEXT['no_data_selected'], className='dao-info-name'), id=org_id+'-info'),
+           html.Div(_get_platform_info(platform), id=org_id+'-info'),
            _get_dao_summary_layout(org_id, datapoints)
         ], className='dao-header-container pt-4'),
     )

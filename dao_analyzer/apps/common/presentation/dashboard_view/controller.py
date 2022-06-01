@@ -8,10 +8,11 @@
 """
 from dash import html
 from dash.dependencies import Input, Output, State
-from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
+from dao_analyzer.apps.common.business.transfers import Organization
+from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
 from dao_analyzer.apps.common.resources.strings import TEXT
-from dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view import _get_dao_info, _gen_sum_hdr
+from dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view import _get_dao_info, _get_platform_info, _gen_sum_hdr
 
 
 # We use organizations Data Access Object to be able to update the organization
@@ -25,17 +26,17 @@ def bind_callbacks(app, section_id: str) -> None:
         Output(dao_sum_hdr, 'children'),
         Input('org-dropdown', 'value'),
         State('org-dropdown', 'options'),
-        State('org-store', 'data'),
+        State('platform-store', 'data'),
     )
-    def organization_section_name(value: str, options: dict, org_store: list) -> html.Div:
+    def organization_section_name(value: str, options: dict, platform_store: Platform) -> html.Div:
         if not value:
             return html.Div(TEXT['no_data_selected'], className='dao-info-name'), _gen_sum_hdr()
 
-        organizations = OrganizationList(org_store)
-        if organizations.is_all_orgs(value):
-            return html.Div(options[0]["label"], className='dao-info-name'), _gen_sum_hdr()
+        platform = Platform.from_json(platform_store)
+        if platform.is_all_orgs(value):
+            return _get_platform_info(platform), _gen_sum_hdr()
         
-        result: Organization = next((x for x in organizations if x.get_id() == value))
+        result: Organization = next((x for x in platform.organization_list if x.get_id() == value))
         
         return _get_dao_info(result), _gen_sum_hdr(result)
 
@@ -43,9 +44,9 @@ def bind_callbacks(app, section_id: str) -> None:
         Output(f'{section_id}-body', 'className'),
         Input(f'{section_id}-body', 'className'),
         Input('org-dropdown', 'value'),
-        State('org-store', 'data'),
+        State('platform-store', 'data'),
     )
-    def show_hide_plots(cname: str, value: str, org_store: list):
+    def show_hide_plots(cname: str, value: str, plat_store: dict):
         if not value:
             return cname
 
@@ -54,7 +55,7 @@ def bind_callbacks(app, section_id: str) -> None:
 
         classes = set(filter(None, cname.split(' ')))
     
-        orgs = OrganizationList(org_store)
+        orgs = Platform.from_json(plat_store).organization_list
         if orgs.is_all_orgs(value):
             # Hide the ones with only-on-dao
             classes.add('is-all-orgs')

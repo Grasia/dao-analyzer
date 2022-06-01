@@ -10,10 +10,9 @@
 from typing import Dict, List, Any
 
 from datetime import datetime
-from dao_analyzer.apps.common.business.transfers.organization.participation_stats import ParticipationStat
+from .participation_stats import ParticipationStat
 
 from dao_analyzer.apps.common.resources.strings import TEXT
-
 
 class Organization:
     def __init__(self,
@@ -81,7 +80,7 @@ class Organization:
         }
 
     @classmethod
-    def from_json(cls, dict: dict[str, str]) -> 'Organization':
+    def from_json(cls, dict: dict[str, Any]) -> 'Organization':
         def _getdt(key):
             d = dict.get(key, None)
 

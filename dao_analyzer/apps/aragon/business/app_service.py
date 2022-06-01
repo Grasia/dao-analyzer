@@ -10,14 +10,14 @@
 
 from typing import Dict, List, Callable
 from dash import html
+from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
-from dao_analyzer.apps.aragon.data_access.daos.organization_dao import AragonDAO
-from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
+from dao_analyzer.apps.aragon.data_access.daos.platform_dao import AragonDAO
+from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO
 from dao_analyzer.apps.aragon.business.metric_adapter.asset_values import AssetsValues
 from dao_analyzer.apps.aragon.business.metric_adapter.asset_tokens import AssetsTokens
-from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.presentation.charts.chart_controller import ChartController
 from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
@@ -45,7 +45,7 @@ class AragonService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__orgsDAO: OrganizationListDao = AragonDAO()
+        self.__orgsDAO: PlatformDAO = AragonDAO()
         self.__controllers: Dict[int, List[ChartController]] = {
             self._TOKEN_HOLDER: list(),
             self._VOTE: list(),
@@ -73,8 +73,8 @@ class AragonService(metaclass=Singleton):
                         c.bind_callback(app)
 
 
-    def organizations(self) -> OrganizationList:
-        return self.__orgsDAO.get_organizations()
+    def platform(self) -> Platform:
+        return self.__orgsDAO.get_platform()
 
     @property
     def are_panes(self) -> bool:
@@ -92,7 +92,7 @@ class AragonService(metaclass=Singleton):
             self.bind_callbacks()
         
         return view.generate_layout(
-            organizations=self.organizations(),
+            platform=self.platform(),
             sections=self.__get_sections(),
             ecosystem='aragon',
             update=self.__orgsDAO.get_last_update_str(),

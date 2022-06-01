@@ -9,12 +9,13 @@ import pandas as pd
 
 from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
 from dao_analyzer.apps.common.business.transfers.organization.participation_stats import MembersCreatedProposalsStat, MembersEverVotedStat
-from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
+from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
+from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO
 from dao_analyzer.apps.common.data_access.requesters import CacheRequester
 
 from .metric import srcs
 
-class DaostackDAO(OrganizationListDao):
+class DaostackDAO(PlatformDAO):
     __DF_IDX = ['network', 'dao']
 
     __DF_DATE = 'createdAt'
@@ -113,3 +114,9 @@ class DaostackDAO(OrganizationListDao):
             ))
 
         return l
+    
+    def get_platform(self) -> Platform:
+        return Platform(
+            name = 'DAOstack',
+            organization_list = self.get_organizations()
+        )

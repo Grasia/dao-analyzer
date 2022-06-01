@@ -12,15 +12,15 @@ from typing import Dict, List, Callable
 from dash import html
 
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
+from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
-from dao_analyzer.apps.daostack.data_access.daos.organization_dao import DaostackDAO
-from dao_analyzer.apps.common.data_access.daos.organization_dao import OrganizationListDao
+from dao_analyzer.apps.daostack.data_access.daos.platform_dao import DaostackDAO
+from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO
 from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 import dao_analyzer.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
-from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.business.singleton import Singleton
 from dao_analyzer.apps.common.presentation.charts.chart_controller import ChartController
 from dao_analyzer.apps.daostack.business.metric_adapter.metric_adapter import MetricAdapter
@@ -50,7 +50,7 @@ class DaostackService(metaclass=Singleton):
 
     def __init__(self):
         # app state
-        self.__orgsDAO: OrganizationListDao = DaostackDAO()
+        self.__orgsDAO: PlatformDAO = DaostackDAO()
         self.__controllers: Dict[int, List[ChartController]] = {
             self._REP_H: list(),
             self._VOTE: list(),
@@ -79,8 +79,8 @@ class DaostackService(metaclass=Singleton):
                         c.bind_callback(app)
 
 
-    def organizations(self) -> OrganizationList:
-        return self.__orgsDAO.get_organizations()
+    def platform(self) -> Platform:
+        return self.__orgsDAO.get_platform()
 
 
     @property
@@ -100,7 +100,7 @@ class DaostackService(metaclass=Singleton):
             self.bind_callbacks()
 
         return view.generate_layout(
-            organizations=self.organizations(),
+            platform=self.platform(),
             sections=self.__get_sections(),
             ecosystem='daostack',
             update=self.__orgsDAO.get_last_update_str(),

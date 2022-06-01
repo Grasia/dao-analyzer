@@ -11,6 +11,7 @@ from dash import dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
+from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
 from dao_analyzer.apps.common.presentation.main_view.main_view import generate_layout
 import dao_analyzer.apps.common.presentation.about_view.about_view as about
@@ -80,7 +81,7 @@ def bind_callbacks(app) -> None: # noqa: C901
         # dropdown_value changed
         elif not bt_daostack and not bt_daohaus and not bt_aragon:
             platform = prev_pathname.split("/")[1]
-            organizations = services[platform].organizations()
+            organizations = services[platform].platform().organization_list
 
             new_pathname = f'/{platform}'
 
@@ -110,10 +111,10 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('org-number', 'children'),
         Input('org-filter', 'value'),
         State('org-dropdown', 'value'),
-        State('org-store', 'data'),
+        State('platform-store', 'data'),
     )
-    def org_filters(filter_values: list[str], org_value: str, org_store: list):
-        filtered = OrganizationList(org_store)
+    def org_filters(filter_values: list[str], org_value: str, plat_store: dict):
+        filtered = Platform.from_json(plat_store).organization_list
 
         for f in OrganizationList.get_filters(filter_values, only_enabled=True):
             filtered = filter(f.pred, filtered)
