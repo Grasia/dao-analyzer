@@ -25,7 +25,7 @@ class OrganizationListDao(metaclass=abc.ABCMeta):
 
     @staticmethod
     def _NaTtoNone(d) -> datetime:
-        return None if pd.isnull(d) else d
+        return None if pd.isna(d) else d
 
     @abc.abstractmethod
     def get_organizations(self) -> OrganizationList:
