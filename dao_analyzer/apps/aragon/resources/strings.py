@@ -18,7 +18,7 @@ TEXT: dict = {
     'css_id_token_holder': 'aragon-token-holders',
     'css_id_transactions': 'aragon-transactions',
     'css_id_vote': 'aragon-votes',
-    'disclaimer_activity': 'We consider activity new proposals, votes and transactions',
+    'disclaimer_activity': 'As activity we consider new proposals, votes and transactions',
     'disclaimer_assets': 'Assets from the Recovery Vault of the DAO',
     'dp_id_active_token_holders': 'aragon-dp-token',
     'dp_id_assets': 'aragon-dp-assets',

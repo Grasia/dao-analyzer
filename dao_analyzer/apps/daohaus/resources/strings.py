@@ -17,7 +17,7 @@ TEXT: dict = {
     'css_id_rage_quit': 'daohaus-rage-quit',
     'css_id_vote': 'daohaus-vote',
     'css_id_proposal': 'daohaus-proposal',
-    'disclaimer_activity': 'We consider activity new proposals, votes and stakes',
+    'disclaimer_activity': 'As activity we consider new proposals and votes',
     'dp_id_active_members': 'daohaus-dp-active-members',
     'dp_id_members': 'daohaus-dp-members',
     'dp_id_proposals': 'daohaus-dp-proposals',

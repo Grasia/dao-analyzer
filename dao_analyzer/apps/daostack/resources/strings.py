@@ -33,7 +33,7 @@ TEXT: dict = {
     'css_pane_border': 'daostack-border',
     'different_stakers_title': 'Different stakers',
     'different_voters_title': 'Different voters',
-    'disclaimer_activity': 'We consider activity new proposals, votes and stakes',
+    'disclaimer_activity': 'As activity we consider new proposals, votes and stakes',
     'downstakes': 'Downstakes',
     'new_proposals_dp_id': 'daostack-dp-proposals',
     'new_proposals_dp_title': 'New Proposals',
