@@ -51,7 +51,7 @@ class DaohausDao(PlatformDAO):
             srcs.PROPOSALS,
         ])
     
-    def get_organizations(self) -> OrganizationList:
+    def get_platform(self) -> Platform:
         df: pd.DataFrame = self._requester.request().set_index(self.__DF_IDX, drop=False)
         activity = self._activityRequester.request()
         members = self._membersRequester.request()
@@ -59,6 +59,8 @@ class DaohausDao(PlatformDAO):
         votes = self._votesRequester.request()
 
         # Clean dfs
+        df['summoningTime'] = pd.to_datetime(df['summoningTime'], unit='s')
+
         activity = activity[self.__DF_ACT_COLS]
         activity[self.__DF_DATE] = pd.to_datetime(activity[self.__DF_DATE], unit='s')
 
@@ -84,7 +86,7 @@ class DaohausDao(PlatformDAO):
                 network = org['network'],
                 o_id = org['molochAddress'],
                 name = org['name'],
-                creation_date = pd.to_datetime(org['summoningTime'], unit='s'),
+                creation_date = org['summoningTime'],
                 first_activity = self._NaTtoNone(org['first_activity']),
                 last_activity = self._NaTtoNone(org['last_activity']),
                 participation_stats = [
@@ -93,10 +95,16 @@ class DaohausDao(PlatformDAO):
                 ],
             ))
 
-        return l
-    
-    def get_platform(self) -> Platform:
+        mcp_pct = participation[self.__DF_PROPOSER].nunique() / members[self.__DF_MEMBER].nunique()
+        mvt_pct = votes[self.__DF_VOTER].nunique() / members[self.__DF_MEMBER].nunique()
+        creation_date = df['summoningTime'].min()
+
         return Platform(
             name = 'DAOhaus',
-            organization_list = self.get_organizations(),
+            creation_date=creation_date,
+            organization_list = l,
+            participation_stats = [
+                MembersCreatedProposalsStat(mcp_pct),
+                MembersEverVotedStat(mvt_pct),
+            ],
         )

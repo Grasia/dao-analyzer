@@ -11,6 +11,7 @@ from typing import Dict, List, Callable
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationFilter
+from dao_analyzer.apps.common.business.transfers.organization.participation_stats import ParticipationStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
 from dao_analyzer.apps.common.resources.strings import TEXT
@@ -97,6 +98,16 @@ def __generate_header(platform: Platform, ecosystem: str, update: str, org_value
     ], className='body-header row-divider')
 
 ### SUBHEADER THINGS
+def _gen_participation_stats(stats: List[ParticipationStat]) -> html.Div:
+    children = []
+    for s in stats:
+        if s.value is None:
+            children.append(html.Div(s.text))
+        else:
+            children.append(html.Div([html.B(s.value_str), s.text]))
+
+    return html.Div(children, className='dao-info-stats')
+
 def _get_platform_info(p: Platform) -> html.Div:
     grid: List[html.Div] = [
         html.Div('Platform', className='dao-info-label'),
@@ -104,6 +115,14 @@ def _get_platform_info(p: Platform) -> html.Div:
         html.Div('Networks', className='dao-info-label'),
         html.Div(', '.join(p.networks), className='dao-info-network'),
     ]
+
+    if p.creation_date:
+        grid.append(html.Div("Creation Date", className='dao-info-label'))
+        grid.append(html.Div(p.creation_date.strftime(TEXT['creation_date_format']), className='dao-info-date'))
+
+    if p.participation_stats:
+        grid.append(html.Div("Participation", className='dao-info-label'))
+        grid.append(_gen_participation_stats(p.participation_stats))
     
     return html.Div(grid, className='dao-info-container')
 
@@ -130,14 +149,7 @@ def _get_dao_info(org: Organization) -> html.Div:
 
     if org.get_participation_stats():
         grid.append(html.Div("Participation", className='dao-info-label'))
-        children = []
-        for s in org.get_participation_stats():
-            if s.value is None:
-                children.append(html.Div(s.text))
-            else:
-                children.append(html.Div([html.B(s.value_str), s.text]))
-
-        grid.append(html.Div(children, className='dao-info-stats'))
+        grid.append(_gen_participation_stats(org.get_participation_stats()))
     
     return html.Div(grid, className='dao-info-container')
 

@@ -52,7 +52,7 @@ class DaostackDAO(PlatformDAO):
             srcs.PROPOSALS,
         ])
 
-    def get_organizations(self) -> OrganizationList:
+    def get_platform(self) -> Platform:
         df: pd.DataFrame = self._requester.request().set_index(self.__DF_IDX, drop=False)
         activity: pd.DataFrame = self._activityRequester.request()
         members = self._membersRequester.request()
@@ -88,11 +88,7 @@ class DaostackDAO(PlatformDAO):
         gbm = members.groupby(self.__DF_IDX)
         gvt = votes.groupby(self.__DF_IDX)
 
-        # TODO: We should only consider proposers who are members
-        # -> We need to join them first, and select only proposer members?
-        # -> But how do we do that in a DAO by DAO basis without grouping?
         df['mcp_pct'] = gbp[self.__DF_PROPOSER].nunique() / gbm[self.__DF_MEMBER].nunique()
-        # TODO: and voters who are members
         df['mvt_pct'] = gvt[self.__DF_VOTER].nunique() / gbm[self.__DF_MEMBER].nunique()
 
         df.reset_index(drop=True).to_feather('/tmp/aux30.arr')
@@ -113,10 +109,16 @@ class DaostackDAO(PlatformDAO):
                 ],
             ))
 
-        return l
-    
-    def get_platform(self) -> Platform:
+        mcp_pct = prop[self.__DF_PROPOSER].nunique() / members[self.__DF_MEMBER].nunique()
+        mvt_pct = votes[self.__DF_VOTER].nunique() / members[self.__DF_MEMBER].nunique()
+        creation_date = df['first_activity'].min()
+
         return Platform(
             name = 'DAOstack',
-            organization_list = self.get_organizations()
+            creation_date = creation_date,
+            organization_list = l,
+            participation_stats = [
+                MembersCreatedProposalsStat(mcp_pct),
+                MembersEverVotedStat(mvt_pct),
+            ]
         )

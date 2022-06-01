@@ -9,6 +9,8 @@
 
 from typing import List, Dict, Any
 
+from datetime import datetime
+
 from dao_analyzer.apps.common.business.transfers.organization.organization_filter import OrganizationFilter
 
 from .organization_list import OrganizationList
@@ -20,11 +22,13 @@ class Platform:
         networks: List[str] = [],
         participation_stats: List[ParticipationStat] = [],
         organization_list: OrganizationList = OrganizationList(),
+        creation_date: datetime = None,
     ):
         self._name = name
         self._networks = networks
         self._stats = participation_stats
         self._orgs = organization_list
+        self._creation_date = creation_date
 
         if self._orgs and not self._networks:
             self._networks = list(set((x.get_network() for x in self._orgs)))
@@ -45,6 +49,10 @@ class Platform:
     def organization_list(self) -> OrganizationList:
         return self._orgs
 
+    @property
+    def creation_date(self) -> datetime:
+        return self._creation_date
+
     def is_all_orgs(self, o_id: str) -> bool:
         return self.organization_list.is_all_orgs(o_id)
 
@@ -63,6 +71,7 @@ class Platform:
             'networks': self.networks,
             'stats': self.participation_stats,
             'orgs': self.organization_list,
+            'creation_date': self.creation_date.isoformat(),
         }
 
     @classmethod
@@ -70,6 +79,7 @@ class Platform:
         return Platform(
             name = dict['name'],
             networks = dict['networks'],
-            participation_stats = dict.get('participation_stats', []),
+            participation_stats = list(map(ParticipationStat.from_json, dict.get('stats', []))),
             organization_list = OrganizationList(dict.get('orgs', [])),
+            creation_date = datetime.fromisoformat(dict['creation_date']),
         )

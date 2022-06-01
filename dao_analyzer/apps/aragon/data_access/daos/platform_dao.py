@@ -31,9 +31,12 @@ class AragonDAO(PlatformDAO):
 
         self._orgsCacheRequester = CacheRequester(srcs=[srcs.ORGANIZATIONS])
 
-    def get_organizations(self) -> OrganizationList:
+    def get_platform(self) -> Platform:
         df: pd.DataFrame = self._requester.request()
         dforgs: pd.DataFrame = self._orgsCacheRequester.request().set_index(self.__DF_IDX, drop=False)
+
+        # Convert to datetime
+        dforgs['createdAt'] = pd.to_datetime(dforgs['createdAt'], unit='s')
 
         # We want to concat all the actions, but they have different column names...
         actions = np.concatenate([
@@ -58,15 +61,15 @@ class AragonDAO(PlatformDAO):
                 network = org['network'],
                 o_id = org['orgAddress'],
                 name = org['name'],
-                creation_date = pd.to_datetime(org['createdAt'], unit='s'),
+                creation_date = org['createdAt'],
                 first_activity = self._NaTtoNone(org['first_activity']),
                 last_activity = self._NaTtoNone(org['last_activity']),
             ))
+        
+        creation_date = dforgs['createdAt'].min()
 
-        return l
-
-    def get_platform(self) -> Platform:
         return Platform(
             name = 'Aragon',
-            organization_list = self.get_organizations(),
+            creation_date = creation_date,
+            organization_list = l,
         )
