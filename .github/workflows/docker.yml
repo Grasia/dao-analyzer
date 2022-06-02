@@ -41,13 +41,13 @@ jobs:
         tag_semver: true
         buildargs: DAOA_VERSION
         tags: ${{ steps.tags.outputs.tag }},${{ steps.tags.outputs.tag_sv }}
-    - name: Publish to Docker Hub with cache
-      uses: elgohr/Publish-Docker-Github-Action@3.04
-      env:
-        POPULATE_CACHE: 1
-      with:
-        name: grasia/dao-analyzer
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        buildargs: DAOA_VERSION,POPULATE_CACHE
-        tags: ${{ steps.tags.outputs.tag_cached }}
+#     - name: Publish to Docker Hub with cache
+#       uses: elgohr/Publish-Docker-Github-Action@3.04
+#       env:
+#         POPULATE_CACHE: 1
+#       with:
+#         name: grasia/dao-analyzer
+#         username: ${{ secrets.DOCKER_USERNAME }}
+#         password: ${{ secrets.DOCKER_PASSWORD }}
+#         buildargs: DAOA_VERSION,POPULATE_CACHE
+#         tags: ${{ steps.tags.outputs.tag_cached }}
