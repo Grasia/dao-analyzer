@@ -12,6 +12,7 @@ import plotly.graph_objs as go
 from plotly_calplot import month_calplot
 
 from .figure import Figure
+import dao_analyzer.apps.common.resources.colors as Color
 
 class CalFigure(Figure):
     def __init__(self) -> None:
@@ -38,6 +39,12 @@ class CalFigure(Figure):
 
         fig.update_layout(
             margin=self.configuration.get_margin(),
+            xaxis = {
+                'tickfont_color': Color.TICKFONT_COLOR,
+            },
+            yaxis = {
+                'tickfont_color': Color.TICKFONT_COLOR,
+            }
         )
 
         return fig
