@@ -75,7 +75,7 @@ class Platform:
         }
 
     @classmethod
-    def from_json(cls, dict: dict[str, Any]) -> 'Platform':
+    def from_json(cls, dict: Dict[str, Any]) -> 'Platform':
         return Platform(
             name = dict['name'],
             networks = dict['networks'],

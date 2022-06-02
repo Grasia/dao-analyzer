@@ -118,7 +118,7 @@ class FigureConfiguration():
     def get_height(self) -> int:
         return 350
 
-    def get_margin(self) -> dict[str, int]:
+    def get_margin(self) -> Dict[str, int]:
         # Margin is calculated automatically
         return {
             'l': 0,

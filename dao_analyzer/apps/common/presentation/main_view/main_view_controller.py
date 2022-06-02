@@ -6,6 +6,8 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
+from typing import List
+
 import dash
 from dash import dcc
 from dash.dependencies import Input, Output, State
@@ -113,7 +115,7 @@ def bind_callbacks(app) -> None: # noqa: C901
         State('org-dropdown', 'value'),
         State('platform-store', 'data'),
     )
-    def org_filters(filter_values: list[str], org_value: str, plat_store: dict):
+    def org_filters(filter_values: List[str], org_value: str, plat_store: dict):
         filtered = Platform.from_json(plat_store).organization_list
 
         for f in OrganizationList.get_filters(filter_values, only_enabled=True):

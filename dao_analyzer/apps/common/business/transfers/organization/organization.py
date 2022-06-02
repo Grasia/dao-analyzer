@@ -80,7 +80,7 @@ class Organization:
         }
 
     @classmethod
-    def from_json(cls, dict: dict[str, Any]) -> 'Organization':
+    def from_json(cls, dict: Dict[str, Any]) -> 'Organization':
         def _getdt(key):
             d = dict.get(key, None)
 
