@@ -56,8 +56,8 @@ class Platform:
     def is_all_orgs(self, o_id: str) -> bool:
         return self.organization_list.is_all_orgs(o_id)
 
-    def get_filters(self) -> List[OrganizationFilter]:
-        return self.organization_list.get_filters()
+    def get_filters(self, **kwargs) -> List[OrganizationFilter]:
+        return self.organization_list.get_filters(**kwargs)
 
     def get_dropdown_representation(self) -> List[Dict[str, str]]:
         return self._orgs.get_dict_representation()

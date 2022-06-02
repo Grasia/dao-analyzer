@@ -77,11 +77,16 @@ class OrganizationList(list):
         return [x.get_id() for x in self]
 
     @classmethod
-    def get_filters(cls, values=None, only_enabled=False) -> List[OrganizationFilter]:
+    def get_filters(cls, values=None, only_enabled=False, force_disabled=False) -> List[OrganizationFilter]:
         filters =  [f() for f in ALL_FILTERS]
+
         if values is not None:
             for f in filters:
                 f.enabled = f.id in values
+
+        if force_disabled:
+            for f in filters:
+                f.enabled = False
 
         if only_enabled:
             filters = [f for f in filters if f.enabled]

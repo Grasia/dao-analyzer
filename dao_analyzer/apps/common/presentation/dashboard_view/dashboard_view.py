@@ -10,7 +10,7 @@ import os
 from typing import Dict, List, Callable
 from dash import dcc, html
 import dash_bootstrap_components as dbc
-from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationFilter
+from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList, OrganizationFilter
 from dao_analyzer.apps.common.business.transfers.organization.participation_stats import ParticipationStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
@@ -24,7 +24,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daostack': ['', '', 'daostack-selected'],
 }
 
-def generate_layout(platform: Platform, sections: Dict, datapoints, ecosystem: str, update: str, org_id: str, org_value: str) -> List:
+def generate_layout(platform: Platform, sections: Dict, datapoints, ecosystem: str, update: str, platform_id: str, org_value: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -41,9 +41,9 @@ def generate_layout(platform: Platform, sections: Dict, datapoints, ecosystem: s
             __generate_header(platform, ecosystem, update, org_value),
         className='top body mb-3 py-4'),
         dbc.Container([
-            __generate_subheader(org_id, platform, datapoints),
+            __generate_subheader(platform_id, platform, datapoints),
             __generate_sections(sections),
-        ], className='body', id=f'{org_id}-body'),
+        ], className='body', id=f'{platform_id}-body'),
     ])
 
 def __gen_ecosystem(id: str, selected: str) -> html.Div:
@@ -61,7 +61,15 @@ def __generate_header(platform: Platform, ecosystem: str, update: str, org_value
 
     ecosystems: List[html.Div] = [ __gen_ecosystem(eid, selected[i]) for i,eid in enumerate(['daohaus', 'aragon', 'daostack']) ]
 
-    filters: OrganizationFilter = platform.get_filters()
+    if not org_value:
+        org_value = OrganizationList.ALL_ORGS_ID
+    
+    # Disable filters if generating header with a DAO pre-selected (comes from URL)
+    # If we don't disable the filter, the DAO will be inmediately filtered out
+    # Fixes #85
+    filters: OrganizationFilter = platform.get_filters(
+        force_disabled=not OrganizationList.is_all_orgs(org_value)
+    )
 
     return dbc.Row(children=[
         html.Div(

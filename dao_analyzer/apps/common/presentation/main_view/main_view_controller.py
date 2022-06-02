@@ -52,14 +52,14 @@ def bind_callbacks(app) -> None: # noqa: C901
         patharr = pathname.split("/")
 
         platform = patharr[1]
-        value = patharr[2] if len(patharr) >= 3 else None
+        org_id = patharr[2] if len(patharr) >= 3 else None
 
         # Dont regenerate layout if we are already using it
         if platform == current_platform:
             raise PreventUpdate
 
         if platform in services:
-            content = generate_layout(body=services[platform].get_layout(value))
+            content = generate_layout(body=services[platform].get_layout(org_id))
         
         return content, state, platform
 

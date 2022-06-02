@@ -92,7 +92,7 @@ class DaohausService(metaclass=Singleton):
             sections=self.__get_sections(),
             ecosystem='daohaus',
             update=self.__orgsDAO.get_last_update_str(),
-            org_id=TEXT['css_id_organization'],
+            platform_id=TEXT['css_id_organization'],
             org_value=org_value,
             datapoints=self.__get_datapoints(),
         )
