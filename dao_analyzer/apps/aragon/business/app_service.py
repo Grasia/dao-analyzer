@@ -204,6 +204,18 @@ class AragonService(metaclass=Singleton):
     def __get_token_holder_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
 
+        # total token holders
+        charts.append(self.__create_sum_chart(
+            title=TEXT['title_total_token_holders'],
+            adapter=BasicAdapter(
+                metric_id=s_factory.TOTAL_TOKEN_HOLDERS,
+            ),
+            figure=BarFigure(),
+            cont_key=self._TOKEN_HOLDER,
+            dp_id=TEXT['dp_id_total_token_holders'],
+            dp_title=TEXT['dp_title_total_token_holders'],
+        ))
+
         # active token holders
         charts.append(self.__create_sum_chart(
             title=TEXT['title_active_token_holders'],

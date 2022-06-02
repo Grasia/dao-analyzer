@@ -91,8 +91,6 @@ class DaostackDAO(PlatformDAO):
         df['mcp_pct'] = gbp[self.__DF_PROPOSER].nunique() / gbm[self.__DF_MEMBER].nunique()
         df['mvt_pct'] = gvt[self.__DF_VOTER].nunique() / gbm[self.__DF_MEMBER].nunique()
 
-        df.reset_index(drop=True).to_feather('/tmp/aux30.arr')
-
         l: OrganizationList = OrganizationList()
 
         for _, org in df.iterrows():

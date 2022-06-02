@@ -26,6 +26,7 @@ from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.st_casted_votes_v
 from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.st_casted_votes_rate import StCastedVotesRate
 from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.st_assets_tokens import StAssetsTokens
 from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.st_assets_values import StAssetsValues
+from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.st_total_token_holders import StTotalTokenHolders
 
 NEW_VOTES = 0
 NEW_TRANSACTIONS = 1
@@ -42,6 +43,7 @@ CASTED_VOTE_AGAINST_RATE = 11
 ASSETS_VALUES = 12
 ASSETS_TOKENS = 13
 ORGANIZATION_ACTIVITY = 14
+TOTAL_TOKEN_HOLDERS = 15
 
 
 def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # noqa: C901
@@ -119,6 +121,13 @@ def _metricsDefault(metric: int) -> Tuple[IMetricStrategy, CacheRequester]: # no
         ], on=['recoveryVault', 'network'])
     elif metric == ORGANIZATION_ACTIVITY:
         stg = StOrganizationActivity()
+        requester = CacheRequester(srcs=[
+            srcs.CASTS,
+            srcs.VOTES,
+            srcs.TRANSACTIONS])
+        address_key = 'orgAddress'
+    elif metric == TOTAL_TOKEN_HOLDERS:
+        stg = StTotalTokenHolders()
         requester = CacheRequester(srcs=[
             srcs.CASTS,
             srcs.VOTES,
