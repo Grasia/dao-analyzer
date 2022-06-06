@@ -78,7 +78,7 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content'),
     dcc.Loading(
-        type="circle",
+        type="cube",
         color=COLOR.DARK_BLUE,
         fullscreen=True,
         children=html.Div(id='header-loading-state', className='d-none')),

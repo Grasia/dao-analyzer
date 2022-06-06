@@ -14,6 +14,7 @@ from dao_analyzer.apps.common.business.transfers.organization import Organizatio
 from dao_analyzer.apps.common.business.transfers.organization.participation_stats import ParticipationStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
+from dao_analyzer.apps.common.resources import colors as COLOR
 from dao_analyzer.apps.common.resources.strings import TEXT
 from dao_analyzer.apps.common.presentation.main_view.main_view import REL_PATH
 
@@ -174,20 +175,24 @@ def _gen_sum_hdr(org: Organization = None):
     return [left, right]
 
 def _get_dao_summary_layout(org_id, datapoints: Dict ):
-    dp_divs: List[html.Div] = [ dp.get_layout() for dp in datapoints.values() ]
+    dp_divs: List[html.Div] = [ dcc.Loading(
+        dp.get_layout(), 
+        type='circle',
+        color=COLOR.DARK_BLUE
+    ) for dp in datapoints.values() ]
 
     return html.Div([
         html.Div(_gen_sum_hdr(), className='dao-summary-hdr', id=org_id+'-summary-hdr'),
         html.Div(dp_divs, className='dao-summary-body'),
-    ], className='dao-summary-container', style={'padding': '1em'})
+    ], className='dao-summary-container')
 
 def __generate_subheader(org_id: str, platform: Platform, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
     return dbc.Row(
         id=org_id,
         className='my-3',
         children=html.Div([
-           html.Div(_get_platform_info(platform), id=org_id+'-info'),
-           _get_dao_summary_layout(org_id, datapoints)
+           dbc.Col(dcc.Loading(html.Div(_get_platform_info(platform), id=org_id+'-info'), color=COLOR.DARK_BLUE)),
+           dbc.Col(_get_dao_summary_layout(org_id, datapoints)),
         ], className='dao-header-container pt-4'),
     )
 
