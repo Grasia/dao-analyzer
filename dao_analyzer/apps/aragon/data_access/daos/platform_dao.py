@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 
 from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
+from dao_analyzer.apps.common.business.transfers.organization.participation_stats import MembersCreatedProposalsStat, MembersEverVotedStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO
 from dao_analyzer.apps.common.data_access.requesters import CacheRequester
@@ -30,10 +31,13 @@ class AragonDAO(PlatformDAO):
         ]))
 
         self._orgsCacheRequester = CacheRequester(srcs=[srcs.ORGANIZATIONS])
+        self._membersCacheRequester = CacheRequester(srcs=[srcs.TOKEN_HOLDERS])
 
     def get_platform(self) -> Platform:
         df: pd.DataFrame = self._requester.request()
         dforgs: pd.DataFrame = self._orgsCacheRequester.request().set_index(self.__DF_IDX, drop=False)
+        dfmem: pd.DataFrame = self._membersCacheRequester.request()
+        dfmem = dfmem.rename(columns={'organizationAddress': 'orgAddress'})
 
         # Convert to datetime
         dforgs['createdAt'] = pd.to_datetime(dforgs['createdAt'], unit='s')
@@ -44,6 +48,23 @@ class AragonDAO(PlatformDAO):
             df[self.__DF_IDX + [self.__DF_VOTE_DATE]].dropna().to_numpy(),
             df[self.__DF_IDX + [self.__DF_TRANSACTION_DATE]].dropna().to_numpy(),
         ], axis=0)
+        creators = df[self.__DF_IDX + ['creator']].dropna()
+        voters = df[self.__DF_IDX + ['voter']].dropna()
+        voters['voter'] = voters['voter'].str.split('-').str[2]
+
+        members = dfmem[self.__DF_IDX + ['address']]
+
+        # Creators who are also members
+        creators = creators.merge(members, 
+            left_on = self.__DF_IDX + ['creator'],
+            right_on = self.__DF_IDX + ['address'],
+        )[self.__DF_IDX + ['creator']]
+
+        # Voters who are also members
+        voters = voters.merge(members,
+            left_on = self.__DF_IDX + ['voter'],
+            right_on = self.__DF_IDX + ['address'],
+        )[self.__DF_IDX + ['voter']]
 
         # Back to dataframe (so we can group by)
         dfActions = pd.DataFrame(actions, columns=self.__DF_IDX + ['actionDate'])
@@ -53,6 +74,14 @@ class AragonDAO(PlatformDAO):
 
         dforgs['first_activity'] = dfgb.min()
         dforgs['last_activity'] = dfgb.max()
+
+        # Getting the participation
+        gbp = creators.groupby(self.__DF_IDX)
+        gbv = voters.groupby(self.__DF_IDX)
+        gbm = members.groupby(self.__DF_IDX)
+
+        dforgs['mcp_pct'] = gbp['creator'].nunique() / gbm['address'].nunique()
+        dforgs['mcv_pct'] = gbv['voter'].nunique() / gbm['address'].nunique()
 
         l: OrganizationList = OrganizationList()
 
@@ -64,6 +93,10 @@ class AragonDAO(PlatformDAO):
                 creation_date = org['createdAt'],
                 first_activity = self._NaTtoNone(org['first_activity']),
                 last_activity = self._NaTtoNone(org['last_activity']),
+                participation_stats = [
+                    MembersCreatedProposalsStat(org['mcp_pct']),
+                    MembersEverVotedStat(org['mcv_pct']),
+                ]
             ))
         
         creation_date = dforgs['createdAt'].min()
