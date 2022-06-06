@@ -309,7 +309,7 @@ a {
 .dao-summary-body {
     display: flex;
     flex: 1 1 0;
-    gap: 50px;
+    justify-content: space-between;
 }
 
 .dao-summary-datapoint {
