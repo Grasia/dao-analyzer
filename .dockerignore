@@ -19,6 +19,7 @@
 !/docker-compose.yml
 !/Dockerfile
 !/CHANGELOG.md
+!CITATION.cff
 !/test
 
 ## Deploy
