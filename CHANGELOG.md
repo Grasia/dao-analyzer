@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.0.0 - 2022-06-07
+**The CSCW update**
+- Added timezone to last_update
+- Updated some things in cache_scripts
+  - Made all collectors updatable
+- Created install scripts and published to pypi
+- Added ABOUT page
+- Added more Aragon Names
+- Changed activity plots to calendar plots
+- Using organizations store (faster response time)
+- Added filtering (DAOs active last year)
+- Added participation equality stats
+- Added CITATION.cff
+- Added total members graph to Aragon DAOs
+- Changed frontend
+  - Now using bootstrap
+  - Changed header (logo and keyphrase)
+  - Changed favicon
+  - Added number of DAOs below the dropdown menu
+  - Added disclaimers to some charts
+  - Removed charts subtitles
+  - Added platform and dao info
+  - Added card with dao/platform datapoints
+  - Changed last update location
+  - Added current version to footer
+  - Changed images to bootstrap icons
+
 ## 0.8.2 - 2022-03-30
 - Changed last_update
 - Fixed Docker workflow
