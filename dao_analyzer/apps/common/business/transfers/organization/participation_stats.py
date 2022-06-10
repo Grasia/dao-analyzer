@@ -37,6 +37,8 @@ class ParticipationStat(metaclass=abc.ABCMeta):
 
     @property
     def value_str(self):
+        if self.value < 0.01:
+            return f'{self.value*100:.2g}%'
         return f'{self.value*100:.0f}%'
 
     @property
