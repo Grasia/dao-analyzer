@@ -192,6 +192,7 @@ class VotesCollector(GraphQLCollector):
             ds.Vote.orgAddress,
             ds.Vote.appAddress,
             ds.Vote.creator,
+            ds.Vote.originalCreator,
             ds.Vote.metadata,
             ds.Vote.executed,
             ds.Vote.executedAt,

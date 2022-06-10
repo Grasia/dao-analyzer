@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.1 - 2022-06-10
+- Added originalCreator field to Aragon Voting subgraph
+
 ## 1.1.0 - 2022-05
 - Used `_change_block` filter to make every subgraph updatable
 - Fixed cryptocompare error
