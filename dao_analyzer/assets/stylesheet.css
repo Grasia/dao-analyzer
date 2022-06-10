@@ -567,3 +567,14 @@ code {
 .markdown li + li {
     margin-top: 0.25rem;
 }
+
+/* JUST FOR THE DEMO */
+/*
+.header-logo {
+    filter: blur(10px);
+}
+
+#page-content > div > footer > div > div.row-cols-1.row-cols-lg-2.gy-3.row {
+    filter: blur(15px);
+}
+*/

@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.0.1 - 2022-06-10
+- Added Equality Stats to Aragon
+
 ## 1.0.0 - 2022-06-07
 **The CSCW update**
 - Added timezone to last_update
