@@ -22,6 +22,9 @@ class AragonDAO(PlatformDAO):
     __DF_CAST_DATE = 'createdAt'
     __DF_VOTE_DATE = 'startDate'
     __DF_TRANSACTION_DATE = 'date'
+    __DF_MEMBER = 'address'
+    __DF_PROPOSER = 'originalCreator'
+    __DF_VOTER = 'voter'
 
     def __init__(self):
         super().__init__(CacheRequester(srcs=[
@@ -48,23 +51,23 @@ class AragonDAO(PlatformDAO):
             df[self.__DF_IDX + [self.__DF_VOTE_DATE]].dropna().to_numpy(),
             df[self.__DF_IDX + [self.__DF_TRANSACTION_DATE]].dropna().to_numpy(),
         ], axis=0)
-        creators = df[self.__DF_IDX + ['creator']].dropna()
-        voters = df[self.__DF_IDX + ['voter']].dropna()
-        voters['voter'] = voters['voter'].str.split('-').str[2]
+        creators = df[self.__DF_IDX + [self.__DF_PROPOSER]].dropna()
+        voters = df[self.__DF_IDX + [self.__DF_VOTER]].dropna()
+        voters[self.__DF_VOTER] = voters[self.__DF_VOTER].str.split('-').str[2]
 
-        members = dfmem[self.__DF_IDX + ['address']]
+        members = dfmem[self.__DF_IDX + [self.__DF_MEMBER]]
 
         # Creators who are also members
         creators = creators.merge(members, 
-            left_on = self.__DF_IDX + ['creator'],
-            right_on = self.__DF_IDX + ['address'],
-        )[self.__DF_IDX + ['creator']]
+            left_on = self.__DF_IDX + [self.__DF_PROPOSER],
+            right_on = self.__DF_IDX + [self.__DF_MEMBER],
+        )[self.__DF_IDX + [self.__DF_PROPOSER]]
 
         # Voters who are also members
         voters = voters.merge(members,
-            left_on = self.__DF_IDX + ['voter'],
-            right_on = self.__DF_IDX + ['address'],
-        )[self.__DF_IDX + ['voter']]
+            left_on = self.__DF_IDX + [self.__DF_VOTER],
+            right_on = self.__DF_IDX + [self.__DF_MEMBER],
+        )[self.__DF_IDX + [self.__DF_VOTER]]
 
         # Back to dataframe (so we can group by)
         dfActions = pd.DataFrame(actions, columns=self.__DF_IDX + ['actionDate'])
@@ -80,8 +83,8 @@ class AragonDAO(PlatformDAO):
         gbv = voters.groupby(self.__DF_IDX)
         gbm = members.groupby(self.__DF_IDX)
 
-        dforgs['mcp_pct'] = gbp['creator'].nunique() / gbm['address'].nunique()
-        dforgs['mcv_pct'] = gbv['voter'].nunique() / gbm['address'].nunique()
+        dforgs['mcp_pct'] = gbp[self.__DF_PROPOSER].nunique() / gbm[self.__DF_MEMBER].nunique()
+        dforgs['mcv_pct'] = gbv[self.__DF_VOTER].nunique() / gbm[self.__DF_MEMBER].nunique()
 
         l: OrganizationList = OrganizationList()
 
@@ -99,10 +102,16 @@ class AragonDAO(PlatformDAO):
                 ]
             ))
         
+        mcp_pct = creators[self.__DF_PROPOSER].nunique() / members[self.__DF_MEMBER].nunique()
+        mvp_pct = voters[self.__DF_VOTER].nunique() / members[self.__DF_MEMBER].nunique()
         creation_date = dforgs['createdAt'].min()
 
         return Platform(
             name = 'Aragon',
             creation_date = creation_date,
             organization_list = l,
+            participation_stats = [
+                MembersCreatedProposalsStat(mcp_pct),
+                MembersEverVotedStat(mvp_pct),
+            ]
         )

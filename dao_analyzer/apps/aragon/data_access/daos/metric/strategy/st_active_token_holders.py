@@ -20,7 +20,7 @@ class StActiveTokenHolders(IMetricStrategy):
     __DF_VOTE_DATE = 'startDate'
     __DF_TRANSACTION_DATE = 'date'
     __DF_CASTER = 'voter'
-    __DF_PROPOSER = 'creator'
+    __DF_PROPOSER = 'originalCreator'
     __DF_TRANSACTIONER = 'entity'
     __DF_MEMEBER = 'member'
     __DF_DATE = 'date'
