@@ -36,9 +36,9 @@ class StActiveTokenHoldersTest(unittest.TestCase):
             {'voter': 1, 'trash': 'trash', 'createdAt': bl.change(hour=5).unix()},#today_year-(today_month-3)-27T05:00:00+00:00
             {'entity': 1, 'trash': 'trash', 'date': bl.add(month=2).unix()},#today_year-(today_month-1)-27T05:00:00+00:00
             {'entity': 2, 'trash': 'trash', 'date': bl.change(day=3, hour=23).unix()},#today_year-(today_month-1)-03T23:00:00+00:00
-            {'creator': 2, 'trash': 'trash', 'startDate': bl.add(month=1).change(minute=59, second=59).unix()},#today_year-today_month-03T23:59:59+00:00
+            {'originalCreator': 2, 'trash': 'trash', 'startDate': bl.add(month=1).change(minute=59, second=59).unix()},#today_year-today_month-03T23:59:59+00:00
             {'entity': 3, 'trash': 'trash', 'date': bl.unix()},#today_year-today_month-03T23:59:59+00:00
-            {'creator': 2, 'trash': 'trash', 'startDate': bl.add(second=1).change(day=7, hour=17).unix()},#today_year-today_month-07T17:00:00+00:00
+            {'originalCreator': 2, 'trash': 'trash', 'startDate': bl.add(second=1).change(day=7, hour=17).unix()},#today_year-today_month-07T17:00:00+00:00
         ])
         out: List[int] = [1, 0, 2, 2]
 
