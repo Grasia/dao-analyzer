@@ -22,6 +22,8 @@ import dao_analyzer.apps.daohaus.business.app_service as daohaus
 import dao_analyzer.apps.aragon.business.app_service as aragon
 from dao_analyzer.apps.common.resources.strings import TEXT
 
+ABOUT_SUBPAGE: str = '__about'
+
 def bind_callbacks(app) -> None: # noqa: C901
 
     # Callbacks need to be loaded twice.
@@ -36,20 +38,30 @@ def bind_callbacks(app) -> None: # noqa: C901
 
     @app.callback(
         Output('page-content', 'children'),
-        Output('header-loading-state', 'children'),
-        Output('page-content', 'data-current-platform'),
-        Input('url', 'pathname'),
-        State('page-content', 'data-current-platform')
+        Output('header-loading-state', 'children'), # <- THIS CAUSES THE FLASH
+        Input('page-content', 'data-subpage'),
+        State('page-content', 'data-org-id'),
     )
-    def display_page(pathname, current_platform):
+    def change_subpage(subpage, org_id):
+        if not subpage:
+            return dcc.Location(pathname='/daohaus', id='default_redirect'), 'redirect'
+        elif subpage == ABOUT_SUBPAGE:
+            return generate_layout(body=about.get_layout()), ''
+        elif subpage in services:
+            return generate_layout(body=services[subpage].get_layout(org_id)), 'loading'
+
+    @app.callback(
+        Output('page-content', 'data-subpage'),
+        Output('page-content', 'data-org-id'),
+        Input('url', 'pathname'),
+        State('page-content', 'data-subpage')
+    )
+    def url_changed(pathname, current_platform):
         if pathname == "/":
-            return [dcc.Location(pathname="/daohaus", id="default_redirect"), "redirect", "daohaus"]
+            return '', dash.no_update
 
         if pathname == '/' + TEXT['url_about']:
-            return generate_layout(body=about.get_layout()), '', 'about'
-
-        content = TEXT['not_found']
-        state = 'loading'
+            return ABOUT_SUBPAGE, dash.no_update
 
         patharr = pathname.split("/")
 
@@ -60,11 +72,7 @@ def bind_callbacks(app) -> None: # noqa: C901
         if platform == current_platform:
             raise PreventUpdate
 
-        if platform in services:
-            content = generate_layout(body=services[platform].get_layout(org_id))
-        
-        return content, state, platform
-
+        return platform, org_id
 
     @app.callback(
         Output('url', 'pathname'),
@@ -95,7 +103,7 @@ def bind_callbacks(app) -> None: # noqa: C901
 
             return new_pathname
         
-        trigger = ctx.triggered[0]['prop_id'].split('.')[0]
+        trigger = ctx.triggered_id
         
         pathname: str = "/"
         if trigger == 'daostack-bt':

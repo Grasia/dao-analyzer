@@ -94,7 +94,7 @@ a {
     text-transform: uppercase;
 }
 
-.header-link:hover, [data-current-platform="about"] .header-link {
+.header-link:hover, [data-subpage="__about"] .header-link {
     color: white;
     border-bottom: 3px solid #F547D6;
 }

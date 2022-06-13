@@ -36,6 +36,12 @@ app = dash.Dash(__name__,
     ],
 )
 
+if DEBUG:
+    pd.options.mode.chained_assignment = None # 'warn' TODO: Delete none
+    app.enable_dev_tools(
+        debug=True,
+    )
+
 matomo_url = None
 site_id = None
 if 'DAOA_MATOMO_URL' in os.environ:
