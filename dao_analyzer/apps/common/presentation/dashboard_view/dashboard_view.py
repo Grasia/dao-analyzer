@@ -10,7 +10,8 @@ import os
 from typing import Dict, List, Callable
 from dash import dcc, html
 import dash_bootstrap_components as dbc
-from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList, OrganizationFilter
+from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList
+from dao_analyzer.apps.common.business.transfers.organization.organization_filter import NetworkFilters, OrganizationFilterGroup
 from dao_analyzer.apps.common.business.transfers.organization.participation_stats import ParticipationStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
@@ -68,9 +69,11 @@ def __generate_header(platform: Platform, ecosystem: str, update: str, org_value
     # Disable filters if generating header with a DAO pre-selected (comes from URL)
     # If we don't disable the filter, the DAO will be inmediately filtered out
     # Fixes #85
-    filters: OrganizationFilter = platform.get_filters(
+    filterGroup: OrganizationFilterGroup = platform.get_filter_group(
         force_disabled=not OrganizationList.is_all_orgs(org_value)
     )
+
+    networkFilters: NetworkFilters = platform.get_network_filters()
 
     return dbc.Row(children=[
         html.Div(
@@ -84,9 +87,16 @@ def __generate_header(platform: Platform, ecosystem: str, update: str, org_value
                 html.Div(html.Span(TEXT['dao_selector_title'])),
                 html.Div([
                     dcc.Checklist(
-                        options = {x.id:x.title for x in filters},
-                        value = [x.id for x in filters if x.enabled],
+                        options = filterGroup.get_options(),
+                        value = filterGroup.get_value(),
+                        className='checklist-filter d-flex flex-column',
                         id='org-filter',
+                    ),
+                    dcc.Checklist(
+                        options = networkFilters.get_options(),
+                        value = networkFilters.get_value(),
+                        className='checklist-filter',
+                        id='org-network-filter',
                     ),
                     html.Div(dcc.Dropdown(
                         id='org-dropdown',

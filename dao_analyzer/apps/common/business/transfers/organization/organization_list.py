@@ -6,10 +6,10 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui 
         <f.r.youssef@hotmail.com>
 """
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Set
 
 from .organization import Organization
-from .organization_filter import OrganizationFilter, ALL_FILTERS
+from .organization_filter import Filter, NetworkFilters, SIMPLE_FILTERS, OrganizationFilterGroup
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 
@@ -76,9 +76,11 @@ class OrganizationList(list):
 
         return [x.get_id() for x in self]
 
-    @classmethod
-    def get_filters(cls, values=None, only_enabled=False, force_disabled=False) -> List[OrganizationFilter]:
-        filters =  [f() for f in ALL_FILTERS]
+    def get_networks(self) -> Set[str]:
+        return set((x.get_network().lower() for x in self))
+
+    def get_filters(self, values=None, only_enabled=False, force_disabled=False) -> List[Filter]:
+        filters = [f() for f in SIMPLE_FILTERS]
 
         if values is not None:
             for f in filters:
@@ -92,3 +94,28 @@ class OrganizationList(list):
             filters = [f for f in filters if f.enabled]
 
         return filters
+
+    def get_filter_group(self, *args, **kwargs) -> OrganizationFilterGroup:
+        return OrganizationFilterGroup(self.get_filters(*args, **kwargs))
+
+    def get_network_filters(self, network_values=None, only_enabled=False, force_disabled=False) -> NetworkFilters:
+        nf = NetworkFilters(self.get_networks())
+
+        if network_values is not None:
+            for f in nf._filters:
+                f.enabled = f.id in network_values
+
+        if force_disabled:
+            for f in nf._filters:
+                f.enabled = False
+
+        if only_enabled:
+            nf._filters = [f for f in nf._filters if f.enabled]
+
+        return nf
+
+    def filter(self, values=None, network_values=None, **kwargs) -> 'OrganizationList':
+        """ Returns a new OrganizationList with only filtered items """
+        filtered = filter(self.get_filter_group(values, **kwargs).pred, self)
+        filtered = filter(self.get_network_filters(network_values, **kwargs).pred, self)
+        return OrganizationList(filtered)

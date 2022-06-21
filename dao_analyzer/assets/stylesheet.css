@@ -142,16 +142,23 @@ a {
     max-width: 450px;
 }
 
-#org-filter > label {
+#org-network-filter {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    margin-top: 0.7em;
+    margin-bottom: 1em;
+}
+
+.checklist-filter > label {
     display: inline-grid;
     grid-template-columns: 1em auto;
-    gap: 1em;
+    gap: .7em;
 
     font-size: 0.9em;
     line-height: 1.1;
 }
 
-#org-filter input[type='checkbox'] {
+.checklist-filter input[type='checkbox'] {
     transform: scale(1.3);
 }
 

@@ -11,7 +11,7 @@ from typing import List, Dict, Any
 
 from datetime import datetime
 
-from dao_analyzer.apps.common.business.transfers.organization.organization_filter import OrganizationFilter
+from dao_analyzer.apps.common.business.transfers.organization.organization_filter import NetworkFilters, OrganizationFilter, OrganizationFilterGroup
 
 from .organization_list import OrganizationList
 from .participation_stats import ParticipationStat
@@ -58,6 +58,12 @@ class Platform:
 
     def get_filters(self, **kwargs) -> List[OrganizationFilter]:
         return self.organization_list.get_filters(**kwargs)
+
+    def get_filter_group(self, *args, **kwargs) -> OrganizationFilterGroup:
+        return self.organization_list.get_filter_group(*args, **kwargs)
+
+    def get_network_filters(self) -> NetworkFilters:
+        return self.organization_list.get_network_filters()
 
     def get_dropdown_representation(self) -> List[Dict[str, str]]:
         return self._orgs.get_dict_representation()
