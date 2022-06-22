@@ -117,5 +117,5 @@ class OrganizationList(list):
     def filter(self, values=None, network_values=None, **kwargs) -> 'OrganizationList':
         """ Returns a new OrganizationList with only filtered items """
         filtered = filter(self.get_filter_group(values, **kwargs).pred, self)
-        filtered = filter(self.get_network_filters(network_values, **kwargs).pred, self)
+        filtered = filter(self.get_network_filters(network_values, **kwargs).pred, filtered)
         return OrganizationList(filtered)
