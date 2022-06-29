@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.2 - 2022-06-29
+- Added ReputationMint and ReputationBurn collectors to DAOstack
+
 ## 1.1.1 - 2022-06-10
 - Added originalCreator field to Aragon Voting subgraph
 

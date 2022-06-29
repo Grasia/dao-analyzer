@@ -142,6 +142,36 @@ class VotesCollector(GraphQLCollector):
             ds.ProposalVote.proposal.select(ds.Proposal.id)
         )
 
+class ReputationMintsCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('reputationMints', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.reputationMints(**kwargs).select(
+            ds.ReputationMint.id,
+            # ds.ReputationMint.txHash, # Not used
+            ds.ReputationMint.contract,
+            ds.ReputationMint.address,
+            ds.ReputationMint.amount,
+            ds.ReputationMint.createdAt
+        )
+
+class ReputationBurnsCollector(GraphQLCollector):
+    def __init__(self, runner, network: str):
+        super().__init__('reputationBurns', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
+
+    def query(self, **kwargs) -> DSLField:
+        ds = self.schema
+        return ds.Query.reputationBurns(**kwargs).select(
+            ds.ReputationBurn.id,
+            # ds.ReputationBurn.txHash, # Not used
+            ds.ReputationBurn.contract,
+            ds.ReputationBurn.address,
+            ds.ReputationBurn.amount,
+            ds.ReputationBurn.createdAt
+        )
+
 class DaostackRunner(GraphQLRunner):
     name: str = 'daostack'
 
@@ -153,7 +183,9 @@ class DaostackRunner(GraphQLRunner):
                 ProposalsCollector(self, n),
                 ReputationHoldersCollector(self, n),
                 StakesCollector(self, n),
-                VotesCollector(self, n)
+                VotesCollector(self, n),
+                ReputationMintsCollector(self, n),
+                ReputationBurnsCollector(self, n),
             ])
 
             oc = DaosCollector(self, n)
