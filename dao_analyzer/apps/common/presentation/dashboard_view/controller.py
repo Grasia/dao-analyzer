@@ -21,6 +21,8 @@ def bind_callbacks(app, section_id: str) -> None:
     dao_info_id = section_id + '-info'
     dao_sum_hdr = section_id + '-summary-hdr'
 
+    # TODO: Add a way to get the platform (with the filters activated)
+
     @app.callback(
         Output(dao_info_id, 'children'),
         Output(dao_sum_hdr, 'children'),

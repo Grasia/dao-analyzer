@@ -21,6 +21,7 @@
 !/CHANGELOG.md
 !CITATION.cff
 !/test
+!/.envrc
 
 ## Deploy
 !/requirements_docker.txt

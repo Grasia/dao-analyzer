@@ -12,7 +12,6 @@ import dash
 from dash import dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from dao_analyzer.apps.common.business.transfers.organization import OrganizationList
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
 from dao_analyzer.apps.common.presentation.main_view.main_view import generate_layout
@@ -120,16 +119,14 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('org-dropdown', 'value'),
         Output('org-number', 'children'),
         Input('org-filter', 'value'),
+        Input('org-network-filter', 'value'),
         State('org-dropdown', 'value'),
         State('platform-store', 'data'),
     )
-    def org_filters(filter_values: List[str], org_value: str, plat_store: dict):
+    def org_filters(filter_values: List[str], network_values: List[str], org_value: str, plat_store: dict):
         filtered = Platform.from_json(plat_store).organization_list
 
-        for f in OrganizationList.get_filters(filter_values, only_enabled=True):
-            filtered = filter(f.pred, filtered)
-
-        organizations = OrganizationList(filtered)
+        organizations = filtered.filter(filter_values, network_values, only_enabled=True)
         options = organizations.get_dict_representation()
         org_number = f"There are {len(organizations):,} DAOs"
 
