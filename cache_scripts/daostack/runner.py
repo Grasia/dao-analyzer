@@ -64,6 +64,10 @@ class ProposalsCollector(GraphQLCollector):
                 'genesisProtocolParamsQueuedVoteRequiredPercentage': 'queuedVoteRequiredPercentage'
             })
 
+        @self.postprocessor
+        def deleteColums(df: pd.DataFrame) -> pd.DataFrame:
+            return df.drop(columns=['competition'])
+
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
         return ds.Query.proposals(**kwargs).select(
@@ -86,7 +90,8 @@ class ProposalsCollector(GraphQLCollector):
             ds.Proposal.stakesFor,
             ds.Proposal.stakesAgainst,
             ds.Proposal.genesisProtocolParams.select(ds.GenesisProtocolParam.queuedVoteRequiredPercentage),
-            ds.Proposal.dao.select(ds.DAO.id)
+            ds.Proposal.dao.select(ds.DAO.id),
+            ds.Proposal.competition.select(ds.CompetitionProposal.id)
         )
 
 class ReputationHoldersCollector(GraphQLCollector):

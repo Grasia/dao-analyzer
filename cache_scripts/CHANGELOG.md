@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.3 - 2022-07-11
+- Added competitionId to daostack proposals
+
 ## 1.1.2 - 2022-06-29
 - Added ReputationMint and ReputationBurn collectors to DAOstack
 
