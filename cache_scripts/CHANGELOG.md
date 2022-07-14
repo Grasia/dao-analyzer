@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.4 - 2022-07-15
+- Added postProcessor to add a `dao` field to reputation mints and burns
+- Not getting reputation mints/burns of amount 0 (not useful)
+
 ## 1.1.3 - 2022-07-11
 - Added competitionId to daostack proposals
 

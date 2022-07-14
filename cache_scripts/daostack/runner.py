@@ -147,13 +147,41 @@ class VotesCollector(GraphQLCollector):
             ds.ProposalVote.proposal.select(ds.Proposal.id)
         )
 
-class ReputationMintsCollector(GraphQLCollector):
-    def __init__(self, runner, network: str):
-        super().__init__('reputationMints', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
+class CommonRepEventCollector(GraphQLCollector):
+    def __init__(self, name, runner, base, network: str): 
+        super().__init__(name, runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
+        self.base = base
+
+        @self.postprocessor
+        def add_dao_id(df: pd.DataFrame) -> pd.DataFrame:
+            """ Using the contract info, appends the DAO id.
+            Used by ReputationMintsCollector and ReputationBurnsCollector
+            """
+            l_index = ['network', 'contract']
+            r_index = ['network', 'nativeReputation']
+
+            wants = ['dao']
+            prev_cols = list(df.columns)
+
+            # Add the DAO field to the dataframe
+            df = df.merge(self.base.df[r_index + wants],
+                how='left',
+                left_on=l_index,
+                right_on=r_index,
+            )
+
+            # Get only the dao field
+            df = df[prev_cols + wants]
+            
+            return df
+
+class ReputationMintsCollector(CommonRepEventCollector):
+    def __init__(self, *args, **kwargs):
+        super().__init__('reputationMints', *args, **kwargs)
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
-        return ds.Query.reputationMints(**kwargs).select(
+        return ds.Query.reputationMints(**add_where(kwargs, amount_not=0)).select(
             ds.ReputationMint.id,
             # ds.ReputationMint.txHash, # Not used
             ds.ReputationMint.contract,
@@ -162,13 +190,13 @@ class ReputationMintsCollector(GraphQLCollector):
             ds.ReputationMint.createdAt
         )
 
-class ReputationBurnsCollector(GraphQLCollector):
-    def __init__(self, runner, network: str):
-        super().__init__('reputationBurns', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
+class ReputationBurnsCollector(CommonRepEventCollector):
+    def __init__(self, *args, **kwargs):
+        super().__init__('reputationBurns', *args, **kwargs)
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
-        return ds.Query.reputationBurns(**kwargs).select(
+        return ds.Query.reputationBurns(**add_where(kwargs, amount_not=0)).select(
             ds.ReputationBurn.id,
             # ds.ReputationBurn.txHash, # Not used
             ds.ReputationBurn.contract,
@@ -184,18 +212,18 @@ class DaostackRunner(GraphQLRunner):
         super().__init__()
         self._collectors: List[Collector] = []
         for n in self.networks:
+            dc = DaosCollector(self, n)
+
             self._collectors.extend([
+                dc,
                 ProposalsCollector(self, n),
                 ReputationHoldersCollector(self, n),
                 StakesCollector(self, n),
                 VotesCollector(self, n),
-                ReputationMintsCollector(self, n),
-                ReputationBurnsCollector(self, n),
+                BalancesCollector(self, dc, n),
+                ReputationMintsCollector(self, dc, n),
+                ReputationBurnsCollector(self, dc, n),
             ])
-
-            oc = DaosCollector(self, n)
-            bc = BalancesCollector(self, oc, n)
-            self._collectors += [oc, bc]
 
     @property
     def collectors(self) -> List[Collector]:
