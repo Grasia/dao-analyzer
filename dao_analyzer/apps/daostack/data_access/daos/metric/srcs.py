@@ -14,13 +14,18 @@ CACHE_PATH: Path = Path('datawarehouse') / 'daostack'
 DAOS: Path = CACHE_PATH / 'daos.arr'
 PROPOSALS: Path = CACHE_PATH / 'proposals.arr'
 REP_HOLDERS: Path = CACHE_PATH / 'reputationHolders.arr'
+REP_MINTS: Path = CACHE_PATH / 'reputationMints.arr'
+REP_BURNS: Path = CACHE_PATH / 'reputationBurns.arr'
 STAKES: Path = CACHE_PATH / 'stakes.arr'
 TOKEN_BALANCES: Path = CACHE_PATH / 'tokenBalances.arr'
 VOTES: Path = CACHE_PATH / 'votes.arr'
+
 ALL_FILES: List[str] = [
     DAOS, 
     PROPOSALS,
     REP_HOLDERS,
+    REP_MINTS,
+    REP_BURNS,
     STAKES,
     TOKEN_BALANCES,
     VOTES,

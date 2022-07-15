@@ -13,6 +13,7 @@ import pandas as pd
 from datetime import datetime
 
 from dao_analyzer.apps.common.business.transfers import Platform
+from dao_analyzer.apps.common.business.transfers.organization.organization_list import OrganizationList
 from dao_analyzer.apps.common.data_access.requesters.irequester import IRequester
 
 class PlatformDAO(metaclass=abc.ABCMeta):
@@ -27,5 +28,22 @@ class PlatformDAO(metaclass=abc.ABCMeta):
         return None if pd.isna(d) else d
 
     @abc.abstractmethod
-    def get_platform(self) -> Platform:
+    def get_platform(self, orglist: OrganizationList = None) -> Platform:
+        """Gets the platform
+
+        Args:
+            orglist (OrganizationList, optional): If not None, limits the organizations used to get the platform info. Defaults to None.
+
+        Returns:
+            Platform: The object with the platform information
+        """
+        raise NotImplementedError
+    
+    @abc.abstractclassmethod
+    def get_organization_list(self) -> OrganizationList:
+        """Gets the organization list
+
+        Returns:
+            OrganizationList: The organization list with all its attributes
+        """
         raise NotImplementedError

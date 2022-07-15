@@ -26,7 +26,7 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daostack': ['', '', 'daostack-selected'],
 }
 
-def generate_layout(platform: Platform, sections: Dict, datapoints, ecosystem: str, update: str, platform_id: str, org_value: str) -> List:
+def generate_layout(organization_list: OrganizationList, sections: Dict, datapoints, ecosystem: str, update: str, platform_id: str, org_value: str) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -36,14 +36,14 @@ def generate_layout(platform: Platform, sections: Dict, datapoints, ecosystem: s
         A html.Div filled with the app view 
     """
     if not org_value:
-        org_value = platform.get_default_org_value()
+        org_value = organization_list.ALL_ORGS_ID
 
     return html.Div([
         dbc.Container(
-            __generate_header(platform, ecosystem, update, org_value),
+            __generate_header(organization_list, ecosystem, update, org_value),
         className='top body mb-3 py-4'),
         dbc.Container([
-            __generate_subheader(platform_id, platform, datapoints),
+            __generate_subheader(platform_id, datapoints),
             __generate_sections(sections),
         ], className='body', id=f'{platform_id}-body'),
     ])
@@ -56,7 +56,7 @@ def __gen_ecosystem(id: str, selected: str) -> html.Div:
             className='ecosystem-img'),
     ], className=f'ecosystem {id}-ecosystem {selected}')
 
-def __generate_header(platform: Platform, ecosystem: str, update: str, org_value: str) -> dbc.Row:
+def __generate_header(organization_list: OrganizationList, ecosystem: str, update: str, org_value: str) -> dbc.Row:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
@@ -69,11 +69,11 @@ def __generate_header(platform: Platform, ecosystem: str, update: str, org_value
     # Disable filters if generating header with a DAO pre-selected (comes from URL)
     # If we don't disable the filter, the DAO will be inmediately filtered out
     # Fixes #85
-    filterGroup: OrganizationFilterGroup = platform.get_filter_group(
+    filterGroup: OrganizationFilterGroup = organization_list.get_filter_group(
         force_disabled=not OrganizationList.is_all_orgs(org_value)
     )
 
-    networkFilters: NetworkFilters = platform.get_network_filters()
+    networkFilters: NetworkFilters = organization_list.get_network_filters()
 
     return dbc.Row(children=[
         html.Div(
@@ -100,7 +100,7 @@ def __generate_header(platform: Platform, ecosystem: str, update: str, org_value
                     ),
                     html.Div(dcc.Dropdown(
                         id='org-dropdown',
-                        options=platform.get_dropdown_representation(),
+                        options=organization_list.get_dict_representation(),
                         value=org_value,
                         clearable=False,
                     )),
@@ -108,9 +108,16 @@ def __generate_header(platform: Platform, ecosystem: str, update: str, org_value
                 ], className='flex-grow-1'),
             ], className='select-dao-wrapper'),
         className='col d-flex justify-content-center'),
+        # The following dcc is changed in callbacks that modify the dao-info-container
         dcc.Store(
-            id='platform-store',
-            data=platform,
+            id='platform-info-store',
+            data=None, # Initially there is no data
+            storage_type='memory',
+        ),
+        # This dcc is read-only an used to generate the dropdown
+        dcc.Store(
+            id='organization-list-store',
+            data=organization_list,
             storage_type='memory',
         ),
         html.Div(f'Last update: {update}', className='last-update'),
@@ -128,6 +135,9 @@ def _gen_participation_stats(stats: List[ParticipationStat]) -> html.Div:
     return html.Div(children, className='dao-info-stats')
 
 def _get_platform_info(p: Platform) -> html.Div:
+    if p is None:
+        return html.Div(TEXT['no_data_selected'], className='dao-info-name')
+    
     grid: List[html.Div] = [
         html.Div('Platform', className='dao-info-label'),
         html.Div(p.name, className='dao-info-name'),
@@ -196,12 +206,12 @@ def _get_dao_summary_layout(org_id, datapoints: Dict ):
         html.Div(dp_divs, className='dao-summary-body'),
     ], className='dao-summary-container')
 
-def __generate_subheader(org_id: str, platform: Platform, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
+def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
     return dbc.Row(
         id=org_id,
         className='my-3',
         children=html.Div([
-           dbc.Col(dcc.Loading(html.Div(_get_platform_info(platform), id=org_id+'-info'), color=COLOR.DARK_BLUE)),
+           dbc.Col(dcc.Loading(html.Div(_get_platform_info(None), id=org_id+'-info'), color=COLOR.DARK_BLUE)),
            dbc.Col(_get_dao_summary_layout(org_id, datapoints)),
         ], className='dao-header-container pt-4'),
     )

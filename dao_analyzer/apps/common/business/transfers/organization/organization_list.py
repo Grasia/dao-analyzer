@@ -24,6 +24,10 @@ class OrganizationList(list):
                 super().__init__(orgs)
             else:
                 super().__init__(map(Organization.from_json, orgs))
+    
+    @staticmethod
+    def from_json(list: list) -> 'OrganizationList':
+        return OrganizationList([] if list is None else list)
 
     def add_organization(self, org: Organization) -> None:
         if org:
@@ -79,7 +83,8 @@ class OrganizationList(list):
     def get_networks(self) -> Set[str]:
         return set((x.get_network().lower() for x in self))
 
-    def get_filters(self, values=None, only_enabled=False, force_disabled=False) -> List[Filter]:
+    @staticmethod
+    def get_filters(values=None, only_enabled=False, force_disabled=False) -> List[Filter]:
         filters = [f() for f in SIMPLE_FILTERS]
 
         if values is not None:
@@ -95,11 +100,13 @@ class OrganizationList(list):
 
         return filters
 
-    def get_filter_group(self, *args, **kwargs) -> OrganizationFilterGroup:
-        return OrganizationFilterGroup(self.get_filters(*args, **kwargs))
+    @staticmethod
+    def get_filter_group(*args, **kwargs) -> OrganizationFilterGroup:
+        return OrganizationFilterGroup(OrganizationList.get_filters(*args, **kwargs))
 
-    def get_network_filters(self, network_values=None, only_enabled=False, force_disabled=False) -> NetworkFilters:
-        nf = NetworkFilters(self.get_networks())
+    @staticmethod
+    def get_network_filters_for(networks, network_values=None, only_enabled=False, force_disabled=False) -> NetworkFilters:
+        nf = NetworkFilters(networks)
 
         if network_values is not None:
             for f in nf._filters:
@@ -113,6 +120,9 @@ class OrganizationList(list):
             nf._filters = [f for f in nf._filters if f.enabled]
 
         return nf
+    
+    def get_network_filters(self, network_values=None, only_enabled=False, force_disabled=False) -> NetworkFilters:
+        return self.get_network_filters_for(self.get_networks(), network_values=network_values, only_enabled=only_enabled, force_disabled=force_disabled)
 
     def filter(self, values=None, network_values=None, **kwargs) -> 'OrganizationList':
         """ Returns a new OrganizationList with only filtered items """

@@ -12,7 +12,7 @@ from typing import Dict, List, Callable
 from dash import html
 
 from dao_analyzer.apps.common.business.i_metric_adapter import IMetricAdapter
-from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
+from dao_analyzer.apps.common.business.transfers import Platform, OrganizationList
 from dao_analyzer.apps.common.presentation.charts.chart_sum_controller import ChartSummaryController
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
@@ -79,9 +79,11 @@ class DaostackService(metaclass=Singleton):
                         c.bind_callback(app)
 
 
-    def platform(self) -> Platform:
-        return self.__orgsDAO.get_platform()
+    def platform(self, orglist = None) -> Platform:
+        return self.__orgsDAO.get_platform(orglist)
 
+    def organization_list(self) -> OrganizationList:
+        return self.__orgsDAO.get_organization_list()
 
     @property
     def are_panes(self) -> bool:
@@ -100,7 +102,7 @@ class DaostackService(metaclass=Singleton):
             self.bind_callbacks()
 
         return view.generate_layout(
-            platform=self.platform(),
+            organization_list=self.organization_list(),
             sections=self.__get_sections(),
             ecosystem='daostack',
             update=self.__orgsDAO.get_last_update_str(),

@@ -6,13 +6,13 @@
    Copyright 2020-2021 Youssef 'FRYoussef' El Faqir El Rhazoui
         <f.r.youssef@hotmail.com>
 """
-from typing import List
+from typing import List, Dict, Any
 
 import dash
 from dash import dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
+from dao_analyzer.apps.common.business.transfers.organization.organization_list import OrganizationList
 
 from dao_analyzer.apps.common.presentation.main_view.main_view import generate_layout
 import dao_analyzer.apps.common.presentation.about_view.about_view as about
@@ -26,10 +26,11 @@ ABOUT_SUBPAGE: str = '__about'
 def bind_callbacks(app) -> None: # noqa: C901
 
     # Callbacks need to be loaded twice.
-    services = {
+    services: Dict[str, Any] = {
         "daostack": daostack.DaostackService(),
-        "daohaus": daohaus.DaohausService(),
-        "aragon": aragon.AragonService()
+        # FIXME: Enable them again
+        # "daohaus": daohaus.DaohausService(),
+        # "aragon": aragon.AragonService()
     }
 
     for s in services.values():
@@ -90,7 +91,7 @@ def bind_callbacks(app) -> None: # noqa: C901
         # dropdown_value changed
         elif not bt_daostack and not bt_daohaus and not bt_aragon:
             platform = prev_pathname.split("/")[1]
-            organizations = services[platform].platform().organization_list
+            organizations = services[platform].organization_list()
 
             new_pathname = f'/{platform}'
 
@@ -118,17 +119,20 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('org-dropdown', 'options'),
         Output('org-dropdown', 'value'),
         Output('org-number', 'children'),
+        Output('platform-info-store', 'data'),
         Input('org-filter', 'value'),
         Input('org-network-filter', 'value'),
         State('org-dropdown', 'value'),
-        State('platform-store', 'data'),
+        State('organization-list-store', 'data'),
+        State('page-content', 'data-subpage'),
     )
-    def org_filters(filter_values: List[str], network_values: List[str], org_value: str, plat_store: dict):
-        filtered = Platform.from_json(plat_store).organization_list
+    def org_filters(filter_values: List[str], network_values: List[str], org_value: str, org_list: list, platform_name: str):
+        filtered = OrganizationList.from_json(org_list)
 
         organizations = filtered.filter(filter_values, network_values, only_enabled=True)
         options = organizations.get_dict_representation()
         org_number = f"There are {len(organizations):,} DAOs"
+        platform = dash.no_update
 
         # If the selected DAO was filtered out, fall back to All DAOs
         if org_value in [ x['value'] for x in options ]:
@@ -136,4 +140,8 @@ def bind_callbacks(app) -> None: # noqa: C901
         else:
             value = organizations.get_all_orgs_dict()['value']
 
-        return options, value, org_number
+        # Change only if is all orgs
+        if value == organizations.ALL_ORGS_ID:
+            platform = services[platform_name].platform(organizations)
+
+        return options, value, org_number, platform
