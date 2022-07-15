@@ -54,6 +54,8 @@ class Platform:
 
     @classmethod
     def from_json(cls, dict: Dict[str, Any]) -> 'Platform':
+        if not dict: return None
+        
         return Platform(
             name = dict['name'],
             networks = dict['networks'],
