@@ -10,7 +10,7 @@
 
 from typing import Dict, List, Callable
 from dash import html
-from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
+from dao_analyzer.apps.common.business.transfers.organization import Platform, OrganizationList
 from dao_analyzer.apps.common.presentation.data_point_layout import DataPointLayout
 
 from dao_analyzer.apps.common.presentation.charts.dt_controller import DataTableController
@@ -69,8 +69,11 @@ class DaohausService(metaclass=Singleton):
                     if hasattr(c, 'bind_callback'):
                         c.bind_callback(app)
 
-    def platform(self) -> Platform:
-        return self.__orgsDAO.get_platform()
+    def platform(self, orglist: OrganizationList) -> Platform:
+        return self.__orgsDAO.get_platform(orglist)
+
+    def organization_list(self) -> OrganizationList:
+        return self.__orgsDAO.get_organization_list()
 
     @property
     def are_panes(self) -> bool:
@@ -88,7 +91,7 @@ class DaohausService(metaclass=Singleton):
             self.bind_callbacks()
 
         return view.generate_layout(
-            platform=self.platform(),
+            organization_list=self.organization_list(),
             sections=self.__get_sections(),
             ecosystem='daohaus',
             update=self.__orgsDAO.get_last_update_str(),

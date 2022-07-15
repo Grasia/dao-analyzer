@@ -28,8 +28,8 @@ def bind_callbacks(app) -> None: # noqa: C901
     # Callbacks need to be loaded twice.
     services: Dict[str, Any] = {
         "daostack": daostack.DaostackService(),
-        # FIXME: Enable them again
-        # "daohaus": daohaus.DaohausService(),
+        "daohaus": daohaus.DaohausService(),
+        # FIXME: Enable it again
         # "aragon": aragon.AragonService()
     }
 
@@ -125,8 +125,9 @@ def bind_callbacks(app) -> None: # noqa: C901
         State('org-dropdown', 'value'),
         State('organization-list-store', 'data'),
         State('page-content', 'data-subpage'),
+        State('platform-info-store', 'data'),
     )
-    def org_filters(filter_values: List[str], network_values: List[str], org_value: str, org_list: list, platform_name: str):
+    def org_filters(filter_values: List[str], network_values: List[str], org_value: str, org_list: list, platform_name: str, prev_platform: str):
         filtered = OrganizationList.from_json(org_list)
 
         organizations = filtered.filter(filter_values, network_values, only_enabled=True)
@@ -140,8 +141,8 @@ def bind_callbacks(app) -> None: # noqa: C901
         else:
             value = organizations.get_all_orgs_dict()['value']
 
-        # Change only if is all orgs
-        if value == organizations.ALL_ORGS_ID:
+        # Change only if is all orgs, or its not stablished yet
+        if value == organizations.ALL_ORGS_ID or not prev_platform:
             platform = services[platform_name].platform(organizations)
 
         return options, value, org_number, platform

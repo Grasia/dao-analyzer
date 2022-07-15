@@ -54,11 +54,12 @@ class Platform:
 
     @classmethod
     def from_json(cls, dict: Dict[str, Any]) -> 'Platform':
-        if not dict: return None
+        if not dict:
+            return None
         
         return Platform(
             name = dict['name'],
             networks = dict['networks'],
             participation_stats = list(map(ParticipationStat.from_json, dict.get('stats', []))),
-            creation_date = datetime.fromisoformat(dict['creation_date']),
+            creation_date = None if dict['creation_date'] == 'NaT' else datetime.fromisoformat(dict['creation_date']),
         )

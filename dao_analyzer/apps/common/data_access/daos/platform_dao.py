@@ -39,7 +39,7 @@ class PlatformDAO(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
     
-    @abc.abstractclassmethod
+    @abc.abstractmethod
     def get_organization_list(self) -> OrganizationList:
         """Gets the organization list
 
