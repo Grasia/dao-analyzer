@@ -66,7 +66,7 @@ class ProposalsCollector(GraphQLCollector):
 
         @self.postprocessor
         def deleteColums(df: pd.DataFrame) -> pd.DataFrame:
-            return df.drop(columns=['competition'])
+            return df.drop(columns=['competition'], errors='ignore')
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
