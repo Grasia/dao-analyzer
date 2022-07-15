@@ -29,8 +29,7 @@ def bind_callbacks(app) -> None: # noqa: C901
     services: Dict[str, Any] = {
         "daostack": daostack.DaostackService(),
         "daohaus": daohaus.DaohausService(),
-        # FIXME: Enable it again
-        # "aragon": aragon.AragonService()
+        "aragon": aragon.AragonService(),
     }
 
     for s in services.values():

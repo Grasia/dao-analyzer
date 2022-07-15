@@ -10,7 +10,7 @@
 
 from typing import Dict, List, Callable
 from dash import html
-from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
+from dao_analyzer.apps.common.business.transfers import Platform, OrganizationList
 
 import dao_analyzer.apps.common.presentation.dashboard_view.dashboard_view as view
 import dao_analyzer.apps.common.presentation.dashboard_view.controller as view_cont
@@ -73,8 +73,11 @@ class AragonService(metaclass=Singleton):
                         c.bind_callback(app)
 
 
-    def platform(self) -> Platform:
-        return self.__orgsDAO.get_platform()
+    def platform(self, orglist: OrganizationList) -> Platform:
+        return self.__orgsDAO.get_platform(orglist)
+
+    def organization_list(self) -> OrganizationList:
+        return self.__orgsDAO.get_organization_list()
 
     @property
     def are_panes(self) -> bool:
@@ -92,7 +95,7 @@ class AragonService(metaclass=Singleton):
             self.bind_callbacks()
         
         return view.generate_layout(
-            platform=self.platform(),
+            organization_list=self.organization_list(),
             sections=self.__get_sections(),
             ecosystem='aragon',
             update=self.__orgsDAO.get_last_update_str(),
