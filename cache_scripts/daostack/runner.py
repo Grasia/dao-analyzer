@@ -157,6 +157,10 @@ class CommonRepEventCollector(GraphQLCollector):
             """ Using the contract info, appends the DAO id.
             Used by ReputationMintsCollector and ReputationBurnsCollector
             """
+            # Skip postprocessor if empty
+            if df.empty:
+                return df
+            
             l_index = ['network', 'contract']
             r_index = ['network', 'nativeReputation']
 

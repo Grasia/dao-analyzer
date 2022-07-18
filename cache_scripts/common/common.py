@@ -6,6 +6,7 @@ import sys
 import json
 from datetime import datetime, timezone
 import traceback
+import pkgutil
 
 from tenacity import retry, retry_if_exception_type, wait_exponential, stop_after_attempt
 import pandas as pd
@@ -19,8 +20,7 @@ from .. import config
 # To be able to obtain endpoints.json
 from cache_scripts import __file__ as csfile
 
-with open(Path(csfile).parent / 'endpoints.json') as json_file:
-    ENDPOINTS: Dict = json.load(json_file)
+ENDPOINTS: Dict = json.loads(pkgutil.get_data('cache_scripts', 'endpoints.json'))
 
 def solve_decimals(df: pd.DataFrame) -> pd.DataFrame:
     """ Adds the balanceFloat column to the dataframe

@@ -8,13 +8,12 @@
 """
 from typing import List
 
+import pkgutil
 from gql.dsl import DSLField
 import pandas as pd
 import numpy as np
 import json
-from pathlib import Path
 
-from cache_scripts import __file__ as csfile
 from ..common.cryptocompare import CCPricesCollector
 from ..common import ENDPOINTS, Collector
 from ..common.graphql import GraphQLCollector, GraphQLRunner
@@ -67,7 +66,7 @@ class CastsCollector(GraphQLCollector):
         )
 
 class OrganizationsCollector(GraphQLCollector):
-    DAO_NAMES_PATH=Path(csfile).parent / 'aragon' / 'dao_names.json'
+    DAO_NAMES=pkgutil.get_data('cache_scripts.aragon', 'dao_names.json')
 
     def __init__(self, runner, network: str):
         super().__init__('organizations', runner, endpoint=ENDPOINTS[network]['aragon'], network=network)
@@ -79,8 +78,7 @@ class OrganizationsCollector(GraphQLCollector):
 
         @self.postprocessor
         def apply_names(df: pd.DataFrame) -> pd.DataFrame:
-            with open(self.DAO_NAMES_PATH, 'r') as f:
-                names_dict = json.load(f)
+            names_dict = json.loads(self.DAO_NAMES)
 
             if self.network not in names_dict.keys() or \
             not names_dict[self.network] or \

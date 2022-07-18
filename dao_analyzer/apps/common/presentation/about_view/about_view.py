@@ -7,19 +7,19 @@
         <ddavo@ucm.es>
 """
 from pathlib import Path
+import pkgutil
 
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
-from dao_analyzer import __file__ as dafile
-ABOUT_MD = Path(dafile).parent / 'assets' / 'ABOUT.md'
+ABOUT_MD = pkgutil.get_data('dao_analyzer', '/assets/ABOUT.md').decode('utf-8')
 
 def get_layout() -> html.Div:
     return dbc.Container(__get_body(), className='top body py-5')
 
 def __get_body() -> html.Div:
-    with open(ABOUT_MD, 'r') as mdf:
-        md = dcc.Markdown(mdf.read(), className='markdown mt-3')
+    # with open(ABOUT_MD, 'r') as mdf:
+    md = dcc.Markdown(ABOUT_MD, className='markdown mt-3')
 
     back = html.A('Back', href='/', className='about-back')
 
