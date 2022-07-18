@@ -63,6 +63,7 @@ TEXT: dict = {
     'logo_ucm_name': 'logo-ucm.png',
     'p2p_models': 'P2P Models',
     'p2p_models_url': 'https://p2pmodels.eu/',
+    'radio_button_all_networks': 'All Networks',
     'spanish_ministry_image_name': 'logo-ministerio.png',
     'spanish_ministry_url': 'https://www.ciencia.gob.es/',
     'stat_members_created_proposals': ' of members have created a proposal',

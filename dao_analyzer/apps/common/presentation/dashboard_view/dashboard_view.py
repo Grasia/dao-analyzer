@@ -11,7 +11,7 @@ from typing import Dict, List, Callable
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from dao_analyzer.apps.common.business.transfers.organization import Organization, OrganizationList
-from dao_analyzer.apps.common.business.transfers.organization.organization_filter import NetworkFilters, OrganizationFilterGroup
+from dao_analyzer.apps.common.business.transfers.organization.organization_filter import NetworkRadioButton, OrganizationFilterGroup
 from dao_analyzer.apps.common.business.transfers.organization.participation_stats import ParticipationStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
 
@@ -73,30 +73,37 @@ def __generate_header(organization_list: OrganizationList, ecosystem: str, updat
         force_disabled=not OrganizationList.is_all_orgs(org_value)
     )
 
-    networkFilters: NetworkFilters = organization_list.get_network_filters()
+    networkRadio: NetworkRadioButton = organization_list.get_network_filters().radio_button()
 
     return dbc.Row(children=[
+        # 1. Ecosystem selector
         html.Div(
             html.Div([
                 html.Div(TEXT['ecosystem_selector_title']),
                 html.Div(children=ecosystems, className='ecosystems-wrapper'),
             ], className='select-platform-wrapper'),
         className='col d-flex justify-content-center'),
+        # 2. Network selector
+        html.Div(
+            html.Div(
+                dcc.RadioItems(
+                    options = networkRadio.get_options(),
+                    value = networkRadio.get_value(),
+                    id='org-network-radio',
+                ),
+            ),
+            className='col d-flex justify-content-center',
+        ),
+        # 3. DAO selector (and filtering)
         html.Div(
             html.Div(children=[
                 html.Div(html.Span(TEXT['dao_selector_title'])),
                 html.Div([
                     dcc.Checklist(
                         options = filterGroup.get_options(),
-                        value = filterGroup.get_value(),
+                        value = filterGroup.get_values(),
                         className='checklist-filter d-flex flex-column',
                         id='org-filter',
-                    ),
-                    dcc.Checklist(
-                        options = networkFilters.get_options(),
-                        value = networkFilters.get_value(),
-                        className='checklist-filter',
-                        id='org-network-filter',
                     ),
                     html.Div(dcc.Dropdown(
                         id='org-dropdown',
@@ -108,6 +115,7 @@ def __generate_header(organization_list: OrganizationList, ecosystem: str, updat
                 ], className='flex-grow-1'),
             ], className='select-dao-wrapper'),
         className='col d-flex justify-content-center'),
+        # 4. information storing (hidden from user)
         # The following dcc is changed in callbacks that modify the dao-info-container
         dcc.Store(
             id='platform-info-store',

@@ -9,7 +9,7 @@
 from typing import List, Dict, Union, Set
 
 from .organization import Organization
-from .organization_filter import Filter, NetworkFilters, SIMPLE_FILTERS, OrganizationFilterGroup
+from .organization_filter import Filter, NetworkFilters, SIMPLE_FILTERS, NetworkRadioButton, OrganizationFilterGroup
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 
@@ -121,11 +121,14 @@ class OrganizationList(list):
 
         return nf
     
+    def get_network_radio(self, network_value=None, **kwargs) -> NetworkRadioButton:
+        return NetworkRadioButton(self.get_networks(), network_value)
+    
     def get_network_filters(self, network_values=None, only_enabled=False, force_disabled=False) -> NetworkFilters:
         return self.get_network_filters_for(self.get_networks(), network_values=network_values, only_enabled=only_enabled, force_disabled=force_disabled)
 
-    def filter(self, values=None, network_values=None, **kwargs) -> 'OrganizationList':
+    def filter(self, values=None, network_value=None, **kwargs) -> 'OrganizationList':
         """ Returns a new OrganizationList with only filtered items """
         filtered = filter(self.get_filter_group(values, **kwargs).pred, self)
-        filtered = filter(self.get_network_filters(network_values, **kwargs).pred, filtered)
+        filtered = filter(self.get_network_radio(network_value, **kwargs).pred, filtered)
         return OrganizationList(filtered)

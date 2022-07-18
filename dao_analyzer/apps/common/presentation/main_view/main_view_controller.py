@@ -120,16 +120,16 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('org-number', 'children'),
         Output('platform-info-store', 'data'),
         Input('org-filter', 'value'),
-        Input('org-network-filter', 'value'),
+        Input('org-network-radio', 'value'),
         State('org-dropdown', 'value'),
         State('organization-list-store', 'data'),
         State('page-content', 'data-subpage'),
         State('platform-info-store', 'data'),
     )
-    def org_filters(filter_values: List[str], network_values: List[str], org_value: str, org_list: list, platform_name: str, prev_platform: str):
+    def org_filters(filter_values: List[str], network_value: str, org_value: str, org_list: list, platform_name: str, prev_platform: str):
         filtered = OrganizationList.from_json(org_list)
 
-        organizations = filtered.filter(filter_values, network_values, only_enabled=True)
+        organizations = filtered.filter(filter_values, network_value, only_enabled=True)
         options = organizations.get_dict_representation()
         org_number = f"There are {len(organizations):,} DAOs"
         platform = dash.no_update

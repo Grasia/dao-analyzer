@@ -9,7 +9,7 @@
 """
 
 import abc
-from typing import List, Callable, Iterable, Dict
+from typing import List, Callable, Iterable, Dict, Union
 from datetime import datetime, timedelta
 
 from dao_analyzer.apps.common.business.transfers.organization.organization import Organization
@@ -86,7 +86,7 @@ class OrganizationFilterGroup(Filter):
     def get_options(self) -> Dict[str, str]:
         return { x.id:x.title for x in self._filters }
     
-    def get_value(self) -> List[str]:
+    def get_values(self) -> List[str]:
         return [ x.id for x in self._filters if x.enabled ]
 
 class NetworkFilters(OrganizationFilterGroup):
@@ -99,6 +99,53 @@ class NetworkFilters(OrganizationFilterGroup):
     def pred(self, org: Organization) -> bool:
         # An item has to be in any of the selected networks
         return any(map(lambda f:f.pred(org), self._filters))
+
+    def radio_button(self) -> 'NetworkRadioButton':
+        return NetworkRadioButton(self)
+
+class NetworkRadioButton(Filter):
+    """ A wrapper around networkFilters to make it compatible with radio buttons """
+    ALL_NETWORKS_VALUE = '__all_networks'
+    ALL_NETWORKS_TEXT = TEXT['radio_button_all_networks']
+
+    @property
+    @staticmethod
+    def ALL_NETWORKS_DICT(self=None):
+        # A new dictionary is needed every time, because they are mutable in Python
+        return { NetworkRadioButton.ALL_NETWORKS_VALUE : NetworkRadioButton.ALL_NETWORKS_TEXT }
+
+    def __init__(self, a: Union[NetworkFilters, List[str]], network_value: str = ALL_NETWORKS_VALUE):
+        self._options = self.ALL_NETWORKS_DICT
+        self._value = network_value
+
+        print("Creating network_filter:", a, network_value)
+        
+        if isinstance(a, NetworkFilters):
+            self._options |= a.get_options()
+        else:
+            self._options |= { n:n.capitalize() for n in a }
+
+        print(f"_options: {self._options} ({len(self._options)})")
+
+        # If the len is just two, we remove the other one and keep only 'ALL NETWORKS'
+        if len(self._options) == 2:
+            self._options = self.ALL_NETWORKS_DICT
+            self._value = self.ALL_NETWORKS_VALUE
+
+        print("final options:", self._options)
+
+        if self._value not in self._options.keys():
+            raise ValueError('network_value must be in networks')
+
+    def get_options(self) -> Dict[str, str]:
+        return self._options
+
+    def get_value(self) -> str:
+        return self._value
+
+    def pred(self, org: Organization):
+        return self._value == self.ALL_NETWORKS_VALUE or self._value == org.get_network()
+
 
 SIMPLE_FILTERS: List[Callable[[], OrganizationFilter]] = [
     ActiveLastYearFilter
