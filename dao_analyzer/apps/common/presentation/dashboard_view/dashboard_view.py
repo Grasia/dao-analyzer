@@ -90,6 +90,7 @@ def __generate_header(organization_list: OrganizationList, ecosystem: str, updat
                 dcc.RadioItems(
                     options = networkRadio.get_options(),
                     value = networkRadio.get_value(),
+                    className = 'checklist-filter',
                     id='org-network-radio'),
             ], className='select-network-wrapper'),
         className='col-3 d-flex justify-content-center'),
