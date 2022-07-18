@@ -6,7 +6,6 @@
    Copyright 2022-2022 David Davó Laviña
         <ddavo@ucm.es>
 """
-from pathlib import Path
 import pkgutil
 
 from dash import html, dcc

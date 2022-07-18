@@ -83,7 +83,7 @@ class DaohausService(metaclass=Singleton):
         return any(self.__controllers.values())
 
 
-    def get_layout(self, org_value: str=None) -> html.Div:
+    def get_layout(self, org_value: str=None, network_value: str = None) -> html.Div:
         """
         Returns the app's layout. 
         """
@@ -98,6 +98,7 @@ class DaohausService(metaclass=Singleton):
             platform_id=TEXT['css_id_organization'],
             org_value=org_value,
             datapoints=self.__get_datapoints(),
+            network_value=network_value,
         )
 
 

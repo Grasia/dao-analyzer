@@ -103,20 +103,20 @@ class NetworkFilters(OrganizationFilterGroup):
     def radio_button(self) -> 'NetworkRadioButton':
         return NetworkRadioButton(self)
 
+ALL_NETWORKS_VALUE = '__all_networks'
+ALL_NETWORKS_TEXT = TEXT['radio_button_all_networks']
+
+def ALL_NETWORKS_DICT():
+    # A new dictionary is needed every time, because they are mutable in Python
+    return { ALL_NETWORKS_VALUE : ALL_NETWORKS_TEXT }
+
+
 class NetworkRadioButton(Filter):
     """ A wrapper around networkFilters to make it compatible with radio buttons """
-    ALL_NETWORKS_VALUE = '__all_networks'
-    ALL_NETWORKS_TEXT = TEXT['radio_button_all_networks']
-
-    @property
-    @staticmethod
-    def ALL_NETWORKS_DICT(self=None):
-        # A new dictionary is needed every time, because they are mutable in Python
-        return { NetworkRadioButton.ALL_NETWORKS_VALUE : NetworkRadioButton.ALL_NETWORKS_TEXT }
 
     def __init__(self, a: Union[NetworkFilters, List[str]], network_value: str = ALL_NETWORKS_VALUE):
-        self._options = self.ALL_NETWORKS_DICT
-        self._value = network_value
+        self._options = ALL_NETWORKS_DICT()
+        self._value = network_value or ALL_NETWORKS_VALUE
 
         if isinstance(a, NetworkFilters):
             self._options |= a.get_options()
@@ -125,8 +125,8 @@ class NetworkRadioButton(Filter):
 
         # If the len is just two, we remove the other one and keep only 'ALL NETWORKS'
         if len(self._options) == 2:
-            self._options = self.ALL_NETWORKS_DICT
-            self._value = self.ALL_NETWORKS_VALUE
+            self._options = ALL_NETWORKS_DICT()
+            self._value = ALL_NETWORKS_VALUE
 
         if self._value not in self._options.keys():
             raise ValueError('network_value must be in networks')
@@ -138,7 +138,7 @@ class NetworkRadioButton(Filter):
         return self._value
 
     def pred(self, org: Organization):
-        return self._value == self.ALL_NETWORKS_VALUE or self._value == org.get_network()
+        return self._value == ALL_NETWORKS_VALUE or self._value == org.get_network()
 
 
 SIMPLE_FILTERS: List[Callable[[], OrganizationFilter]] = [

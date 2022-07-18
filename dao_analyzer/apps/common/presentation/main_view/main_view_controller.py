@@ -12,6 +12,7 @@ import dash
 from dash import dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from dao_analyzer.apps.common.business.transfers.organization.organization_filter import ALL_NETWORKS_VALUE
 from dao_analyzer.apps.common.business.transfers.organization.organization_list import OrganizationList
 
 from dao_analyzer.apps.common.presentation.main_view.main_view import generate_layout
@@ -22,6 +23,26 @@ import dao_analyzer.apps.aragon.business.app_service as aragon
 from dao_analyzer.apps.common.resources.strings import TEXT
 
 ABOUT_SUBPAGE: str = '__about'
+
+def _process_params(search: str) -> Dict[str, str]:
+    # TODO: Return Dict[str, Any] instead (parse json)
+    search = search.removeprefix('?')
+
+    if not search:
+        return {}
+    
+    params = dict()
+    for p in search.split('&'):
+        k,v = p.split('=', 1) # Split only on first ocurrence
+        params[k] = v
+
+    return params
+
+def _params_string(d: Dict[str, str]):
+    if not d: 
+        return ""
+    
+    return '?' + '&'.join(['='.join([k,v]) for k,v in d.items()])
 
 def bind_callbacks(app) -> None: # noqa: C901
 
@@ -40,14 +61,15 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('header-loading-state', 'children'), # <- THIS CAUSES THE FLASH
         Input('page-content', 'data-subpage'),
         State('page-content', 'data-org-id'),
+        State('url', 'search')
     )
-    def change_subpage(subpage, org_id):
+    def change_subpage(subpage, org_id, search):
         if not subpage:
             return dcc.Location(pathname='/daohaus', id='default_redirect'), 'redirect'
         elif subpage == ABOUT_SUBPAGE:
             return generate_layout(body=about.get_layout()), ''
         elif subpage in services:
-            return generate_layout(body=services[subpage].get_layout(org_id)), 'loading'
+            return generate_layout(body=services[subpage].get_layout(org_value=org_id, network_value=_process_params(search).get('network', ''))), 'loading'
 
     @app.callback(
         Output('page-content', 'data-subpage'),
@@ -119,6 +141,7 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('org-dropdown', 'value'),
         Output('org-number', 'children'),
         Output('platform-info-store', 'data'),
+        Output('url', 'search'),
         Input('org-filter', 'value'),
         Input('org-network-radio', 'value'),
         State('org-dropdown', 'value'),
@@ -129,10 +152,15 @@ def bind_callbacks(app) -> None: # noqa: C901
     def org_filters(filter_values: List[str], network_value: str, org_value: str, org_list: list, platform_name: str, prev_platform: str):
         filtered = OrganizationList.from_json(org_list)
 
+        # First we initialize all values
         organizations = filtered.filter(filter_values, network_value, only_enabled=True)
         options = organizations.get_dict_representation()
         org_number = f"There are {len(organizations):,} DAOs"
         platform = dash.no_update
+        params = {}
+        
+        if network_value != ALL_NETWORKS_VALUE:
+            params = {'network': network_value}
 
         # If the selected DAO was filtered out, fall back to All DAOs
         if org_value in [ x['value'] for x in options ]:
@@ -144,4 +172,4 @@ def bind_callbacks(app) -> None: # noqa: C901
         if value == organizations.ALL_ORGS_ID or not prev_platform:
             platform = services[platform_name].platform(organizations)
 
-        return options, value, org_number, platform
+        return options, value, org_number, platform, _params_string(params)

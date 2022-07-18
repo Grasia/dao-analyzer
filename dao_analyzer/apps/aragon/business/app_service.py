@@ -87,7 +87,7 @@ class AragonService(metaclass=Singleton):
         return any(self.__controllers.values())
 
 
-    def get_layout(self, org_value: str = None) -> html.Div:
+    def get_layout(self, **kwargs) -> html.Div:
         """
         Returns the app's layout. 
         """
@@ -100,8 +100,8 @@ class AragonService(metaclass=Singleton):
             ecosystem='aragon',
             update=self.__orgsDAO.get_last_update_str(),
             platform_id=TEXT['css_id_organization'],
-            org_value=org_value,
             datapoints=self.__get_datapoints(),
+            **kwargs
         )
     
 

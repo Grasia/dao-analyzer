@@ -18,8 +18,6 @@ from ..metadata import RunnerMetadata, Block
 from .. import config
 
 # To be able to obtain endpoints.json
-from cache_scripts import __file__ as csfile
-
 ENDPOINTS: Dict = json.loads(pkgutil.get_data('cache_scripts', 'endpoints.json'))
 
 def solve_decimals(df: pd.DataFrame) -> pd.DataFrame:

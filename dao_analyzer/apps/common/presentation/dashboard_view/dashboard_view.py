@@ -26,7 +26,16 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
     'daostack': ['', '', 'daostack-selected'],
 }
 
-def generate_layout(organization_list: OrganizationList, sections: Dict, datapoints, ecosystem: str, update: str, platform_id: str, org_value: str) -> List:
+def generate_layout(
+    organization_list: OrganizationList, 
+    sections: Dict,
+    datapoints, 
+    ecosystem: str, 
+    update: str, 
+    platform_id: str, 
+    org_value: str,
+    network_value: str,
+) -> List:
     """
     Use this function to generate the app view.
     Params:
@@ -40,7 +49,7 @@ def generate_layout(organization_list: OrganizationList, sections: Dict, datapoi
 
     return html.Div([
         dbc.Container(
-            __generate_header(organization_list, ecosystem, update, org_value),
+            __generate_header(organization_list, ecosystem, update, org_value, network_value),
         className='top body mb-3 py-4'),
         dbc.Container([
             __generate_subheader(platform_id, datapoints),
@@ -56,7 +65,13 @@ def __gen_ecosystem(id: str, selected: str) -> html.Div:
             className='ecosystem-img'),
     ], className=f'ecosystem {id}-ecosystem {selected}')
 
-def __generate_header(organization_list: OrganizationList, ecosystem: str, update: str, org_value: str) -> dbc.Row:
+def __generate_header(
+    organization_list: OrganizationList,
+    ecosystem: str,
+    update: str,
+    org_value: str,
+    network_value: str,
+) -> dbc.Row:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
         selected = __ECOSYSTEM_SELECTED[ecosystem]
@@ -73,7 +88,10 @@ def __generate_header(organization_list: OrganizationList, ecosystem: str, updat
         force_disabled=not OrganizationList.is_all_orgs(org_value)
     )
 
-    networkRadio: NetworkRadioButton = organization_list.get_network_filters().radio_button()
+    try:
+        networkRadio: NetworkRadioButton = organization_list.get_network_radio(network_value)
+    except ValueError:
+        networkRadio: NetworkRadioButton = organization_list.get_network_radio()
 
     return dbc.Row(children=[
         # 1. Ecosystem selector
