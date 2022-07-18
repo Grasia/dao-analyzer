@@ -11,7 +11,8 @@ from pathlib import Path
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
-ABOUT_MD = Path('./ABOUT.md')
+from dao_analyzer import __file__ as dafile
+ABOUT_MD = Path(dafile).parent / 'assets' / 'ABOUT.md'
 
 def get_layout() -> html.Div:
     return dbc.Container(__get_body(), className='top body py-5')
