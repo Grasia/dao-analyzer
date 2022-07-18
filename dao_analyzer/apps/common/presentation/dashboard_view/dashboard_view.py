@@ -85,15 +85,14 @@ def __generate_header(organization_list: OrganizationList, ecosystem: str, updat
         className='col d-flex justify-content-center'),
         # 2. Network selector
         html.Div(
-            html.Div(
+            html.Div(children=[
+                html.Div(html.Span(TEXT['network_selector_title'])),
                 dcc.RadioItems(
                     options = networkRadio.get_options(),
                     value = networkRadio.get_value(),
-                    id='org-network-radio',
-                ),
-            ),
-            className='col d-flex justify-content-center',
-        ),
+                    id='org-network-radio'),
+            ], className='select-network-wrapper'),
+        className='col-3 d-flex justify-content-center'),
         # 3. DAO selector (and filtering)
         html.Div(
             html.Div(children=[

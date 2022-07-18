@@ -118,21 +118,15 @@ class NetworkRadioButton(Filter):
         self._options = self.ALL_NETWORKS_DICT
         self._value = network_value
 
-        print("Creating network_filter:", a, network_value)
-        
         if isinstance(a, NetworkFilters):
             self._options |= a.get_options()
         else:
             self._options |= { n:n.capitalize() for n in a }
 
-        print(f"_options: {self._options} ({len(self._options)})")
-
         # If the len is just two, we remove the other one and keep only 'ALL NETWORKS'
         if len(self._options) == 2:
             self._options = self.ALL_NETWORKS_DICT
             self._value = self.ALL_NETWORKS_VALUE
-
-        print("final options:", self._options)
 
         if self._value not in self._options.keys():
             raise ValueError('network_value must be in networks')

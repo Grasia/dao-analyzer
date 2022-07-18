@@ -61,6 +61,7 @@ TEXT: dict = {
     'last_update': 'Last update:',
     'logo_grasia_name': 'logo-grasia.png',
     'logo_ucm_name': 'logo-ucm.png',
+    'network_selector_title': 'Network',
     'p2p_models': 'P2P Models',
     'p2p_models_url': 'https://p2pmodels.eu/',
     'radio_button_all_networks': 'All Networks',

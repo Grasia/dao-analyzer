@@ -142,11 +142,17 @@ a {
     max-width: 450px;
 }
 
-#org-network-filter {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    margin-top: 0.7em;
-    margin-bottom: 1em;
+.select-network-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+#org-network-radio {
+    display: flex;
+    flex-direction: column;
 }
 
 .checklist-filter > label {
@@ -156,6 +162,8 @@ a {
 
     font-size: 0.9em;
     line-height: 1.1;
+
+    margin-bottom: 0.4em;
 }
 
 .checklist-filter input[type='checkbox'] {
@@ -230,7 +238,7 @@ a {
 }
 
 @media (min-width: 768px) {
-    .row-divider > .col:nth-child(n+2) {
+    .row-divider > .col:nth-child(n+2),[class*=col-]:nth-child(n+2) {
         border-left: 1px solid #E8DFF0;
     }
 }
