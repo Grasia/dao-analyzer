@@ -84,12 +84,31 @@ class OrganizationList(list):
         return set((x.get_network().lower() for x in self))
 
     @staticmethod
-    def get_filters(values=None, only_enabled=False, force_disabled=False) -> List[Filter]:
+    def get_filters(
+        values: List[str] = None,
+        only_enabled: bool = False,
+        force_disabled: bool = False,
+        diff: bool = False
+    ) -> List[Filter]:
+        """Gets the filters available for an OrganizationList
+
+        Args:
+            values (List[str], optional): The ids of the filters to set to enable, if None returns default values. Defaults to None.
+            only_enabled (bool, optional): When True, returns only the enabled filters. Defaults to False.
+            force_disabled (bool, optional): When True, forces all filters to the disabled state. Defaults to False.
+            diff (bool, optional): When True, values is the ids of the filters to change to the non-default value (see :func:`~OrganizationList.get_diff_filters`). Defaults to False.
+
+        Returns:
+            List[Filter]: The list of selected filters.
+        """
         filters = [f() for f in SIMPLE_FILTERS]
 
         if values is not None:
             for f in filters:
-                f.enabled = f.id in values
+                if not diff:
+                    f.enabled = f.id in values
+                elif diff and f.id in values:
+                    f.enabled = not f.default
 
         if force_disabled:
             for f in filters:
@@ -99,6 +118,11 @@ class OrganizationList(list):
             filters = [f for f in filters if f.enabled]
 
         return filters
+    
+    @staticmethod
+    def get_diff_filters(values=None):
+        """ Return filters which the value is different from the default """
+        return [f for f in OrganizationList.get_filters(values) if f.enabled != f.default]
 
     @staticmethod
     def get_filter_group(*args, **kwargs) -> OrganizationFilterGroup:

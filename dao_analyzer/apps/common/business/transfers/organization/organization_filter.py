@@ -23,10 +23,11 @@ class Filter(metaclass=abc.ABCMeta):
 
 class OrganizationFilter(Filter, metaclass=abc.ABCMeta):
 
-    def __init__(self, id, title, enabled):
+    def __init__(self, id, title, default):
         self._id = id
         self._title = title
-        self._enabled = enabled
+        self._default = default
+        self._enabled = default
 
     @property
     def id(self) -> str:
@@ -39,6 +40,10 @@ class OrganizationFilter(Filter, metaclass=abc.ABCMeta):
     @property
     def enabled(self) -> bool:
         return self._enabled
+
+    @property
+    def default(self) -> bool:
+        return self._default
 
     @enabled.setter
     def enabled(self, value: bool) -> None:

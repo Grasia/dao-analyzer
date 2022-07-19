@@ -36,12 +36,18 @@ def _process_params(search: str) -> Dict[str, str]:
         k,v = p.split('=', 1) # Split only on first ocurrence
         params[k] = v
 
+    if 'filters' in params:
+        params['filters'] = params['filters'].split(',')
+
     return params
 
 def _params_string(d: Dict[str, str]):
     if not d: 
         return ""
-    
+
+    if 'filters' in d:
+        d['filters'] = ','.join(d['filters'])
+
     return '?' + '&'.join(['='.join([k,v]) for k,v in d.items()])
 
 def bind_callbacks(app) -> None: # noqa: C901
@@ -61,7 +67,7 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('header-loading-state', 'children'), # <- THIS CAUSES THE FLASH
         Input('page-content', 'data-subpage'),
         State('page-content', 'data-org-id'),
-        State('url', 'search')
+        State('url', 'search'),
     )
     def change_subpage(subpage, org_id, search):
         if not subpage:
@@ -69,7 +75,13 @@ def bind_callbacks(app) -> None: # noqa: C901
         elif subpage == ABOUT_SUBPAGE:
             return generate_layout(body=about.get_layout()), ''
         elif subpage in services:
-            return generate_layout(body=services[subpage].get_layout(org_value=org_id, network_value=_process_params(search).get('network', ''))), 'loading'
+            params = _process_params(search)
+
+            return generate_layout(body=services[subpage].get_layout(
+                org_value=org_id, 
+                network_value=params.get('network', None),
+                filter_values=params.get('filters', []),
+            )), 'loading'
 
     @app.callback(
         Output('page-content', 'data-subpage'),
@@ -160,7 +172,11 @@ def bind_callbacks(app) -> None: # noqa: C901
         params = {}
         
         if network_value != ALL_NETWORKS_VALUE:
-            params = {'network': network_value}
+            params['network'] = network_value
+        
+        ndf = OrganizationList.get_diff_filters(filter_values)
+        if ndf:
+            params['filters'] = [ f.id for f in ndf ]
 
         # If the selected DAO was filtered out, fall back to All DAOs
         if org_value in [ x['value'] for x in options ]:

@@ -35,6 +35,7 @@ def generate_layout(
     platform_id: str, 
     org_value: str,
     network_value: str,
+    filter_values: List[str],
 ) -> List:
     """
     Use this function to generate the app view.
@@ -49,7 +50,7 @@ def generate_layout(
 
     return html.Div([
         dbc.Container(
-            __generate_header(organization_list, ecosystem, update, org_value, network_value),
+            __generate_header(organization_list, ecosystem, update, org_value, network_value, filter_values),
         className='top body mb-3 py-4'),
         dbc.Container([
             __generate_subheader(platform_id, datapoints),
@@ -71,6 +72,7 @@ def __generate_header(
     update: str,
     org_value: str,
     network_value: str,
+    filter_values: List[str],
 ) -> dbc.Row:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
     if ecosystem in __ECOSYSTEM_SELECTED.keys():
@@ -85,7 +87,9 @@ def __generate_header(
     # If we don't disable the filter, the DAO will be inmediately filtered out
     # Fixes #85
     filterGroup: OrganizationFilterGroup = organization_list.get_filter_group(
-        force_disabled=not OrganizationList.is_all_orgs(org_value)
+        values=filter_values,
+        force_disabled=not OrganizationList.is_all_orgs(org_value),
+        diff=True,
     )
 
     try:
