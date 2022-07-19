@@ -15,6 +15,8 @@
     --front-color: var(--bs-white);
     --bs-body-color: #383838;
     --footer-background: #2F2F2F;
+    --body-header-gap: 1em;
+    --body-header-internal-padding: 1em;
 }
 
 a {
@@ -132,27 +134,39 @@ a {
 }
 
 .select-dao-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem 0;
-    gap: 1.5rem;
-    flex-grow: 1;
-    max-width: 450px;
+    width: 100%;
+    max-width: 275px;
 }
 
-.select-network-wrapper {
+.dao-dropdown-wrapper {
     display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 1.5rem;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+#org-dropdown {
+    width: 100%;
+}
+
+.header-selector-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--body-header-gap);
+    padding-top: var(--body-header-internal-padding);
+    padding-bottom: var(--body-header-internal-padding);
 }
 
 #org-network-radio {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: 1em;
+    grid-template-rows: repeat(3, 1fr);
 }
 
 .checklist-filter > label {
@@ -170,18 +184,12 @@ a {
     transform: scale(1.3);
 }
 
-.select-platform-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-}
-
 .ecosystems-wrapper {
     display: flex;
     flex-direction: row;
     gap: 1rem;
+    flex-grow: 1;
+    align-items: center;
 }
 
 .ecosystem {

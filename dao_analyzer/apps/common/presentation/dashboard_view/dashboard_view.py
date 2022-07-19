@@ -103,7 +103,7 @@ def __generate_header(
             html.Div([
                 html.Div(TEXT['ecosystem_selector_title']),
                 html.Div(children=ecosystems, className='ecosystems-wrapper'),
-            ], className='select-platform-wrapper'),
+            ], className='header-selector-wrapper'),
         className='col d-flex justify-content-center'),
         # 2. Network selector
         html.Div(
@@ -114,12 +114,12 @@ def __generate_header(
                     value = networkRadio.get_value(),
                     className = 'checklist-filter',
                     id='org-network-radio'),
-            ], className='select-network-wrapper'),
+            ], className='header-selector-wrapper'),
         className='col-3 d-flex justify-content-center'),
         # 3. DAO selector (and filtering)
         html.Div(
             html.Div(children=[
-                html.Div(html.Span(TEXT['dao_selector_title'])),
+                html.Div(TEXT['dao_selector_title']),
                 html.Div([
                     dcc.Checklist(
                         options = filterGroup.get_options(),
@@ -127,15 +127,15 @@ def __generate_header(
                         className='checklist-filter d-flex flex-column',
                         id='org-filter',
                     ),
-                    html.Div(dcc.Dropdown(
+                    dcc.Dropdown(
                         id='org-dropdown',
                         options=organization_list.get_dict_representation(),
                         value=org_value,
                         clearable=False,
-                    )),
+                    ),
                     html.Div("", id='org-number', className='number-of-daos'),
-                ], className='flex-grow-1'),
-            ], className='select-dao-wrapper'),
+                ], className='dao-dropdown-wrapper'),
+            ], className='header-selector-wrapper select-dao-wrapper'),
         className='col d-flex justify-content-center'),
         # 4. information storing (hidden from user)
         # The following dcc is changed in callbacks that modify the dao-info-container
