@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.0 - 2022-07-20
+- Added filter dropdown by DAO activity
+- Added filter DAOs by Network
+- Added DAOstack creation date
+- Added URL search params
+- Bugs removed
+
 ## 1.0.1 - 2022-06-10
 - Added Equality Stats to Aragon
 - Fixed participation stats when less than 1%
