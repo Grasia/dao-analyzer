@@ -246,7 +246,8 @@ a {
 }
 
 @media (min-width: 768px) {
-    .row-divider > .col:nth-child(n+2),[class*=col-]:nth-child(n+2) {
+    .row-divider > .col:nth-child(n+2), 
+    .row-divider > [class*=col-]:nth-child(n+2) {
         border-left: 1px solid #E8DFF0;
     }
 }
