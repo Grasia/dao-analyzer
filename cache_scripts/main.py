@@ -10,6 +10,7 @@ import shutil
 from sys import stderr
 
 import logging
+from logging.handlers import RotatingFileHandler
 
 from .aragon.runner import AragonRunner
 from .daohaus.runner import DaohausRunner
@@ -54,7 +55,12 @@ def main_aux(datawarehouse: Path):
 
     logger = logging.getLogger()
     logger.propagate = True
-    filehandler = logging.FileHandler(config.datawarehouse / 'cache_scripts.log')
+    filehandler = RotatingFileHandler(
+        filename=config.datawarehouse / 'cache_scripts.log',
+        maxBytes=config.LOGGING_MAX_MB * 2**20,
+        backupCount=config.LOGGING_BACKUP_COUNT,
+    )
+
     filehandler.setFormatter(logging.Formatter(LOG_FILE_FORMAT))
     logger.addHandler(filehandler)
     logger.setLevel(level=logging.DEBUG if config.debug else logging.INFO)

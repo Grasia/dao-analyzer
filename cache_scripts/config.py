@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 from . import __version__
 
@@ -8,6 +9,10 @@ CACHE_SCRIPTS_VERSION = __version__
 # Number of blocks to skip to only consult confirmed blocks
 SKIP_INVALID_BLOCKS = 250
 DEFAULT_DATAWAREHOUSE = Path('datawarehouse')
+
+# LOGGING CONFIG
+LOGGING_BACKUP_COUNT = os.getenv('DAOA_LOGGING_BACKUP_COUNT', 3)
+LOGGING_MAX_MB = os.getenv('DAOA_LOGGING_MAX_MB', 100)
 
 __args = None
 
