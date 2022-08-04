@@ -30,6 +30,10 @@ class Platform:
         return self._name
 
     @property
+    def id(self) -> str:
+        return self._name.lower()
+
+    @property
     def networks(self) -> List[str]:
         return self._networks
 

@@ -159,9 +159,8 @@ def bind_callbacks(app) -> None: # noqa: C901
         State('org-dropdown', 'value'),
         State('organization-list-store', 'data'),
         State('page-content', 'data-subpage'),
-        State('platform-info-store', 'data'),
     )
-    def org_filters(filter_values: List[str], network_value: str, org_value: str, org_list: list, platform_name: str, prev_platform: str):
+    def org_filters(filter_values: List[str], network_value: str, org_value: str, org_list: list, platform_name: str):
         filtered = OrganizationList.from_json(org_list)
 
         # First we initialize all values
@@ -184,8 +183,8 @@ def bind_callbacks(app) -> None: # noqa: C901
         else:
             value = organizations.get_all_orgs_dict()['value']
 
-        # Change only if is all orgs, or its not stablished yet
-        if value == organizations.ALL_ORGS_ID or not prev_platform:
+        # Change only if is all orgs
+        if value == organizations.ALL_ORGS_ID:
             platform = services[platform_name].platform(organizations)
 
         return options, value, org_number, platform, _params_string(params)

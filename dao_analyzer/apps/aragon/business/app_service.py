@@ -93,11 +93,13 @@ class AragonService(metaclass=Singleton):
         """
         if not self.__already_bound:
             self.bind_callbacks()
+
+        org_list = self.organization_list()
         
         return view.generate_layout(
-            organization_list=self.organization_list(),
+            organization_list=org_list,
+            platform_info=self.platform(org_list),
             sections=self.__get_sections(),
-            ecosystem='aragon',
             update=self.__orgsDAO.get_last_update_str(),
             platform_id=TEXT['css_id_organization'],
             datapoints=self.__get_datapoints(),

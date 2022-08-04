@@ -28,9 +28,9 @@ __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
 
 def generate_layout(
     organization_list: OrganizationList, 
+    platform_info: Platform,
     sections: Dict,
     datapoints, 
-    ecosystem: str, 
     update: str, 
     platform_id: str, 
     org_value: str,
@@ -48,9 +48,11 @@ def generate_layout(
     if not org_value:
         org_value = organization_list.ALL_ORGS_ID
 
+    assert isinstance(platform_info, Platform)
+
     return html.Div([
         dbc.Container(
-            __generate_header(organization_list, ecosystem, update, org_value, network_value, filter_values),
+            __generate_header(organization_list, platform_info, update, org_value, network_value, filter_values),
         className='top body mb-3 py-4'),
         dbc.Container([
             __generate_subheader(platform_id, datapoints),
@@ -68,15 +70,15 @@ def __gen_ecosystem(id: str, selected: str) -> html.Div:
 
 def __generate_header(
     organization_list: OrganizationList,
-    ecosystem: str,
+    platform_info: Platform,
     update: str,
     org_value: str,
     network_value: str,
     filter_values: List[str],
 ) -> dbc.Row:
     selected: List[str] = __ECOSYSTEM_SELECTED['default']
-    if ecosystem in __ECOSYSTEM_SELECTED.keys():
-        selected = __ECOSYSTEM_SELECTED[ecosystem]
+    if platform_info.id in __ECOSYSTEM_SELECTED.keys():
+        selected = __ECOSYSTEM_SELECTED[platform_info.id]
 
     ecosystems: List[html.Div] = [ __gen_ecosystem(eid, selected[i]) for i,eid in enumerate(['daohaus', 'aragon', 'daostack']) ]
 
@@ -141,7 +143,7 @@ def __generate_header(
         # The following dcc is changed in callbacks that modify the dao-info-container
         dcc.Store(
             id='platform-info-store',
-            data=None, # Initially there is no data
+            data=platform_info,
             storage_type='memory',
         ),
         # This dcc is read-only an used to generate the dropdown
