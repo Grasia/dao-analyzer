@@ -18,7 +18,7 @@ from dao_analyzer.apps.common.business.transfers.organization import Organizatio
 
 OrganizationStrategy = st.builds(
     Organization,
-    o_id=st.text(min_size=2),
+    id=st.text(min_size=2),
     name=st.text())
 
 ALL_ORGS_ID = OrganizationList.ALL_ORGS_ID
@@ -26,8 +26,8 @@ ALL_ORGS_ID = OrganizationList.ALL_ORGS_ID
 class OrganizationTest(unittest.TestCase):
 
     def test_get_dict_representation_1(self):
-        org1: Organization = Organization(o_id='222', name='test2', network="n")
-        org2: Organization = Organization(o_id='111', name='test1', network="n")
+        org1: Organization = Organization(id='222', name='test2', network="n")
+        org2: Organization = Organization(id='111', name='test1', network="n")
         orgs: OrganizationList = OrganizationList(orgs=[org1, org2])
         result: List[Dict[str, str]] = orgs.get_dict_representation()
 
