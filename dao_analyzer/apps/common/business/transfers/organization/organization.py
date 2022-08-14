@@ -10,13 +10,16 @@
 from typing import Dict, List, Any
 
 from datetime import datetime
+
+from dao_analyzer.apps.common.business.transfers.data_transfer_object import DataTransferObject
 from .participation_stats import ParticipationStat
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 
-class Organization:
+class Organization(DataTransferObject):
+
     def __init__(self,
-        o_id: str = TEXT['no_data'],
+        id: str = TEXT['no_data'],
         name: str = TEXT['no_data'],
         network: str = TEXT['no_data'],
         creation_date: datetime = None,
@@ -24,7 +27,7 @@ class Organization:
         last_activity: datetime = None,
         participation_stats: List[ParticipationStat] = [],
     ):
-        self._id: str = o_id
+        self._id: str = id
         self._name: str = name
         self._network: str = network
         self._creation_date: datetime = creation_date
@@ -94,7 +97,7 @@ class Organization:
         participation = [ParticipationStat.from_json(x) for x in dict.get('participation_stats', [])]
 
         return Organization(
-            o_id = dict['address'],
+            id = dict['address'],
             network = dict['network'],
             name = dict.get('name', None),
             creation_date = _getdt('creation_date'),

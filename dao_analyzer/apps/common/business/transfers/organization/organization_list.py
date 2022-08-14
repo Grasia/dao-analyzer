@@ -13,7 +13,7 @@ from .organization_filter import Filter, NetworkFilters, SIMPLE_FILTERS, Network
 
 from dao_analyzer.apps.common.resources.strings import TEXT
 
-class OrganizationList(list):
+class OrganizationList(list[Organization]):
     ALL_ORGS_ID = '-1'
 
     def __init__(self, orgs: Union[List[Organization], List[dict]] = []) -> None:

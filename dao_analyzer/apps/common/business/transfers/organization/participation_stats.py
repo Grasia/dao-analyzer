@@ -10,11 +10,15 @@ from typing import Dict, List, Any
 
 import abc
 
+from dao_analyzer.apps.common.business.transfers import DataTransferObject
 from dao_analyzer.apps.common.resources.strings import TEXT
 
-class ParticipationStat(metaclass=abc.ABCMeta):
+class ParticipationStat(abc.ABC, DataTransferObject):
     def __init__(self, value):
         self._value = value
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(value={self._value})'
 
     def to_plotly_json(self) -> Dict[str, Any]:
         """ Allows the object to be stored inside a Dcc.Store """
