@@ -6,6 +6,7 @@ WORKDIR /dao-analyzer
 
 # A bug with docker makes it so its always hot-reloading
 ENV DASH_HOT_RELOAD=false
+ENV DAOA_CACHE_DIR='/dao-analyzer/cache'
 
 RUN pip install --upgrade pip
 
@@ -18,6 +19,7 @@ RUN rm -rf .git
 RUN if [ "$POPULATE_CACHE" -eq 0 ] && [ -e ./datawarehouse ]; then rm -r ./datawarehouse; fi
 RUN if [ "$POPULATE_CACHE" -eq 1 ] ; then daoa-cache-scripts --ignore-errors; fi
 VOLUME "/dao-analyzer/datawarehouse"
+VOLUME "/dao-analyzer/cache"
 
 HEALTHCHECK --interval=5m --timeout=3s --start-period=1m --retries=3 \
   CMD "curl -f localhost" || exit 1

@@ -10,7 +10,7 @@ import pandas as pd
 from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
 from dao_analyzer.apps.common.business.transfers.organization.participation_stats import MembersCreatedProposalsStat, MembersEverVotedStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
-from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO
+from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO, platform_memoize
 from dao_analyzer.apps.common.data_access.requesters import CacheRequester
 
 from .metric import srcs
@@ -95,6 +95,7 @@ class DaostackDAO(PlatformDAO):
 
         return votes
 
+    @platform_memoize
     def get_platform(self, orglist: OrganizationList = None) -> Platform:
         daos: pd.DataFrame = self._requester.request()
         
@@ -122,6 +123,7 @@ class DaostackDAO(PlatformDAO):
             ]
         )
 
+    @platform_memoize
     def get_organization_list(self) -> OrganizationList:
         df = self._get_daos()
 
@@ -144,7 +146,7 @@ class DaostackDAO(PlatformDAO):
         for _, org in df.iterrows():
             l.append(Organization(
                 network = org['network'],
-                o_id = org['dao'],
+                id = org['dao'],
                 name = org['name'],
                 creation_date = None, # We don't know how to get it
                 first_activity = self._NaTtoNone(org['first_activity']),

@@ -7,6 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
+import logging
 import os
 import dash
 from dash import dcc, html
@@ -15,6 +16,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 
 from .matomo import Matomo
+from .cache import cache, get_cache_config
 from .apps.common.resources import colors as COLOR
 from .apps.common.resources.strings import TEXT
 from .apps.common.presentation.main_view.main_view_controller import bind_callbacks
@@ -37,7 +39,8 @@ app = dash.Dash(__name__,
 )
 
 if DEBUG:
-    pd.options.mode.chained_assignment = None # 'warn' TODO: Delete none
+    logging.basicConfig(level=logging.DEBUG)
+    pd.options.mode.chained_assignment = None # 'warn'
     app.enable_dev_tools(
         debug=True,
     )
@@ -91,6 +94,10 @@ app.layout = html.Div([
 ])
 
 bind_callbacks(app)
+
+cache_config = get_cache_config(DEBUG)
+logging.info('Using cache_config: %s', cache_config)
+cache.init_app(server, config=cache_config)
 
 def main():
     app.run_server(debug=DEBUG, dev_tools_ui=DEBUG)

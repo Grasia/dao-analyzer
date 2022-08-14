@@ -11,7 +11,7 @@ import numpy as np
 from dao_analyzer.apps.common.business.transfers import Organization, OrganizationList
 from dao_analyzer.apps.common.business.transfers.organization.participation_stats import MembersCreatedProposalsStat, MembersEverVotedStat
 from dao_analyzer.apps.common.business.transfers.organization.platform import Platform
-from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO
+from dao_analyzer.apps.common.data_access.daos.platform_dao import PlatformDAO, platform_memoize
 from dao_analyzer.apps.common.data_access.requesters import CacheRequester
 
 from .metric import srcs
@@ -91,6 +91,7 @@ class AragonDAO(PlatformDAO):
 
         return voters
 
+    @platform_memoize
     def get_platform(self, orglist: OrganizationList) -> Platform:
         orgs = self._get_orgs()
         members = self._get_members()
@@ -115,6 +116,7 @@ class AragonDAO(PlatformDAO):
             ]
         )
     
+    @platform_memoize
     def get_organization_list(self) -> OrganizationList:
         dforgs = self._get_orgs()
         members = self._get_members()
@@ -139,7 +141,7 @@ class AragonDAO(PlatformDAO):
         for _, org in dforgs.iterrows():
             l.append(Organization(
                 network = org['network'],
-                o_id = org['orgAddress'],
+                id = org['orgAddress'],
                 name = org['name'],
                 creation_date = org['createdAt'],
                 first_activity = self._NaTtoNone(org['first_activity']),

@@ -32,6 +32,12 @@ environment variables:
 ```
 # The CrytptoCompare API key to be used to get token prices
 DAOA_CC_API_KEY = "your_api_key"
+
+# The directory where to use for caching of the application
+DAOA_CACHE_DIR = ".cache"
+
+# URL to use to connect to redis server for storing caching objects (overrides cache dir)
+DAOA_CACHE_REDIS_URL = "redis://user:password@localhost:6379/2"
 ```
 
 ### Installation
