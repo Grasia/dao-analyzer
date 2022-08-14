@@ -1,20 +1,26 @@
-from typing import List
+from typing import List, Callable
 import pandas as pd
 from pathlib import Path
 import portalocker as pl
 from datetime import datetime, timedelta, timezone
 import json
 import logging
+from wrapt import synchronized
 
 from dao_analyzer.apps.common.business.singleton import ABCSingleton
 from dao_analyzer.apps.common.data_access.requesters.irequester import IRequester
 
+# https://stackoverflow.com/questions/70861731/how-to-filelock-an-entire-directory
 LOCK_PATH = Path('datawarehouse/.lock')
+
+def _void_on_reload(prev_update: datetime) -> None:
+    ...
 
 class CacheRequester(IRequester, metaclass=ABCSingleton):
     CHECKING_COOLDOWN = 60
+    MIN_DATE = datetime.min.replace(tzinfo=timezone.utc)
 
-    def __init__(self, srcs: List[Path]):
+    def __init__(self, srcs: List[Path], on_reload: Callable[[datetime], None] = _void_on_reload):
         """
         Initializes the CacheRequester
 
@@ -28,16 +34,22 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
         self._next_check = datetime.min
 
         # Lets us read the data only when necessary
-        self._last_update = datetime.min.replace(tzinfo=timezone.utc)
+        self._last_update = self.MIN_DATE
         self.logger = logging.getLogger("app.cacherequester")
 
+        self._on_reload = on_reload
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(srcs={repr(self._srcs)})'
+
+    @synchronized
     def get_last_update(self) -> datetime:
         return self._last_update
     
     def get_last_update_str(self) -> str:
         return self.get_last_update().strftime('%b %-d, %Y at %H:%M %Z')
 
-    def metadataTime(self) -> datetime:
+    def _metadataTime(self) -> datetime:
         """
         Returns the latest time the dataframes have been updated
         """
@@ -53,10 +65,10 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
 
         return t
 
-    def tryReload(self):
+    def _tryReload(self):
         self._df = pd.concat(map(pd.read_feather, self._srcs), axis=0, ignore_index=True)
 
-    # https://stackoverflow.com/questions/70861731/how-to-filelock-an-entire-directory
+    @synchronized
     def request(self) -> pd.DataFrame:
         """
         Gets data from datawarehouse.
@@ -74,10 +86,14 @@ class CacheRequester(IRequester, metaclass=ABCSingleton):
             try:
                 # Lock the datawarehouse as reader, and then check if the metadata changed
                 with pl.Lock(LOCK_PATH, 'rb', flags=pl.LockFlags.SHARED  | pl.LockFlags.NON_BLOCKING, timeout=0.1):
-                    t = self.metadataTime()
+                    t = self._metadataTime()
                     if t > self._last_update or self._df.empty:
+                        prev_update = self._last_update
                         self._last_update = t
-                        self.tryReload()
+                        self._tryReload()
+                        if not self._df.empty:
+                            self._on_reload(prev_update)
+                            
             except (pl.LockException, pl.AlreadyLocked):
                 self.logger.debug("Couldn't acquire lock")
 
