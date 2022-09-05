@@ -4,8 +4,6 @@ ARG POPULATE_CACHE=0
 
 WORKDIR /dao-analyzer
 
-# A bug with docker makes it so its always hot-reloading
-ENV DASH_HOT_RELOAD=false
 ENV DAOA_CACHE_DIR='/dao-analyzer/cache'
 
 RUN pip install --upgrade pip
