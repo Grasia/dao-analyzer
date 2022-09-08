@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 
-from gql import Client
+from gql import Client, gql
 from gql.dsl import DSLField, DSLQuery, DSLSchema, DSLType, dsl_gql
 from gql.transport.requests import RequestsHTTPTransport
 import re
@@ -80,19 +80,19 @@ class RequestProgressSpinner:
 class GQLRequester:
     ELEMS_PER_CHUNK: int = 1000
 
-    def __init__(self, endpoint: str, pbar_enabled: bool=True) -> None:
+    def __init__(self, endpoint: str, pbar_enabled: bool=True, introspection=True) -> None:
         self.__transport = RequestsHTTPTransport(endpoint)
-        self.__client: Client = Client(transport=self.__transport, fetch_schema_from_transport=True)
+        self.__client: Client = Client(transport=self.__transport, fetch_schema_from_transport=introspection)
         self.pbar = IndexProgressBar if pbar_enabled else RequestProgressSpinner
 
         logging.debug(f"Invoked ApiRequester with endpoint: {endpoint}")
 
     def get_schema(self) -> DSLSchema:
-        with self.__client as _:
+        with self.__client:
             assert(self.__client.schema is not None)
             return DSLSchema(self.__client.schema)
 
-    def request(self, query: Union[DSLQuery, DSLField]) -> Dict:
+    def request(self, query: DSLQuery | DSLField | str) -> Dict:
         """
         Requests data from endpoint.
         """
@@ -100,13 +100,18 @@ class GQLRequester:
             query = DSLQuery(query)
 
         logging.debug(f"Requesting: {query}")
-        result = self.__client.execute(dsl_gql(query))
+
+        if isinstance(query, DSLQuery):
+            result = self.__client.execute(dsl_gql(query))
+        else:
+            result = self.__client.execute(gql(query))
+        
         if "errors" in result:
             raise GQLQueryException(result["errors"])
 
         return result
 
-    def request_single(self, q: Union[DSLQuery, DSLField]) -> Dict:
+    def request_single(self, q: DSLQuery | DSLField | str) -> Dict:
         result = self.request(q)
         if result and len(result.values()) == 1:
             return next(iter(result.values()))
