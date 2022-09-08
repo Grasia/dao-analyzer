@@ -103,6 +103,8 @@ class OrganizationList(list):
         """
         filters = [f() for f in SIMPLE_FILTERS]
 
+        print("values:", values, "only_enabled:", only_enabled, "diff:", diff)
+
         if values is not None:
             for f in filters:
                 if not diff:
@@ -117,6 +119,8 @@ class OrganizationList(list):
         if only_enabled:
             filters = [f for f in filters if f.enabled]
 
+        print("Returning filters:", {o.id:o.enabled for o in filters})
+        
         return filters
     
     @staticmethod
@@ -151,8 +155,24 @@ class OrganizationList(list):
     def get_network_filters(self, network_values=None, only_enabled=False, force_disabled=False) -> NetworkFilters:
         return self.get_network_filters_for(self.get_networks(), network_values=network_values, only_enabled=only_enabled, force_disabled=force_disabled)
 
-    def filter(self, values=None, network_value=None, **kwargs) -> 'OrganizationList':
+    def filter(self, values=None, network_value=None, filter_group=None, network_radio=None, **kwargs) -> 'OrganizationList':
         """ Returns a new OrganizationList with only filtered items """
-        filtered = filter(self.get_filter_group(values, **kwargs).pred, self)
-        filtered = filter(self.get_network_radio(network_value, **kwargs).pred, filtered)
+
+        if filter_group is None:
+            filter_group = self.get_filter_group(values, **kwargs)
+        elif not isinstance(filter_group, OrganizationFilterGroup):
+            raise TypeError('filter_group has an invalid type')
+        
+        if network_radio is None:
+            network_radio = self.get_network_radio(network_value, **kwargs)
+        elif not isinstance(network_radio, NetworkRadioButton):
+            raise TypeError('network_radio has an invalid type')
+        
+        print("Filtering with filter_group:", {o.id:o.enabled for o in filter_group._filters})
+        filtered = filter(network_radio.pred, self)
+        filtered = list(filtered)
+        print("first step (network):", len(filtered))
+        filtered = filter(filter_group.pred, filtered)
+        filtered = list(filtered)
+        print("second step (filters):", len(filtered))
         return OrganizationList(filtered)

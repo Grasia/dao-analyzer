@@ -77,6 +77,8 @@ def bind_callbacks(app) -> None: # noqa: C901
         elif subpage in services:
             params = _process_params(search)
 
+            print("> change_subpage. params:", params)
+
             return generate_layout(body=services[subpage].get_layout(
                 org_value=org_id, 
                 network_value=params.get('network', None),
@@ -154,13 +156,17 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('org-number', 'children'),
         Output('platform-info-store', 'data'),
         Output('url', 'search'),
+        Output('org-filter', 'data-initialized'),
         Input('org-filter', 'value'),
         Input('org-network-radio', 'value'),
         State('org-dropdown', 'value'),
         State('organization-list-store', 'data'),
         State('page-content', 'data-subpage'),
+        State('org-filter', 'data-initialized'),
     )
-    def org_filters(filter_values: List[str], network_value: str, org_value: str, org_list: list, platform_name: str):
+    def org_filters(filter_values: List[str], network_value: str, org_value: str, org_list: list, platform_name: str, initialized: bool):
+        print(f">>> org_filters triggered by {dash.ctx.triggered}")
+            
         filtered = OrganizationList.from_json(org_list)
 
         # First we initialize all values
@@ -187,4 +193,11 @@ def bind_callbacks(app) -> None: # noqa: C901
         if value == organizations.ALL_ORGS_ID:
             platform = services[platform_name].platform(organizations)
 
-        return options, value, org_number, platform, _params_string(params)
+        # if not initialized:
+        #     print("Preventing initial call")
+        #     platform = dash.no_update
+        #     if value == organizations.ALL_ORGS_ID:
+        #         platform = services[platform_name].platform(organizations)
+        #     return [dash.no_update]*3 + [platform, dash.no_update, True]
+
+        return options, value, org_number, platform, _params_string(params), True

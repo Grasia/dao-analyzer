@@ -84,20 +84,43 @@ def __generate_header(
 
     if not org_value:
         org_value = OrganizationList.ALL_ORGS_ID
-    
+
+    print(">>> __generate_header")
     # Disable filters if generating header with a DAO pre-selected (comes from URL)
     # If we don't disable the filter, the DAO will be inmediately filtered out
     # Fixes #85
+    # TODO: If the dao would be filtered out, force disabled
     filterGroup: OrganizationFilterGroup = organization_list.get_filter_group(
         values=filter_values,
-        force_disabled=not OrganizationList.is_all_orgs(org_value),
         diff=True,
     )
+
+    print("len(organization_list):", len(organization_list))
 
     try:
         networkRadio: NetworkRadioButton = organization_list.get_network_radio(network_value)
     except ValueError:
         networkRadio: NetworkRadioButton = organization_list.get_network_radio()
+
+    print("filter_values:", filter_values, "network:", network_value, "filtergroup:", filterGroup.get_values())
+
+    aux_organization_list = organization_list.filter(filter_group=filterGroup, network_radio=networkRadio)
+    print("len(aux):", len(aux_organization_list))
+
+    if org_value in { x['value'] for x in aux_organization_list.get_dict_representation() }:
+        organization_list = aux_organization_list
+    else:
+        print("org value not in list, generating without filters")
+        # TODO: Update URL (because the disable was forced)
+        # TODO: Perhaps removing it just in the callback (dont prevent first call)
+        #       but prevent the updates
+        filterGroup = organization_list.get_filter_group(
+            force_disabled=True,
+        )
+        organization_list = organization_list.filter(filter_group=filterGroup, network_radio=networkRadio)
+
+    print("len(organization_list) (filtered):", len(organization_list))
+    dropdown_list = OrganizationList(organization_list[:3])
 
     return dbc.Row(children=[
         # 1. Ecosystem selector
@@ -132,10 +155,10 @@ def __generate_header(
                     dcc.Dropdown(
                         id='org-dropdown',
                         options=organization_list.get_dict_representation(),
-                        value=org_value,
+                        value=org_value, # TODO: Fall back to old value
                         clearable=False,
                     ),
-                    html.Div("", id='org-number', className='number-of-daos'),
+                    html.Div([f"There are {len(organization_list):,} DAOs"], id='org-number', className='number-of-daos'),
                 ], className='dao-dropdown-wrapper'),
             ], className='header-selector-wrapper select-dao-wrapper'),
         className='col d-flex justify-content-center'),

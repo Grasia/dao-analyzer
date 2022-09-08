@@ -85,8 +85,8 @@ class OrganizationFilterGroup(Filter):
         self._filters.append(filter)
 
     def pred(self, org: Organization) -> bool:
-        # For an item to be selected, it has to verify every filter
-        return all(map(lambda f:f.pred(org), self._filters))
+        # For an item to be selected, it has to verify every enabled filter
+        return all((f.pred(org) for f in self._filters if f.enabled))
 
     def get_options(self) -> Dict[str, str]:
         return { x.id:x.title for x in self._filters }
