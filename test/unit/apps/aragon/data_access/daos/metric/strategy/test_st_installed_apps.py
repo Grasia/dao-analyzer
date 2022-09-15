@@ -11,10 +11,10 @@ import unittest
 from typing import List, Dict
 import pandas as pd
 
-from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.\
+from dao_analyzer.web.apps.aragon.data_access.daos.metric.strategy.\
     st_installed_apps import StInstalledApps
 
-from dao_analyzer.apps.common.business.transfers.stacked_serie import StackedSerie
+from dao_analyzer.web.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
 class StInstalledAppsTest(unittest.TestCase):

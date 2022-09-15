@@ -1,0 +1,14 @@
+### Webpack
+.build_cache
+
+### Dependency directories
+node_modules/
+jspm_packages/
+
+### produced js
+dao_analyzer_components/*
+!dao_analyzer_components/__init__.py
+!dao_analyzer_components/dao_analyzer_components.css
+
+### docs
+man/

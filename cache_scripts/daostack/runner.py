@@ -11,8 +11,8 @@ from typing import List
 import pandas as pd
 from gql.dsl import DSLField
 
-from cache_scripts.common.blockscout import BlockscoutBallancesCollector
-from cache_scripts.common.cryptocompare import CCPricesCollector
+from ..common.blockscout import BlockscoutBallancesCollector
+from ..common.cryptocompare import CCPricesCollector
 
 from ..common import ENDPOINTS, Collector
 from ..common.graphql import GraphQLCollector, GraphQLRunner, add_where

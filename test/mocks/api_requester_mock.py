@@ -7,7 +7,7 @@
         <f.r.youssef@hotmail.com>
 """
 from typing import Any, List, Dict
-from dao_analyzer.apps.common.data_access.requesters.irequester import IRequester
+from dao_analyzer.web.apps.common.data_access.requesters.irequester import IRequester
 
 class ApiRequesterMock(IRequester):
     def __init__(self, any_list: List[Dict]):

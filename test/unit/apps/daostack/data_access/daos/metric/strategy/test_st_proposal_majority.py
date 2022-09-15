@@ -12,9 +12,9 @@ import unittest
 from typing import List
 
 from test.mocks.unix_date_builder import UnixDateBuilder
-from dao_analyzer.apps.daostack.data_access.daos.metric.strategy.\
+from dao_analyzer.web.apps.daostack.data_access.daos.metric.strategy.\
     st_proposal_majority import StProposalMajority
-from dao_analyzer.apps.common.business.transfers.n_stacked_serie import NStackedSerie    
+from dao_analyzer.web.apps.common.business.transfers.n_stacked_serie import NStackedSerie    
 
 class StProposalMajorityTest(unittest.TestCase):
     

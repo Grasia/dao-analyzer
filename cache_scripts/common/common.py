@@ -16,9 +16,10 @@ from gql.transport.exceptions import TransportQueryError
 from .api_requester import GQLRequester
 from ..metadata import RunnerMetadata, Block
 from .. import config
+from ... import cache_scripts
 
 # To be able to obtain endpoints.json
-ENDPOINTS: Dict = json.loads(pkgutil.get_data('cache_scripts', 'endpoints.json'))
+ENDPOINTS: Dict = json.loads(pkgutil.get_data(cache_scripts.__name__, 'endpoints.json'))
 
 def solve_decimals(df: pd.DataFrame) -> pd.DataFrame:
     """ Adds the balanceFloat column to the dataframe

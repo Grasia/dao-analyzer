@@ -4,3 +4,7 @@ hypothesis
 flake8
 pandas-vet
 twine
+dash[dev,testing]
+pytest
+hypothesis
+pandas-vet

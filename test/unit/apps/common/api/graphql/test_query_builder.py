@@ -11,8 +11,8 @@ from typing import List
 import unittest
 from hypothesis import given, example, settings, strategies as st
 
-from dao_analyzer.apps.common.api.graphql.query import Query
-from dao_analyzer.apps.common.api.graphql.query_builder import QueryBuilder
+from dao_analyzer.web.apps.common.api.graphql.query import Query
+from dao_analyzer.web.apps.common.api.graphql.query_builder import QueryBuilder
 
 QueryStrategy = st.builds(
                     Query, 
