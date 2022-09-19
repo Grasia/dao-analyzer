@@ -10,8 +10,9 @@
 
 from typing import Dict, List, Callable
 from dash import html
+import dao_analyzer_components as dac
+
 from dao_analyzer.web.apps.common.business.transfers.organization import Platform, OrganizationList
-from dao_analyzer.web.apps.common.presentation.data_point_layout import DataPointLayout
 
 from dao_analyzer.web.apps.common.presentation.charts.dt_controller import DataTableController
 import dao_analyzer.web.apps.common.presentation.dashboard_view.dashboard_view as view
@@ -159,7 +160,7 @@ class DaohausService(metaclass=Singleton):
         if not self.are_panes:
             self.__gen_sections()
 
-        return self.__data_points
+        return self.__data_points.values()
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
         charts: List[Callable] = list()
@@ -418,8 +419,8 @@ class DaohausService(metaclass=Singleton):
         )
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
-        self.__data_points[dp_id] = DataPointLayout(
-            css_id=dp_id,
+        self.__data_points[dp_id] = dac.DataPoint(
+            id=dp_id,
             title=dp_title,
         )
 
@@ -427,7 +428,7 @@ class DaohausService(metaclass=Singleton):
             css_id=css_id,
             layout=layout,
             adapter=adapter,
-            datapoint_layout=self.__data_points[dp_id],
+            dp_id=dp_id,
         )
 
         self.__controllers[cont_key].append(controller)

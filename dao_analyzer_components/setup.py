@@ -1,11 +1,12 @@
 import json
 from setuptools import setup
 
+raise NotImplementedError("Please don't install this package. Install dao-analyzer instead")
 
 with open('package.json', 'r') as f:
     package = json.load(f)
 
-package_name = 'dao_analyzer.dac'
+package_name = 'dao_analyzer_components'
 package_folder = package["name"].replace(" ", "_").replace("-", "_")
 
 setup(

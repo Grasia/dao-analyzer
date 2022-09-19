@@ -16,6 +16,7 @@
     "validate-init": "python _validate_init.py",
     "prepublishOnly": "npm run validate-init",
     "build:js": "webpack --mode production",
+    "build:dev": "webpack --mode development && npm run build:backends",
     "build:backends": "dash-generate-components ./src/lib/components dao_analyzer_components -p package-info.json --ignore \\.test\\.",
     "build:backends-activated": "(. venv/bin/activate || venv\\scripts\\activate && npm run build:py_and_r)",
     "build": "npm run build:js && npm run build:backends",
@@ -23,7 +24,7 @@
     "watch": "npm-watch"
   },
   "watch": {
-    "build": {
+    "build:dev": {
       "patterns": [
         "src/lib"
       ],

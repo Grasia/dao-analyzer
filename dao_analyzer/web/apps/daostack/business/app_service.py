@@ -10,6 +10,7 @@
 
 from typing import Dict, List, Callable
 from dash import html
+import dao_analyzer_components as dac
 
 from dao_analyzer.web.apps.common.business.i_metric_adapter import IMetricAdapter
 from dao_analyzer.web.apps.common.business.transfers import Platform, OrganizationList
@@ -18,7 +19,6 @@ import dao_analyzer.web.apps.common.presentation.dashboard_view.dashboard_view a
 import dao_analyzer.web.apps.common.presentation.dashboard_view.controller as view_cont
 from dao_analyzer.web.apps.daostack.data_access.daos.platform_dao import DaostackDAO
 from dao_analyzer.web.apps.common.data_access.daos.platform_dao import PlatformDAO
-from dao_analyzer.web.apps.common.presentation.data_point_layout import DataPointLayout
 import dao_analyzer.web.apps.daostack.data_access.daos.metric.\
     metric_dao_factory as s_factory
 from dao_analyzer.web.apps.common.business.singleton import Singleton
@@ -60,7 +60,7 @@ class DaostackService(metaclass=Singleton):
             self._ASSETS: list(),
         }
         self.__already_bound: bool = False
-        self.__data_points: Dict[str, DataPointLayout] = {}
+        self.__data_points: Dict[str, dac.DataPoint] = {}
 
 
     def bind_callbacks(self, app) -> None:
@@ -176,7 +176,7 @@ class DaostackService(metaclass=Singleton):
         if not self.are_panes:
             self.__gen_sections()
 
-        return self.__data_points
+        return self.__data_points.values()
 
 
     def __get_organization_charts(self) -> List[Callable[[], html.Div]]:
@@ -451,8 +451,8 @@ class DaostackService(metaclass=Singleton):
         )
         layout.configuration.set_css_border(css_border=TEXT['css_pane_border'])
 
-        self.__data_points[dp_id] = DataPointLayout(
-            css_id=dp_id,
+        self.__data_points[dp_id] = dac.DataPoint(
+            id=dp_id,
             title=dp_title,
         )
 
@@ -460,7 +460,7 @@ class DaostackService(metaclass=Singleton):
             css_id=css_id,
             layout=layout,
             adapter=adapter,
-            datapoint_layout=self.__data_points[dp_id]
+            dp_id=dp_id,
         )
 
         self.__controllers[cont_key].append(controller)

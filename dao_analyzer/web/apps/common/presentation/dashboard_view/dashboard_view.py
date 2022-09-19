@@ -11,10 +11,9 @@ from typing import Dict, List, Callable
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 
-from dao_analyzer import dac
+import dao_analyzer_components as dac
 
 from dao_analyzer.web.apps.common.business.transfers.organization import Organization, OrganizationList
-from dao_analyzer.web.apps.common.business.transfers.organization import participation_stats
 from dao_analyzer.web.apps.common.business.transfers.organization.organization_filter import NetworkRadioButton, OrganizationFilterGroup
 from dao_analyzer.web.apps.common.business.transfers.organization.participation_stats import ParticipationStat
 from dao_analyzer.web.apps.common.business.transfers.organization.platform import Platform
@@ -34,7 +33,7 @@ def generate_layout(
     organization_list: OrganizationList, 
     platform_info: Platform,
     sections: Dict,
-    datapoints, 
+    datapoints: List[dac.DataPoint], 
     update: str, 
     platform_id: str, 
     org_value: str,
@@ -202,19 +201,19 @@ def _gen_sum_hdr(org: Organization = None):
     
     return [left, right]
 
-def _get_dao_summary_layout(org_id, datapoints: Dict ):
+def _get_dao_summary_layout(org_id, datapoints: List[dac.DataPoint]):
     dp_divs: List[html.Div] = [ dcc.Loading(
-        dp.get_layout(), 
+        dp, 
         type='circle',
         color=COLOR.DARK_BLUE
-    ) for dp in datapoints.values() ]
+    ) for dp in datapoints ]
 
     return html.Div([
         html.Div(_gen_sum_hdr(), className='dao-summary-hdr', id=org_id+'-summary-hdr'),
         html.Div(dp_divs, className='dao-summary-body'),
     ], className='dao-summary-container')
 
-def __generate_subheader(org_id: str, datapoints: Dict[str, List[Callable]]) -> dbc.Row:
+def __generate_subheader(org_id: str, datapoints: List[dac.DataPoint]) -> dbc.Row:
     return dbc.Row(
         id=org_id,
         className='my-3',

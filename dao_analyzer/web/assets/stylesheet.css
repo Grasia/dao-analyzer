@@ -318,16 +318,6 @@ a {
     display: none;
 }
 
-.dao-summary-body {
-    display: flex;
-    flex: 1 1 0;
-    justify-content: space-between;
-}
-
-.dao-summary-datapoint {
-    padding: 5px;
-}
-
 .dao-summary-datapoint-title {
     text-transform: uppercase;
     font-size: small;

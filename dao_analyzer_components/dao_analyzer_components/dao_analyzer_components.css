@@ -20,3 +20,21 @@
 .dao-info-network {
     font-family: monospace;
 }
+
+.dao-summary-body {
+    display: flex;
+    flex: 1 1 0;
+    justify-content: space-between;
+}
+
+.dao-summary-datapoint {
+    padding: 5px;
+}
+
+.dp-icon-up {
+    color: green;
+}
+
+.dp-icon-down {
+    color: red;
+}

@@ -7,8 +7,8 @@ import json
 import dash as _dash
 
 # noinspection PyUnresolvedReferences
-from ._imports_ import *
-from ._imports_ import __all__
+from . import _imports_
+__all__ = _imports_.__all__
 
 if not hasattr(_dash, '__plotly_dash') and not hasattr(_dash, 'development'):
     print('Dash was not successfully imported. '
@@ -21,11 +21,15 @@ _filepath = _os.path.abspath(_os.path.join(_basepath, 'package-info.json'))
 with open(_filepath) as f:
     package = json.load(f)
 
+_is_dev = _os.environ.get('FLASK_DEBUG', 'False').lower() == "true"
+
 package_name = package['name'].replace(' ', '_')
 json_fname = package_name.replace('-', '_')
 python_package_path = __name__.replace('.', '/')
 __version__ = package['version']
 namespace_name = 'dao_analyzer_components'
+
+_js_rel_file_name = 'dao_analyzer_components' + ('.dev.js' if _is_dev else '.min.js')
 
 _current_path = _os.path.dirname(_os.path.abspath(__file__))
 
@@ -66,30 +70,23 @@ _js_dist.extend(
     ]
 )
 
-print("__name__:", __name__)
-print("package_name:", package_name)
-print("_this_module:", _this_module.__name__)
-print("_basepath:", _basepath)
-print("_filepath:", _filepath)
-print("_current_path:", _current_path)
 _js_dist.extend(
     [
         {
-            'relative_package_path': 'dao_analyzer_components.min.js',
+            'relative_package_path': _js_rel_file_name,
             'external_url': (
                 f'https://unpkg.com/dao-analyzer-components@{__version__}'
-                '/dao_analyzer_components.min.js'
+                f'/dao_analyzer_components.min.js'
             ),
             'namespace': namespace_name
         },
         {
-            'relative_package_path': 'dao_analyzer_components.min.js.map',
+            'relative_package_path': _js_rel_file_name + '.map',
             'external_url': (
                 f'https://unpkg.com/dao-analzyer-components@{__version__}'
                 '/dao_analyzer_components.min.js.map'
             ),
             'namespace': namespace_name,
-            'dynamic': True
         }
     ]
 )
@@ -104,7 +101,6 @@ _css_dist = [
         'namespace': namespace_name
     }
 ]
-
 
 for _component_name in _imports_.__all__:
     _component = getattr(_imports_, _component_name)
