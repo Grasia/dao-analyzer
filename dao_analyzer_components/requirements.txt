@@ -1,0 +1,2 @@
+# Used only to build dao_analyzer_components
+dash[dev]
