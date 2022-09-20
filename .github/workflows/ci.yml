@@ -3,16 +3,50 @@ name: dao-analyzer CI
 on: [push]
 
 jobs:
-  testing:
+  dao_analyzer_components:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+    - name: Runtime versions
+      run: |
+        node --version
+        npm --version
+    - name: 📦 Install npm dependencies and build package
+      run: |
+        cd dao_analyzer_components
+        npm clean-install
+        npm run build
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: dao_analyzer_components
+        path: dao_analyzer_components/dao_analyzer_components
+  dao_analyzer_components_publish:
+    runs-on: ubuntu-latest
+    needs: [dao_analyzer_components]
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+      with:
+        registry-url: 'https://registry.npmjs.org'
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: dao_analyzer_components
+    - name: Publish package
+      run: cd dao_analyzer_components && npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  testing_python:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10"]
-    
     env:
-      # Environment variables
       DEBUG: TRUE
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -24,13 +58,17 @@ jobs:
         python -m pip install --upgrade pip wheel tox tox-gh-actions
     - name: Test with tox
       run: tox
+
   package:
     runs-on: ubuntu-latest
-    needs: [testing]
+    needs: [dao_analyzer_components, testing_python]
     steps:
     - uses: actions/checkout@v2
       with:
-        fetch-depth: 0 # Downloading tags
+        fetch-depth: 0 # Downloading tags to gen version name
+    - uses: actions/download-artifact@v3
+      with:
+        name: dao_analyzer_components
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
