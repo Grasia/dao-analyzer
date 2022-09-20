@@ -1,7 +1,7 @@
 # DAO-Analyzer
 It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/). Web site: [http://dao-analyzer.science/](http://dao-analyzer.science/)
 
-## Set-up & Running
+## Set-up & Running (Download app)
 You can either install it on your local machine, or if you prefer it, you can use the official docker image.
 
 > If you only want to retrieve the data used by our application, you can follow [this guide](./cache_scripts/README.md) instead
@@ -12,9 +12,9 @@ The easiest method by far to download and run the application is to use pip to i
 pip install dao-analyzer
 ```
 
-Then, you can run the app using the command `daoa-server`
+Then, you can run the app using the commands `daoa-cache-scripts` and `daoa-server`
 
-## Download
+## Custom  from files
 Enter in your terminal (git must be installed) and write down:
 
 `git clone https://github.com/Grasia/dao-analyzer`

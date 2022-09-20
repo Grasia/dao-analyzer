@@ -1,48 +1,20 @@
 # Ignore everything
 **
 
-
-# Allow some things
-
 ## Building
-!/pyproject.toml
-!/setup.cfg
-!/setup.py
-!/tox.ini
-### Allow git folder for setuptools_scm (delete it after)
-!/.git
-!/.github
-!/.gitignore
+!/dist
 
 # A few kb that can help someone understand the downloaded image
-!/.dockerignore
-!/docker-compose.yml
-!/Dockerfile
 !/CHANGELOG.md
 !CITATION.cff
 !/test
-!/.envrc
 
 ## Deploy
-!/requirements_docker.txt
-!/requirements_dev.txt
 !/gunicorn_config.py
-!/index.py
 !/LICENSE
 !/README.md
 !/ABOUT.md
-!/requirements.txt
-!/scripts
 !/init.sh
+
 ### If there is already a datawarehouse, it will be updated
-!/datawarehouse
-
-## Package
-!/dao_analyzer/**
-!/cache_scripts/**
-!/LICENSE
-!/ABOUT.md
-!/README.md
-
-# Ignore again
-**/__pycache__/
+!/datawarehouse/**

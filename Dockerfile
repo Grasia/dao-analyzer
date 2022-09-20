@@ -1,16 +1,16 @@
 FROM python:3.10
 LABEL maintainer "David Davó <ddavo@ucm.es>"
 ARG POPULATE_CACHE=0
+ARG PYTHON_PKG=dao-analyzer
 
 WORKDIR /dao-analyzer
 
+COPY . ./
+
 RUN pip install --upgrade pip
 
-COPY . /dao-analyzer/
-
-RUN pip install -e .
-RUN pip install -r requirements_docker.txt
-RUN rm -rf .git
+RUN --mount=type=cache,target=/root/.cache pip install ${PYTHON_PKG}[docker]
+RUN rm -rf ./dist
 
 RUN if [ "$POPULATE_CACHE" -eq 0 ] && [ -e ./datawarehouse ]; then rm -r ./datawarehouse; fi
 RUN if [ "$POPULATE_CACHE" -eq 1 ] ; then daoa-cache-scripts --ignore-errors; fi
