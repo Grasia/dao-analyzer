@@ -9,7 +9,7 @@ COPY . ./
 
 RUN pip install --upgrade pip
 
-RUN --mount=type=cache,target=/root/.cache pip install ${PYTHON_PKG}[docker]
+RUN --mount=type=cache,target=/root/.cache pip install $PYTHON_PKG[docker]
 RUN rm -rf ./dist
 
 RUN if [ "$POPULATE_CACHE" -eq 0 ] && [ -e ./datawarehouse ]; then rm -r ./datawarehouse; fi

@@ -133,8 +133,14 @@ jobs:
         path: ./dist/
     - name: Get DAOA_VERSION and PYTHON_PKG
       run: |
-        export PYTHON_PKG=$(ls -t dist/*.whl | head -1)
-        export DAOA_VERSION=$(python -c "from pkginfo import Wheel as W; print(W(r'$PYTHON_PKG').version)")
+        pip install pkginfo
+        PYTHON_PKG=$(ls -t dist/*.whl | head -1)
+        echo PYTHON_PKG="$PYTHON_PKG" >> $GITHUB_ENV
+        echo DAOA_VERSION=$(python -c "from pkginfo import Wheel as W; print(W(r'$PYTHON_PKG').version)") >> $GITHUB_ENV
+    - name: Check env variables
+      run: |
+        echo PYTHON_PKG: $PYTHON_PKG && [ ! -z "$PYTHON_PKG" ]
+        echo DAOA_VERSION: $DAOA_VERSION && [ ! -z "$DAOA_VERSION" ]
     - name: "Get tag names"
       run: |
         branch=$(git branch --show-current)
