@@ -129,7 +129,7 @@ jobs:
     - name: Getting built package
       uses: actions/download-artifact@v3
       with:
-        name: ./dist/
+        name: dist
         path: ./dist/
     - name: Get DAOA_VERSION and PYTHON_PKG
       run: |
@@ -144,6 +144,8 @@ jobs:
       id: tags
     - name: Publish to Docker Hub
       uses: elgohr/Publish-Docker-Github-Action@3.04
+      env:
+        DOCKER_BUILDKIT: "1"
       with:
         name: grasia/dao-analyzer
         username: ${{ secrets.DOCKER_USERNAME }}

@@ -77,7 +77,7 @@ _js_dist.extend(
             'relative_package_path': _js_rel_file_name,
             'external_url': (
                 f'https://unpkg.com/dao-analyzer-components@{__version__}'
-                f'/dao_analyzer_components.min.js'
+                f'/dao_analyzer_components/dao_analyzer_components.min.js'
             ),
             'namespace': namespace_name
         },
@@ -85,7 +85,7 @@ _js_dist.extend(
             'relative_package_path': _js_rel_file_name + '.map',
             'external_url': (
                 f'https://unpkg.com/dao-analyzer-components@{__version__}'
-                '/dao_analyzer_components.min.js.map'
+                '/dao_analyzer_components/dao_analyzer_components.min.js.map'
             ),
             'namespace': namespace_name,
         }
@@ -97,7 +97,7 @@ _css_dist = [
         'relative_package_path': 'dao_analyzer_components.css',
         'external_url': (
             f'https://unpkg.com/dao-analyzer-components@{__version__}'
-            '/dao_analyzer_components.css'
+            '/dao_analyzer_components/dao_analyzer_components.css'
         ),
         'namespace': namespace_name
     }

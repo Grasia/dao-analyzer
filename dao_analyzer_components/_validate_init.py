@@ -8,6 +8,7 @@ import os
 import sys
 import importlib
 
+os.environ['FLASK_DEBUG'] = 'False'
 
 components_package = 'dao_analyzer_components'
 
