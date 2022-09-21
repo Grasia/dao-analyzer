@@ -151,5 +151,5 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         tag_semver: true
-        buildargs: DAOA_VERSION PYTHON_PKG
+        buildargs: DAOA_VERSION,PYTHON_PKG
         tags: ${{ steps.tags.outputs.tag }},${{ steps.tags.outputs.tag_sv }}
