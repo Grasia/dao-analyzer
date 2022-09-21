@@ -84,7 +84,7 @@ _js_dist.extend(
         {
             'relative_package_path': _js_rel_file_name + '.map',
             'external_url': (
-                f'https://unpkg.com/dao-analzyer-components@{__version__}'
+                f'https://unpkg.com/dao-analyzer-components@{__version__}'
                 '/dao_analyzer_components.min.js.map'
             ),
             'namespace': namespace_name,

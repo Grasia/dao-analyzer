@@ -1,6 +1,6 @@
 {
   "name": "dao-analyzer-components",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "description": "Components for dao-analyzer",
   "repository": {
     "type": "git",
@@ -66,5 +66,10 @@
   "engines": {
     "node": ">=8.11.0",
     "npm": ">=6.1.0"
-  }
+  },
+  "files": [
+    "dao_analyzer_components/*.min.js",
+    "dao_analyzer_components/*.min.js.map",
+    "dao_analyzer_components/*.css"
+  ]
 }
