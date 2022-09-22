@@ -12,10 +12,10 @@ from typing import List
 import pandas as pd
 
 from test.mocks.unix_date_builder import UnixDateBuilder
-from dao_analyzer.apps.aragon.data_access.daos.metric.strategy.\
+from dao_analyzer.web.apps.aragon.data_access.daos.metric.strategy.\
     st_vote_outcome import StVoteOutcome
 
-from dao_analyzer.apps.common.business.transfers.stacked_serie import StackedSerie
+from dao_analyzer.web.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
 class StVoteOutcomeTest(unittest.TestCase):

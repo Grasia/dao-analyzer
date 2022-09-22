@@ -1,6 +1,6 @@
 import multiprocessing
 
-wsgi_app = 'dao_analyzer:create_app()'
+wsgi_app = 'dao_analyzer.web:create_app()'
 bind = ':80'
 timeout = 1200
 proc_name = 'DAO-Analyzer'

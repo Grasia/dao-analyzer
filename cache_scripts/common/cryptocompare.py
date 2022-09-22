@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from cache_scripts.common.api_requester import CryptoCompareRequester
+from .api_requester import CryptoCompareRequester
 
 from .. import config
 from .common import Collector, NetworkRunner

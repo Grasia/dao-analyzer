@@ -1,0 +1,40 @@
+.dao-info-container {
+    display: grid;
+    line-height: 1.2;
+    grid-template-columns: auto 1fr;
+    column-gap: 40px;
+    row-gap: 5px;
+    align-items: baseline;
+}
+
+.dao-info-label {
+    font-size: small;
+    color: gray;
+    text-transform: uppercase;
+}
+
+.dao-info-name {
+    font-size: 2em;
+}
+
+.dao-info-network {
+    font-family: monospace;
+}
+
+.dao-summary-body {
+    display: flex;
+    flex: 1 1 0;
+    justify-content: space-between;
+}
+
+.dao-summary-datapoint {
+    padding: 5px;
+}
+
+.dp-icon-up {
+    color: green;
+}
+
+.dp-icon-down {
+    color: red;
+}

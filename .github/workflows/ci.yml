@@ -3,20 +3,71 @@ name: dao-analyzer CI
 on: [push]
 
 jobs:
-  testing:
+  dao_analyzer_components:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dao_analyzer_components
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+    - name: Install dash and other deps
+      run: pip install -r requirements.txt
+    - name: Runtime versions
+      run: |
+        node --version
+        npm --version
+    - name: 📦 Install npm dependencies and build package
+      run: |
+        npm clean-install
+        npm run build
+    - name: Validate init
+      run: npm run validate-init
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: dao_analyzer_components
+        path: |
+          ./dao_analyzer_components/dao_analyzer_components/
+          !**/__pycache__
+
+  dao_analyzer_components_publish:
+    runs-on: ubuntu-latest
+    needs: [dao_analyzer_components]
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+    defaults:
+      run:
+        working-directory: dao_analyzer_components
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v3
+      with:
+        registry-url: 'https://registry.npmjs.org'
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: dao_analyzer_components
+        path: ./dao_analyzer_components/dao_analyzer_components/
+    - name: Publish package
+      run: npm publish --ignore-scripts
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  testing_python:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8","3.9","3.10"]
-    
     env:
-      # Environment variables
       DEBUG: TRUE
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -24,25 +75,87 @@ jobs:
         python -m pip install --upgrade pip wheel tox tox-gh-actions
     - name: Test with tox
       run: tox
+
   package:
     runs-on: ubuntu-latest
-    needs: [testing]
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+    needs: [dao_analyzer_components, testing_python]
     steps:
     - uses: actions/checkout@v2
       with:
-        fetch-depth: 0 # Downloading tags
-    - name: Set up Python
-      uses: actions/setup-python@v1
+        fetch-depth: 0 # Downloading tags to gen version name
+    - uses: actions/download-artifact@v3
       with:
-        python-version: "3.10"
+        name: dao_analyzer_components
+        path: ./dao_analyzer_components/dao_analyzer_components/
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
     - name: Install build deps
       run: python -m pip install --upgrade pip build wheel
     - name: Build package
       run: python -m build
+    - name: Archive built package
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: ./dist/
+  pypi:
+    runs-on: ubuntu-latest
+    needs: [package,dao_analyzer_components_publish]
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+    steps:
+    - name: Download built package
+      uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: ./dist/
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
-
+  docker:
+    runs-on: ubuntu-latest
+    needs: [package,dao_analyzer_components_publish]
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+    steps:
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+    - uses: actions/checkout@master
+    - name: Getting built package
+      uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: ./dist/
+    - name: Get DAOA_VERSION and PYTHON_PKG
+      run: |
+        pip install pkginfo
+        PYTHON_PKG=$(ls -t dist/*.whl | head -1)
+        echo PYTHON_PKG="$PYTHON_PKG" >> $GITHUB_ENV
+        echo DAOA_VERSION=$(python -c "from pkginfo import Wheel as W; print(W(r'$PYTHON_PKG').version)") >> $GITHUB_ENV
+    - name: Check env variables
+      run: |
+        echo PYTHON_PKG: $PYTHON_PKG && [ ! -z "$PYTHON_PKG" ]
+        echo DAOA_VERSION: $DAOA_VERSION && [ ! -z "$DAOA_VERSION" ]
+    - name: "Get tag names"
+      run: |
+        branch=$(git branch --show-current)
+        [[ "$branch" = "master" ]] && branch=latest
+        echo "::set-output name=tag::$branch"
+        echo "::set-output name=tag_sv::$DAOA_VERSION"
+      id: tags
+    - name: Publish to Docker Hub
+      uses: elgohr/Publish-Docker-Github-Action@3.04
+      env:
+        DOCKER_BUILDKIT: "1"
+      with:
+        name: grasia/dao-analyzer
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        tag_semver: true
+        buildargs: DAOA_VERSION,PYTHON_PKG
+        tags: ${{ steps.tags.outputs.tag }},${{ steps.tags.outputs.tag_sv }}

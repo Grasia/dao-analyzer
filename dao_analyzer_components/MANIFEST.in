@@ -1,0 +1,12 @@
+include dao_analyzer_components/dao_analyzer_components.min.js
+include dao_analyzer_components/dao_analyzer_components.min.js.map
+include dao_analyzer_components/dao_analyzer_components.css
+include dao_analyzer_components/async-*.js
+include dao_analyzer_components/async-*.js.map
+include dao_analyzer_components/*-shared.js
+include dao_analyzer_components/*-shared.js.map
+include dao_analyzer_components/metadata.json
+include dao_analyzer_components/package-info.json
+include README.md
+include LICENSE
+include package.json

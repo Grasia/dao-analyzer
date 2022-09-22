@@ -28,3 +28,8 @@ jobs:
       run: pip install -e .
     - name: Run verify-scripts
       run: ./scripts/checkContinue.sh
+    - name: Upload datawarehouse artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: datawarehouse
+        path: datawarehouse

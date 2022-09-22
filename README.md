@@ -1,20 +1,7 @@
 # DAO-Analyzer
 It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/). Web site: [http://dao-analyzer.science/](http://dao-analyzer.science/)
 
-## Set-up & Running
-You can either install it on your local machine, or if you prefer it, you can use the official docker image.
-
-> If you only want to retrieve the data used by our application, you can follow [this guide](./cache_scripts/README.md) instead
-
-The easiest method by far to download and run the application is to use pip to install it
-
-```
-pip install dao-analyzer
-```
-
-Then, you can run the app using the command `daoa-server`
-
-## Download
+## Build application
 Enter in your terminal (git must be installed) and write down:
 
 `git clone https://github.com/Grasia/dao-analyzer`
@@ -25,6 +12,32 @@ After that, move to repository root directory with:
 cd dao-analyzer
 ```
 
+Build the `dao_analyzer_components`
+
+```
+cd dao_analyzer_components && npm ci && npm build
+```
+
+Then, go back to the root folder of the project, and install the package
+
+```
+pip install -e .
+```
+
+If you don't want to share Python dependencies among other projects, you should use a virtual environment, such as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
+
+## Set-up & Running (Download app)
+You can either install it on your local machine, or if you prefer it, you can use the official docker image.
+
+> If you only want to retrieve the data used by our application, you can follow [this guide](./cache_scripts/README.md) instead
+
+The easiest method by far to download and run the application is to use pip to install it
+
+```
+pip install dao-analyzer
+```
+
+Then, you can run the app using the commands `daoa-cache-scripts` and `daoa-server`
 ### Environment variables
 To be able to access all the features of dao-analyzer, you can specify the following
 environment variables:
@@ -39,22 +52,6 @@ DAOA_CACHE_DIR = ".cache"
 # URL to use to connect to redis server for storing caching objects (overrides cache dir)
 DAOA_CACHE_REDIS_URL = "redis://user:password@localhost:6379/2"
 ```
-
-### Installation
-All code has been tested on Linux, but it should work on Windows and macOS, 'cause it just uses the python environment.
-
-So, you must install the following dependencies to run the tool:
-
-* python3 (3.10 or later)
-* python3-pip
-
-Now, install the Python dependencies:
-
-```
-pip3 install -r requirements.txt
-```
-
-If you don't want to share Python dependencies among other projects, you should use a virtual environment, such as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
 
 ### How to run it?
 Before launching the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
@@ -71,7 +68,7 @@ python3 index.py
 
 Now, visit `http://127.0.0.1:8050` or the address given in the program output with your web browser.
 
-### Using Docker <a name="docker"></a>
+## Using Docker <a name="docker"></a>
 If you use Docker, you can just use the images at [grasia/dao-analyzer](https://hub.docker.com/r/grasia/dao-analyzer). The tags with the `-cached` suffix have a pre-populated data warehouse (this means the image uses more space, but takes less time to load). To use it, just run the command:
 
 ```

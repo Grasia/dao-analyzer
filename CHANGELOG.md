@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.1.2 - 2022-08-09
+- Fixing [#100](https://github.com/Grasia/dao-analyzer/issues/100)
+- Added logging rotations
+
 ## 1.1.1 - 2022-07-27
 - Fixed CSS bug
 

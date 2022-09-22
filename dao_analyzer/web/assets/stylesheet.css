@@ -1,0 +1,582 @@
+/* For the text of the webpage */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
+/* Icons */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/font/bootstrap-icons.css");
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --text-accent-color: #500B89;
+    --content-padding-x: 2rem;
+    --back-color: var(--bs-gray-200);
+    --front-color: var(--bs-white);
+    --bs-body-color: #383838;
+    --footer-background: #2F2F2F;
+    --body-header-gap: 1em;
+    --body-header-internal-padding: 1em;
+}
+
+a {
+    color: #74CAE8;
+}
+
+.root {
+    background-color: var(--back-color);
+    font-family: 'Roboto', sans-serif;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.grid-container {
+    display: grid;
+}
+
+/*********************/
+/*    HEADER         */
+.main-header {
+    min-height: 10rem;
+    width: 100%;
+    background-image: url("/assets/img_header.jpg");
+    background-position: center;
+    background-color: #240457;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.header-things-container {
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    color: #74CAE8;
+}
+
+.header-text {
+    display: block;
+    font-weight: 300;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header-logo {
+    display: block;
+    height: auto;
+    width: 100%;
+    max-width: 417px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header-links-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    display: flex;
+    justify-content: end;
+
+    padding-top: .5rem;
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+}
+
+.header-link {
+    color: white;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.header-link:hover, [data-subpage="__about"] .header-link {
+    color: white;
+    border-bottom: 3px solid #F547D6;
+}
+
+/*********************/
+
+/*********************/
+/*      BODY         */
+
+/****** Body-Header ***/
+.body-header {
+    justify-content: space-around;
+    z-index: 2;
+    position: relative;
+}
+
+.body-header .last-update {
+    position: absolute;
+    color: white;
+    font-size: small;
+    width: fit-content;
+    top: -3rem;
+    right: 0rem;
+}
+
+.number-of-daos {
+    color: var(--text-accent-color);
+    font-weight: 500;
+    font-size: 0.9em;
+}
+
+.tab-container {
+    margin-left: calc(-1* var(--content-padding-x));
+    margin-right: calc(-1* var(--content-padding-x));
+}
+
+.select-dao-wrapper {
+    width: 100%;
+    max-width: 275px;
+}
+
+.dao-dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+#org-dropdown {
+    width: 100%;
+}
+
+.header-selector-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--body-header-gap);
+    padding-top: var(--body-header-internal-padding);
+    padding-bottom: var(--body-header-internal-padding);
+}
+
+#org-network-radio {
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: 1em;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.checklist-filter > label {
+    display: inline-grid;
+    grid-template-columns: 1em auto;
+    gap: .7em;
+
+    font-size: 0.9em;
+    line-height: 1.1;
+
+    margin-bottom: 0.4em;
+}
+
+.checklist-filter input[type='checkbox'] {
+    transform: scale(1.3);
+}
+
+.ecosystems-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-grow: 1;
+    align-items: center;
+}
+
+.ecosystem {
+    height: 50px;
+    width: 100px;
+    border: 3px solid transparent;
+    box-sizing: content-box;
+}
+
+.ecosystem-overlay {
+    position: relative;
+    float: left;
+    opacity: 0;
+    z-index: 2;
+    height: 100%;
+    width: 100%;
+}
+
+.ecosystem-overlay:hover {
+    opacity: 0.4;
+    cursor: pointer;
+}
+
+.ecosystem-img {
+    position: relative;
+    top: -50px;
+    height: auto;
+    max-width: 100px;
+    max-height: 100%;
+}
+
+.daostack-color {
+    background-color: #74CAE8;
+}
+
+.aragon-color {
+    background-color: #4DDEA4;
+}
+
+.daohaus-color {
+    background-color: #9960B1;
+}
+
+.daostack-selected, .daostack-ecosystem:hover {
+    border-color: #74CAE8;
+}
+
+.aragon-selected, .aragon-ecosystem:hover {
+    border-color: #4DDEA4;
+}
+
+.daohaus-selected, .daohaus-ecosystem:hover {
+    border-color: #9960B1;
+}
+
+@media (min-width: 768px) {
+    .row-divider > .col:nth-child(n+2), 
+    .row-divider > [class*=col-]:nth-child(n+2) {
+        border-left: 1px solid #E8DFF0;
+    }
+}
+
+/*********************/
+
+/****** Dao-Info *****/
+.dao-header-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 25px;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+.dao-info-container {
+    color: #3B393B;
+}
+
+.dao-info-name {
+    font-size: 2.5em;
+    font-weight: 100;
+}
+
+.dao-info-network {
+    font-size: 1em;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+}
+
+.dao-info-address {
+    font-size: 1em;
+}
+
+.dao-info-date {
+    font-size: 1em;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.dao-info-stats {
+    font-size: small;
+    color: #676467;
+}
+
+.dao-info-stats b {
+    color: var(--text-accent-color);
+}
+
+/*********************/
+
+/***** DAO SUMMARY ******/
+.dao-summary-container {
+    color: #676467;
+    background-color: #F8F7F8;
+    border: 1px solid #E8DFF0;
+    padding: 1em;
+}
+
+.dao-summary-hdr {
+    border-bottom: 1px solid var(--text-accent-color);
+    font-size: small;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dao-summary-hdr:empty {
+    display: none;
+}
+
+.dao-summary-datapoint-title {
+    text-transform: uppercase;
+    font-size: small;
+}
+
+.dao-summary-datapoint-number {
+    font-size: xx-large;
+    font-weight: 100;
+    color: var(--text-accent-color);
+}
+
+.dao-summary-datapoint-lastmonth {
+    font-size: small;
+    text-transform: capitalize;
+}
+
+.dao-summary-datapoint-evolution {
+    color: var(--text-accent-color);
+    font-size: small;
+}
+
+.dp-icon-up {
+    color: #4ddea4;
+}
+
+.dp-icon-down {
+    color: #ea44cd;
+}
+/************************/
+
+/****** Body *********/
+.top {
+    margin-top: -3vh;
+}
+
+.body {
+    background-color: var(--front-color);
+    padding-right: var(--content-padding-x);
+    padding-left: var(--content-padding-x);
+}
+
+.tab {
+    font-weight: 300;
+    text-transform: uppercase;
+    color: var(--text-accent-color);
+    border: 0 !important;
+}
+
+.tab.tab--selected {
+    font-weight: normal;
+    border-top: 2px solid var(--text-accent-color)!important;
+    border-left: 1px solid #E8DFF0!important;
+    border-right: 1px solid #E8DFF0!important;
+}
+
+.tab:first-child {
+    border-left: 0 !important;
+}
+
+.tab:last-child {
+    border-right: 0 !important;
+}
+
+.section-hdr {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    color: #676467;
+    font-size: 2em;
+    font-weight: 100;
+
+    /* Break long names and URLS */
+    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.section-disclaimer {
+    color: gray;
+}
+
+.graph-pane-title {
+    font-weight: bolder;
+    font-size: large;
+}
+
+.chart-header {
+    margin-bottom: 1rem;
+}
+
+.chart {
+    margin-bottom: 4rem;
+}
+
+.only-on-all-orgs {
+    display: none;
+}
+
+.is-all-orgs .only-on-all-orgs {
+    display: block;
+}
+
+/*********************/
+/*********************/
+
+/*********************/
+/*      FOOT         */
+
+footer {
+    min-height: 10rem;
+    background-color: var(--footer-background);
+    color: #CCCCCC;
+    font-size: x-small;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+footer .container {
+    padding-left: var(--content-padding-x);
+    padding-right: var(--content-padding-x);
+}
+
+.footer-logos-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    flex-wrap: wrap;
+}
+
+.foot-ack-logos {
+    display: flex;
+    flex-direction: column;
+    margin-right: 1rem;
+    justify-content: flex-start;
+}
+
+.sponsor-img {
+    max-height: 50px;
+}
+
+/*********************/
+
+/*********************/
+/*      URL         */
+.url-color {
+    text-decoration: none;
+}
+
+.url-color:link {
+    color: #74CAE8;
+}
+
+.url-color:visited {
+    color: #74CAE8;
+}
+/*********************/
+
+.v-separator {
+    border-left: 1px solid #979797;
+    height: 6vw;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.hide {
+    visibility: hidden;
+}
+
+/*********************/
+/*      TEXT         */
+.small-font {
+    font-size: small;
+}
+
+.xsmall-font {
+    font-size: x-small;
+}
+
+.address {
+    color: #2F2F2F;
+    margin-top: 0.3em;
+    font-family: 'Courier New', Courier, monospace;
+    max-width: fit-content;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+code {
+    background-color: lightgray;
+    padding: 0.2em 0.4em;
+    font-size: 85%;
+    margin: 0;
+    border-radius: 6px;
+}
+
+/*********************/
+
+/*********************/
+/*    ABOUT          */
+/*********************/
+.about-back {
+    color: #F547D6;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.about-back::before {
+    font-family: bootstrap-icons!important;
+    font-weight: normal!important;
+    content: "\f12f";
+    margin-right: 0.3em;
+    line-height: 1;
+    vertical-align: -0.125em;
+}
+
+/*********************/
+
+/*********************/
+/*    MARKDOWN       */
+/*********************/
+/* Based on multiple sources like GitHub's markdown */
+
+.markdown > *:first-child {
+    margin-top: 0!important;
+}
+
+.markdown h1,h2,h3,h4,h5,h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 100;
+}
+
+.markdown p, pre, ul, ol {
+    margin-bottom: 16px;
+    line-height: 1.9;
+}
+
+.markdown pre code {
+    background-color: lightgray;
+}
+
+.markdown ul {
+    padding-left: 2em;
+}
+
+.markdown li + li {
+    margin-top: 0.25rem;
+}
+
+/* JUST FOR THE DEMO */
+/*
+.header-logo {
+    filter: blur(10px);
+}
+
+#page-content > div > footer > div > div.row-cols-1.row-cols-lg-2.gy-3.row {
+    filter: blur(15px);
+}
+*/

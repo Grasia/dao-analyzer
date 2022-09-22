@@ -14,6 +14,7 @@ import pandas as pd
 import numpy as np
 import json
 
+from ..aragon import __name__ as aragon_module_name
 from ..common.cryptocompare import CCPricesCollector
 from ..common import ENDPOINTS, Collector
 from ..common.graphql import GraphQLCollector, GraphQLRunner
@@ -66,7 +67,7 @@ class CastsCollector(GraphQLCollector):
         )
 
 class OrganizationsCollector(GraphQLCollector):
-    DAO_NAMES=pkgutil.get_data('cache_scripts.aragon', 'dao_names.json')
+    DAO_NAMES=pkgutil.get_data(aragon_module_name, 'dao_names.json')
 
     def __init__(self, runner, network: str):
         super().__init__('organizations', runner, endpoint=ENDPOINTS[network]['aragon'], network=network)

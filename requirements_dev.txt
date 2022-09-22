@@ -1,6 +1,0 @@
-build
-pytest
-hypothesis
-flake8
-pandas-vet
-twine

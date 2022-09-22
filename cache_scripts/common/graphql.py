@@ -30,16 +30,19 @@ def partial_query(q, w) -> DSLField:
 def checkSubgraphHealth(endpoint: str, network: str = None):
     subgraphName = '/'.join(endpoint.split('/')[-2:])
     
-    requester = GQLRequester(endpoint=ENDPOINTS['_theGraph']['index-node'])
-    ds = requester.get_schema()
-    q = ds.Query.indexingStatusForCurrentVersion(subgraphName=subgraphName).select(
-        ds.SubgraphIndexingStatus.health,
-        ds.SubgraphIndexingStatus.synced,
-        ds.SubgraphIndexingStatus.node,
-        ds.SubgraphIndexingStatus.chains.select(
-            ds.ChainIndexingStatus.network
-        )
-    )
+    requester = GQLRequester(endpoint=ENDPOINTS['_theGraph']['index-node'], introspection=False)
+    q = f"""
+    {{
+        indexingStatusForCurrentVersion(subgraphName: "{subgraphName}") {{
+            health,
+            synced,
+            node,
+            chains {{
+                network
+            }}
+        }}
+    }}
+    """
 
     r = requester.request_single(q)
 

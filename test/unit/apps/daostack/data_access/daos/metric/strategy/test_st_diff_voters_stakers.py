@@ -12,9 +12,9 @@ from typing import List
 import pandas as pd
 
 from test.mocks.unix_date_builder import UnixDateBuilder
-from dao_analyzer.apps.daostack.data_access.daos.metric.strategy.\
+from dao_analyzer.web.apps.daostack.data_access.daos.metric.strategy.\
     st_different_voters_stakers import StDifferentVS
-from dao_analyzer.apps.common.business.transfers.stacked_serie import StackedSerie
+from dao_analyzer.web.apps.common.business.transfers.stacked_serie import StackedSerie
 
 
 class StDifferentVSTest(unittest.TestCase):
