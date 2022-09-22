@@ -22,7 +22,7 @@ _filepath = _os.path.abspath(_os.path.join(_basepath, 'package-info.json'))
 with open(_filepath) as f:
     package = json.load(f)
 
-_is_dev = _os.environ.get('FLASK_DEBUG', 'False').lower() == "true"
+_is_dev = _os.environ.get('DAOA_COMPONENTS_DEV', 'False').lower() == "true"
 
 package_name = package['name'].replace(' ', '_')
 json_fname = package_name.replace('-', '_')
