@@ -15,6 +15,7 @@ from typing import Callable, Any
 
 from datetime import datetime
 
+from dao_analyzer.web.cache import cache
 from dao_analyzer.web.apps.common.business.singleton import ABCSingleton
 from dao_analyzer.web.apps.common.business.transfers import Platform
 from dao_analyzer.web.apps.common.business.transfers.organization.organization_list import OrganizationList
