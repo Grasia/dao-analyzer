@@ -51,6 +51,8 @@ def bind_callbacks(app, section_id: str) -> None:
         
         return _get_dao_info(result), _gen_sum_hdr(result)
 
+    # TODO: Use the "match" thing instead of creating lots of functions with the
+    # same name (which is what this is doing)
     @app.callback(
         Output(f'{section_id}-body', 'className'),
         Input(f'{section_id}-body', 'className'),

@@ -17,6 +17,7 @@ import pandas as pd
 
 from .matomo import Matomo
 from .cache import cache, get_cache_config
+# from .background_callback import background_callback_manager
 from .apps.common.resources import colors as COLOR
 from .apps.common.resources.strings import TEXT
 from .apps.common.presentation.main_view.main_view_controller import bind_callbacks
@@ -25,6 +26,35 @@ DEBUG = 'DEBUG' in os.environ and os.environ['DEBUG'].lower() == 'true' or \
         'FLASK_ENV' in os.environ and os.environ['FLASK_ENV'].lower() == 'development'
 
 pd.options.mode.chained_assignment = 'warn' if DEBUG else None
+
+### TODO: DELETE BELOW
+from uuid import uuid4
+from pathlib import Path
+
+from dash import DiskcacheManager, CeleryManager
+
+launch_uid = uuid4()
+
+bg_cb_mngr_args = dict(
+    cache_by=[lambda: launch_uid],
+    expire=3600,
+)
+
+if 'DAOA_CACHE_REDIS_URL' in os.environ:
+    from celery import Celery
+    celery_app = Celery(__name__, 
+        broker=os.environ['DAOA_CACHE_REDIS_URL'],
+        backend=os.environ['DAOA_CACHE_REDIS_URL'],
+    )
+    background_callback_manager = CeleryManager(celery_app, **bg_cb_mngr_args)
+else:
+    import diskcache
+    cache_path = Path(os.environ.get('DAOA_CACHE_DIR', '.cache')) / 'callbacks'
+    
+    dc = diskcache.Cache(cache_path)
+    background_callback_manager = DiskcacheManager(dc, **bg_cb_mngr_args)
+
+### TODO: DELETE ABOVE
 
 app = dash.Dash(__name__, 
     suppress_callback_exceptions=True, 
@@ -36,6 +66,7 @@ app = dash.Dash(__name__,
     meta_tags=[
         { 'name': 'viewport', 'content': 'width=device-width, initial-scale=1' },
     ],
+    background_callback_manager=background_callback_manager,
 )
 
 if DEBUG:

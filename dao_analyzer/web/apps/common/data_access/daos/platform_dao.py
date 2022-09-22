@@ -39,6 +39,7 @@ def platform_memoize(f: Callable[..., Any]) -> Callable[..., Any]:
         Callable: The wrapped function
     """
 
+    return f
     return cache.memoize(
         timeout=3600*24,
     )(f)

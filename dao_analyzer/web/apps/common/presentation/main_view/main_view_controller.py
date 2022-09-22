@@ -8,6 +8,9 @@
 """
 from typing import List, Dict, Any
 
+# TODO: Delete logging in this file
+import logging
+
 import dash
 from dash import dcc
 from dash.dependencies import Input, Output, State
@@ -68,6 +71,7 @@ def bind_callbacks(app) -> None: # noqa: C901
         Input('page-content', 'data-subpage'),
         State('page-content', 'data-org-id'),
         State('url', 'search'),
+        background=True,
     )
     def change_subpage(subpage, org_id, search):
         if not subpage:
@@ -87,7 +91,8 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('page-content', 'data-subpage'),
         Output('page-content', 'data-org-id'),
         Input('url', 'pathname'),
-        State('page-content', 'data-subpage')
+        State('page-content', 'data-subpage'),
+        background=True,
     )
     def url_changed(pathname, current_platform):
         if pathname == "/":
@@ -113,9 +118,14 @@ def bind_callbacks(app) -> None: # noqa: C901
         Input('daohaus-bt', 'n_clicks'),
         Input('aragon-bt', 'n_clicks'),
         Input('org-dropdown', 'value'),
-        State('url', 'pathname')
+        State('url', 'pathname'),
+        background=True,
+        cache_args_to_ignore=[0,1,2], # n_clicks will be different every time
     )
     def load_ecosystem(bt_daostack: int, bt_daohaus: int, bt_aragon: int, dropdown_value: str, prev_pathname: str) -> str:
+        print("Loading ecosystem and sleeping 10s")
+        from time import sleep
+        sleep(60)
         ctx = dash.callback_context
 
         # prev_pathname state changed (maybe we did it)
@@ -154,11 +164,15 @@ def bind_callbacks(app) -> None: # noqa: C901
         Output('org-number', 'children'),
         Output('platform-info-store', 'data'),
         Output('url', 'search'),
-        Input('org-filter', 'value'),
-        Input('org-network-radio', 'value'),
-        State('org-dropdown', 'value'),
-        State('organization-list-store', 'data'),
-        State('page-content', 'data-subpage'),
+        [
+            Input('org-filter', 'value'),
+            Input('org-network-radio', 'value'),
+            State('org-dropdown', 'value'),
+            State('organization-list-store', 'data'),
+            State('page-content', 'data-subpage'),
+        ],
+        background=True,
+        # cache_args_to_ignore=[0,1,2,3,4],
     )
     def org_filters(filter_values: List[str], network_value: str, org_value: str, org_list: list, platform_name: str):
         filtered = OrganizationList.from_json(org_list)

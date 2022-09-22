@@ -10,6 +10,7 @@ from typing import Dict
 
 import os
 import logging
+from pathlib import Path
 
 from flask_caching import Cache
 
@@ -26,7 +27,7 @@ def get_cache_config(debug=False) -> Dict[str, str]:
         cache_config['CACHE_REDIS_URL'] = os.environ['DAOA_CACHE_REDIS_URL']
     elif 'DAOA_CACHE_DIR' in os.environ:
         cache_config['CACHE_TYPE'] = 'FileSystemCache'
-        cache_config['CACHE_DIR'] = os.environ['DAOA_CACHE_DIR']
+        cache_config['CACHE_DIR'] = Path(os.environ['DAOA_CACHE_DIR']) / 'flask'
     elif not debug:
         logging.warn("""Cache not configured. Using SimpleCache by default. Setting up redis or file caching is recommended using DAOA_CACHE_DIR or DAOA_CACHE_REDIS_URL env variable.""")
 

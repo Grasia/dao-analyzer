@@ -12,3 +12,6 @@ services:
     environment:
       - DAOA_MATOMO_URL="https://matomo.example.com"
       - DAOA_MATOMO_SITE_ID=42
+  redis:
+    container_name: dao-analyzer-redis
+    image: redis
