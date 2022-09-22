@@ -53,7 +53,7 @@ jobs:
         name: dao_analyzer_components
         path: ./dao_analyzer_components/dao_analyzer_components/
     - name: Publish package
-      run: npm publish --ignore-scripts
+      run: npx is-published || npm publish --ignore-scripts
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
