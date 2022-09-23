@@ -32,7 +32,6 @@ class CalFigure(Figure):
         fig: go.Figure = month_calplot(
             x=plot_data['x'],
             y=plot_data['y'],
-            width=None,
             gap=3,
             year_height=50,
         )
