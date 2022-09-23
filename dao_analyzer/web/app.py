@@ -8,6 +8,7 @@
 """
 
 import logging
+import argparse
 import os
 import dash
 from dash import dcc, html
@@ -131,4 +132,22 @@ logging.info('Using cache_config: %s', cache_config)
 cache.init_app(server, config=cache_config)
 
 def main():
-    app.run_server(debug=DEBUG, dev_tools_ui=DEBUG)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-H', '--host',
+        help='Host IP used to serve the application',
+        default=os.getenv('HOST', '127.0.0.1'),
+    )
+    parser.add_argument(
+        '-P', '--port',
+        help='Port used to serve the application',
+        default=os.getenv('PORT', 8050),
+    )
+
+    args = parser.parse_args()
+    
+    app.run_server(
+        debug=DEBUG, 
+        dev_tools_ui=DEBUG,
+        port=args.port,
+    )
