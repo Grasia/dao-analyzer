@@ -124,13 +124,16 @@ class NetworkRadioButton(Filter):
         self._value = network_value or ALL_NETWORKS_VALUE
 
         if isinstance(a, NetworkFilters):
-            self._options |= a.get_options()
+            self._options = a.get_options()
         else:
-            self._options |= { n:n.capitalize() for n in a }
+            self._options = { n:n.capitalize() for n in a }
 
-        # If the len is just two, we remove the other one and keep only 'ALL NETWORKS'
-        if len(self._options) == 2:
-            self._options = ALL_NETWORKS_DICT()
+        if len(self._options) > 1:
+            self._options = ALL_NETWORKS_DICT() | dict(sorted(self._options.items()))
+        else:
+            # We show the network name, but with the ALL_NETWORKS_VALUE key
+            name = next(iter(self._options.values()))
+            self._options = { ALL_NETWORKS_VALUE:name }
             self._value = ALL_NETWORKS_VALUE
 
         if self._value not in self._options.keys():
