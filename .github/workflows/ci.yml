@@ -146,7 +146,7 @@ jobs:
         branch=$(git branch --show-current)
         [[ "$branch" = "master" ]] && branch=latest
         echo "::set-output name=tag::$branch"
-        echo "::set-output name=tag_sv::$DAOA_VERSION"
+        echo "::set-output name=tag_sv::v$DAOA_VERSION"
       id: tags
     - name: Publish to Docker Hub
       uses: elgohr/Publish-Docker-Github-Action@3.04

@@ -83,7 +83,7 @@ class MultiBarFigure(Figure):
 
         super().configuration.add_x_params(
             params={
-                'tickvals': plot_data['common']['x'],
+                # 'tickvals': plot_data['common']['x'],
                 'type': plot_data['common']['type'],
                 'tickformat': plot_data['common']['x_format'],
             })

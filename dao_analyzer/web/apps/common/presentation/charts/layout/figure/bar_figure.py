@@ -53,14 +53,14 @@ class BarFigure(Figure):
                 x=plot_data['x'],
                 y=plot_data['y'],
                 name=plot_data['name'],
-                marker_color=plot_data['color'])
+                marker_color=plot_data['color'],
+        )
 
         super().configuration.add_x_params(
             params={
-                'tickvals': plot_data['x'],
+                # 'tickvals': plot_data['x'],
                 'type': plot_data['type'],
                 'tickformat': plot_data['x_format'],
-                'tickfont_size': 10,
             })
 
         super().configuration.disable_legend()

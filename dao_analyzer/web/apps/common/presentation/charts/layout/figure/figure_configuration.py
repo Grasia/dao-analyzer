@@ -79,39 +79,47 @@ class FigureConfiguration():
         Returns the axis layout using params in args.
         TODO: remove args parameter to simplify.
         """
+        args = args.copy()
+        
         axis_l: Dict[str, str] = {
-            'type': args['type'] if 'type' in args else '-',
+            'type': args.pop('type', '-'),
             'ticks': 'outside',
             'ticklen': 5,
             'tickwidth': 2,
-            'ticksuffix': args['suffix'] if 'suffix' in args else '',
+            'ticksuffix': args.pop('suffix', ''),
+            'tickfont_size': args.pop('tickfont_size', 10),
             'showline': True, 
             'linewidth': 2, 
             'linecolor': Color.BLACK,
-            'showgrid': args['grid'] if 'grid' in args else False,
+            'showgrid': args.pop('grid', False),
             'gridwidth': 0.5,
             'gridcolor': Color.GRID_COLOR,
             'tickfont_color': Color.TICKFONT_COLOR,
             'automargin': True,
+            'minor': {},
         }
 
         if 'removemarkers' in args:
+            args.pop('removemarkers')
             axis_l['ticklen'] = 0
             axis_l['tickwidth'] = 0
         if 'tickvals' in args:
-            axis_l['tickvals'] = args['tickvals']
+            axis_l['tickvals'] = args.pop('tickvals')
         if 'reverse_range' in args:
+            args.pop('reverse_range')
             axis_l['autorange'] = 'reversed'
         if 'l_range' in args:
-            axis_l['range'] = args['l_range']
+            axis_l['range'] = args.pop('l_range')
         if 'tickformat' in args:
-            axis_l['tickformat'] = args['tickformat']
+            axis_l['tickformat'] = args.pop('tickformat')
         if 'tickangle' in args:
+            args.pop('tickangle')
             axis_l['tickangle'] = 45
         if 'matches' in args:
-            axis_l['matches'] = args['matches']
-        if 'tickfont_size' in args:
-            axis_l['tickfont_size'] = args['tickfont_size']
+            axis_l['matches'] = args.pop('matches')
+
+        if args.keys():
+            raise ValueError(f"Args not recognized: {', '.join(args.keys())}")
 
         return axis_l
 
