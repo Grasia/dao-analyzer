@@ -1,31 +1,6 @@
 # DAO-Analyzer
 It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/). Web site: [http://dao-analyzer.science/](http://dao-analyzer.science/)
 
-## Build application
-Enter in your terminal (git must be installed) and write down:
-
-`git clone https://github.com/Grasia/dao-analyzer`
-
-After that, move to repository root directory with:
-
-```
-cd dao-analyzer
-```
-
-Build the `dao_analyzer_components`
-
-```
-cd dao_analyzer_components && npm ci && npm build
-```
-
-Then, go back to the root folder of the project, and install the package
-
-```
-pip install -e .
-```
-
-If you don't want to share Python dependencies among other projects, you should use a virtual environment, such as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
-
 ## Set-up & Running (Download app)
 You can either install it on your local machine, or if you prefer it, you can use the official docker image.
 
@@ -38,6 +13,22 @@ pip install dao-analyzer
 ```
 
 Then, you can run the app using the commands `daoa-cache-scripts` and `daoa-server`
+
+### How to run it?
+Before launching the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
+
+```
+daoa-cache-scripts
+```
+
+After a few minutes, you can now run the app with:
+
+```
+daoa-server
+```
+
+Now, visit `http://127.0.0.1:8050` or the address given in the program output with your web browser.
+
 ### Environment variables
 To be able to access all the features of dao-analyzer, you can specify the following
 environment variables:
@@ -47,20 +38,30 @@ environment variables:
 DAOA_CC_API_KEY = "your_api_key"
 ```
 
-### How to run it?
-Before launching the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
+## Build application
+Enter in your terminal (git must be installed) and write down:
+
+`git clone https://github.com/Grasia/dao-analyzer`
+
+After that, move to repository root directory with:
 
 ```
-python3 -m cache_scripts
+cd dao-analyzer
 ```
 
-After a few minutes, you can now run the app with:
+Build the `dao_analyzer_components` (not necessary if you only want to get the data, but not to display it)
 
 ```
-python3 index.py
+cd dao_analyzer_components && npm ci && npm build
 ```
 
-Now, visit `http://127.0.0.1:8050` or the address given in the program output with your web browser.
+Then, go back to the root folder of the project, and install the package
+
+```
+pip install -e .
+```
+
+If you don't want to share Python dependencies among other projects, you should use a virtual environment, such as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
 
 ## Using Docker <a name="docker"></a>
 If you use Docker, you can just use the images at [grasia/dao-analyzer](https://hub.docker.com/r/grasia/dao-analyzer). The tags with the `-cached` suffix have a pre-populated data warehouse (this means the image uses more space, but takes less time to load). To use it, just run the command:
@@ -102,7 +103,7 @@ export FLASK_ENV=development
 ### How to test it?
 Run all tests with:
 
-`pytest`
+`tox`
 
 or
 

@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.2.0 - 2022-09-27
+- System of Dash Components (faster loading time)
+- Fixed error with Dropdown
+- Improved installation and setup
+- Added cli options to daoa-server
+- Minor visual improvements
+
 # 1.1.2 - 2022-08-09
 - Fixing [#100](https://github.com/Grasia/dao-analyzer/issues/100)
 - Added logging rotations
