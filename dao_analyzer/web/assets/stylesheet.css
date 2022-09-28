@@ -165,7 +165,7 @@ a {
 #org-network-radio {
     display: grid;
     grid-auto-flow: column;
-    column-gap: 1em;
+    column-gap: 2em;
     grid-template-rows: repeat(3, 1fr);
 }
 
