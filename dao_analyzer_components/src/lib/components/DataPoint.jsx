@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
  */
 export default class DataPoint extends Component {
     get_dp_icon(evolution) {
-        if (!evolution) {
+        if (isNaN(evolution)) {
             return (<></>);
         }
 
@@ -21,15 +21,15 @@ export default class DataPoint extends Component {
     }
     
     get_evolution_str(evolution, evolution_rel) {
-        evolution = Math.round(evolution)
-        evolution_rel = Math.round(evolution_rel * 100) / 100
+        const round_evolution = Math.round(evolution)
+        const round_evolution_rel = Math.round(evolution_rel * 100) / 100
 
-        if (evolution && evolution_rel) {
-            return `${evolution} (${Math.abs(evolution_rel)}%)`;
-        } else if (evolution) {
-            return `${evolution}`;
-        } else if (evolution_rel) {
-            return `${evolution_rel}%`;
+        if (!isNaN(evolution) && !isNaN(evolution_rel)) {
+            return `${round_evolution} (${Math.abs(round_evolution_rel)}%)`;
+        } else if (!isNaN(evolution)) {
+            return `${round_evolution}`;
+        } else if (!isNaN(evolution_rel)) {
+            return `${round_evolution_rel}%`;
         } else {
             return '';
         }
@@ -47,14 +47,17 @@ export default class DataPoint extends Component {
             number_str = Math.round(number);
         }
 
+        const f_evolution = parseFloat(evolution);
+        const f_evolution_rel = parseFloat(evolution_rel);
+
         return (<div id={id} className='dao-summary-datapoint'>
             <span className='dao-summary-datapoint-title'>{title}</span>
             <div className='dao-summary-datapoint-number'>{number_str}</div>
-            { evolution && 
+            { !isNaN(f_evolution) && 
                 <>
                 <div className='dao-summary-datapoint-lastmonth'>This Month</div>
                 <div className='dao-summary-datapoint-evolution'>
-                    {this.get_dp_icon(evolution)} {this.get_evolution_str(evolution, evolution_rel)}
+                    {this.get_dp_icon(f_evolution)} {this.get_evolution_str(f_evolution, f_evolution_rel)}
                 </div>
                 </>
             }
