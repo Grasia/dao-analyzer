@@ -10,7 +10,10 @@
 from pathlib import Path
 from typing import List
 
-CACHE_PATH: Path = Path('datawarehouse') / 'daohaus'
+from dao_analyzer.web.apps.common.data_access.daos.metric.srcs import DATAWAREHOUSE
+
+CACHE_PATH: Path = DATAWAREHOUSE / 'daohaus'
+
 MOLOCHES: Path = CACHE_PATH / 'moloches.arr'
 PROPOSALS: Path = CACHE_PATH / 'proposals.arr'
 MEMBERS: Path = CACHE_PATH / 'members.arr'

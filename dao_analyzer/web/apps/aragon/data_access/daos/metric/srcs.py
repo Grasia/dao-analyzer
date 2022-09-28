@@ -10,7 +10,10 @@
 from pathlib import Path
 from typing import List
 
-CACHE_PATH: Path = Path('datawarehouse') / 'aragon'
+from dao_analyzer.web.apps.common.data_access.daos.metric.srcs import DATAWAREHOUSE
+
+CACHE_PATH: Path = DATAWAREHOUSE / 'aragon'
+
 APPS: Path = CACHE_PATH / 'apps.arr'
 CASTS: Path = CACHE_PATH / 'casts.arr'
 MINI_ME_TOKENS: Path = CACHE_PATH / 'miniMeTokens.arr'

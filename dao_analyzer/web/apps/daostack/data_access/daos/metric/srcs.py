@@ -9,8 +9,10 @@
 
 from pathlib import Path
 from typing import List
+from dao_analyzer.web.apps.common.data_access.daos.metric.srcs import DATAWAREHOUSE
 
-CACHE_PATH: Path = Path('datawarehouse') / 'daostack'
+CACHE_PATH: Path = DATAWAREHOUSE / 'daostack'
+
 DAOS: Path = CACHE_PATH / 'daos.arr'
 PROPOSALS: Path = CACHE_PATH / 'proposals.arr'
 REP_HOLDERS: Path = CACHE_PATH / 'reputationHolders.arr'

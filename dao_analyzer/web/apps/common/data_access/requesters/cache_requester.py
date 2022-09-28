@@ -8,8 +8,9 @@ import logging
 
 from dao_analyzer.web.apps.common.business.singleton import ABCSingleton
 from dao_analyzer.web.apps.common.data_access.requesters.irequester import IRequester
+from dao_analyzer.web.apps.common.data_access.daos.metric.srcs import DATAWAREHOUSE
 
-LOCK_PATH = Path('datawarehouse/.lock')
+LOCK_PATH = DATAWAREHOUSE / '.lock'
 
 class CacheRequester(IRequester, metaclass=ABCSingleton):
     CHECKING_COOLDOWN = 60

@@ -8,7 +8,7 @@ CACHE_SCRIPTS_VERSION = __version__
 # https://letsexchange.io/blog/what-is-block-confirmation-on-ethereum-and-how-many-confirmations-are-required/
 # Number of blocks to skip to only consult confirmed blocks
 SKIP_INVALID_BLOCKS = 250
-DEFAULT_DATAWAREHOUSE = Path('datawarehouse')
+DEFAULT_DATAWAREHOUSE = Path(os.getenv('DAOA_DW_PATH', 'datawarehouse'))
 
 # LOGGING CONFIG
 LOGGING_BACKUP_COUNT = os.getenv('DAOA_LOGGING_BACKUP_COUNT', 3)

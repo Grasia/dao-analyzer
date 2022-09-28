@@ -36,6 +36,9 @@ environment variables:
 ```
 # The CrytptoCompare API key to be used to get token prices
 DAOA_CC_API_KEY = "your_api_key"
+
+# The path of the datawarehouse
+DAOA_DW_PATH = './datawarehouse' # <-- Default value
 ```
 
 ## Build application
