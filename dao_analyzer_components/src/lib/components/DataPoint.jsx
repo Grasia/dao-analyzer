@@ -40,10 +40,9 @@ export default class DataPoint extends Component {
         let number_str = '?';
         // TODO: Move style to css
 
-        // TODO: If number is int
         if (typeof number === 'string') {
             number_str = number;
-        } else if (number) {
+        } else if (!isNaN(number)) {
             number_str = Math.round(number);
         }
 
