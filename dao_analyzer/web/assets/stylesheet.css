@@ -165,8 +165,13 @@ a {
 #org-network-radio {
     display: grid;
     grid-auto-flow: column;
-    column-gap: 1em;
+    column-gap: 2em;
     grid-template-rows: repeat(3, 1fr);
+}
+
+#org-network-radio label:first-child {
+    grid-column-start: 1;
+    grid-column-end: 3;
 }
 
 .checklist-filter > label {

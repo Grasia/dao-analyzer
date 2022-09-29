@@ -129,7 +129,7 @@ class NetworkRadioButton(Filter):
             self._options = { n:n.capitalize() for n in a }
 
         if len(self._options) > 1:
-            self._options = ALL_NETWORKS_DICT() | dict(sorted(self._options.items()))
+            self._options = ALL_NETWORKS_DICT() | dict(sorted(self._options.items(), key=self.sorted_key))
         else:
             # We show the network name, but with the ALL_NETWORKS_VALUE key
             name = next(iter(self._options.values()))
@@ -138,6 +138,13 @@ class NetworkRadioButton(Filter):
 
         if self._value not in self._options.keys():
             raise ValueError('network_value must be in networks')
+
+    @staticmethod
+    def sorted_key(item):
+        # This function makes mainnet be always the first one
+        if item[0] == 'mainnet':
+            return '_' + item[0]
+        return item[0]
 
     def get_options(self) -> Dict[str, str]:
         return self._options
