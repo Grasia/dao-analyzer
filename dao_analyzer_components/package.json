@@ -1,6 +1,6 @@
 {
   "name": "dao-analyzer-components",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Components for dao-analyzer",
   "repository": {
     "type": "git",
@@ -34,7 +34,7 @@
   "author": "David Davó <ddavo@ucm.es>",
   "license": "GPL-3.0",
   "dependencies": {
-    "ramda": "^0.26.1"
+    "ramda": "^0.28.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
@@ -47,18 +47,18 @@
     "babel-loader": "^8.0.6",
     "copyfiles": "^2.1.1",
     "css-loader": "^6.7.1",
-    "eslint": "^6.0.1",
+    "eslint": "^8.24.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-react": "^7.14.2",
     "is-published": "^0.2.0",
     "npm-watch": "^0.11.0",
     "prop-types": "^15.7.2",
-    "react": "^16.8.6",
+    "react": "^18.2.0",
     "react-docgen": "^5.4.3",
-    "react-dom": "^16.8.6",
-    "style-loader": "^0.23.1",
-    "styled-jsx": "^3.2.1",
+    "react-dom": "^18.2.0",
+    "style-loader": "^3.3.1",
+    "styled-jsx": "^5.0.7",
     "terser-webpack-plugin": "^5.3.6",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
