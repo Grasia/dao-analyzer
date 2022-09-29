@@ -1,6 +1,6 @@
 {
   "name": "dao-analyzer-components",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Components for dao-analyzer",
   "repository": {
     "type": "git",
@@ -46,7 +46,7 @@
     "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
     "copyfiles": "^2.1.1",
-    "css-loader": "^5.2.7",
+    "css-loader": "^6.7.1",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.18.0",
