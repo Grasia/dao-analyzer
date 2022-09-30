@@ -7,5 +7,7 @@ version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
     directory: "/dao_analyzer_components" # Location of package manifests
+    # Use the `develop` branch instead
+    target-branch: "develop"
     schedule:
       interval: "monthly"

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.2.1 - 2022-09-30
+- Improved network selector
+- Added the DAOA_DW_PATH env variable
+- Fixed problems with DataPoint component when value was 0
+
 # 1.2.0 - 2022-09-27
 - System of Dash Components (faster loading time)
 - Fixed error with Dropdown

@@ -82,19 +82,18 @@ module.exports = (env, argv) => {
             ],
         },
         optimization: {
+            minimize: true,
             minimizer: [
                 new TerserPlugin({
-                    sourceMap: true,
                     parallel: true,
-                    cache: './.build_cache/terser',
                     terserOptions: {
+                        sourceMap: true,
                         warnings: false,
                         ie8: false
                     }
                 })
             ],
             splitChunks: {
-                name: true,
                 cacheGroups: {
                     async: {
                         chunks: 'async',
