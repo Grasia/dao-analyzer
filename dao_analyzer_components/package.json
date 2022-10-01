@@ -48,7 +48,7 @@
     "copyfiles": "^2.1.1",
     "css-loader": "^6.7.1",
     "eslint": "^8.24.0",
-    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-react": "^7.14.2",
     "is-published": "^0.2.0",
