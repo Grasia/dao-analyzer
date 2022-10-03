@@ -14,7 +14,7 @@ export default class DAOInfo extends Component {
         return (
             <div className='dao-info-container'>
                 <div className='dao-info-label'>DAO</div>
-                <div className='dao-info-name'>{name}</div>
+                <div className='dao-info-name'>{name || <i>No Name Given</i>}</div>
                 <div className='dao-info-label'>Network</div>
                 <div className='dao-info-network'>{network}</div>
                 <div className='dao-info-label'>Address</div>
