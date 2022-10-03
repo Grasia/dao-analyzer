@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.2.2 - 2022-10-03
+- Fixed #117 (No Name Given not showing)
+
 # 1.2.1 - 2022-09-30
 - Improved network selector
 - Added the DAOA_DW_PATH env variable
