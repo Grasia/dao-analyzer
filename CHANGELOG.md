@@ -1,8 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.2.3 - 2022-10-08
+- Fixed [#118](https://github.com/Grasia/dao-analyzer/issues/118)
+
 # 1.2.2 - 2022-10-03
-- Fixed #117 (No Name Given not showing)
+- Fixed [#117](https://github.com/Grasia/dao-analyzer/issues/117)
 
 # 1.2.1 - 2022-09-30
 - Improved network selector
