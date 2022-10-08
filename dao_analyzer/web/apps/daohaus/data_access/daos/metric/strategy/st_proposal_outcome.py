@@ -31,19 +31,21 @@ class StProposalOutcome(IMetricStrategy):
 
 
     def process_data(self, df: pd.DataFrame) -> StackedSerie:
-        if pd_utl.is_an_empty_df(df):
+        if df.empty:
             return StackedSerie()
-
-        df = self.clean_df(df=df)
 
         # takes just the month
         df = pd_utl.unix_to_date(df, self.__DF_DATE)
         df = pd_utl.transform_to_monthly_date(df, self.__DF_DATE)
+        start = df[self.__DF_DATE].min()
+
+        df = self.clean_df(df=df)
+
 
         df = pd_utl.count_cols_repetitions(df, self.__DF_COLS, self.__DF_COUNT)
         
         # generates a time series
-        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE)
+        idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE, start=start)
         dff = pd_utl.get_df_from_lists([idx, 0], [self.__DF_DATE, self.__DF_COUNT])
         dff = pd_utl.datetime_to_date(dff, self.__DF_DATE)
 

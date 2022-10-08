@@ -7,6 +7,8 @@
         <f.r.youssef@hotmail.com>
 """
 
+import logging
+from dash import html
 from dash.dependencies import Input, Output, State
 from dao_analyzer.web.apps.common.business.transfers.organization.organization_list import OrganizationList
 
@@ -38,5 +40,10 @@ class ChartController():
             if not org_id:
                 self._layout.get_layout()
 
-            data = self._adapter.get_plot_data(org_id, OrganizationList.from_dict_representation(org_options))
-            return self._layout.fill_child(plot_data=data)
+            try:
+                data = self._adapter.get_plot_data(org_id, OrganizationList.from_dict_representation(org_options))
+            except ValueError as e:
+                logging.exception(e, exc_info=True)
+                return html.Span("Error showing graph. See logs for details.", className='text-danger')
+            else:
+                return self._layout.fill_child(plot_data=data)

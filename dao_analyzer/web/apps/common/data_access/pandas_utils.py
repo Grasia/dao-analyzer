@@ -113,8 +113,12 @@ def sum_cols_repetitions(df: DataFrame, cols: List[str], new_col: str)\
 
 
 def get_monthly_serie_from_df(df: DataFrame, date_col: str, start: date = None) -> pd.DatetimeIndex:
+    if df.empty and not start:
+        raise ValueError("DataFrame can't be empty if no start provided")
+
     today = date.today().replace(day=1)
-    start = df[date_col].min() if not start else start
+    start = start or df[date_col].min()
+
     return pd.date_range(start=start, end=today, freq=DateOffset(months=1))
 
 

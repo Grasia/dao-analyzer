@@ -111,5 +111,6 @@ def main():
     app.run_server(
         debug=DEBUG, 
         dev_tools_ui=DEBUG,
+        host=args.host,
         port=args.port,
     )

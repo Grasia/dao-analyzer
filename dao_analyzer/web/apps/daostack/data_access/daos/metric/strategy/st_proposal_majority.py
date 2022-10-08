@@ -78,6 +78,8 @@ class StProposalMajority(IMetricStrategy):
 
     def __get_sserie_outcome(self, df: pd.DataFrame, has_pass: bool)\
     -> Tuple[StackedSerie, StackedSerie]:
+        if df.empty:
+            return (StackedSerie(), StackedSerie())
 
         first_date = df[self.__DF_DATE].min()
         idx = pd_utl.get_monthly_serie_from_df(df, self.__DF_DATE, start=first_date)
