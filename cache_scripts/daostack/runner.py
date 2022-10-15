@@ -6,7 +6,7 @@
     Copyright 2021 David Davó
         <david@ddavo.me>
 """
-from typing import List
+from typing import List, Callable
 
 import pandas as pd
 from gql.dsl import DSLField
@@ -23,6 +23,12 @@ def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
         'proposalId': 'proposal'
     })
     return df
+
+def _remove_phantom_daos_wr(daoc: 'DaosCollector') -> Callable[[pd.DataFrame], pd.DataFrame]:
+    def _remove_phantom_daos(df: pd.DataFrame) -> pd.DataFrame:
+        return df[df.dao.isin(daoc.df.dao)]
+    
+    return _remove_phantom_daos
 
 class BalancesCollector(BlockscoutBallancesCollector):
     def __init__(self, runner, base, network: str):
@@ -49,12 +55,13 @@ class DaosCollector(GraphQLCollector):
         return ds.Query.daos(**add_where(kwargs, register="registered")).select(
             ds.DAO.id,
             ds.DAO.name,
+            ds.DAO.register,
             ds.DAO.nativeToken.select(ds.Token.id),
             ds.DAO.nativeReputation.select(ds.Rep.id)
         )
 
 class ProposalsCollector(GraphQLCollector):
-    def __init__(self, runner, network: str):
+    def __init__(self, runner, network: str, daoC: DaosCollector):
         super().__init__('proposals', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
 
         @self.postprocessor
@@ -67,6 +74,8 @@ class ProposalsCollector(GraphQLCollector):
         @self.postprocessor
         def deleteColums(df: pd.DataFrame) -> pd.DataFrame:
             return df.drop(columns=['competition'], errors='ignore')
+
+        self.postprocessors.append(_remove_phantom_daos_wr(daoC))
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
@@ -95,9 +104,11 @@ class ProposalsCollector(GraphQLCollector):
         )
 
 class ReputationHoldersCollector(GraphQLCollector):
-    def __init__(self, runner, network: str):
+    def __init__(self, runner, network: str, daoC: DaosCollector):
         super().__init__('reputationHolders', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
         self.postprocessor(_changeProposalColumnNames)
+
+        self.postprocessors.append(_remove_phantom_daos_wr(daoC))
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
@@ -111,10 +122,12 @@ class ReputationHoldersCollector(GraphQLCollector):
         )
 
 class StakesCollector(GraphQLCollector):
-    def __init__(self, runner, network: str):
+    def __init__(self, runner, network: str, daoC: DaosCollector):
         super().__init__('stakes', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
         self.postprocessor(_changeProposalColumnNames)
     
+        self.postprocessors.append(_remove_phantom_daos_wr(daoC))
+
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
         return ds.Query.proposalStakes(**kwargs).select(
@@ -131,9 +144,11 @@ class TokenPricesCollector(CCPricesCollector):
     pass
 
 class VotesCollector(GraphQLCollector):
-    def __init__(self, runner, network: str):
+    def __init__(self, runner, network: str, daoC: DaosCollector):
         super().__init__('votes', runner, network=network, endpoint=ENDPOINTS[network]['daostack'])
         self.postprocessor(_changeProposalColumnNames)
+
+        self.postprocessors.append(_remove_phantom_daos_wr(daoC))
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
@@ -179,6 +194,8 @@ class CommonRepEventCollector(GraphQLCollector):
             
             return df
 
+        self.postprocessors.append(_remove_phantom_daos_wr(self.base))
+
 class ReputationMintsCollector(CommonRepEventCollector):
     def __init__(self, *args, **kwargs):
         super().__init__('reputationMints', *args, **kwargs)
@@ -220,10 +237,10 @@ class DaostackRunner(GraphQLRunner):
 
             self._collectors.extend([
                 dc,
-                ProposalsCollector(self, n),
-                ReputationHoldersCollector(self, n),
-                StakesCollector(self, n),
-                VotesCollector(self, n),
+                ProposalsCollector(self, n, dc),
+                ReputationHoldersCollector(self, n, dc),
+                StakesCollector(self, n, dc),
+                VotesCollector(self, n, dc),
                 BalancesCollector(self, dc, n),
                 ReputationMintsCollector(self, dc, n),
                 ReputationBurnsCollector(self, dc, n),

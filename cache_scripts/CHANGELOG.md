@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.5 - 2022-10-15
+- Remove DAOstack phantom DAOs [#120](https://github.com/Grasia/dao-analyzer/issues/120)
+
 ## 1.1.4 - 2022-07-15
 - Added postProcessor to add a `dao` field to reputation mints and burns
 - Not getting reputation mints/burns of amount 0 (not useful)
