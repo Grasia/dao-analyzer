@@ -11,6 +11,7 @@ from typing import List, Callable
 import pandas as pd
 from gql.dsl import DSLField
 
+from .. import config
 from ..common.blockscout import BlockscoutBallancesCollector
 from ..common.cryptocompare import CCPricesCollector
 
@@ -26,6 +27,9 @@ def _changeProposalColumnNames(df: pd.DataFrame) -> pd.DataFrame:
 
 def _remove_phantom_daos_wr(daoc: 'DaosCollector') -> Callable[[pd.DataFrame], pd.DataFrame]:
     def _remove_phantom_daos(df: pd.DataFrame) -> pd.DataFrame:
+        if df.empty or daoc.df.empty: 
+            return df
+        
         return df[df.dao.isin(daoc.df.dao)]
     
     return _remove_phantom_daos
@@ -47,12 +51,20 @@ class DaosCollector(GraphQLCollector):
         
         @self.postprocessor
         def clone_id(df: pd.DataFrame) -> pd.DataFrame:
+            if df.empty:
+                return df
+
             df['dao'] = df['id']
             return df
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
-        return ds.Query.daos(**add_where(kwargs, register="registered")).select(
+
+        where = { 'register': 'registered' }
+        if config.daostack_all:
+            where.pop('register')
+        
+        return ds.Query.daos(**add_where(kwargs, **where)).select(
             ds.DAO.id,
             ds.DAO.name,
             ds.DAO.register,

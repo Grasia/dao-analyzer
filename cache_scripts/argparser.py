@@ -96,3 +96,10 @@ class CacheScriptsArgParser(ArgumentParser):
             required=False,
             default=False
         )
+        self.add_argument(
+            "--daostack-all",
+            help="Obtain all DAOs in DAOstack, not only registered ones",
+            action='store_true',
+            required=False,
+            default=False,
+        )
