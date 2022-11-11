@@ -132,6 +132,10 @@ DAOA_MATOMO_SITE_ID = 1
 You can check if the integration is working visiting the page and then your dashboard. The integration uses Javascript, so if there are any errors, you should be able to see them using "Inspect view" in your browser.
 
 ## Publications
+
+* Javier Arroyo, David Davó, Elena Martínez-Vicente, Youssef Faqir-Rhazoui, and Samer Hassan (2022). "DAO-Analyzer: Exploring Activity and Participation in Blockchain Organizations.". Companion Publication of the 2022 Conference on Computer Supported Cooperative Work and Social Computing (CSCW'22 Companion). ACM, 193–196.
+    * [Freely available here](https://doi.org/10.1145/3500868.3559707)
+
 * Youssef Faqir-Rhazoui, Javier Arroyo and Samer Hassan (2021). "A comparative analysis of the platforms for decentralized autonomous organizations in the Ethereum blockchain." Journal of Internet Services and Applications volume 12, Article number: 9.
     * [Freely available here](https://jisajournal.springeropen.com/articles/10.1186/s13174-021-00139-6).
 

@@ -87,4 +87,6 @@ and the research papers based on it.
 
 -   Our [article in the Journal of Internet Services and Applications](https://jisajournal.springeropen.com/articles/10.1186/s13174-021-00139-6), where we compare the evolution of three DAO platforms.
 
+-   Our [extended-abstract](https://doi.org/10.1145/3500868.3559707) from the demo performed at CSCW 2022, where we present the current state of the application and its architecture.
+
 Stay tuned for more!
