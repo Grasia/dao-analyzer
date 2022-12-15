@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.7 - 2022-12-13
+- Obtaining more fields from DAOstack proposals
+  - queuedVotePeriodLimit
+  - boostedVotePeriodLimit
+
 ## 1.1.6 - 2022-10-22
 - Obtaining more time fields from DAOstack proposals
 

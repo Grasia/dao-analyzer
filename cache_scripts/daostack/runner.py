@@ -80,14 +80,23 @@ class ProposalsCollector(GraphQLCollector):
         def changeColumnNames(df: pd.DataFrame) -> pd.DataFrame:
             return df.rename(columns={
                 'daoId': 'dao',
-                'genesisProtocolParamsQueuedVoteRequiredPercentage': 'queuedVoteRequiredPercentage'
-            })
+            }).rename(columns=self._stripGenesis)
 
         @self.postprocessor
         def deleteColums(df: pd.DataFrame) -> pd.DataFrame:
             return df.drop(columns=['competition'], errors='ignore')
 
         self.postprocessors.append(_remove_phantom_daos_wr(daoC))
+
+    @staticmethod
+    def _stripGenesis(s: str):
+        tostrip='genesisProtocolParams'
+
+        if s and len(s) > 1 and s.startswith(tostrip):
+            s = s[len(tostrip):]
+            return s[0].lower() + s[1:]
+        else:
+            return s
 
     def query(self, **kwargs) -> DSLField:
         ds = self.schema
@@ -112,7 +121,11 @@ class ProposalsCollector(GraphQLCollector):
             ds.Proposal.winningOutcome,
             ds.Proposal.stakesFor,
             ds.Proposal.stakesAgainst,
-            ds.Proposal.genesisProtocolParams.select(ds.GenesisProtocolParam.queuedVoteRequiredPercentage),
+            ds.Proposal.genesisProtocolParams.select(
+                ds.GenesisProtocolParam.queuedVoteRequiredPercentage,
+                ds.GenesisProtocolParam.queuedVotePeriodLimit,
+                ds.GenesisProtocolParam.boostedVotePeriodLimit,
+            ),
             ds.Proposal.dao.select(ds.DAO.id),
             ds.Proposal.competition.select(ds.CompetitionProposal.id)
         )
