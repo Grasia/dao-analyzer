@@ -125,6 +125,10 @@ class ProposalsCollector(GraphQLCollector):
                 ds.GenesisProtocolParam.queuedVoteRequiredPercentage,
                 ds.GenesisProtocolParam.queuedVotePeriodLimit,
                 ds.GenesisProtocolParam.boostedVotePeriodLimit,
+                # Used for Holografic Consensus threshold
+                ds.GenesisProtocolParam.thresholdConst,
+                ds.GenesisProtocolParam.minimumDaoBounty,
+                ds.GenesisProtocolParam.daoBountyConst,
             ),
             ds.Proposal.dao.select(ds.DAO.id),
             ds.Proposal.competition.select(ds.CompetitionProposal.id)
