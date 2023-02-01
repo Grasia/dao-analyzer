@@ -44,7 +44,7 @@
     "@plotly/dash-component-plugins": "^1.2.0",
     "@plotly/webpack-dash-dynamic-import": "^1.2.0",
     "babel-eslint": "^10.0.2",
-    "babel-loader": "^8.0.6",
+    "babel-loader": "^9.1.2",
     "copyfiles": "^2.1.1",
     "css-loader": "^6.7.1",
     "eslint": "^8.24.0",
