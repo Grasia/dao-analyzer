@@ -52,7 +52,7 @@ TEXT: dict = {
     'title_section_app': 'Aragon apps',
     'title_total_token_holders': 'Total token holders',
     'title_vote_outcome': 'Vote\'s outcome',
-    'title_votes_voters': 'NUmber of casted votes per voter',
+    'title_votes_voters': 'Number of casted votes per voter',
     'votes_against': 'Casted votes against',
     'votes_for': 'Casted votes for',
 }
