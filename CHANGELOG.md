@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.2.4 - 2023-02-20
+- Updated README and ABOUT to add CSCW's demo
+- [Updated cache-scripts](./cache_scripts/CHANGELOG.md)
+- Fixed small typo on Aragon's votes graph title
+
 # 1.2.3 - 2022-10-08
 - Fixed [#118](https://github.com/Grasia/dao-analyzer/issues/118)
 
