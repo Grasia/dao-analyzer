@@ -47,6 +47,9 @@ software (remember that a blockchain can be viewed as a decentralized
 database). Thus, we use the *The Graph* protocol to query the blockchain
 and retrieve information about the DAO: membership, assets, voting, etc.
 
+We publish the dataset daily on [Kaggle](https://www.kaggle.com/datasets/daviddavo/dao-analyzer). If you want to cite it, 
+it is also available on Zenodo with DOI [10.5281/zenodo.7669709](https://doi.org/10.5281/zenodo.7669709).
+
 ## Who develops DAO-Analyzer?
 
 We are researchers of the [GRASIA research
@@ -71,6 +74,17 @@ You can have a look at the code on
 [Github](https://github.com/Grasia/dao-analyzer).
 
 Also, you can follow us on [Twitter](https://twitter.com/p2pmod).
+
+### How can I cite you?
+
+You can just cite one of our publications:
+
+> Javier Arroyo, David Davó, Elena Martínez-Vicente, Youssef Faqir-Rhazoui, and Samer Hassan (2022). "DAO-Analyzer: Exploring Activity and Participation in Blockchain Organizations.". Companion Publication of the 2022 Conference on Computer Supported Cooperative Work and Social Computing (CSCW'22 Companion). ACM, 193–196.
+
+Or, if you want to explicitly cite the application:
+
+> Arroyo, Javier, Davó, David, Faqir-Rhazoui, Youssef, & Martínez Vicente, Elena. (2023). DAO Analyzer. Zenodo. https://doi.org/10.5281/zenodo.7669689
+
 
 ## How can I know more?
 
