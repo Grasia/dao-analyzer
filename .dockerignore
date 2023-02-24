@@ -9,6 +9,10 @@
 !CITATION.cff
 !/test
 
+# Some useful utilities
+!/scripts
+scripts/archive/**
+
 ## Deploy
 !/gunicorn_config.py
 !/LICENSE

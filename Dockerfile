@@ -16,6 +16,8 @@ RUN if [ "$POPULATE_CACHE" -eq 0 ] && [ -e ./datawarehouse ]; then rm -r ./dataw
 RUN if [ "$POPULATE_CACHE" -eq 1 ] ; then daoa-cache-scripts --ignore-errors; fi
 VOLUME "/dao-analyzer/datawarehouse"
 
+ENV PATH="$PATH:/dao-analyzer/scripts"
+
 HEALTHCHECK --interval=5m --timeout=3s --start-period=1m --retries=3 \
   CMD "curl -f localhost" || exit 1
 
