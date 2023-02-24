@@ -1,5 +1,41 @@
+<p align="center">
+    <img src="./dao_analyzer/web/assets/github_logo.png"
+        height="130">
+</p>
+<p align="center">
+    <a href="https://pypi.org/project/dao-analyzer/">
+        <img src="https://img.shields.io/pypi/v/dao-analyzer" alt="PyPI">
+    </a>
+    <a href="https://hub.docker.com/r/grasia/dao-analyzer">
+        <img src="https://img.shields.io/docker/pulls/grasia/dao-analyzer" alt="Docker pulls">
+    </a>
+    <a href="https://doi.org/10.5281/zenodo.7669689">
+        <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7669689.svg" alt="DOI 10.5281/zenodo.7669689.svg">
+    </a>
+    <img src="https://img.shields.io/github/license/grasia/dao-analyzer" alt="License">
+</p>
+
 # DAO-Analyzer
 It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](https://daostack.io/), [DAOhaus](https://daohaus.club/), and [Aragon](https://aragon.org/). Web site: [http://dao-analyzer.science/](http://dao-analyzer.science/)
+
+## Table of contents <!-- omit from toc -->
+- [Set-up \& Running (Download app)](#set-up--running-download-app)
+  - [How to run it?](#how-to-run-it)
+  - [Environment variables](#environment-variables)
+- [Build application](#build-application)
+- [Using Docker ](#using-docker-)
+- [Technical details](#technical-details)
+  - [Architecture](#architecture)
+  - [Debugging](#debugging)
+  - [How to test it?](#how-to-test-it)
+    - [Flags for hypothesis testing](#flags-for-hypothesis-testing)
+- [Deploy](#deploy)
+  - [Matomo integration](#matomo-integration)
+- [Data](#data)
+- [Publications](#publications)
+- [Acknowledgements](#acknowledgements)
+- [Cite as](#cite-as)
+
 
 ## Set-up & Running (Download app)
 You can either install it on your local machine, or if you prefer it, you can use the official docker image.
@@ -131,6 +167,11 @@ DAOA_MATOMO_SITE_ID = 1
 
 You can check if the integration is working visiting the page and then your dashboard. The integration uses Javascript, so if there are any errors, you should be able to see them using "Inspect view" in your browser.
 
+## Data
+
+The data is updated daily and published in [Kaggle](https://www.kaggle.com/datasets/daviddavo/dao-analyzer)
+
+
 ## Publications
 
 * Javier Arroyo, David Davó, Elena Martínez-Vicente, Youssef Faqir-Rhazoui, and Samer Hassan (2022). "DAO-Analyzer: Exploring Activity and Participation in Blockchain Organizations.". Companion Publication of the 2022 Conference on Computer Supported Cooperative Work and Social Computing (CSCW'22 Companion). ACM, 193–196.
@@ -151,3 +192,13 @@ You can check if the integration is working visiting the page and then your dash
 ## Acknowledgements
 
 DAO-Analyzer is created under the umbrella of two research projects: Chain Community, funded by the Spanish Ministry of Science and Innovation (RTI2018‐096820‐A‐I00) and led by Javier Arroyo and Samer Hassan; and P2P Models, funded by the European Research Council (ERC-2017-STG 625 grant no.: 75920), led by Samer Hassan.
+
+## Cite as
+
+You can just cite one of our publications:
+
+> Javier Arroyo, David Davó, Elena Martínez-Vicente, Youssef Faqir-Rhazoui, and Samer Hassan (2022). "DAO-Analyzer: Exploring Activity and Participation in Blockchain Organizations.". Companion Publication of the 2022 Conference on Computer Supported Cooperative Work and Social Computing (CSCW'22 Companion). ACM, 193–196.
+
+Or, if you want to explicitly cite the application:
+
+> Arroyo, Javier, Davó, David, Faqir-Rhazoui, Youssef, & Martínez Vicente, Elena. (2023). DAO Analyzer. Zenodo. https://doi.org/10.5281/zenodo.7669689
