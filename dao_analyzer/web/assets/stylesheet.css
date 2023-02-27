@@ -575,6 +575,12 @@ code {
     margin-top: 0.25rem;
 }
 
+.markdown blockquote {
+    padding-left: 1em;
+    background-color: #F8F7F8;
+    border-left: 0.25em solid var(--text-accent-color);
+}
+
 /* JUST FOR THE DEMO */
 /*
 .header-logo {
