@@ -1,7 +1,18 @@
 FROM python:3.10
-LABEL maintainer "David Davó <ddavo@ucm.es>"
 ARG POPULATE_CACHE=0
 ARG PYTHON_PKG=dao-analyzer
+ARG DAOA_VERSION
+ARG REVISION
+ARG CREATED
+
+LABEL maintainer "David Davó <ddavo@ucm.es>"
+LABEL org.opencontainers.image.source "https://github.com/grasia/dao-analyzer"
+LABEL org.opencontainers.image.licenses "GPL-3.0"
+LABEL org.opencontainers.image.title "DAO-Analyzer"
+LABEL org.opencontainers.image.description "Explore the DAO world"
+LABEL org.opencontainers.image.revision $REVISION 
+LABEL org.opencontainers.image.version $DAOA_VERSION
+LABEL org.opencontainers.image.created $CREATED
 
 WORKDIR /dao-analyzer
 

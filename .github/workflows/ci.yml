@@ -137,6 +137,8 @@ jobs:
         PYTHON_PKG=$(ls -t dist/*.whl | head -1)
         echo PYTHON_PKG="$PYTHON_PKG" >> $GITHUB_ENV
         echo DAOA_VERSION=$(python -c "from pkginfo import Wheel as W; print(W(r'$PYTHON_PKG').version)") >> $GITHUB_ENV
+        echo CREATED=$(date --rfc-3339=seconds) >> $GITHUB_ENV
+        echo REVISION=$(git rev-parse HEAD) >> $GITHUB_ENV
     - name: Check env variables
       run: |
         echo PYTHON_PKG: $PYTHON_PKG && [ ! -z "$PYTHON_PKG" ]
@@ -157,5 +159,5 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         tag_semver: true
-        buildargs: DAOA_VERSION,PYTHON_PKG
+        buildargs: DAOA_VERSION,PYTHON_PKG,CREATED,REVISION
         tags: ${{ steps.tags.outputs.tag }},${{ steps.tags.outputs.tag_sv }}
