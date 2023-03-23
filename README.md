@@ -6,9 +6,6 @@
     <a href="https://pypi.org/project/dao-analyzer/">
         <img src="https://img.shields.io/pypi/v/dao-analyzer" alt="PyPI">
     </a>
-    <a href="https://hub.docker.com/r/grasia/dao-analyzer">
-        <img src="https://img.shields.io/docker/pulls/grasia/dao-analyzer" alt="Docker pulls">
-    </a>
     <a href="https://doi.org/10.5281/zenodo.7669689">
         <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.7669689.svg" alt="DOI 10.5281/zenodo.7669689.svg">
     </a>
@@ -103,16 +100,16 @@ pip install -e .
 If you don't want to share Python dependencies among other projects, you should use a virtual environment, such as [virtualenv](https://docs.python-guide.org/dev/virtualenvs/).
 
 ## Using Docker <a name="docker"></a>
-If you use Docker, you can just use the images at [grasia/dao-analyzer](https://hub.docker.com/r/grasia/dao-analyzer). The tags with the `-cached` suffix have a pre-populated data warehouse (this means the image uses more space, but takes less time to load). To use it, just run the command:
+If you use Docker, you can just use the images at [ghcri.io/grasia/dao-analyzer](https://github.com/Grasia/dao-analyzer/pkgs/container/dao-analyzer). The tags with the `-cached` suffix have a pre-populated data warehouse (this means the image uses more space, but takes less time to load). To use it, just run the command:
 
 ```
-docker run --name dao-analyzer -it -p80:80 grasia/dao-analyzer:latest
+docker run --name dao-analyzer -it -p80:80 ghcr.io/grasia/dao-analyzer:latest
 ```
 
 or
 
 ```
-docker run --name dao-analyzer -it -p80:80 grasia/dao-analyzer:latest-cached
+docker run --name dao-analyzer -it -p80:80 ghcr.io/grasia/dao-analyzer:latest-cached
 ```
 
 > `dao-analyzer` is the container name, you can put whatever you want, but remember

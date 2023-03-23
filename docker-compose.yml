@@ -4,7 +4,7 @@ volumes:
 services:
   dao-analyzer:
     container_name: dao-analyzer
-    image: grasia/dao-analyzer:latest
+    image: ghcr.io/grasia/dao-analyzer:latest
     volumes:
       - datawarehouse:/dao-analyzer/datawarehouse
     ports:
