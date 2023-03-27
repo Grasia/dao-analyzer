@@ -74,6 +74,8 @@ class OrganizationsCollector(GraphQLCollector):
 
         @self.postprocessor
         def set_dead_recoveryVault(df: pd.DataFrame) -> pd.DataFrame:
+            if df.empty: return df
+
             df['recoveryVault'] = df['recoveryVault'].replace(r'^0x0+$', np.NaN, regex=True)
             return df
 

@@ -54,5 +54,5 @@ class VotesType(IMetricAdapter):
             'last_serie_elem': metric.get_last_serie_elem(),
             'last_value': last_value,
             'diff': metric.get_diff_last_values(add_stacks=True),
-            'diff_rel': metric.get_rel_last_values(add_stacks=True),
+            'diff_rel': metric.get_diff_rel_last_values(add_stacks=True),
         }

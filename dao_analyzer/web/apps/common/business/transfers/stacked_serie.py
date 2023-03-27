@@ -89,8 +89,7 @@ class StackedSerie():
         
         return this - prev
 
-    def get_rel_last_values(self, **kwargs)\
-    -> float:
+    def get_diff_rel_last_values(self, add_stacks: bool = False, **kwargs) -> float:
         """
         A percentage of the diference among the last two values.
         Parameters: 
@@ -101,7 +100,7 @@ class StackedSerie():
         Return:
             A float. 
         """
-        this, prev = self.get_last_values(**kwargs)
+        this, prev = self.get_last_values(add_stacks=add_stacks, **kwargs)
 
         if this is None:
             this = 0.0
@@ -110,8 +109,15 @@ class StackedSerie():
             prev = 0.0
 
         val: float = 0.0
-        denominator = (this + prev)
-        numerator = (this - prev)
+
+        if add_stacks:
+            numerator = (this - prev)
+            denominator = (this + prev)
+        else:
+            numerator = this - prev
+            denominator = prev
+
+        print(f"this: {this}, prev: {prev}, stacks: {add_stacks}, num: {numerator}, den: {denominator} frac: {numerator/denominator}")
 
         if denominator > 0:
             val = numerator / denominator * 100
