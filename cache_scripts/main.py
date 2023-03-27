@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from typing import Dict
 
-from datetime import date
+from datetime import datetime
 from pathlib import Path
 import portalocker as pl
 import os
@@ -80,10 +80,10 @@ def main_aux(datawarehouse: Path):
         _call_platform(p, datawarehouse, config.force, config.networks, config.collectors)
 
     # write date
-    data_date: str = str(date.today().isoformat())
+    data_date: str = str(datetime.now().isoformat())
 
     if config.block_datetime:
-        data_date = config.block_datetime.date().isoformat()
+        data_date = config.block_datetime.isoformat()
 
     with open(datawarehouse / 'update_date.txt', 'w') as f:
         f.write(data_date)
