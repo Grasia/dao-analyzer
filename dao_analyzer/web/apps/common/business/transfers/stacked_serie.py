@@ -117,8 +117,6 @@ class StackedSerie():
             numerator = this - prev
             denominator = prev
 
-        print(f"this: {this}, prev: {prev}, stacks: {add_stacks}, num: {numerator}, den: {denominator} frac: {numerator/denominator}")
-
         if denominator > 0:
             val = numerator / denominator * 100
 
