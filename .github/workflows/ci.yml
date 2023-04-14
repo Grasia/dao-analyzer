@@ -174,4 +174,4 @@ jobs:
     - name: Trigger update in server
       continue-on-error: true
       run: |
-        curl -H "Authorization: ${{ secrets.WATCHTOWER_HTTP_API_TOKEN }}" dao-analyzer.science:8042/v1/update
+        curl -f -H "Authorization: Bearer ${{ secrets.WATCHTOWER_HTTP_API_TOKEN }}" dao-analyzer.science:8042/v1/update
