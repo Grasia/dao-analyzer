@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.1.9 - 2023-05-11
+- Obtaining textual fields from DAOstack proposals
+  - title
+  - description
+  - url
+  - confidence
+  - confidenceThreshold
+
+## 1.1.8 - 2023-01-23
+- Updated cache-scripts to get more daostack parameters
+  - thresholdConst
+  - minimumDaoBounty
+  - daoBountyConst
+
 ## 1.1.7 - 2022-12-13
 - Obtaining more fields from DAOstack proposals
   - queuedVotePeriodLimit

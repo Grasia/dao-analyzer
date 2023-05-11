@@ -121,6 +121,11 @@ class ProposalsCollector(GraphQLCollector):
             ds.Proposal.winningOutcome,
             ds.Proposal.stakesFor,
             ds.Proposal.stakesAgainst,
+            ds.Proposal.title,
+            ds.Proposal.description,
+            ds.Proposal.url,
+            ds.Proposal.confidence,
+            ds.Proposal.confidenceThreshold,
             ds.Proposal.genesisProtocolParams.select(
                 ds.GenesisProtocolParam.queuedVoteRequiredPercentage,
                 ds.GenesisProtocolParam.queuedVotePeriodLimit,

@@ -46,6 +46,9 @@ def _is_good_version(datawarehouse: Path) -> bool:
 
 def main_aux(datawarehouse: Path):
     if config.delete_force or not _is_good_version(datawarehouse):
+        if not config.delete_force:
+            print(f"datawarehouse version is not version {config.CACHE_SCRIPTS_VERSION}, upgrading")
+
         # We skip the dotfiles like .lock
         for p in datawarehouse.glob('[!.]*'):
             if p.is_dir():
@@ -73,7 +76,7 @@ def main_aux(datawarehouse: Path):
 
     # The default config is every platform
     if not config.platforms:
-        config.platforms = AVAILABLE_PLATFORMS.keys()
+        config.platforms = AVAILABLE_PLATFORcache_scriptsMS.keys()
 
     # Now calling the platform and deleting if needed
     for p in config.platforms:

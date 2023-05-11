@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.2.6 - 2023-05-11
+- Small style fixes and typos
+- [Updated cache-scripts](./cache_scripts/CHANGELOG.md) to 1.1.9
+
 # 1.2.5 - 2023-02-24
 - Updated README and ABOUT to add Zenodo and Kaggle
 - Created script to deploy data to Zenodo and Kaggle
