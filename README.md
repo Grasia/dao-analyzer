@@ -37,7 +37,7 @@ It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](h
 ## Set-up & Running (Download app)
 You can either install it on your local machine, or if you prefer it, you can use the official docker image.
 
-> If you only want to retrieve the data used by our application, you can follow [this guide](./cache_scripts/README.md) instead
+> If you only want to retrieve the data used by our application, go to [grasia/dao-scripts](https://github.com/Grasia/dao-scripts) instead
 
 The easiest method by far to download and run the application is to use pip to install it
 
@@ -51,7 +51,7 @@ Then, you can run the app using the commands `daoa-cache-scripts` and `daoa-serv
 Before launching the app, you have to run the following script in order to enable the cache stored in `datawarehouse`:
 
 ```
-daoa-cache-scripts
+dao-scripts
 ```
 
 After a few minutes, you can now run the app with:
@@ -118,7 +118,7 @@ docker run --name dao-analyzer -it -p80:80 ghcr.io/grasia/dao-analyzer:latest-ca
 Now, you can update the datawarehouse using:
 
 ```
-docker exec -it dao-analyzer python -m cache_scripts
+docker exec -it dao-analyzer dao-scripts
 ```
 
 You can even add it to your system as a cron job to update it daily, weekly, etc...

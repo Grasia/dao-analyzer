@@ -11,7 +11,6 @@ def version_dev(version):
 
 package_dir = {
   'dao_analyzer.web': 'dao_analyzer/web',
-  'dao_analyzer.cache_scripts':  'cache_scripts',
   # Unfortunately, this package can't be in the same namespace as the others
   # see https://github.com/plotly/dash/issues/2236
   'dao_analyzer_components': 'dao_analyzer_components/dao_analyzer_components',
