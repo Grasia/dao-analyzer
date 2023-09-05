@@ -23,7 +23,7 @@ jobs:
         path: |
           ./datawarehouse*
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
     - name: Install package
       run: pip install -e .
     - name: Run verify-scripts
