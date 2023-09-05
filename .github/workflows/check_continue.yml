@@ -17,7 +17,7 @@ jobs:
         access_token: ${{ github.token }}
     - uses: actions/checkout@master
     - name: Getting datawarehouse cache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         key: ${{ runner.os }}-dw
         path: |
