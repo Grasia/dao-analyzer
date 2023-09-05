@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.2.7 - 2023-09-05
+- Moved cache-scripts to its own package ([dao-scripts](https://pypi.org/project/dao-scripts/))
+- Updated dependencies
+
 # 1.2.6 - 2023-05-11
 - Small style fixes and typos
 - [Updated cache-scripts](./cache_scripts/CHANGELOG.md) to 1.1.9
