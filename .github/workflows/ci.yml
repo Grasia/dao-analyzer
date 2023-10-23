@@ -10,7 +10,7 @@ jobs:
         working-directory: dao_analyzer_components
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
     - uses: actions/setup-python@v4
       with:
         python-version: '3.10'
@@ -44,7 +44,7 @@ jobs:
         working-directory: dao_analyzer_components
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
       with:
         registry-url: 'https://registry.npmjs.org'
     - name: Download artifact
