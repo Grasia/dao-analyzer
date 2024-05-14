@@ -188,7 +188,26 @@ The data is updated daily and published in [Kaggle](https://www.kaggle.com/datas
 
 ## Acknowledgements
 
-DAO-Analyzer is created under the umbrella of two research projects: Chain Community, funded by the Spanish Ministry of Science and Innovation (RTI2018‐096820‐A‐I00) and led by Javier Arroyo and Samer Hassan; and P2P Models, funded by the European Research Council (ERC-2017-STG 625 grant no.: 75920), led by Samer Hassan.
+<div align="center">
+<img src="https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/web/assets/logo-ministerio.png?raw=true"
+     alt="Logo Ministerio de Ciencia e Innovación. Gobierno de España"
+     style="max-height: 3em"
+><img src="https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/web/assets/logo-erc.png?raw=true"
+     alt="Logotipo European Research Council"
+     style="max-height: 3em"
+><img src="https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/web/assets/logo-grasia.png?raw=true"
+     alt="Logo GRASIA UCM"
+     style="max-height: 3em"
+><img src="https://github.com/Grasia/dao-analyzer/blob/master/dao_analyzer/web/assets/logo-ucm.png?raw=true"
+     alt="Logo Universidad Complutense de Madrid"
+     style="max-height: 3em"
+>
+</div>
+
+DAO-Analyzer is created under the umbrella of multiple research projects: 
+- Chain Community, funded by the Spanish Ministry of Science and Innovation ([RTI2018‐096820‐A‐I00](https://produccioncientifica.ucm.es/proyectos/48103/detalle)) and led by Javier Arroyo and Samer Hassan
+- P2P Models, funded by the European Research Council (ERC-2017-STG 625 grant no.: 75920), led by Samer Hassan.
+- DAOapplications, funded by the Spanish Ministry of Science and Innovation ([PID2021-127956OB-I00](https://produccioncientifica.ucm.es/proyectos/551171/detalle)) and led by Javier Arroyo, Samer Hassan and maria Cruz Valiente
 
 ## Cite as
 
