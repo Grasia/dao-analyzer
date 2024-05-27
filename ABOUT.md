@@ -29,7 +29,7 @@ allocation of cryptofunds.
 The DAOs that we monitor are running on public blockchains. Mainly, in
 the Ethereum *mainnet*, that is, the primary public Ethereum blockchain
 network. However, in recent times, DAO platforms make it possible to
-deploy and operate a DAO in other chains, such as *xDai* or *Polygon*,
+deploy and operate a DAO in other chains, such as *Gnosis* (formerly xdai) or *Polygon*,
 that are designed to address Ethereum *mainnet* issues like slow
 transactions, high fees and throughput problems. DAO-Analyzer also
 monitors the DAOs in such networks.
@@ -38,7 +38,7 @@ monitors the DAOs in such networks.
 
 DAO-Analyzer retrieves the data from the different blockchains using
 [The Graph](https://thegraph.com), an indexing protocol for
-querying decentralized networks such as Ethereum, xDai, Polygon, etc.
+querying decentralized networks such as Ethereum, Gnosis, Polygon, etc.
 Using this protocol, **we get the public data stored on the blockchain**
 about each DAO.
 
