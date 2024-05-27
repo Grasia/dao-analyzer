@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.3.0 - 2024-05-27
+- Updated dao-scripts to 1.3.0, now The Graph API key is needed to download data
+- Updated dependencies
+- Added Python 3.12 support
+
 # 1.2.7 - 2023-09-05
 - Moved cache-scripts to its own package ([dao-scripts](https://pypi.org/project/dao-scripts/))
 - Updated dependencies
