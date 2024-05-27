@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.3.1 - 2024-05-27
+- Updated dao-scripts to 1.3.1
+
 # 1.3.0 - 2024-05-27
 - Updated dao-scripts to 1.3.0, now The Graph API key is needed to download data
 - Updated dependencies
