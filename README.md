@@ -166,7 +166,7 @@ You can check if the integration is working visiting the page and then your dash
 
 ## Data
 
-The data is updated daily and published in [Kaggle](https://www.kaggle.com/datasets/daviddavo/dao-analyzer)
+The data is updated daily and published in [Kaggle](https://www.kaggle.com/datasets/daviddavo/dao-analyzer) and [Zenodo](https://zenodo.org/doi/10.5281/zenodo.7669709)
 
 
 ## Publications
