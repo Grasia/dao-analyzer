@@ -165,7 +165,7 @@ a {
 #org-network-radio {
     display: grid;
     grid-auto-flow: column;
-    column-gap: 2em;
+    column-gap: 1em;
     grid-template-rows: repeat(3, 1fr);
 }
 
@@ -424,6 +424,10 @@ a {
 
 .is-all-orgs .only-on-all-orgs {
     display: block;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    margin-right: .7em;
 }
 
 /*********************/

@@ -80,3 +80,13 @@ TEXT: dict = {
     'url_daostack': 'daostack',
     'url_daohaus': 'daohaus',
 }
+
+NETWORKS: dict[str, str] = {
+    '__all_networks': TEXT['radio_button_all_networks'],
+    'arbitrum': 'Arbitrum One',
+    'arbitrum-one': 'Arbitrum One',
+    'xdai': 'Gnosis (xdai)',
+    'mainnet': 'Ethereum Mainnet',
+    'matic': 'Matic (polygon)',
+    'polygon': 'Polygon (matic)',
+}

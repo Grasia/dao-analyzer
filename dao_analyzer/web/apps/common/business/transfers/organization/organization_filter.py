@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 from dao_analyzer.web.apps.common.business.transfers.organization.organization import Organization
 
-from dao_analyzer.web.apps.common.resources.strings import TEXT
+from dao_analyzer.web.apps.common.resources.strings import TEXT, NETWORKS
 
 class Filter(metaclass=abc.ABCMeta):
 
@@ -126,7 +126,7 @@ class NetworkRadioButton(Filter):
         if isinstance(a, NetworkFilters):
             self._options = a.get_options()
         else:
-            self._options = { n:n.capitalize() for n in a }
+            self._options = { n:NETWORKS.get(n, n.capitalize()) for n in a }
 
         if len(self._options) > 1:
             self._options = ALL_NETWORKS_DICT() | dict(sorted(self._options.items(), key=self.sorted_key))

@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+# 1.3.3 - 2024-06-03
+- Updated dao-scripts to 1.4.6
+- Changed some network names
+- Updated dependencies
+
 # 1.3.1 - 2024-05-27
 - Updated dao-scripts to 1.3.1
 

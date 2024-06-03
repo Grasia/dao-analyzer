@@ -19,7 +19,7 @@ from dao_analyzer.web.apps.common.business.transfers.organization.participation_
 from dao_analyzer.web.apps.common.business.transfers.organization.platform import Platform
 
 from dao_analyzer.web.apps.common.resources import colors as COLOR
-from dao_analyzer.web.apps.common.resources.strings import TEXT
+from dao_analyzer.web.apps.common.resources.strings import TEXT, NETWORKS
 from dao_analyzer.web.apps.common.presentation.main_view.main_view import REL_PATH
 
 __ECOSYSTEM_SELECTED: Dict[str, List[str]] = {
@@ -120,7 +120,7 @@ def __generate_header(
                     className = 'checklist-filter',
                     id='org-network-radio'),
             ], className='header-selector-wrapper'),
-        className='col-3 d-flex justify-content-center'),
+        className='col-4 d-flex justify-content-center'),
         # 3. DAO selector (and filtering)
         html.Div(
             html.Div(children=[
@@ -174,7 +174,7 @@ def _get_platform_info(p: Platform) -> dac.PlatformInfo:
 
     return dac.PlatformInfo(
         name=p.name,
-        networks=p.networks,
+        networks=[ NETWORKS[n] for n in p.networks ],
         creation_date=_aux_crdatetime(p.creation_date),
         participation_stats=_gen_participation_stats(p.participation_stats)
     )
@@ -182,7 +182,7 @@ def _get_platform_info(p: Platform) -> dac.PlatformInfo:
 def _get_dao_info(org: Organization) -> dac.DAOInfo:
     return dac.DAOInfo(
         name=org.get_name(), 
-        network=org.get_network(),
+        network=NETWORKS[org.get_network()],
         address=org.get_id(),
         creation_date=_aux_crdatetime(org.get_creation_date()),
         first_activity=_aux_crdatetime(org.get_first_activity()),
