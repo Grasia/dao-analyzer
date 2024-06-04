@@ -14,9 +14,9 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
   - package-ecosystem: "pip"
     directory: "/"
     target-branch: "develop"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
