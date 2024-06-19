@@ -56,7 +56,7 @@ We are researchers of the [GRASIA research
 group](http://grasia.fdi.ucm.es/) of [Universidad Complutense de
 Madrid](https://www.ucm.es/).
 
-In particular, DAO-Analyzer is created under the umbrella of two
+In particular, DAO-Analyzer is developed under the umbrella of two
 research projects: Chain Community, funded by the Spanish Ministry of
 Science and Innovation (RTI2018‐096820‐A‐I00) and led by Javier Arroyo
 and Samer Hassan; and [P2P Models](https://p2pmodels.eu/), funded

@@ -29,7 +29,7 @@ It is a tool to visualize DAO metrics. Currently, it shows DAO from [DAOstack](h
 - [Deploy](#deploy)
   - [Matomo integration](#matomo-integration)
 - [Data](#data)
-- [Publications](#publications)
+- [Publications and related research](#publications-and-related-research)
 - [Acknowledgements](#acknowledgements)
 - [Cite as](#cite-as)
 
@@ -169,7 +169,10 @@ You can check if the integration is working visiting the page and then your dash
 The data is updated daily and published in [Kaggle](https://www.kaggle.com/datasets/daviddavo/dao-analyzer) and [Zenodo](https://zenodo.org/doi/10.5281/zenodo.7669709)
 
 
-## Publications
+## Publications and related research
+
+* Andrea Peña-Calvin, Javier Arroyo, Andrew Schwartz, and Samer Hassan (2024). Concentration of Power and Participation in Online Governance: the Ecosystem of Decentralized Autonomous Organizations. In Companion Proceedings of the ACM on Web Conference 2024 (WWW '24). ACM, 927–930.
+  *  [Freely available here](https://doi.org/10.1145/3589335.3651481)
 
 * Javier Arroyo, David Davó, Elena Martínez-Vicente, Youssef Faqir-Rhazoui, and Samer Hassan (2022). "DAO-Analyzer: Exploring Activity and Participation in Blockchain Organizations.". Companion Publication of the 2022 Conference on Computer Supported Cooperative Work and Social Computing (CSCW'22 Companion). ACM, 193–196.
     * [Freely available here](https://doi.org/10.1145/3500868.3559707)
@@ -204,10 +207,10 @@ The data is updated daily and published in [Kaggle](https://www.kaggle.com/datas
 >
 </div>
 
-DAO-Analyzer is created under the umbrella of multiple research projects: 
+DAO-Analyzer is developed under the umbrella of multiple research projects: 
 - Chain Community, funded by the Spanish Ministry of Science and Innovation ([RTI2018‐096820‐A‐I00](https://produccioncientifica.ucm.es/proyectos/48103/detalle)) and led by Javier Arroyo and Samer Hassan
 - P2P Models, funded by the European Research Council (ERC-2017-STG 625 grant no.: 75920), led by Samer Hassan.
-- DAOapplications, funded by the Spanish Ministry of Science and Innovation ([PID2021-127956OB-I00](https://produccioncientifica.ucm.es/proyectos/551171/detalle)) and led by Javier Arroyo, Samer Hassan and maria Cruz Valiente
+- DAOapplications, funded by the Spanish Ministry of Science and Innovation ([PID2021-127956OB-I00](https://produccioncientifica.ucm.es/proyectos/551171/detalle)) and led by Javier Arroyo and Samer Hassan
 
 ## Cite as
 
