@@ -48,7 +48,7 @@ jobs:
       with:
         registry-url: 'https://registry.npmjs.org'
     - name: Download artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: dao_analyzer_components
         path: ./dao_analyzer_components/dao_analyzer_components/
@@ -84,7 +84,7 @@ jobs:
     - uses: actions/checkout@v5
       with:
         fetch-depth: 0 # Downloading tags to gen version name
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v5
       with:
         name: dao_analyzer_components
         path: ./dao_analyzer_components/dao_analyzer_components/
@@ -108,7 +108,7 @@ jobs:
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/' )
     steps:
     - name: Download built package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: dist
         path: ./dist/
@@ -127,7 +127,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Getting built package
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: dist
         path: ./dist/
