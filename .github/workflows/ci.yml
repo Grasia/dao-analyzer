@@ -28,7 +28,7 @@ jobs:
     - name: Validate init
       run: npm run validate-init
     - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: dao_analyzer_components
         path: |
@@ -98,7 +98,7 @@ jobs:
     - name: Build package
       run: python -m build
     - name: Archive built package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: dist
         path: ./dist/
