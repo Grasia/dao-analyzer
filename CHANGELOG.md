@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 1.3.6 - 2025-11-06
+- Added paper to ABOUT.md
+
 ## 1.3.5 - 2025-05-04
 - Updated dao_analyzer_components dependencies
 - Updated dao-scripts to 1.5.4

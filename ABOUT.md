@@ -103,4 +103,7 @@ and the research papers based on it.
 
 -   Our [extended-abstract](https://doi.org/10.1145/3500868.3559707) from the demo performed at CSCW 2022, where we present the current state of the application and its architecture.
 
+- Our [article in PeerJ](https://peerj.com/articles/cs-3320/), where we do a post-mortem analysis of the entire life cycle of the DAOstack platform.
+
+
 Stay tuned for more!
